@@ -1,7 +1,9 @@
+import 'package:cloud_gallery/utils/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:style/home_test.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -15,12 +17,18 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
-      return const CupertinoApp(
-        home: HomeScreen(),
+      return CupertinoApp(
+        onGenerateTitle: (context) => context.l10n.app_name,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const HomeScreen(),
       );
     }
-    return const MaterialApp(
-      home: HomeScreen(),
+    return MaterialApp(
+      onGenerateTitle: (context) => context.l10n.app_name,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: const HomeScreen(),
     );
   }
 }

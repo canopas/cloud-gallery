@@ -30,8 +30,6 @@ dependencies:
   flutter_riverpod: ^2.4.9
 
 
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
