@@ -13,7 +13,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         name: Set up Flutter SDK
         with:
-          flutter-version: latest
+          flutter-version: 'latest'
           channel: 'stable'
           cache: true
 
