@@ -3,7 +3,7 @@ name: Analyze
 on: push
 
 jobs:
-  build:
+  analyze:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,8 +18,30 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd app
           flutter clean
           flutter pub get
+          
+          cd ../data
+          flutter clean
+          flutter pub get
+          
+          cd ../style
+          flutter clean
+          flutter pub get
+          
+          cd ..
 
       - name: Lint test
-        run: dart analyze --fatal-infos
+        run: |
+          cd app
+          dart analyze --fatal-infos
+          
+          cd ../data
+          dart analyze --fatal-infos
+          
+          cd ../style
+          dart analyze --fatal-infos
+          
+          cd ..
+        
