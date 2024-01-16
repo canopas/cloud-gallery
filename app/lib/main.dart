@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'app.dart';
+import 'ui/app.dart';
 
 void main() {
   runApp(const CloudGalleryApp());
