@@ -10,10 +10,9 @@ jobs:
       - uses: actions/checkout@v3
         name: Checkout
 
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2.12.0
         name: Set up Flutter SDK
         with:
-          flutter-version: 'latest'
           channel: 'stable'
           cache: true
 
