@@ -1,9 +1,9 @@
-name: Analyze
+name: Build
 
 on: push
 
 jobs:
-  analyze:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,16 +32,18 @@ jobs:
           
           cd ..
 
-      - name: Lint test
+      - name: Build android APK
         run: |
           cd app
-          dart analyze --fatal-infos
-          
-          cd ../data
-          dart analyze --fatal-infos
-          
-          cd ../style
-          dart analyze --fatal-infos
-          
+          file='VERSION'
+          fileData=`cat $file`
+          IFS='.'
+          read -a versionValue <<< "$fileData"
+          buildNumber=$(expr `expr ${versionValue[0]} \* 1000000` + `expr ${versionValue[1]} \* 10000` + ${CI_PIPELINE_IID})
+          IFS=''
+          buildName="${versionValue[0]}.${versionValue[1]}.$CI_PIPELINE_IID"
+          echo "Generating android build $buildName $buildNumber"
+          flutter build apk --flavor prod --release --build-number=$buildNumber --build-name=$buildName
+          mv build/app/outputs/apk/release/*.apk .
           cd ..
-        
+          
