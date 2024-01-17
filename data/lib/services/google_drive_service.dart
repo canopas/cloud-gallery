@@ -1,4 +1,5 @@
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
@@ -19,7 +20,9 @@ class GoogleDriveService {
       if (client == null) return;
       final driveApi = drive.DriveApi(client);
       final files = await driveApi.files.list();
-      print(files);
+      if (kDebugMode) {
+        print(files);
+      }
     }
   }
 }
