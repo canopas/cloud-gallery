@@ -12,7 +12,20 @@
           "package_name": "com.canopas.cloud_gallery"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "64221198282-3eg7r09fsl1u3s9tge7ud1206q18pkf7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.canopas.cloud_gallery",
+            "certificate_hash": "38887addbb77aaeba38c77a211469aafe02b2b41"
+          }
+        },
+        {
+          "client_id": "64221198282-3pk3g95eutmuj2u4h45ptorsbb64g3og.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyABDkRcwTA2gwgjBtx5GGNLgAsCHKY7Rpc"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64221198282-3pk3g95eutmuj2u4h45ptorsbb64g3og.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.canopas.cloudGallery"
+              }
+            }
+          ]
         }
       }
     }

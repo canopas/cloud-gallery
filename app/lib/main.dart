@@ -5,7 +5,9 @@ import 'ui/app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
+
   final container = ProviderContainer();
   runApp(UncontrolledProviderScope(
       container: container, child: const CloudGalleryApp()));
