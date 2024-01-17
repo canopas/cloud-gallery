@@ -12,6 +12,19 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>GIDClientID</key>
+    <string>64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq.apps.googleusercontent.com</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<string>com.googleusercontent.apps.64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq</string>
+    		</array>
+    	</dict>
+    </array>
 	<key>CFBundleName</key>
 	<string>cloud_gallery</string>
 	<key>CFBundlePackageType</key>

@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
@@ -51,11 +52,30 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        if (System.getenv("APKSIGN_KEYSTORE") != null) {
+            release {
+                storeFile file(System.getenv("APKSIGN_KEYSTORE"))
+                storePassword System.getenv("APKSIGN_KEYSTORE_PASS")
+                keyAlias System.getenv("APKSIGN_KEY_ALIAS")
+                keyPassword System.getenv("APKSIGN_KEY_PASS")
+            }
+        } else {
+            release {
+                keyAlias 'cloud-gallery'
+                keyPassword 'canopas@cloud-gallery'
+                storeFile file('dev.jks')
+                storePassword 'canopas@cloud-gallery'
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
