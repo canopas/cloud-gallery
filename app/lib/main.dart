@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'ui/app.dart';
 
 void main() {
-  runApp(const CloudGalleryApp());
+  final container = ProviderContainer();
+  runApp(UncontrolledProviderScope(container: container, child: const CloudGalleryApp()) );
 }
 
 class CloudGalleryApp extends StatefulWidget {

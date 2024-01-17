@@ -12,7 +12,17 @@ dependencies:
 
   # services
   googleapis: ^12.0.0
+
+  # authentication
   google_sign_in: ^6.2.1
+  extension_google_sign_in_as_googleapis_auth: ^2.0.12
+
+  # state management
+  flutter_riverpod: ^2.4.9
+
+  # ode generation
+  freezed: ^2.4.6
+  freezed_annotation: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -24,7 +34,7 @@ dev_dependencies:
 
   # code generation
   build_runner: ^2.3.3
-  freezed: ^2.4.6
+
 
 flutter:
 

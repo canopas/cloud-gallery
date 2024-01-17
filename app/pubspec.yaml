@@ -32,6 +32,10 @@ dependencies:
   # navigation
   go_router: ^13.0.1
 
+  # ode generation
+  freezed: ^2.4.6
+  freezed_annotation: ^2.4.1
+
 
 dev_dependencies:
   flutter_test:
@@ -43,7 +47,8 @@ dev_dependencies:
 
   # code generation
   build_runner: ^2.3.3
-  freezed: ^2.4.6
+
+
 
 
 flutter:

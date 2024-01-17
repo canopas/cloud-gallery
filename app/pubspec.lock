@@ -240,6 +240,14 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  extension_google_sign_in_as_googleapis_auth:
+    dependency: transitive
+    description:
+      name: extension_google_sign_in_as_googleapis_auth
+      sha256: bcf4f8dedcc1e66ce5fe98fbd98cc86ed25ad7fce0511e8d6cdc46ccbf421e8e
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.12"
   fake_async:
     dependency: transitive
     description:
@@ -301,7 +309,7 @@ packages:
     source: sdk
     version: "0.0.0"
   freezed:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: freezed
       sha256: "6c5031daae12c7072b3a87eff98983076434b4889ef2a44384d0cae3f82372ba"
@@ -309,7 +317,7 @@ packages:
     source: hosted
     version: "2.4.6"
   freezed_annotation:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: freezed_annotation
       sha256: c3fd9336eb55a38cc1bbd79ab17573113a8deccd0ecbbf926cca3c62803b5c2d
@@ -396,6 +404,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "12.0.0"
+  googleapis_auth:
+    dependency: transitive
+    description:
+      name: googleapis_auth
+      sha256: "127b1bbd32170ab8312f503bd57f1d654d8e4039ddfbc63c027d3f7ade0eff74"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
   graphs:
     dependency: transitive
     description:
@@ -416,10 +432,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: d4872660c46d929f6b8a9ef4e7a7eff7e49bbf0c4ec3f385ee32df5119175139
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.2"
+    version: "0.13.6"
   http_multi_server:
     dependency: transitive
     description:
