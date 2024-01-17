@@ -14,21 +14,12 @@ class GoogleDriveService {
   const GoogleDriveService(this._googleSignIn);
 
   Future<void> getDriveFiles() async {
-    print("Getting drive files..");
     if (_googleSignIn.currentUser != null) {
-      print("currentUser: ${_googleSignIn.currentUser}");
       final client = await _googleSignIn.authenticatedClient();
-      print("client: $client");
-      print("client is null: ${client == null}");
       final driveApi = drive.DriveApi(client!);
-      try {
-        final files = await driveApi.files.list();
-        print(files.toJson());
-      } catch (e) {
-        print("Error: $e");
-      }
-    } else {
-      print("currentUser: null");
+      await driveApi.files.list();
+
+      ///TODO: Convert File to custom object
     }
   }
 }
