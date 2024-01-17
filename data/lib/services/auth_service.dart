@@ -5,7 +5,7 @@ import 'package:googleapis/drive/v3.dart' as drive;
 final googleSignInProvider = Provider(
   (ref) => GoogleSignIn(
     scopes: [
-      drive.DriveApi.driveFileScope,
+      drive.DriveApi.driveScope,
     ],
   ),
 );
