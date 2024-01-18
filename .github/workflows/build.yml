@@ -47,3 +47,9 @@ jobs:
           flutter build apk --release --build-number=$buildNumber --build-name=$buildName
           mv build/app/outputs/apk/release/*.apk .
           cd ..
+
+      - name: Archive Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-gallery.apk
+          path: app/build/app/outputs/apk/release/*.apk
