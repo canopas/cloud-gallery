@@ -1,8 +1,19 @@
+import 'package:cloud_gallery/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'ui/app.dart';
 
-void main() {
-  runApp(const CloudGalleryApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  final container = ProviderContainer();
+  runApp(UncontrolledProviderScope(
+      container: container, child: const CloudGalleryApp()));
 }
 
 class CloudGalleryApp extends StatefulWidget {
@@ -18,4 +29,3 @@ class _CloudGalleryAppState extends State<CloudGalleryApp> {
     return const App();
   }
 }
-
