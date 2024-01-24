@@ -1,11 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:googleapis/drive/v3.dart' as google_drive;
+import 'package:googleapis/photoslibrary/v1.dart' as google_photos;
 
 final googleSignInProvider = Provider(
   (ref) => GoogleSignIn(
     scopes: [
-      drive.DriveApi.driveScope,
+      google_drive.DriveApi.driveScope,
+      google_photos.PhotosLibraryApi.photoslibraryScope,
     ],
   ),
 );
@@ -39,4 +41,10 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<bool> isSignedIn() async {
+    return _googleSignIn.isSignedIn();
+  }
+
+  GoogleSignInAccount? get getUser => _googleSignIn.currentUser;
 }
