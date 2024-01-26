@@ -1,19 +1,31 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'media.freezed.dart';
+
 part 'media.g.dart';
 
+enum AppMediaType { image, video }
+
+enum AppMediaOrientation { landscape, portrait }
+
 @freezed
-class Media with _$Media {
-  const factory Media({
+class AppMedia with _$AppMedia {
+  const factory AppMedia({
     required String id,
-    required String name,
-    required String image,
-    required double size,
+    String? name,
+    required String path,
+    double? displayHeight,
+    double? displayWidth,
+    required AppMediaType type,
     String? mimeType,
     required DateTime createdTime,
     DateTime? modifiedTime,
-  }) = _Media;
+    AppMediaOrientation? orientation,
+    required double? latitude,
+    required double? longitude,
+    @Default(false) bool isLocal,
+  }) = _AppMedia;
 
-  factory Media.fromJson(Map<String, dynamic> json) => _$MediaFromJson(json);
+  factory AppMedia.fromJson(Map<String, dynamic> json) =>
+      _$AppMediaFromJson(json);
 }
