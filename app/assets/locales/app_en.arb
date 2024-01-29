@@ -1,3 +1,6 @@
 {
-  "app_name": "Cloud Gallery"
+  "app_name": "Cloud Gallery",
+
+  "no_internet_connection_error": "No internet connection! Please check your network and try again.",
+  "something_went_wrong_error": "Something went wrong! Please try again later."
 }
