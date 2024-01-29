@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:data/errors/l10n_error_codes.dart';
 
 class AppError implements Exception {
@@ -10,6 +12,14 @@ class AppError implements Exception {
   @override
   String toString() {
     return '$runtimeType{message: $message, code: $statusCode, l10nCode: $l10nCode}';
+  }
+
+  factory AppError.fromError(Object error) {
+    if (error is SocketException) {
+      return const NoConnectionError();
+    } else {
+      return const SomethingWentWrongError();
+    }
   }
 }
 
