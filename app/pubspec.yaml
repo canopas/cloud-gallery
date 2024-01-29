@@ -23,6 +23,10 @@ dependencies:
   style:
     path: ../style
 
+  # services
+  photo_manager: ^3.0.0-dev.5
+  photo_manager_image_provider: ^2.1.0
+
   # UI
   cupertino_icons: ^1.0.2
 
@@ -38,7 +42,6 @@ dependencies:
   # code generation
   freezed: ^2.4.6
   freezed_annotation: ^2.4.1
-
 
 dev_dependencies:
   flutter_test:
