@@ -3,25 +3,35 @@ import 'package:cloud_gallery/utils/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:style/theme/theme.dart';
 import 'package:style/theme/app_theme_builder.dart';
+import 'package:data/storage/app_preferences.dart';
 
-class App extends StatefulWidget {
-  const App({super.key});
+class CloudGalleryApp extends ConsumerStatefulWidget {
+  const CloudGalleryApp({super.key});
 
   @override
-  State<App> createState() => _AppState();
+  ConsumerState<CloudGalleryApp> createState() => _CloudGalleryAppState();
 }
 
-class _AppState extends State<App> {
+class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
   late GoRouter _router;
+
+  String _configureInitialRoute() {
+    if (!ref.read(AppPreferences.isOnBoardComplete)) {
+      return AppRoutePath.onBoard;
+    } else {
+      return AppRoutePath.home;
+    }
+  }
 
   @override
   void initState() {
     _router = GoRouter(
-      initialLocation: AppRoutePath.home,
+      initialLocation: _configureInitialRoute(),
       routes: AppRouter.routes,
     );
     super.initState();

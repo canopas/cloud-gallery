@@ -21,10 +21,15 @@ dependencies:
   # state management
   flutter_riverpod: ^2.4.9
 
+  # storage
+  shared_preferences: ^2.2.2
+
   # code generation
   freezed: ^2.4.6
   freezed_annotation: ^2.4.1
   json_serializable: ^6.7.1
+
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:
