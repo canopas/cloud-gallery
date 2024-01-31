@@ -1,31 +1,36 @@
+import 'dart:async';
 import 'package:cloud_gallery/firebase_options.dart';
+import 'package:data/storage/provider/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'ui/app.dart';
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final container = ProviderContainer();
-  runApp(UncontrolledProviderScope(
-      container: container, child: const CloudGalleryApp()));
+  final container = await _configureContainerWithAsyncDependency();
+
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const CloudGalleryApp(),
+    ),
+  );
 }
 
-class CloudGalleryApp extends StatefulWidget {
-  const CloudGalleryApp({super.key});
-
-  @override
-  State<CloudGalleryApp> createState() => _CloudGalleryAppState();
-}
-
-class _CloudGalleryAppState extends State<CloudGalleryApp> {
-  @override
-  Widget build(BuildContext context) {
-    return const App();
-  }
+Future<ProviderContainer> _configureContainerWithAsyncDependency() async {
+  final prefs = await SharedPreferences.getInstance();
+  final container = ProviderContainer(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ],
+  );
+  return container;
 }

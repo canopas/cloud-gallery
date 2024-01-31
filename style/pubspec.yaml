@@ -16,4 +16,20 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter_regular.ttf
+        - asset: assets/fonts/inter_light.ttf
+          weight: 300
+        - asset: assets/fonts/inter_medium.ttf
+          weight: 500
+        - asset: assets/fonts/inter_semi_bold.ttf
+          weight: 600
+        - asset: assets/fonts/inter_bold.ttf
+          weight: 700
+        - asset: assets/fonts/inter_italic.ttf
+          style: italic
+        - asset: assets/fonts/inter_black_italic.ttf
+          weight: 900
+          style: italic

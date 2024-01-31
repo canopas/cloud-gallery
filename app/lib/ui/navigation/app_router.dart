@@ -1,4 +1,5 @@
 import 'package:cloud_gallery/ui/flow/main/main_screen.dart';
+import 'package:cloud_gallery/ui/flow/onboard/onboard_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'app_route.dart';
 
@@ -8,11 +9,18 @@ class AppRouter {
         builder: (context) => const HomeScreen(),
       );
 
+  static AppRoute get onBoard => AppRoute(
+        AppRoutePath.onBoard,
+        builder: (context) => const OnBoardScreen(),
+      );
+
   static final routes = <GoRoute>[
     home.goRoute,
+    onBoard.goRoute,
   ];
 }
 
 class AppRoutePath {
   static const home = '/';
+  static const onBoard = '/on-board';
 }

@@ -23,12 +23,9 @@ dependencies:
   style:
     path: ../style
 
-  # services
-  photo_manager: ^3.0.0-dev.5
-  photo_manager_image_provider: ^2.1.0
-
   # UI
   cupertino_icons: ^1.0.2
+  flutter_svg: ^2.0.9
 
   # state management
   flutter_riverpod: ^2.4.9
@@ -38,6 +35,9 @@ dependencies:
 
   # core
   firebase_core: ^2.24.2
+
+  # storage
+  shared_preferences: ^2.2.2
 
   # code generation
   freezed: ^2.4.6
@@ -55,8 +55,9 @@ dev_dependencies:
   build_runner: ^2.3.3
 
 
-
-
 flutter:
   uses-material-design: true
   generate: true
+
+  assets:
+    - assets/images/
