@@ -1,5 +1,5 @@
 import 'package:cloud_gallery/ui/navigation/app_router.dart';
-import 'package:cloud_gallery/utils/extensions/context_extensions.dart';
+import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

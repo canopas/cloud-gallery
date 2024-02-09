@@ -13,13 +13,19 @@ class GoogleDriveService {
 
   const GoogleDriveService(this._googleSignIn);
 
+  init(){
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+      if (account != null) {
+        getDriveFiles();
+      }
+    });
+  }
+
   Future<void> getDriveFiles() async {
     if (_googleSignIn.currentUser != null) {
       final client = await _googleSignIn.authenticatedClient();
       final driveApi = drive.DriveApi(client!);
       await driveApi.files.list();
-
-      ///TODO: Convert File to custom object
     }
   }
 }

@@ -1,6 +1,6 @@
-import 'package:cloud_gallery/ui/flow/main/main_screen.dart';
 import 'package:cloud_gallery/ui/flow/onboard/onboard_screen.dart';
 import 'package:go_router/go_router.dart';
+import '../flow/home/home_screen.dart';
 import 'app_route.dart';
 
 class AppRouter {
