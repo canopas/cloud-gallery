@@ -8,6 +8,7 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:style/text/app_text_style.dart';
 import '../../../components/action_sheet.dart';
 import '../../../domain/assets/assets_paths.dart';
 import 'components/image_item.dart';
@@ -64,15 +65,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         if (selectedMedia.isNotEmpty)
           TextButton(
               onPressed: () {
-                showAppSheet(context, [
-                  AppSheetAction(
-                    icon: SvgPicture.asset(Assets.images.icons.googlePhotos, height: 24, width: 24),
-                    title: "Backup on Google Drive",
-                    onPressed: () {},
-                  )
-                ]);
+                showAppSheet(
+                    context: context,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppSheetAction(
+                          icon: SvgPicture.asset(
+                            Assets.images.icons.googlePhotos,
+                            height: 24,
+                            width: 24,
+                          ),
+                          title: context.l10n.back_up_on_google_drive_text,
+                          onPressed: () {
+
+                          },
+                        ),
+                      ],
+                    ));
               },
-              child: const Text("Done"))
+              child: Text(context.l10n.common_done,
+                  style: AppTextStyles.button.copyWith(
+                    color: context.colorScheme.primary,
+                  )))
       ],
       body: Visibility(
         visible: !isLoading,

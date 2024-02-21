@@ -12,6 +12,7 @@ dependencies:
 
   # services
   googleapis: ^12.0.0
+  http: ^1.2.1
   photo_manager: ^3.0.0-dev.5
 
   # authentication

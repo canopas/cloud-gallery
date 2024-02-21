@@ -2,9 +2,11 @@
   "app_name": "Cloud Gallery",
 
   "common_get_started":"Get Started",
+  "common_done": "Done",
 
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Something went wrong! Please try again later.",
 
-  "on_board_description":"Effortlessly move, share, and organize your photos and videos in a breeze. Access all your clouds in one friendly place. Your moments, your way, simplified for you! 🚀"
+  "on_board_description":"Effortlessly move, share, and organize your photos and videos in a breeze. Access all your clouds in one friendly place. Your moments, your way, simplified for you! 🚀",
+  "back_up_on_google_drive_text":"Back up on Google Drive"
 }

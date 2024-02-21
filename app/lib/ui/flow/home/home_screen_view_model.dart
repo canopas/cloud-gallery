@@ -64,6 +64,14 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
       );
     }
   }
+
+  void clearMediaSelection() {
+    state = state.copyWith(selectedMedias: []);
+  }
+
+  Future<void> uploadMediaOnGoogleDrive() async {
+
+  }
 }
 
 @freezed
