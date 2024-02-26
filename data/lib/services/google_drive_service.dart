@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:data/models/media/media.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,48 +12,61 @@ final googleDriveServiceProvider = Provider<GoogleDriveService>(
 );
 
 class GoogleDriveService {
+  final String _backUpFolderName = "Cloud Gallery Backup";
+  final String _backUpFolderDescription =
+      "This folder is used to backup media from Cloud Gallery";
+
   final GoogleSignIn _googleSignIn;
 
   const GoogleDriveService(this._googleSignIn);
 
-  Future<String?> createFolder() async {
+  Future<drive.DriveApi> _getGoogleDriveAPI() async {
+    if (_googleSignIn.currentUser == null) {
+      throw const UserGoogleSignInAccountNotFound();
+    }
+    final client = await _googleSignIn.authenticatedClient();
+    return drive.DriveApi(client!);
+  }
+
+  Future<String?> getBackupFolderId() async {
     try {
-      if (_googleSignIn.currentUser != null) {
-        final client = await _googleSignIn.authenticatedClient();
-        final driveApi = drive.DriveApi(client!);
+      final driveApi = await _getGoogleDriveAPI();
+
+      final response = await driveApi.files.list(
+        q: "name='$_backUpFolderName' and description='$_backUpFolderDescription' and mimeType='application/vnd.google-apps.folder'",
+      );
+
+      if (response.files?.isNotEmpty ?? false) {
+        return response.files?.first.id;
+      } else {
         final folder = drive.File(
-          name: "Cloud Gallery Backup",
-          mimeType: "application/vnd.google-apps.folder",
+          name: _backUpFolderName,
+          description: _backUpFolderDescription,
+          mimeType: 'application/vnd.google-apps.folder',
         );
         final googleDriveFolder = await driveApi.files.create(folder);
         return googleDriveFolder.id;
-      } else {
-        throw const UserGoogleSignInAccountNotFound();
       }
-    } catch (error) {
-      throw AppError.fromError(error);
+    } catch (e) {
+      throw AppError.fromError(e);
     }
   }
 
   Future<void> uploadInGoogleDrive(
-      {required String folderID, required File localFile}) async {
+      {required String folderID, required AppMedia media}) async {
+    final localFile = File(media.path);
     try {
-      if (_googleSignIn.currentUser != null) {
-        final client = await _googleSignIn.authenticatedClient();
-        final driveApi = drive.DriveApi(client!);
-        final file = drive.File(
-          name: localFile.path.split('/').last,
-          parents: [folderID],
-        );
+      final driveApi = await _getGoogleDriveAPI();
 
-        await driveApi.files.create(
-          file,
-          uploadMedia:
-              drive.Media(localFile.openRead(), localFile.lengthSync()),
-        );
-      } else {
-        throw const UserGoogleSignInAccountNotFound();
-      }
+      final file = drive.File(
+        name: media.name ?? localFile.path.split('/').last,
+        id: media.id,
+        parents: [folderID],
+      );
+      await driveApi.files.create(
+        file,
+        uploadMedia: drive.Media(localFile.openRead(), localFile.lengthSync()),
+      );
     } catch (error) {
       throw AppError.fromError(error);
     }

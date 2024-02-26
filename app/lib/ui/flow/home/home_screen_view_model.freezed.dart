@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$HomeViewState {
   bool get loading => throw _privateConstructorUsedError;
+  List<AppMedia> get uploadingMedias => throw _privateConstructorUsedError;
   List<AppMedia> get medias => throw _privateConstructorUsedError;
   List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
   int get mediaCount => throw _privateConstructorUsedError;
@@ -35,6 +36,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
+      List<AppMedia> uploadingMedias,
       List<AppMedia> medias,
       List<AppMedia> selectedMedias,
       int mediaCount,
@@ -55,6 +57,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
   @override
   $Res call({
     Object? loading = null,
+    Object? uploadingMedias = null,
     Object? medias = null,
     Object? selectedMedias = null,
     Object? mediaCount = null,
@@ -65,6 +68,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
+      uploadingMedias: null == uploadingMedias
+          ? _value.uploadingMedias
+          : uploadingMedias // ignore: cast_nullable_to_non_nullable
+              as List<AppMedia>,
       medias: null == medias
           ? _value.medias
           : medias // ignore: cast_nullable_to_non_nullable
@@ -92,6 +99,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
+      List<AppMedia> uploadingMedias,
       List<AppMedia> medias,
       List<AppMedia> selectedMedias,
       int mediaCount,
@@ -110,6 +118,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
+    Object? uploadingMedias = null,
     Object? medias = null,
     Object? selectedMedias = null,
     Object? mediaCount = null,
@@ -120,6 +129,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
+      uploadingMedias: null == uploadingMedias
+          ? _value._uploadingMedias
+          : uploadingMedias // ignore: cast_nullable_to_non_nullable
+              as List<AppMedia>,
       medias: null == medias
           ? _value._medias
           : medias // ignore: cast_nullable_to_non_nullable
@@ -142,16 +155,27 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
 class _$HomeViewStateImpl implements _HomeViewState {
   const _$HomeViewStateImpl(
       {this.loading = false,
+      final List<AppMedia> uploadingMedias = const [],
       final List<AppMedia> medias = const [],
       final List<AppMedia> selectedMedias = const [],
       this.mediaCount = 0,
       this.error})
-      : _medias = medias,
+      : _uploadingMedias = uploadingMedias,
+        _medias = medias,
         _selectedMedias = selectedMedias;
 
   @override
   @JsonKey()
   final bool loading;
+  final List<AppMedia> _uploadingMedias;
+  @override
+  @JsonKey()
+  List<AppMedia> get uploadingMedias {
+    if (_uploadingMedias is EqualUnmodifiableListView) return _uploadingMedias;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_uploadingMedias);
+  }
+
   final List<AppMedia> _medias;
   @override
   @JsonKey()
@@ -178,7 +202,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
 
   @override
   String toString() {
-    return 'HomeViewState(loading: $loading, medias: $medias, selectedMedias: $selectedMedias, mediaCount: $mediaCount, error: $error)';
+    return 'HomeViewState(loading: $loading, uploadingMedias: $uploadingMedias, medias: $medias, selectedMedias: $selectedMedias, mediaCount: $mediaCount, error: $error)';
   }
 
   @override
@@ -187,6 +211,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
         (other.runtimeType == runtimeType &&
             other is _$HomeViewStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            const DeepCollectionEquality()
+                .equals(other._uploadingMedias, _uploadingMedias) &&
             const DeepCollectionEquality().equals(other._medias, _medias) &&
             const DeepCollectionEquality()
                 .equals(other._selectedMedias, _selectedMedias) &&
@@ -199,6 +225,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
   int get hashCode => Object.hash(
       runtimeType,
       loading,
+      const DeepCollectionEquality().hash(_uploadingMedias),
       const DeepCollectionEquality().hash(_medias),
       const DeepCollectionEquality().hash(_selectedMedias),
       mediaCount,
@@ -214,6 +241,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
 abstract class _HomeViewState implements HomeViewState {
   const factory _HomeViewState(
       {final bool loading,
+      final List<AppMedia> uploadingMedias,
       final List<AppMedia> medias,
       final List<AppMedia> selectedMedias,
       final int mediaCount,
@@ -221,6 +249,8 @@ abstract class _HomeViewState implements HomeViewState {
 
   @override
   bool get loading;
+  @override
+  List<AppMedia> get uploadingMedias;
   @override
   List<AppMedia> get medias;
   @override

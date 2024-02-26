@@ -38,7 +38,7 @@ class UserGoogleSignInAccountNotFound extends AppError {
       : super(
             l10nCode: AppErrorL10nCodes.googleSignInUserNotFoundError,
             message:
-                "User google signed in account not found. Please try again");
+                "User google signed in account not found. Please sign in again");
 }
 
 class SomethingWentWrongError extends AppError {

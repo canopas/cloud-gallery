@@ -27,7 +27,7 @@ mixin _$AppMedia {
   double? get displayWidth => throw _privateConstructorUsedError;
   AppMediaType get type => throw _privateConstructorUsedError;
   String? get mimeType => throw _privateConstructorUsedError;
-  DateTime get createdTime => throw _privateConstructorUsedError;
+  DateTime? get createdTime => throw _privateConstructorUsedError;
   DateTime? get modifiedTime => throw _privateConstructorUsedError;
   AppMediaOrientation? get orientation => throw _privateConstructorUsedError;
   double? get latitude => throw _privateConstructorUsedError;
@@ -53,7 +53,7 @@ abstract class $AppMediaCopyWith<$Res> {
       double? displayWidth,
       AppMediaType type,
       String? mimeType,
-      DateTime createdTime,
+      DateTime? createdTime,
       DateTime? modifiedTime,
       AppMediaOrientation? orientation,
       double? latitude,
@@ -81,7 +81,7 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
     Object? displayWidth = freezed,
     Object? type = null,
     Object? mimeType = freezed,
-    Object? createdTime = null,
+    Object? createdTime = freezed,
     Object? modifiedTime = freezed,
     Object? orientation = freezed,
     Object? latitude = freezed,
@@ -117,10 +117,10 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
           ? _value.mimeType
           : mimeType // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdTime: null == createdTime
+      createdTime: freezed == createdTime
           ? _value.createdTime
           : createdTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       modifiedTime: freezed == modifiedTime
           ? _value.modifiedTime
           : modifiedTime // ignore: cast_nullable_to_non_nullable
@@ -161,7 +161,7 @@ abstract class _$$AppMediaImplCopyWith<$Res>
       double? displayWidth,
       AppMediaType type,
       String? mimeType,
-      DateTime createdTime,
+      DateTime? createdTime,
       DateTime? modifiedTime,
       AppMediaOrientation? orientation,
       double? latitude,
@@ -187,7 +187,7 @@ class __$$AppMediaImplCopyWithImpl<$Res>
     Object? displayWidth = freezed,
     Object? type = null,
     Object? mimeType = freezed,
-    Object? createdTime = null,
+    Object? createdTime = freezed,
     Object? modifiedTime = freezed,
     Object? orientation = freezed,
     Object? latitude = freezed,
@@ -223,10 +223,10 @@ class __$$AppMediaImplCopyWithImpl<$Res>
           ? _value.mimeType
           : mimeType // ignore: cast_nullable_to_non_nullable
               as String?,
-      createdTime: null == createdTime
+      createdTime: freezed == createdTime
           ? _value.createdTime
           : createdTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       modifiedTime: freezed == modifiedTime
           ? _value.modifiedTime
           : modifiedTime // ignore: cast_nullable_to_non_nullable
@@ -262,7 +262,7 @@ class _$AppMediaImpl implements _AppMedia {
       this.displayWidth,
       required this.type,
       this.mimeType,
-      required this.createdTime,
+      this.createdTime,
       this.modifiedTime,
       this.orientation,
       required this.latitude,
@@ -287,7 +287,7 @@ class _$AppMediaImpl implements _AppMedia {
   @override
   final String? mimeType;
   @override
-  final DateTime createdTime;
+  final DateTime? createdTime;
   @override
   final DateTime? modifiedTime;
   @override
@@ -374,7 +374,7 @@ abstract class _AppMedia implements AppMedia {
       final double? displayWidth,
       required final AppMediaType type,
       final String? mimeType,
-      required final DateTime createdTime,
+      final DateTime? createdTime,
       final DateTime? modifiedTime,
       final AppMediaOrientation? orientation,
       required final double? latitude,
@@ -399,7 +399,7 @@ abstract class _AppMedia implements AppMedia {
   @override
   String? get mimeType;
   @override
-  DateTime get createdTime;
+  DateTime? get createdTime;
   @override
   DateTime? get modifiedTime;
   @override

@@ -64,30 +64,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       actions: [
         if (selectedMedia.isNotEmpty)
           TextButton(
-              onPressed: () {
-                showAppSheet(
-                    context: context,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AppSheetAction(
-                          icon: SvgPicture.asset(
-                            Assets.images.icons.googlePhotos,
-                            height: 24,
-                            width: 24,
-                          ),
-                          title: context.l10n.back_up_on_google_drive_text,
-                          onPressed: () {
-
-                          },
+            onPressed: () {
+              showAppSheet(
+                  context: context,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppSheetAction(
+                        icon: SvgPicture.asset(
+                          Assets.images.icons.googlePhotos,
+                          height: 24,
+                          width: 24,
                         ),
-                      ],
-                    ));
-              },
-              child: Text(context.l10n.common_done,
-                  style: AppTextStyles.button.copyWith(
-                    color: context.colorScheme.primary,
-                  )))
+                        title: context.l10n.back_up_on_google_drive_text,
+                        onPressed: notifier.uploadMediaOnGoogleDrive,
+                      ),
+                    ],
+                  ));
+            },
+            child: Text(
+              context.l10n.common_done,
+              style: AppTextStyles.button.copyWith(
+                color: context.colorScheme.primary,
+              ),
+            ),
+          )
       ],
       body: Visibility(
         visible: !isLoading,
