@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_gallery/ui/flow/home/local/components/multi_selection_done_button.dart';
 import 'package:cloud_gallery/ui/flow/home/local/components/no_local_medias_access_screen.dart';
 import 'package:cloud_gallery/ui/flow/home/local/local_media_screen_view_model.dart';
 import 'package:data/models/media/media.dart';
@@ -67,61 +68,69 @@ class _LocalSourceViewState extends ConsumerState<LocalMediasScreen> {
         .select((state) => state.hasLocalMediaAccess));
 
     //View
-    if(!hasAccess){
+    if (!hasAccess) {
       return const NoLocalMediasAccessScreen();
+    } else if (isLoading && medias.isEmpty) {
+      return const Center(child: CircularProgressIndicator.adaptive());
     }
-    return Visibility(
-      visible: !isLoading,
-      replacement: const Center(child: CircularProgressIndicator.adaptive()),
-      child: Scrollbar(
-        controller: _scrollController,
-        child: GridView.builder(
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        Scrollbar(
           controller: _scrollController,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemCount: mediaCounts,
-          itemBuilder: (context, index) {
-            if (index > medias.length - 6) {
-              runPostFrame(() {
-                notifier.loadMedia(append: true);
-              });
-            }
-            if (index < medias.length) {
-              if (medias[index].type != AppMediaType.image) {
+          child: GridView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: mediaCounts,
+            itemBuilder: (context, index) {
+              if (index > medias.length - 6) {
+                runPostFrame(() {
+                  notifier.loadMedia(append: true);
+                });
+              }
+              if (index < medias.length) {
+                if (medias[index].type != AppMediaType.image) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: context.colorScheme.outline,
+                    ),
+                  );
+                }
+                return ImageItem(
+                  onTap: () {
+                    if (selectedMedia.isNotEmpty) {
+                      notifier.mediaSelection(medias[index]);
+                    }
+                  },
+                  onLongTap: () {
+                    notifier.mediaSelection(medias[index]);
+                  },
+                  isSelected: selectedMedia.contains(medias[index]),
+                  imageProvider: FileImage(File(medias[index].path)),
+                );
+              } else {
                 return Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: context.colorScheme.outline,
+                    color: context.colorScheme.primary,
                   ),
                 );
               }
-              return ImageItem(
-                onTap: () {
-                  if (selectedMedia.isNotEmpty) {
-                    notifier.mediaSelection(medias[index]);
-                  }
-                },
-                onLongTap: () {
-                  notifier.mediaSelection(medias[index]);
-                },
-                isSelected: selectedMedia.contains(medias[index]),
-                imageProvider: FileImage(File(medias[index].path)),
-              );
-            } else {
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: context.colorScheme.primary,
-                ),
-              );
-            }
-          },
+            },
+          ),
         ),
-      ),
+        if (selectedMedia.isNotEmpty)
+          Padding(
+            padding: context.systemPadding + const EdgeInsets.all(16),
+            child: const MultiSelectionDoneButton(),
+          ),
+      ],
     );
   }
 }
