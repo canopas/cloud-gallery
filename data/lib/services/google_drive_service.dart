@@ -52,6 +52,21 @@ class GoogleDriveService {
     }
   }
 
+  Future<List<AppMedia>> getDriveMedias({required String backUpFolderId}) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+
+      final response = await driveApi.files.list(
+        q: "'$backUpFolderId' in parents and trashed=false",
+      );
+
+     print(response.files?.map((e) => e.toJson()).toList());
+     return [];
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
   Future<void> uploadInGoogleDrive(
       {required String folderID, required AppMedia media}) async {
     final localFile = File(media.path);

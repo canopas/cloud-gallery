@@ -1,4 +1,3 @@
-import 'package:data/errors/app_error.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
@@ -30,19 +29,23 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
 
   Future<void> loadMediaCount() async {
     try {
-      state = state.copyWith(error: null);
+      state = state.copyWith(
+        error: null,
+        loading: state.medias.isEmpty,
+      );
       final hasAccess = await _localMediaService.requestPermission();
       if (hasAccess) {
         final count = await _localMediaService.getMediaCount();
         state = state.copyWith(
           mediaCount: count,
           hasLocalMediaAccess: hasAccess,
+          loading: false,
         );
       } else {
-        state = state.copyWith(hasLocalMediaAccess: hasAccess);
+        state = state.copyWith(hasLocalMediaAccess: hasAccess, loading: false);
       }
     } catch (error) {
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, loading: false);
     }
   }
 
@@ -86,7 +89,7 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
 
   Future<void> uploadMediaOnGoogleDrive() async {
     try {
-      if (_authService.getUser == null) {
+      if (!_authService.hasUserSigned) {
         await _authService.signInWithGoogle();
       }
       state =
