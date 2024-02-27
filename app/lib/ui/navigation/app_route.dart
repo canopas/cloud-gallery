@@ -58,7 +58,7 @@ class AppRoute {
 
   GoRoute get goRoute => GoRoute(
         path: path,
-        name: path,
+        name: name,
         builder: (context, state) => builder(context),
       );
 }

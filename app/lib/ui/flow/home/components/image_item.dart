@@ -1,7 +1,7 @@
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:style/animations/on_tap_scale.dart';
 import 'package:style/animations/parallex_effect.dart';
+import 'package:style/extensions/context_extensions.dart';
 
 class ImageItem extends StatefulWidget {
   final VoidCallback? onTap;
@@ -89,18 +89,18 @@ class ItemSelector extends StatelessWidget {
              Align(
               alignment: Alignment.bottomRight,
               child: Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: context.colorScheme.surface,
                   border: Border.all(
-                    color: CupertinoColors.systemGreen,
+                    color: const Color(0xff808080),
                   ),
                 ),
-                child: const Icon(
+                child:  const Icon(
                   CupertinoIcons.checkmark_alt,
-                  color: CupertinoColors.systemGreen,
-                  size: 18,
+                  color: Color(0xff808080),
+                  size: 16,
                 ),
               ),
             ),

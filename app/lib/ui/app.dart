@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:style/extensions/context_extensions.dart';
 import 'package:style/theme/theme.dart';
 import 'package:style/theme/app_theme_builder.dart';
 import 'package:data/storage/app_preferences.dart';

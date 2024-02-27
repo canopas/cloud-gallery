@@ -1,5 +1,5 @@
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:style/extensions/context_extensions.dart';
 
 Future<T?> showAppSheet<T>(
     {required BuildContext context, required Widget child}) {

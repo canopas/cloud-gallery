@@ -26,9 +26,13 @@ dependencies:
   # UI
   cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.9
+  fluttertoast: ^8.2.4
 
   # state management
   flutter_riverpod: ^2.4.9
+
+  # permission
+  permission_handler: ^11.3.0
 
   # navigation
   go_router: ^13.0.1

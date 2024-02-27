@@ -16,12 +16,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$HomeViewState {
-  bool get loading => throw _privateConstructorUsedError;
-  List<AppMedia> get uploadingMedias => throw _privateConstructorUsedError;
-  List<AppMedia> get medias => throw _privateConstructorUsedError;
-  List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
-  int get mediaCount => throw _privateConstructorUsedError;
-  Object? get error => throw _privateConstructorUsedError;
+  SourcePage get sourcePage => throw _privateConstructorUsedError;
+  bool get isLastViewChangedByScroll => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeViewStateCopyWith<HomeViewState> get copyWith =>
@@ -34,13 +30,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
           HomeViewState value, $Res Function(HomeViewState) then) =
       _$HomeViewStateCopyWithImpl<$Res, HomeViewState>;
   @useResult
-  $Res call(
-      {bool loading,
-      List<AppMedia> uploadingMedias,
-      List<AppMedia> medias,
-      List<AppMedia> selectedMedias,
-      int mediaCount,
-      Object? error});
+  $Res call({SourcePage sourcePage, bool isLastViewChangedByScroll});
 }
 
 /// @nodoc
@@ -56,35 +46,18 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
-    Object? uploadingMedias = null,
-    Object? medias = null,
-    Object? selectedMedias = null,
-    Object? mediaCount = null,
-    Object? error = freezed,
+    Object? sourcePage = null,
+    Object? isLastViewChangedByScroll = null,
   }) {
     return _then(_value.copyWith(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      sourcePage: null == sourcePage
+          ? _value.sourcePage
+          : sourcePage // ignore: cast_nullable_to_non_nullable
+              as SourcePage,
+      isLastViewChangedByScroll: null == isLastViewChangedByScroll
+          ? _value.isLastViewChangedByScroll
+          : isLastViewChangedByScroll // ignore: cast_nullable_to_non_nullable
               as bool,
-      uploadingMedias: null == uploadingMedias
-          ? _value.uploadingMedias
-          : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      medias: null == medias
-          ? _value.medias
-          : medias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      selectedMedias: null == selectedMedias
-          ? _value.selectedMedias
-          : selectedMedias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      mediaCount: null == mediaCount
-          ? _value.mediaCount
-          : mediaCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      error: freezed == error ? _value.error : error,
     ) as $Val);
   }
 }
@@ -97,13 +70,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       __$$HomeViewStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool loading,
-      List<AppMedia> uploadingMedias,
-      List<AppMedia> medias,
-      List<AppMedia> selectedMedias,
-      int mediaCount,
-      Object? error});
+  $Res call({SourcePage sourcePage, bool isLastViewChangedByScroll});
 }
 
 /// @nodoc
@@ -117,35 +84,18 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
-    Object? uploadingMedias = null,
-    Object? medias = null,
-    Object? selectedMedias = null,
-    Object? mediaCount = null,
-    Object? error = freezed,
+    Object? sourcePage = null,
+    Object? isLastViewChangedByScroll = null,
   }) {
     return _then(_$HomeViewStateImpl(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
+      sourcePage: null == sourcePage
+          ? _value.sourcePage
+          : sourcePage // ignore: cast_nullable_to_non_nullable
+              as SourcePage,
+      isLastViewChangedByScroll: null == isLastViewChangedByScroll
+          ? _value.isLastViewChangedByScroll
+          : isLastViewChangedByScroll // ignore: cast_nullable_to_non_nullable
               as bool,
-      uploadingMedias: null == uploadingMedias
-          ? _value._uploadingMedias
-          : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      medias: null == medias
-          ? _value._medias
-          : medias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      selectedMedias: null == selectedMedias
-          ? _value._selectedMedias
-          : selectedMedias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      mediaCount: null == mediaCount
-          ? _value.mediaCount
-          : mediaCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      error: freezed == error ? _value.error : error,
     ));
   }
 }
@@ -154,55 +104,19 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
 
 class _$HomeViewStateImpl implements _HomeViewState {
   const _$HomeViewStateImpl(
-      {this.loading = false,
-      final List<AppMedia> uploadingMedias = const [],
-      final List<AppMedia> medias = const [],
-      final List<AppMedia> selectedMedias = const [],
-      this.mediaCount = 0,
-      this.error})
-      : _uploadingMedias = uploadingMedias,
-        _medias = medias,
-        _selectedMedias = selectedMedias;
+      {this.sourcePage = const SourcePage(),
+      this.isLastViewChangedByScroll = false});
 
   @override
   @JsonKey()
-  final bool loading;
-  final List<AppMedia> _uploadingMedias;
+  final SourcePage sourcePage;
   @override
   @JsonKey()
-  List<AppMedia> get uploadingMedias {
-    if (_uploadingMedias is EqualUnmodifiableListView) return _uploadingMedias;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_uploadingMedias);
-  }
-
-  final List<AppMedia> _medias;
-  @override
-  @JsonKey()
-  List<AppMedia> get medias {
-    if (_medias is EqualUnmodifiableListView) return _medias;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_medias);
-  }
-
-  final List<AppMedia> _selectedMedias;
-  @override
-  @JsonKey()
-  List<AppMedia> get selectedMedias {
-    if (_selectedMedias is EqualUnmodifiableListView) return _selectedMedias;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_selectedMedias);
-  }
-
-  @override
-  @JsonKey()
-  final int mediaCount;
-  @override
-  final Object? error;
+  final bool isLastViewChangedByScroll;
 
   @override
   String toString() {
-    return 'HomeViewState(loading: $loading, uploadingMedias: $uploadingMedias, medias: $medias, selectedMedias: $selectedMedias, mediaCount: $mediaCount, error: $error)';
+    return 'HomeViewState(sourcePage: $sourcePage, isLastViewChangedByScroll: $isLastViewChangedByScroll)';
   }
 
   @override
@@ -210,26 +124,16 @@ class _$HomeViewStateImpl implements _HomeViewState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$HomeViewStateImpl &&
-            (identical(other.loading, loading) || other.loading == loading) &&
-            const DeepCollectionEquality()
-                .equals(other._uploadingMedias, _uploadingMedias) &&
-            const DeepCollectionEquality().equals(other._medias, _medias) &&
-            const DeepCollectionEquality()
-                .equals(other._selectedMedias, _selectedMedias) &&
-            (identical(other.mediaCount, mediaCount) ||
-                other.mediaCount == mediaCount) &&
-            const DeepCollectionEquality().equals(other.error, error));
+            (identical(other.sourcePage, sourcePage) ||
+                other.sourcePage == sourcePage) &&
+            (identical(other.isLastViewChangedByScroll,
+                    isLastViewChangedByScroll) ||
+                other.isLastViewChangedByScroll == isLastViewChangedByScroll));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      loading,
-      const DeepCollectionEquality().hash(_uploadingMedias),
-      const DeepCollectionEquality().hash(_medias),
-      const DeepCollectionEquality().hash(_selectedMedias),
-      mediaCount,
-      const DeepCollectionEquality().hash(error));
+  int get hashCode =>
+      Object.hash(runtimeType, sourcePage, isLastViewChangedByScroll);
 
   @JsonKey(ignore: true)
   @override
@@ -240,25 +144,13 @@ class _$HomeViewStateImpl implements _HomeViewState {
 
 abstract class _HomeViewState implements HomeViewState {
   const factory _HomeViewState(
-      {final bool loading,
-      final List<AppMedia> uploadingMedias,
-      final List<AppMedia> medias,
-      final List<AppMedia> selectedMedias,
-      final int mediaCount,
-      final Object? error}) = _$HomeViewStateImpl;
+      {final SourcePage sourcePage,
+      final bool isLastViewChangedByScroll}) = _$HomeViewStateImpl;
 
   @override
-  bool get loading;
+  SourcePage get sourcePage;
   @override
-  List<AppMedia> get uploadingMedias;
-  @override
-  List<AppMedia> get medias;
-  @override
-  List<AppMedia> get selectedMedias;
-  @override
-  int get mediaCount;
-  @override
-  Object? get error;
+  bool get isLastViewChangedByScroll;
   @override
   @JsonKey(ignore: true)
   _$$HomeViewStateImplCopyWith<_$HomeViewStateImpl> get copyWith =>

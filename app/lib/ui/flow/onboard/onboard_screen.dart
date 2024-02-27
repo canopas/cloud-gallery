@@ -5,6 +5,7 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 import 'package:style/animations/on_tap_scale.dart';
 import '../../../domain/assets/assets_paths.dart';

@@ -1,4 +1,4 @@
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
+import 'package:style/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:style/animations/on_tap_scale.dart';
 import 'package:style/text/app_text_style.dart';
