@@ -92,6 +92,7 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
       state =
           state.copyWith(uploadingMedias: state.selectedMedias, error: null);
       final folderId = await _googleDriveService.getBackupFolderId();
+
       for (final media in state.selectedMedias) {
         await _googleDriveService.uploadInGoogleDrive(
             media: media, folderID: folderId!);

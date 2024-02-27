@@ -33,10 +33,10 @@ class GoogleDriveService {
       final driveApi = await _getGoogleDriveAPI();
 
       final response = await driveApi.files.list(
-        q: "name='$_backUpFolderName' and description='$_backUpFolderDescription' and mimeType='application/vnd.google-apps.folder'",
+        q: "name='$_backUpFolderName' and mimeType='application/vnd.google-apps.folder'",
       );
 
-      if (response.files?.isNotEmpty ?? false) {
+      if (response.files?.isNotEmpty ?? false || response.files?.first.trashed == false) {
         return response.files?.first.id;
       } else {
         final folder = drive.File(
@@ -60,7 +60,7 @@ class GoogleDriveService {
 
       final file = drive.File(
         name: media.name ?? localFile.path.split('/').last,
-        id: media.id,
+        description: media.path,
         parents: [folderID],
       );
       await driveApi.files.create(
@@ -68,6 +68,7 @@ class GoogleDriveService {
         uploadMedia: drive.Media(localFile.openRead(), localFile.lengthSync()),
       );
     } catch (error) {
+      print(error);
       throw AppError.fromError(error);
     }
   }
