@@ -15,7 +15,9 @@ _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
       displayWidth: (json['displayWidth'] as num?)?.toDouble(),
       type: $enumDecode(_$AppMediaTypeEnumMap, json['type']),
       mimeType: json['mimeType'] as String?,
-      createdTime: DateTime.parse(json['createdTime'] as String),
+      createdTime: json['createdTime'] == null
+          ? null
+          : DateTime.parse(json['createdTime'] as String),
       modifiedTime: json['modifiedTime'] == null
           ? null
           : DateTime.parse(json['modifiedTime'] as String),
@@ -35,7 +37,7 @@ Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
       'displayWidth': instance.displayWidth,
       'type': _$AppMediaTypeEnumMap[instance.type]!,
       'mimeType': instance.mimeType,
-      'createdTime': instance.createdTime.toIso8601String(),
+      'createdTime': instance.createdTime?.toIso8601String(),
       'modifiedTime': instance.modifiedTime?.toIso8601String(),
       'orientation': _$AppMediaOrientationEnumMap[instance.orientation],
       'latitude': instance.latitude,

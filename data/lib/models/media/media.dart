@@ -18,7 +18,7 @@ class AppMedia with _$AppMedia {
     double? displayWidth,
     required AppMediaType type,
     String? mimeType,
-    required DateTime createdTime,
+    DateTime? createdTime,
     DateTime? modifiedTime,
     AppMediaOrientation? orientation,
     required double? latitude,
@@ -29,3 +29,4 @@ class AppMedia with _$AppMedia {
   factory AppMedia.fromJson(Map<String, dynamic> json) =>
       _$AppMediaFromJson(json);
 }
+

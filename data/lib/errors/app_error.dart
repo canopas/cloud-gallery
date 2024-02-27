@@ -15,7 +15,9 @@ class AppError implements Exception {
   }
 
   factory AppError.fromError(Object error) {
-    if (error is SocketException) {
+    if (error is AppError) {
+      return error;
+    } else if (error is SocketException) {
       return const NoConnectionError();
     } else {
       return const SomethingWentWrongError();
@@ -29,6 +31,14 @@ class NoConnectionError extends AppError {
             l10nCode: AppErrorL10nCodes.noInternetConnection,
             message:
                 "No internet connection. Please check your network and try again.");
+}
+
+class UserGoogleSignInAccountNotFound extends AppError {
+  const UserGoogleSignInAccountNotFound()
+      : super(
+            l10nCode: AppErrorL10nCodes.googleSignInUserNotFoundError,
+            message:
+                "User google signed in account not found. Please sign in again");
 }
 
 class SomethingWentWrongError extends AppError {

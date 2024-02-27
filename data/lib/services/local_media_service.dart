@@ -10,12 +10,18 @@ final localMediaServiceProvider = Provider<LocalMediaService>(
 class LocalMediaService {
   const LocalMediaService();
 
-  Future<List<AppMedia>> getAssets() async {
-    await PhotoManager.requestPermissionExtend();
-    final imageCount = await PhotoManager.getAssetCount();
-    final assets =
-        await PhotoManager.getAssetListRange(start: 0, end: imageCount);
+  Future<bool> requestPermission() async {
+    final state = await PhotoManager.requestPermissionExtend();
+    return state.hasAccess;
+  }
 
+  Future<int> getMediaCount() async {
+    return await PhotoManager.getAssetCount();
+  }
+
+  Future<List<AppMedia>> getMedia(
+      {required int start, required int end}) async {
+    final assets = await PhotoManager.getAssetListRange(start: start, end: end);
     final files = await Future.wait(
       assets.map(
         (asset) async {
@@ -41,7 +47,6 @@ class LocalMediaService {
         },
       ),
     );
-
     return files.whereNotNull().toList();
   }
 }

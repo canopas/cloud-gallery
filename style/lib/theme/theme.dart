@@ -28,6 +28,7 @@ class AppColorScheme {
   final Color tertiary;
   final Color tertiaryInverse;
   final Color surface;
+  final Color surfaceInverse;
   final Color outline;
   final Color textPrimary;
   final Color textSecondary;
@@ -57,6 +58,7 @@ class AppColorScheme {
     required this.tertiary,
     required this.tertiaryInverse,
     required this.surface,
+    required this.surfaceInverse,
     required this.outline,
     required this.textPrimary,
     required this.textSecondary,
@@ -97,6 +99,7 @@ final appColorSchemeLight = AppColorScheme(
   tertiary: AppColors.tertiaryLightColor,
   tertiaryInverse: AppColors.tertiaryDarkColor,
   surface: AppColors.surfaceLightColor,
+  surfaceInverse: AppColors.surfaceDarkColor,
   outline: AppColors.outlineLightColor,
   outlineInverse: AppColors.outlineDarkColor,
   textPrimary: AppColors.textPrimaryLightColor,
@@ -127,6 +130,7 @@ final appColorSchemeDark = AppColorScheme(
   tertiary: AppColors.tertiaryDarkColor,
   tertiaryInverse: AppColors.tertiaryLightColor,
   surface: AppColors.surfaceDarkColor,
+  surfaceInverse: AppColors.surfaceLightColor,
   outline: AppColors.outlineDarkColor,
   outlineInverse: AppColors.outlineLightColor,
   textPrimary: AppColors.textPrimaryDarkColor,
