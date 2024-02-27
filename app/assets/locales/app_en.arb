@@ -1,18 +1,14 @@
 {
   "app_name": "Cloud Gallery",
-
-  "common_get_started":"Get Started",
+  "common_get_started": "Get Started",
   "common_done": "Done",
   "common_local": "Local",
-
   "google_drive_title": "Google Drive",
-
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Something went wrong! Please try again later.",
-
-  "on_board_description":"Effortlessly move, share, and organize your photos and videos in a breeze. Access all your clouds in one friendly place. Your moments, your way, simplified for you! 🚀",
-  "back_up_on_google_drive_text":"Back up on Google Drive",
-
+  "user_google_sign_in_account_not_found_error": "You haven't signed in with Google account yet. Please sign in with Google account and try again.",
+  "on_board_description": "Effortlessly move, share, and organize your photos and videos in a breeze. Access all your clouds in one friendly place. Your moments, your way, simplified for you! 🚀",
+  "back_up_on_google_drive_text": "Back up on Google Drive",
   "cant_find_media_title": "Can't find your photos or videos",
   "ask_for_media_permission_message": "Please give us permission to access your local media, so you can load and enjoy all your favorite photos and videos effortlessly.",
   "load_local_media_button_text": "Load local media"

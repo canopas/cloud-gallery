@@ -28,9 +28,9 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
       this._localMediaService, this._googleDriveService, this._authService)
       : super(const LocalMediasViewState());
 
-
   Future<void> loadMediaCount() async {
     try {
+      state = state.copyWith(error: null);
       final hasAccess = await _localMediaService.requestPermission();
       if (hasAccess) {
         final count = await _localMediaService.getMediaCount();
@@ -50,7 +50,7 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
     if (_loading == true) return;
     _loading = true;
     try {
-      state = state.copyWith(loading: state.medias.isEmpty);
+      state = state.copyWith(loading: state.medias.isEmpty, error: null);
       final medias = await _localMediaService.getMedia(
         start: append ? state.medias.length : 0,
         end: append
@@ -74,10 +74,12 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
     if (selectedMedias.contains(media)) {
       state = state.copyWith(
         selectedMedias: selectedMedias.toList()..remove(media),
+        error: null,
       );
     } else {
       state = state.copyWith(
         selectedMedias: [...selectedMedias, media],
+        error: null,
       );
     }
   }
@@ -87,7 +89,8 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
       if (_authService.getUser == null) {
         await _authService.signInWithGoogle();
       }
-      state = state.copyWith(uploadingMedias: state.selectedMedias);
+      state =
+          state.copyWith(uploadingMedias: state.selectedMedias, error: null);
       final folderId = await _googleDriveService.getBackupFolderId();
       for (final media in state.selectedMedias) {
         await _googleDriveService.uploadInGoogleDrive(
@@ -95,10 +98,6 @@ class LocalMediasViewStateNotifier extends StateNotifier<LocalMediasViewState> {
       }
       state = state.copyWith(uploadingMedias: [], selectedMedias: []);
     } catch (error) {
-      if (error is UserGoogleSignInAccountNotFound) {
-        await _authService.signInWithGoogle();
-        await uploadMediaOnGoogleDrive();
-      }
       state = state.copyWith(error: error, uploadingMedias: []);
     }
   }
