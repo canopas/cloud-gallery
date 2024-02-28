@@ -64,7 +64,6 @@ class GoogleDriveService {
             "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime)",
       );
 
-      print(response.files?.map((e) => e.toJson()).toList());
       return (response.files ?? [])
           .map(
             (e) => AppMedia(
