@@ -34,4 +34,6 @@ class AppColors {
   static const awarenessAlertColor = Color(0xFFCA2F27);
   static const awarenessPositiveColor = Color(0xFF47A96E);
   static const awarenessWarningColor = Color(0xFFFFA500);
+
+  static const googleDriveColor = Color(0xFF4285F4);
 }

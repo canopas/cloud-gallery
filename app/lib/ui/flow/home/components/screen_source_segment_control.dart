@@ -28,7 +28,7 @@ class ScreenSourceSegmentControl extends ConsumerWidget {
             ButtonSegment(
               value: MediaSource.googleDrive,
               label: Text(
-                context.l10n.google_drive_title,
+                context.l10n.common_google_drive,
                 style: AppTextStyles.body2,
               ),
             )
