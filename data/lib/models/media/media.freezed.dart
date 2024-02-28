@@ -265,8 +265,8 @@ class _$AppMediaImpl implements _AppMedia {
       this.createdTime,
       this.modifiedTime,
       this.orientation,
-      required this.latitude,
-      required this.longitude,
+      this.latitude,
+      this.longitude,
       this.isLocal = false});
 
   factory _$AppMediaImpl.fromJson(Map<String, dynamic> json) =>
@@ -377,8 +377,8 @@ abstract class _AppMedia implements AppMedia {
       final DateTime? createdTime,
       final DateTime? modifiedTime,
       final AppMediaOrientation? orientation,
-      required final double? latitude,
-      required final double? longitude,
+      final double? latitude,
+      final double? longitude,
       final bool isLocal}) = _$AppMediaImpl;
 
   factory _AppMedia.fromJson(Map<String, dynamic> json) =

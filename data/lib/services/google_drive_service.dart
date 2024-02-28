@@ -36,7 +36,8 @@ class GoogleDriveService {
         q: "name='$_backUpFolderName' and mimeType='application/vnd.google-apps.folder'",
       );
 
-      if (response.files?.isNotEmpty ?? false || response.files?.first.trashed == false) {
+      if (response.files?.isNotEmpty ??
+          false || response.files?.first.trashed == false) {
         return response.files?.first.id;
       } else {
         final folder = drive.File(
@@ -47,6 +48,32 @@ class GoogleDriveService {
         final googleDriveFolder = await driveApi.files.create(folder);
         return googleDriveFolder.id;
       }
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  Future<List<AppMedia>> getDriveMedias(
+      {required String backUpFolderId}) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+
+      final response = await driveApi.files.list(
+        q: "'$backUpFolderId' in parents and trashed=false",
+        $fields:
+            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime)",
+      );
+
+      print(response.files?.map((e) => e.toJson()).toList());
+      return (response.files ?? [])
+          .map(
+            (e) => AppMedia(
+              id: e.id!,
+              path: e.thumbnailLink!,
+              type: AppMediaType.image,
+            ),
+          )
+          .toList();
     } catch (e) {
       throw AppError.fromError(e);
     }

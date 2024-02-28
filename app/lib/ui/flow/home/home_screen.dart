@@ -72,6 +72,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const ScreenSourceSegmentControl(),
           Expanded(
             child: PageView(
+              restorationId: 'home_page_view',
               onPageChanged: (value) {
                 notifier.updateMediaSource(
                     isChangedByScroll: true, source: MediaSource.values[value]);

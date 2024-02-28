@@ -42,7 +42,7 @@ class AuthService {
     }
   }
 
-  Future<bool> get isSignedIn async => await _googleSignIn.isSignedIn();
+  bool get hasUserSigned  => _googleSignIn.currentUser != null;
 
-  GoogleSignInAccount? get getUser => _googleSignIn.currentUser;
+  GoogleSignInAccount? get user => _googleSignIn.currentUser;
 }
