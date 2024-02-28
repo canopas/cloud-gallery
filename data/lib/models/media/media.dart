@@ -21,12 +21,11 @@ class AppMedia with _$AppMedia {
     DateTime? createdTime,
     DateTime? modifiedTime,
     AppMediaOrientation? orientation,
-    required double? latitude,
-    required double? longitude,
+    double? latitude,
+    double? longitude,
     @Default(false) bool isLocal,
   }) = _AppMedia;
 
   factory AppMedia.fromJson(Map<String, dynamic> json) =>
       _$AppMediaFromJson(json);
 }
-

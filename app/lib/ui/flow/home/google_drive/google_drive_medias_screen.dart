@@ -84,6 +84,10 @@ class _LocalSourceViewState extends ConsumerState<GoogleDriveMediasScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: context.colorScheme.outline,
+              image: DecorationImage(
+                image: NetworkImage(medias[index].path),
+                fit: BoxFit.cover,
+              ),
             ),
           );
         },
