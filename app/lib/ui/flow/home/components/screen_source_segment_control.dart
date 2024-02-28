@@ -1,5 +1,6 @@
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
@@ -35,6 +36,7 @@ class ScreenSourceSegmentControl extends ConsumerWidget {
           selected: {sources.sourcePage},
           multiSelectionEnabled: false,
           onSelectionChanged: (source) {
+            HapticFeedback.vibrate();
             notifier.updateMediaSource(
                 source: source.first, isChangedByScroll: false);
           },
