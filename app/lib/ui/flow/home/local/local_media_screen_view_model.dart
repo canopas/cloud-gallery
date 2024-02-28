@@ -1,4 +1,3 @@
-import 'package:data/errors/app_error.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';

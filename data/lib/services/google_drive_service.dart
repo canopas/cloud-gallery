@@ -68,7 +68,6 @@ class GoogleDriveService {
         uploadMedia: drive.Media(localFile.openRead(), localFile.lengthSync()),
       );
     } catch (error) {
-      print(error);
       throw AppError.fromError(error);
     }
   }
