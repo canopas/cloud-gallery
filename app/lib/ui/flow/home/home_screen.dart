@@ -5,7 +5,6 @@ import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
 import 'package:cloud_gallery/ui/flow/home/local/local_medias_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import '../../../domain/assets/assets_paths.dart';
@@ -57,7 +56,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             minimumSize: const Size(28, 28),
           ),
           onPressed: () {
-            HapticFeedback.vibrate();
             AppRouter.accounts.push(context);
           },
           icon: Icon(

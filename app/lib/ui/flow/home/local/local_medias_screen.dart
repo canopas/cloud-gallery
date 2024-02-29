@@ -4,7 +4,6 @@ import 'package:cloud_gallery/ui/flow/home/local/components/no_local_medias_acce
 import 'package:cloud_gallery/ui/flow/home/local/local_media_screen_view_model.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import '../../../../components/snack_bar.dart';
@@ -106,12 +105,10 @@ class _LocalSourceViewState extends ConsumerState<LocalMediasScreen> {
                 return ImageItem(
                   onTap: () {
                     if (selectedMedia.isNotEmpty) {
-                      HapticFeedback.vibrate();
                       notifier.mediaSelection(medias[index]);
                     }
                   },
                   onLongTap: () {
-                    HapticFeedback.vibrate();
                     notifier.mediaSelection(medias[index]);
                   },
                   isSelected: selectedMedia.contains(medias[index]),

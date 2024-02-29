@@ -355,7 +355,6 @@
         <entry key="google_identity_services_web">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.0+2/lib" />
             </list>
           </value>
@@ -391,7 +390,6 @@
         <entry key="google_sign_in_web">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.4/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.3+3/lib" />
             </list>
           </value>
@@ -407,7 +405,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/googleapis_auth-1.4.2/lib" />
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/googleapis_auth-1.4.1/lib" />
             </list>
           </value>
         </entry>
@@ -428,7 +425,6 @@
         <entry key="http">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.2.1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.2.0/lib" />
             </list>
           </value>
@@ -758,7 +754,6 @@
         <entry key="shared_preferences_web">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_web-2.3.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_web-2.2.2/lib" />
             </list>
           </value>
@@ -934,7 +929,6 @@
         <entry key="web">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.5.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.4.2/lib" />
             </list>
           </value>
@@ -1024,20 +1018,16 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/glob-2.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/go_router-13.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.0+2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in-6.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_android-6.1.21/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_ios-5.7.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_platform_interface-2.4.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.3+3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/googleapis-12.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/googleapis_auth-1.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/googleapis_auth-1.4.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/graphs-2.3.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/hotreloader-4.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.2.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_multi_server-3.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/intl-0.18.1/lib" />
@@ -1085,7 +1075,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_linux-2.3.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_platform_interface-2.3.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_web-2.2.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_web-2.3.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_windows-2.3.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shelf-1.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shelf_web_socket-1.0.4/lib" />
@@ -1110,7 +1099,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vm_service-13.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/watcher-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.4.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.5.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-2.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xdg_directories-1.0.4/lib" />

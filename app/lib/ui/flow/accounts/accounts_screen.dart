@@ -1,13 +1,18 @@
 import 'package:cloud_gallery/components/app_page.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:data/services/auth_service.dart';
+import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
+import 'package:cloud_gallery/ui/flow/accounts/accounts_screen_view_model.dart';
+import 'package:cloud_gallery/ui/flow/accounts/components/settings_action_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:style/animations/on_tap_scale.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 import 'package:style/theme/colors.dart';
 import 'package:style/buttons/buttons_list.dart';
+import 'package:style/buttons/switch.dart';
+import 'components/account_tab.dart';
 
 class AccountsScreen extends ConsumerStatefulWidget {
   const AccountsScreen({super.key});
@@ -17,132 +22,83 @@ class AccountsScreen extends ConsumerStatefulWidget {
 }
 
 class _AccountsScreenState extends ConsumerState<AccountsScreen> {
+  late AccountsStateNotifier notifier;
+
+  @override
+  void initState() {
+    super.initState();
+    notifier = ref.read(accountsStateNotifierProvider.notifier);
+    runPostFrame(() => notifier.init());
+  }
+
   @override
   Widget build(BuildContext context) {
-    final googleAccount =
-        ref.read(authServiceProvider.select((value) => value.user));
+    final googleAccount = ref.watch(
+        accountsStateNotifierProvider.select((value) => value.googleAccount));
+
     return AppPage(
       title: context.l10n.common_accounts,
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          AccountsTab(
-            name: googleAccount?.displayName ?? 'Add account',
-            accountSource: context.l10n.common_google_drive,
-            profileImage: googleAccount?.photoUrl,
-          ),
+          if (googleAccount != null)
+            AccountsTab(
+              name: googleAccount.displayName ?? "Anonymous",
+              serviceDescription: context.l10n.common_google_drive,
+              profileImage: googleAccount.photoUrl,
+              actionList: ActionList(buttons: [
+                ActionListButton(
+                  title: context.l10n.common_auto_back_up,
+                  trailing: Consumer(
+                    builder: (context, ref, child) {
+                      final autoBackUp = ref.watch(accountsStateNotifierProvider
+                          .select((value) => value.autoBackUp));
+                      return AppSwitch(
+                        value: autoBackUp,
+                        onChanged: notifier.setAutoBackUp,
+                      );
+                    },
+                  ),
+                ),
+                ActionListButton(
+                  title: context.l10n.common_sign_out,
+                  onPressed: notifier.signOutWithGoogle,
+                ),
+              ]),
+              backgroundColor: AppColors.googleDriveColor.withAlpha(50),
+            ),
+          if (googleAccount == null)
+            OnTapScale(
+              onTap: () {
+                notifier.signInWithGoogle();
+              },
+              child: AccountsTab(
+                name: context.l10n.add_account_title,
+                backgroundColor: context.colorScheme.containerNormal,
+              ),
+            ),
           const SizedBox(height: 16),
-          ActionList(buttons: [
-            ActionListButton(title: context.l10n.common_term_and_condition, onPressed: (){}),
-            ActionListButton(title: context.l10n.common_privacy_policy, onPressed: (){}),
-          ]),
+          const SettingsActionList(),
           const SizedBox(height: 16),
-          Text(
-            "Version: 1.0.0",
+          _buildVersion(context: context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVersion({required BuildContext context}) =>
+      Consumer(builder: (context, ref, child) {
+        final version = ref.watch(
+            accountsStateNotifierProvider.select((value) => value.version));
+        return Visibility(
+          visible: version != null,
+          child: Text(
+            "${context.l10n.version_text} $version",
             style: AppTextStyles.body2.copyWith(
               color: context.colorScheme.textSecondary,
             ),
             textAlign: TextAlign.center,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class AccountsTab extends StatefulWidget {
-  final String name;
-  final String? profileImage;
-  final String accountSource;
-
-  const AccountsTab(
-      {super.key,
-      required this.name,
-      required this.accountSource,
-       this.profileImage});
-
-  @override
-  State<AccountsTab> createState() => _AccountsTabState();
-}
-
-class _AccountsTabState extends State<AccountsTab> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.googleDriveColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  width: 55,
-                  height: 55,
-                  decoration: BoxDecoration(
-                      color: context.colorScheme.containerNormal,
-                      border:
-                          Border.all(color: context.colorScheme.outline, width: 0.8),
-                      image: widget.profileImage != null?DecorationImage(
-                        image: NetworkImage(widget.profileImage!)
-                      ):null,
-                      shape: BoxShape.circle),
-                  child: Visibility(
-                    visible: widget.profileImage == null,
-                    child: Icon(
-                      CupertinoIcons.person,
-                      color: context.colorScheme.textPrimary,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.name,
-                      style: AppTextStyles.subtitle2.copyWith(
-                        color: context.colorScheme.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.accountSource,
-                      style: AppTextStyles.body2.copyWith(
-                        color: context.colorScheme.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ActionList(buttons: [
-              ActionListButton(title: "Auto Back-up", trailing: Material(
-                color: Colors.transparent,
-                child: Switch.adaptive(
-                  value: val ,
-                  onChanged: (value) {
-                    setState((){});
-                    val = value;
-                  },
-                  activeColor: context.colorScheme.positive,
-                  thumbColor: MaterialStateProperty.all(context.colorScheme.surface),
-                  inactiveTrackColor: context.colorScheme.containerNormal,
-                ),
-              )),
-              ActionListButton(title: "Sign Out", onPressed: (){}),
-            ]),
-          )
-        ],
-      ),
-    );
-  }
+        );
+      });
 }
-
-bool val = false;

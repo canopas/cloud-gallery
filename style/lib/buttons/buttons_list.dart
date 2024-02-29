@@ -37,7 +37,7 @@ class ActionList extends StatelessWidget {
       margin: margin,
       decoration: BoxDecoration(
         borderRadius: borderRadius,
-        color: background ?? context.colorScheme.containerLow,
+        color: background ?? context.colorScheme.containerNormal,
       ),
       child: ColumnBuilder.separated(
         itemCount: buttons.length,

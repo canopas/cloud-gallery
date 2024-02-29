@@ -10,7 +10,7 @@ extension BuildContextExtensions on BuildContext {
 
   Brightness get brightness => MediaQuery.of(this).platformBrightness;
 
-  bool get isDarkMode => brightness == Brightness.dark;
+  bool get systemThemeIsDark => brightness == Brightness.dark;
 
   FocusScopeNode get focusScope => FocusScope.of(this);
 

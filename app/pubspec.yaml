@@ -37,6 +37,9 @@ dependencies:
   # navigation
   go_router: ^13.0.1
 
+  # auth
+  google_sign_in: ^6.2.1
+
   # core
   firebase_core: ^2.24.2
 
@@ -57,7 +60,6 @@ dev_dependencies:
 
   # code generation
   build_runner: ^2.3.3
-
 
 flutter:
   uses-material-design: true

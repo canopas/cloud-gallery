@@ -16,9 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AccountsState {
-  bool get loading => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
+  GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
+  bool get autoBackUp => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AccountsStateCopyWith<AccountsState> get copyWith =>
@@ -31,7 +32,11 @@ abstract class $AccountsStateCopyWith<$Res> {
           AccountsState value, $Res Function(AccountsState) then) =
       _$AccountsStateCopyWithImpl<$Res, AccountsState>;
   @useResult
-  $Res call({bool loading, String? version, Object? error});
+  $Res call(
+      {String? version,
+      Object? error,
+      GoogleSignInAccount? googleAccount,
+      bool autoBackUp});
 }
 
 /// @nodoc
@@ -47,20 +52,25 @@ class _$AccountsStateCopyWithImpl<$Res, $Val extends AccountsState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
     Object? version = freezed,
     Object? error = freezed,
+    Object? googleAccount = freezed,
+    Object? autoBackUp = null,
   }) {
     return _then(_value.copyWith(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
       version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
               as String?,
       error: freezed == error ? _value.error : error,
+      googleAccount: freezed == googleAccount
+          ? _value.googleAccount
+          : googleAccount // ignore: cast_nullable_to_non_nullable
+              as GoogleSignInAccount?,
+      autoBackUp: null == autoBackUp
+          ? _value.autoBackUp
+          : autoBackUp // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -73,7 +83,11 @@ abstract class _$$AccountsStateImplCopyWith<$Res>
       __$$AccountsStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool loading, String? version, Object? error});
+  $Res call(
+      {String? version,
+      Object? error,
+      GoogleSignInAccount? googleAccount,
+      bool autoBackUp});
 }
 
 /// @nodoc
@@ -87,20 +101,25 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
     Object? version = freezed,
     Object? error = freezed,
+    Object? googleAccount = freezed,
+    Object? autoBackUp = null,
   }) {
     return _then(_$AccountsStateImpl(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
       version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
               as String?,
       error: freezed == error ? _value.error : error,
+      googleAccount: freezed == googleAccount
+          ? _value.googleAccount
+          : googleAccount // ignore: cast_nullable_to_non_nullable
+              as GoogleSignInAccount?,
+      autoBackUp: null == autoBackUp
+          ? _value.autoBackUp
+          : autoBackUp // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -109,21 +128,21 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
 
 class _$AccountsStateImpl implements _AccountsState {
   const _$AccountsStateImpl(
-      {this.loading = false, this.version = null, this.error = null});
+      {this.version, this.error, this.googleAccount, this.autoBackUp = false});
 
   @override
-  @JsonKey()
-  final bool loading;
-  @override
-  @JsonKey()
   final String? version;
   @override
-  @JsonKey()
   final Object? error;
+  @override
+  final GoogleSignInAccount? googleAccount;
+  @override
+  @JsonKey()
+  final bool autoBackUp;
 
   @override
   String toString() {
-    return 'AccountsState(loading: $loading, version: $version, error: $error)';
+    return 'AccountsState(version: $version, error: $error, googleAccount: $googleAccount, autoBackUp: $autoBackUp)';
   }
 
   @override
@@ -131,14 +150,17 @@ class _$AccountsStateImpl implements _AccountsState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AccountsStateImpl &&
-            (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.version, version) || other.version == version) &&
-            const DeepCollectionEquality().equals(other.error, error));
+            const DeepCollectionEquality().equals(other.error, error) &&
+            (identical(other.googleAccount, googleAccount) ||
+                other.googleAccount == googleAccount) &&
+            (identical(other.autoBackUp, autoBackUp) ||
+                other.autoBackUp == autoBackUp));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, version,
-      const DeepCollectionEquality().hash(error));
+  int get hashCode => Object.hash(runtimeType, version,
+      const DeepCollectionEquality().hash(error), googleAccount, autoBackUp);
 
   @JsonKey(ignore: true)
   @override
@@ -149,16 +171,19 @@ class _$AccountsStateImpl implements _AccountsState {
 
 abstract class _AccountsState implements AccountsState {
   const factory _AccountsState(
-      {final bool loading,
-      final String? version,
-      final Object? error}) = _$AccountsStateImpl;
+      {final String? version,
+      final Object? error,
+      final GoogleSignInAccount? googleAccount,
+      final bool autoBackUp}) = _$AccountsStateImpl;
 
-  @override
-  bool get loading;
   @override
   String? get version;
   @override
   Object? get error;
+  @override
+  GoogleSignInAccount? get googleAccount;
+  @override
+  bool get autoBackUp;
   @override
   @JsonKey(ignore: true)
   _$$AccountsStateImplCopyWith<_$AccountsStateImpl> get copyWith =>

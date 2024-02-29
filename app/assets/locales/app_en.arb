@@ -21,5 +21,13 @@
 
   "cant_find_media_title": "Can't find your photos or videos",
   "ask_for_media_permission_message": "Please give us permission to access your local media, so you can load and enjoy all your favorite photos and videos effortlessly.",
-  "load_local_media_button_text": "Load local media"
+  "load_local_media_button_text": "Load local media",
+
+  "theme_text": "Theme",
+  "light_theme_text": "Light",
+  "dark_theme_text": "Dark",
+  "system_theme_text": "System",
+
+  "add_account_title": "Add account",
+  "version_text": "Version"
 }
