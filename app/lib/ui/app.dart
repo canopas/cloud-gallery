@@ -40,8 +40,10 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme =
-        context.isDarkMode ? appColorSchemeDark : appColorSchemeLight;
+    final bool? isDarkMode = ref.watch(AppPreferences.isDarkMode);
+    final colorScheme = (isDarkMode ?? context.systemThemeIsDark)
+        ? appColorSchemeDark
+        : appColorSchemeLight;
     return AppTheme(
       colorScheme: colorScheme,
       child: _buildApp(

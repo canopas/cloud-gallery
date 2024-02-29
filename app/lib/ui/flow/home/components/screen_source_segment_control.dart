@@ -1,6 +1,5 @@
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
@@ -28,7 +27,7 @@ class ScreenSourceSegmentControl extends ConsumerWidget {
             ButtonSegment(
               value: MediaSource.googleDrive,
               label: Text(
-                context.l10n.google_drive_title,
+                context.l10n.common_google_drive,
                 style: AppTextStyles.body2,
               ),
             )
@@ -36,7 +35,6 @@ class ScreenSourceSegmentControl extends ConsumerWidget {
           selected: {sources.sourcePage},
           multiSelectionEnabled: false,
           onSelectionChanged: (source) {
-            HapticFeedback.vibrate();
             notifier.updateMediaSource(
                 source: source.first, isChangedByScroll: false);
           },
