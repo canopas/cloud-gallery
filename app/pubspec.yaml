@@ -27,6 +27,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.9
   fluttertoast: ^8.2.4
+  cached_network_image: ^3.3.1
+  video_player: ^2.8.2
+  visibility_detector: ^0.4.0+2
 
   # state management
   flutter_riverpod: ^2.4.9
@@ -42,6 +45,7 @@ dependencies:
 
   # core
   firebase_core: ^2.24.2
+  collection: ^1.18.0
 
   # storage
   shared_preferences: ^2.2.2

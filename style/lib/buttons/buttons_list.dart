@@ -61,7 +61,7 @@ class ActionList extends StatelessWidget {
       enabled: button.onPressed != null,
       onTap: button.onPressed,
       child: SizedBox(
-        height: 45,
+        height: 50,
         child: Padding(
           padding: const EdgeInsets.only(left: 16, right: 8),
           child: Row(

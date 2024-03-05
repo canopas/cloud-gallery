@@ -1,5 +1,5 @@
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/ui/flow/home/local/local_media_screen_view_model.dart';
+import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,7 +12,7 @@ class NoLocalMediasAccessScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(localMediasViewStateNotifier.notifier);
+    final notifier = ref.read(homeViewStateNotifier.notifier);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(30),
@@ -42,8 +42,7 @@ class NoLocalMediasAccessScreen extends ConsumerWidget {
             PrimaryButton(
               onPressed: () async {
                 await openAppSettings();
-                await notifier.loadMediaCount();
-                await notifier.loadMedia();
+                await notifier.loadMedias();
               },
               text: context.l10n.load_local_media_button_text,
             ),

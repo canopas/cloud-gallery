@@ -19,32 +19,18 @@ class LocalMediaService {
     return await PhotoManager.getAssetCount();
   }
 
-  Future<List<AppMedia>> getMedia(
+  Future<List<AppMedia>> getLocalMedia(
       {required int start, required int end}) async {
-    final assets = await PhotoManager.getAssetListRange(start: start, end: end);
+    final assets = await PhotoManager.getAssetListRange(
+      start: start,
+      end: end,
+      filterOption: FilterOptionGroup(
+        orders: [const OrderOption(type: OrderOptionType.createDate)],
+      ),
+    );
     final files = await Future.wait(
       assets.map(
-        (asset) async {
-          final file = await asset.originFile;
-          if (file == null) return null;
-          return AppMedia(
-            id: asset.id,
-            path: file.path,
-            type: asset.type == AssetType.image
-                ? AppMediaType.image
-                : AppMediaType.video,
-            createdTime: asset.createDateTime,
-            latitude: asset.latitude,
-            longitude: asset.longitude,
-            isLocal: true,
-            orientation: asset.orientation == 90 || asset.orientation == 270
-                ? AppMediaOrientation.landscape
-                : AppMediaOrientation.portrait,
-            modifiedTime: asset.modifiedDateTime,
-            displayHeight: asset.size.height,
-            displayWidth: asset.size.width,
-          );
-        },
+        (asset) => AppMedia.fromAssetEntity(asset),
       ),
     );
     return files.whereNotNull().toList();
