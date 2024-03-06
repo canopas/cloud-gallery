@@ -1,13 +1,13 @@
 class Assets {
-  static Images images = Images();
+  static PathImages images = PathImages();
 }
 
-class Images {
+class PathImages {
   String get appIcon => 'assets/images/app_logo.png';
 
-  Icons get icons => Icons();
+  PathIcons get icons => PathIcons();
 }
 
-class Icons {
+class PathIcons {
   String get googlePhotos => 'assets/images/icons/google_photos.svg';
 }

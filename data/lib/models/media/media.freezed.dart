@@ -12,7 +12,7 @@ part of 'media.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 AppMedia _$AppMediaFromJson(Map<String, dynamic> json) {
   return _AppMedia.fromJson(json);
@@ -23,6 +23,7 @@ mixin _$AppMedia {
   String get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
+  String? get thumbnailPath => throw _privateConstructorUsedError;
   double? get displayHeight => throw _privateConstructorUsedError;
   double? get displayWidth => throw _privateConstructorUsedError;
   AppMediaType get type => throw _privateConstructorUsedError;
@@ -30,9 +31,11 @@ mixin _$AppMedia {
   DateTime? get createdTime => throw _privateConstructorUsedError;
   DateTime? get modifiedTime => throw _privateConstructorUsedError;
   AppMediaOrientation? get orientation => throw _privateConstructorUsedError;
+  String? get size => throw _privateConstructorUsedError;
+  Duration? get videoDuration => throw _privateConstructorUsedError;
   double? get latitude => throw _privateConstructorUsedError;
   double? get longitude => throw _privateConstructorUsedError;
-  bool get isLocal => throw _privateConstructorUsedError;
+  List<AppMediaSource> get sources => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,6 +52,7 @@ abstract class $AppMediaCopyWith<$Res> {
       {String id,
       String? name,
       String path,
+      String? thumbnailPath,
       double? displayHeight,
       double? displayWidth,
       AppMediaType type,
@@ -56,9 +60,11 @@ abstract class $AppMediaCopyWith<$Res> {
       DateTime? createdTime,
       DateTime? modifiedTime,
       AppMediaOrientation? orientation,
+      String? size,
+      Duration? videoDuration,
       double? latitude,
       double? longitude,
-      bool isLocal});
+      List<AppMediaSource> sources});
 }
 
 /// @nodoc
@@ -77,6 +83,7 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
     Object? id = null,
     Object? name = freezed,
     Object? path = null,
+    Object? thumbnailPath = freezed,
     Object? displayHeight = freezed,
     Object? displayWidth = freezed,
     Object? type = null,
@@ -84,9 +91,11 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
     Object? createdTime = freezed,
     Object? modifiedTime = freezed,
     Object? orientation = freezed,
+    Object? size = freezed,
+    Object? videoDuration = freezed,
     Object? latitude = freezed,
     Object? longitude = freezed,
-    Object? isLocal = null,
+    Object? sources = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -101,6 +110,10 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
               as String,
+      thumbnailPath: freezed == thumbnailPath
+          ? _value.thumbnailPath
+          : thumbnailPath // ignore: cast_nullable_to_non_nullable
+              as String?,
       displayHeight: freezed == displayHeight
           ? _value.displayHeight
           : displayHeight // ignore: cast_nullable_to_non_nullable
@@ -129,6 +142,14 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
           ? _value.orientation
           : orientation // ignore: cast_nullable_to_non_nullable
               as AppMediaOrientation?,
+      size: freezed == size
+          ? _value.size
+          : size // ignore: cast_nullable_to_non_nullable
+              as String?,
+      videoDuration: freezed == videoDuration
+          ? _value.videoDuration
+          : videoDuration // ignore: cast_nullable_to_non_nullable
+              as Duration?,
       latitude: freezed == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -137,10 +158,10 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double?,
-      isLocal: null == isLocal
-          ? _value.isLocal
-          : isLocal // ignore: cast_nullable_to_non_nullable
-              as bool,
+      sources: null == sources
+          ? _value.sources
+          : sources // ignore: cast_nullable_to_non_nullable
+              as List<AppMediaSource>,
     ) as $Val);
   }
 }
@@ -157,6 +178,7 @@ abstract class _$$AppMediaImplCopyWith<$Res>
       {String id,
       String? name,
       String path,
+      String? thumbnailPath,
       double? displayHeight,
       double? displayWidth,
       AppMediaType type,
@@ -164,9 +186,11 @@ abstract class _$$AppMediaImplCopyWith<$Res>
       DateTime? createdTime,
       DateTime? modifiedTime,
       AppMediaOrientation? orientation,
+      String? size,
+      Duration? videoDuration,
       double? latitude,
       double? longitude,
-      bool isLocal});
+      List<AppMediaSource> sources});
 }
 
 /// @nodoc
@@ -183,6 +207,7 @@ class __$$AppMediaImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = freezed,
     Object? path = null,
+    Object? thumbnailPath = freezed,
     Object? displayHeight = freezed,
     Object? displayWidth = freezed,
     Object? type = null,
@@ -190,9 +215,11 @@ class __$$AppMediaImplCopyWithImpl<$Res>
     Object? createdTime = freezed,
     Object? modifiedTime = freezed,
     Object? orientation = freezed,
+    Object? size = freezed,
+    Object? videoDuration = freezed,
     Object? latitude = freezed,
     Object? longitude = freezed,
-    Object? isLocal = null,
+    Object? sources = null,
   }) {
     return _then(_$AppMediaImpl(
       id: null == id
@@ -207,6 +234,10 @@ class __$$AppMediaImplCopyWithImpl<$Res>
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
               as String,
+      thumbnailPath: freezed == thumbnailPath
+          ? _value.thumbnailPath
+          : thumbnailPath // ignore: cast_nullable_to_non_nullable
+              as String?,
       displayHeight: freezed == displayHeight
           ? _value.displayHeight
           : displayHeight // ignore: cast_nullable_to_non_nullable
@@ -235,6 +266,14 @@ class __$$AppMediaImplCopyWithImpl<$Res>
           ? _value.orientation
           : orientation // ignore: cast_nullable_to_non_nullable
               as AppMediaOrientation?,
+      size: freezed == size
+          ? _value.size
+          : size // ignore: cast_nullable_to_non_nullable
+              as String?,
+      videoDuration: freezed == videoDuration
+          ? _value.videoDuration
+          : videoDuration // ignore: cast_nullable_to_non_nullable
+              as Duration?,
       latitude: freezed == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -243,10 +282,10 @@ class __$$AppMediaImplCopyWithImpl<$Res>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double?,
-      isLocal: null == isLocal
-          ? _value.isLocal
-          : isLocal // ignore: cast_nullable_to_non_nullable
-              as bool,
+      sources: null == sources
+          ? _value._sources
+          : sources // ignore: cast_nullable_to_non_nullable
+              as List<AppMediaSource>,
     ));
   }
 }
@@ -258,6 +297,7 @@ class _$AppMediaImpl implements _AppMedia {
       {required this.id,
       this.name,
       required this.path,
+      this.thumbnailPath,
       this.displayHeight,
       this.displayWidth,
       required this.type,
@@ -265,9 +305,12 @@ class _$AppMediaImpl implements _AppMedia {
       this.createdTime,
       this.modifiedTime,
       this.orientation,
+      this.size,
+      this.videoDuration,
       this.latitude,
       this.longitude,
-      this.isLocal = false});
+      final List<AppMediaSource> sources = const [AppMediaSource.local]})
+      : _sources = sources;
 
   factory _$AppMediaImpl.fromJson(Map<String, dynamic> json) =>
       _$$AppMediaImplFromJson(json);
@@ -278,6 +321,8 @@ class _$AppMediaImpl implements _AppMedia {
   final String? name;
   @override
   final String path;
+  @override
+  final String? thumbnailPath;
   @override
   final double? displayHeight;
   @override
@@ -293,16 +338,25 @@ class _$AppMediaImpl implements _AppMedia {
   @override
   final AppMediaOrientation? orientation;
   @override
+  final String? size;
+  @override
+  final Duration? videoDuration;
+  @override
   final double? latitude;
   @override
   final double? longitude;
+  final List<AppMediaSource> _sources;
   @override
   @JsonKey()
-  final bool isLocal;
+  List<AppMediaSource> get sources {
+    if (_sources is EqualUnmodifiableListView) return _sources;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sources);
+  }
 
   @override
   String toString() {
-    return 'AppMedia(id: $id, name: $name, path: $path, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, latitude: $latitude, longitude: $longitude, isLocal: $isLocal)';
+    return 'AppMedia(id: $id, name: $name, path: $path, thumbnailPath: $thumbnailPath, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
   }
 
   @override
@@ -313,6 +367,8 @@ class _$AppMediaImpl implements _AppMedia {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.path, path) || other.path == path) &&
+            (identical(other.thumbnailPath, thumbnailPath) ||
+                other.thumbnailPath == thumbnailPath) &&
             (identical(other.displayHeight, displayHeight) ||
                 other.displayHeight == displayHeight) &&
             (identical(other.displayWidth, displayWidth) ||
@@ -326,11 +382,14 @@ class _$AppMediaImpl implements _AppMedia {
                 other.modifiedTime == modifiedTime) &&
             (identical(other.orientation, orientation) ||
                 other.orientation == orientation) &&
+            (identical(other.size, size) || other.size == size) &&
+            (identical(other.videoDuration, videoDuration) ||
+                other.videoDuration == videoDuration) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
-            (identical(other.isLocal, isLocal) || other.isLocal == isLocal));
+            const DeepCollectionEquality().equals(other._sources, _sources));
   }
 
   @JsonKey(ignore: true)
@@ -340,6 +399,7 @@ class _$AppMediaImpl implements _AppMedia {
       id,
       name,
       path,
+      thumbnailPath,
       displayHeight,
       displayWidth,
       type,
@@ -347,9 +407,11 @@ class _$AppMediaImpl implements _AppMedia {
       createdTime,
       modifiedTime,
       orientation,
+      size,
+      videoDuration,
       latitude,
       longitude,
-      isLocal);
+      const DeepCollectionEquality().hash(_sources));
 
   @JsonKey(ignore: true)
   @override
@@ -370,6 +432,7 @@ abstract class _AppMedia implements AppMedia {
       {required final String id,
       final String? name,
       required final String path,
+      final String? thumbnailPath,
       final double? displayHeight,
       final double? displayWidth,
       required final AppMediaType type,
@@ -377,9 +440,11 @@ abstract class _AppMedia implements AppMedia {
       final DateTime? createdTime,
       final DateTime? modifiedTime,
       final AppMediaOrientation? orientation,
+      final String? size,
+      final Duration? videoDuration,
       final double? latitude,
       final double? longitude,
-      final bool isLocal}) = _$AppMediaImpl;
+      final List<AppMediaSource> sources}) = _$AppMediaImpl;
 
   factory _AppMedia.fromJson(Map<String, dynamic> json) =
       _$AppMediaImpl.fromJson;
@@ -390,6 +455,8 @@ abstract class _AppMedia implements AppMedia {
   String? get name;
   @override
   String get path;
+  @override
+  String? get thumbnailPath;
   @override
   double? get displayHeight;
   @override
@@ -405,11 +472,15 @@ abstract class _AppMedia implements AppMedia {
   @override
   AppMediaOrientation? get orientation;
   @override
+  String? get size;
+  @override
+  Duration? get videoDuration;
+  @override
   double? get latitude;
   @override
   double? get longitude;
   @override
-  bool get isLocal;
+  List<AppMediaSource> get sources;
   @override
   @JsonKey(ignore: true)
   _$$AppMediaImplCopyWith<_$AppMediaImpl> get copyWith =>

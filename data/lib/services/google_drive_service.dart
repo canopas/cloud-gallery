@@ -61,16 +61,12 @@ class GoogleDriveService {
       final response = await driveApi.files.list(
         q: "'$backUpFolderId' in parents and trashed=false",
         $fields:
-            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime)",
+            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
       );
 
       return (response.files ?? [])
           .map(
-            (e) => AppMedia(
-              id: e.id!,
-              path: e.thumbnailLink!,
-              type: AppMediaType.image,
-            ),
+            (e) => AppMedia.fromGoogleDriveFile(e),
           )
           .toList();
     } catch (e) {

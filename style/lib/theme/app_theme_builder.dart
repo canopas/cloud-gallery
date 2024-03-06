@@ -29,7 +29,10 @@ class AppThemeBuilder {
       scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
-        surfaceTintColor: colorScheme.containerLow,
+        surfaceTintColor: colorScheme.surface,
+        foregroundColor: colorScheme.textPrimary,
+        scrolledUnderElevation: 3,
+
       ),
     );
   }
