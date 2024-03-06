@@ -6,13 +6,16 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
+import 'package:style/text/app_text_style.dart';
 import '../../../components/snack_bar.dart';
 import '../../../domain/assets/assets_paths.dart';
 import '../../navigation/app_router.dart';
 import 'components/app_media_item.dart';
 import 'components/multi_selection_done_button.dart';
+import 'package:style/slivers/sticky_header_delegate.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -73,7 +76,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _body({required BuildContext context}) {
-
     //States
     final medias =
         ref.watch(homeViewStateNotifier.select((state) => state.medias));
@@ -115,40 +117,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildMediaList(
       {required BuildContext context,
-      required List<AppMedia> medias,
+      required Map<DateTime, List<AppMedia>> medias,
       required List<String> uploadingMedias,
-      required List<String> selectedMedias}) {
+      required List<AppMedia> selectedMedias}) {
     return Scrollbar(
-      interactive: true,
-      thickness: 4,
-
       controller: _scrollController,
-      child: GridView.builder(
+      interactive: true,
+      child: CustomScrollView(
         controller: _scrollController,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
-        ),
-        itemCount: medias.length,
-        itemBuilder: (context, index) {
-          final media = medias[index];
-          return AppMediaItem(
-            key: ValueKey(media.id),
-            onTap: () {
-              if (selectedMedias.isNotEmpty) {
-                notifier.mediaSelection(media);
-              }
-            },
-            onLongTap: () {
-              notifier.mediaSelection(media);
-            },
-            isSelected: selectedMedias.contains(media.id),
-            isUploading: uploadingMedias.contains(media.id),
-            media: media,
-          );
-        },
+        slivers: medias.entries
+            .map(
+              (e) => SliverMainAxisGroup(
+                slivers: [
+                  SliverPersistentHeader(
+                    delegate: SliverStickyHeaderDelegate(
+                      header: Container(
+                        padding: const EdgeInsets.only(left: 16),
+                        alignment: Alignment.centerLeft,
+
+                        decoration: BoxDecoration(
+                          color: context.colorScheme.surface,
+                        ),
+                        child: Text(
+                          DateFormat("d MMMM, y").format(e.key),
+                          style: AppTextStyles.subtitle1.copyWith(
+                            color: context.colorScheme.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    pinned: true,
+                   floating: true,
+                   // floating: true,
+                  ),
+                  SliverPadding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    sliver: SliverGrid.builder(
+                      itemBuilder: (context, index) {
+                        final media = e.value[index];
+                        return AppMediaItem(
+                          key: ValueKey(media.id),
+                          onTap: () {
+                            if (selectedMedias.isNotEmpty) {
+                              notifier.toggleMediaSelection(media);
+                            }
+                          },
+                          onLongTap: () {
+                            notifier.toggleMediaSelection(media);
+                          },
+                          isSelected: selectedMedias.contains(media),
+                          isUploading: uploadingMedias.contains(media.id),
+                          media: media,
+                        );
+                      },
+                      itemCount: e.value.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 4,
+                        mainAxisSpacing: 4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+            .toList(),
       ),
     );
   }

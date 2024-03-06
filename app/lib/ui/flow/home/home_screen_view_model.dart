@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'package:cloud_gallery/domain/extensions/date_extensions.dart';
+import 'package:collection/collection.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
@@ -26,7 +27,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
 
   String? _backUpFolderId;
   List<AppMedia> _localMedias = [];
-  int _localMediaCount = 0;
+  int? _localMediaCount;
   List<AppMedia> _googleDriveMedias = [];
 
   HomeViewStateNotifier(
@@ -38,26 +39,26 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
   Future<void> loadMedias() async {
     state = state.copyWith(loading: state.medias.isEmpty, error: null);
     try {
-      final counts = await _loadMediaCount();
-      if (counts != null) {
+      _localMediaCount ??= await _getLocalMediaCount();
+      if (_localMediaCount != null) {
         await Future.wait([
           _getGoogleDriveMedias(),
-          _loadLocalMedias(),
+          _getLocalMedias(),
         ]);
       } else {
         await _getGoogleDriveMedias();
       }
       state = state.copyWith(
         loading: false,
-        medias: _sortMedia(),
-        hasLocalMediaAccess: counts != null,
+        medias: _sortMedias(medias: _getAllMedias()),
+        hasLocalMediaAccess: _localMediaCount != null,
       );
     } catch (error) {
       state = state.copyWith(loading: false, error: error);
     }
   }
 
-  List<AppMedia> _sortMedia() {
+  List<AppMedia> _getAllMedias() {
     final commonMedias = <AppMedia>[];
 
     for (AppMedia localMedia in _localMedias.toList()) {
@@ -74,54 +75,48 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
       });
     }
 
-    List<AppMedia> shortedMedia = [
-      ..._localMedias,
-      ..._googleDriveMedias,
-      ...commonMedias
-    ];
+    return [..._localMedias, ..._googleDriveMedias, ...commonMedias];
+  }
 
-    shortedMedia.sort((a, b) => (b.createdTime ?? DateTime.now())
+  Map<DateTime, List<AppMedia>> _sortMedias({required List<AppMedia> medias}) {
+    medias.sort((a, b) => (b.createdTime ?? DateTime.now())
         .compareTo(a.createdTime ?? DateTime.now()));
-    return shortedMedia;
+    return groupBy<AppMedia, DateTime>(
+      medias,
+      (AppMedia media) =>
+          media.createdTime?.dateOnly ?? DateTime.now().dateOnly,
+    );
   }
 
   Future<void> _getGoogleDriveMedias() async {
-    if(_authService.hasUserSigned){
+    if (_authService.hasUserSigned) {
       _backUpFolderId ??= await _googleDriveService.getBackupFolderId();
       _googleDriveMedias = await _googleDriveService.getDriveMedias(
           backUpFolderId: _backUpFolderId!);
     }
   }
 
-  Future<int?> _loadMediaCount() async {
+  Future<int?> _getLocalMediaCount() async {
     final hasAccess = await _localMediaService.requestPermission();
     if (hasAccess) {
-      _localMediaCount = await _localMediaService.getMediaCount();
-      return _localMediaCount;
+      return await _localMediaService.getMediaCount();
     }
     return null;
   }
 
-  Future<void> _loadLocalMedias() async {
-    _localMedias = await _localMediaService.getLocalMedia(
-      start: 0,
-      end: _localMediaCount,
-    );
-  }
-
-  void mediaSelection(AppMedia media) {
-    final selectedMedias = state.selectedMedias.toList();
-    if (selectedMedias.contains(media.id)) {
-      state = state.copyWith(
-        selectedMedias: selectedMedias.toList()..remove(media.id),
-        error: null,
-      );
-    } else {
-      state = state.copyWith(
-        selectedMedias: [...selectedMedias, media.id],
-        error: null,
+  Future<void> _getLocalMedias() async {
+    if (_localMediaCount != null) {
+      _localMedias = await _localMediaService.getLocalMedia(
+        start: 0,
+        end: _localMediaCount!,
       );
     }
+  }
+
+  void toggleMediaSelection(AppMedia media) {
+    final selectedMedias = state.selectedMedias.toList();
+    selectedMedias.addOrRemove(element: media);
+    state = state.copyWith(selectedMedias: selectedMedias);
   }
 
   Future<void> uploadMediaOnGoogleDrive() async {
@@ -129,30 +124,32 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
       if (!_authService.hasUserSigned) {
         await _authService.signInWithGoogle();
       }
-      List<AppMedia> uploadingMedias = state.medias
+      List<AppMedia> uploadingMedias = state.selectedMedias
           .where((element) =>
-              state.selectedMedias.contains(element.id) &&
               !element.sources.contains(AppMediaSource.googleDrive))
           .toList();
 
       state = state.copyWith(
-          uploadingMedias: uploadingMedias.map((e) => e.id).toList(),
-          error: null);
-      final folderId = await _googleDriveService.getBackupFolderId();
+        uploadingMedias: uploadingMedias.map((e) => e.id).toList(),
+        error: null,
+      );
+      _backUpFolderId ??= await _googleDriveService.getBackupFolderId();
 
       for (final media in uploadingMedias) {
         await _googleDriveService.uploadInGoogleDrive(
           media: media,
-          folderID: folderId!,
+          folderID: _backUpFolderId!,
         );
+
         state = state.copyWith(
-          medias: state.medias.toList()
-            ..updateElement(
-              newElement: media.copyWith(
-                  sources: media.sources.toList()
-                    ..add(AppMediaSource.googleDrive)),
-              oldElement: media,
-            ),
+          medias: state.medias.map((key, value) {
+            value.updateElement(
+                newElement: media.copyWith(
+                    sources: media.sources.toList()
+                      ..add(AppMediaSource.googleDrive)),
+                oldElement: media);
+            return MapEntry(key, value);
+          }),
           uploadingMedias: state.uploadingMedias.toList()..remove(media.id),
         );
       }
@@ -170,8 +167,8 @@ class HomeViewState with _$HomeViewState {
     Object? error,
     @Default(false) bool hasLocalMediaAccess,
     @Default(false) bool loading,
-    @Default([]) List<AppMedia> medias,
-    @Default([]) List<String> selectedMedias,
+    @Default({}) Map<DateTime, List<AppMedia>> medias,
+    @Default([]) List<AppMedia> selectedMedias,
     @Default([]) List<String> uploadingMedias,
   }) = _HomeViewState;
 }

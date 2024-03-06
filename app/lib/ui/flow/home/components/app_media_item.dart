@@ -3,10 +3,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:style/animations/parallax_effect.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
-import 'package:video_player/video_player.dart';
 import '../../../../domain/assets/assets_paths.dart';
 import 'package:style/animations/item_selector.dart';
 
@@ -30,27 +28,30 @@ class AppMediaItem extends StatefulWidget {
   State<AppMediaItem> createState() => _AppMediaItemState();
 }
 
-class _AppMediaItemState extends State<AppMediaItem> with AutomaticKeepAliveClientMixin {
-  final _imageKey = GlobalKey();
-  VideoPlayerController? _videoPlayerController;
-
+class _AppMediaItemState extends State<AppMediaItem>
+    with AutomaticKeepAliveClientMixin {
+  //VideoPlayerController? _videoPlayerController;
 
   @override
   void initState() {
     if (widget.media.type.isVideo &&
         widget.media.sources.contains(AppMediaSource.local)) {
-      if (widget.media.sources.contains(AppMediaSource.local)) {
-        _videoPlayerController =
-            VideoPlayerController.file(File(widget.media.path))
-              ..initialize().then((_) {
-                setState(() {});
-              });
-      }
+      // if (widget.media.sources.contains(AppMediaSource.local)) {
+      //   _videoPlayerController =
+      //       VideoPlayerController.file(File(widget.media.path))
+      //         ..initialize().then((_) {
+      //           setState(() {});
+      //         });
+      // }
     }
     super.initState();
   }
 
-
+  @override
+  void dispose() {
+    // _videoPlayerController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,17 +60,20 @@ class _AppMediaItemState extends State<AppMediaItem> with AutomaticKeepAliveClie
       onTap: widget.onTap,
       onLongTap: widget.onLongTap,
       isSelected: widget.isSelected,
-      child: Stack(
-        alignment: Alignment.bottomLeft,
-        children: [
-          widget.media.type.isVideo &&
-                  widget.media.sources.contains(AppMediaSource.local)
-              ? _buildVideoView(context: context)
-              : _buildImageView(context: context),
-          if (widget.media.sources.contains(AppMediaSource.googleDrive) ||
-              widget.isUploading)
-            _sourceIndicators(context: context),
-        ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Stack(
+          alignment: Alignment.bottomLeft,
+          children: [
+            widget.media.type.isVideo &&
+                    widget.media.sources.contains(AppMediaSource.local)
+                ? _buildVideoView(context: context)
+                : _buildImageView(context: context),
+            if (widget.media.sources.contains(AppMediaSource.googleDrive) ||
+                widget.isUploading)
+              _sourceIndicators(context: context),
+          ],
+        ),
       ),
     );
   }
@@ -79,18 +83,18 @@ class _AppMediaItemState extends State<AppMediaItem> with AutomaticKeepAliveClie
       margin: const EdgeInsets.all(4),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: context.colorScheme.surface.withOpacity(0.6),
+        color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (widget.media.sources.contains(AppMediaSource.googleDrive))
-            SvgPicture.asset(
-              Assets.images.icons.googlePhotos,
-              height: 12,
-              width: 12,
-            ),
+          SvgPicture.asset(
+            Assets.images.icons.googlePhotos,
+            height: 12,
+            width: 12,
+          ),
           if (widget.isUploading) const AppCircularProgressIndicator(size: 12),
         ],
       ),
@@ -98,38 +102,55 @@ class _AppMediaItemState extends State<AppMediaItem> with AutomaticKeepAliveClie
   }
 
   Widget _buildImageView({required BuildContext context}) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: Flow(
-            delegate: ParallaxFlowDelegate(
-              scrollable: Scrollable.of(context),
-              listItemContext: context,
-              backgroundImageKey: _imageKey,
-            ),
-            children: [
-              Image(
-                key: _imageKey,
-                image: widget.media.sources.contains(AppMediaSource.local)
-                    ? FileImage(File(widget.media.path))
-                    : CachedNetworkImageProvider(widget.media.thumbnailPath!)
-                        as ImageProvider,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  }
-                  return const Center(child: AppCircularProgressIndicator());
-                },
-                width: constraints.maxWidth,
-                height: constraints.maxHeight * 1.5,
+    return LayoutBuilder(builder: (context, constraints) {
+      return Image(
+        image: ResizeImage(
+          widget.media.sources.contains(AppMediaSource.local)
+              ? FileImage(File(widget.media.path))
+              : CachedNetworkImageProvider(widget.media.thumbnailPath!)
+                  as ImageProvider,
+          height: constraints.maxHeight.toInt(),
+          width: constraints.maxWidth.toInt(),
+          policy: ResizeImagePolicy.fit,
+        ),
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          }
+          return Container(
+            width: double.maxFinite,
+            height: double.maxFinite,
+            color: context.colorScheme.containerNormalOnSurface,
+            child: Center(
+              child: AppCircularProgressIndicator(
+                value: (loadingProgress.expectedTotalBytes != null &&
+                        (loadingProgress.expectedTotalBytes ?? 0) > 0)
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
               ),
-            ],
-          ),
-        );
-      },
-    );
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            width: double.maxFinite,
+            height: double.maxFinite,
+            color: context.colorScheme.containerNormalOnSurface,
+            child: Center(
+              child: Icon(
+                CupertinoIcons.photo,
+                color: context.colorScheme.onPrimary,
+                size: 32,
+              ),
+            ),
+          );
+        },
+        width: double.maxFinite,
+        height: double.maxFinite,
+      );
+    });
   }
 
   Widget _buildVideoView({required BuildContext context}) {
@@ -137,13 +158,13 @@ class _AppMediaItemState extends State<AppMediaItem> with AutomaticKeepAliveClie
       alignment: Alignment.center,
       children: [
         Container(
-            decoration: BoxDecoration(
-              color: context.colorScheme.containerLowOnSurface,
-            ),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: VideoPlayer(_videoPlayerController!))),
-        Icon(CupertinoIcons.play_arrow_solid, color: context.colorScheme.onPrimary),
+          decoration: BoxDecoration(
+            color: context.colorScheme.containerNormalOnSurface,
+          ),
+          // child: VideoPlayer(_videoPlayerController!),
+        ),
+        Icon(CupertinoIcons.play_arrow_solid,
+            color: context.colorScheme.onPrimary),
       ],
     );
   }

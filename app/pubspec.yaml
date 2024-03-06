@@ -30,6 +30,7 @@ dependencies:
   cached_network_image: ^3.3.1
   video_player: ^2.8.2
   visibility_detector: ^0.4.0+2
+  flutter_displaymode: ^0.6.0
 
   # state management
   flutter_riverpod: ^2.4.9

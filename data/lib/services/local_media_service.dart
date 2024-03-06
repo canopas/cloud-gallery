@@ -16,7 +16,11 @@ class LocalMediaService {
   }
 
   Future<int> getMediaCount() async {
-    return await PhotoManager.getAssetCount();
+    return await PhotoManager.getAssetCount(
+      filterOption: FilterOptionGroup(
+        orders: [const OrderOption(type: OrderOptionType.createDate)],
+      ),
+    );
   }
 
   Future<List<AppMedia>> getLocalMedia(

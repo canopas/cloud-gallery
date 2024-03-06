@@ -8,10 +8,10 @@ extension ListExtension<E> on List<E> {
   }
 
   /// Replaces [oldElement] with [newElement] if found, else adds [newElement].
-  void updateElement({required E newElement, required E oldElement}) {
+  void updateElement({required E newElement, required E oldElement,bool addIfNotContain = false}) {
     if (contains(oldElement)) {
       this[indexOf(oldElement)] = newElement;
-    } else {
+    } else if(addIfNotContain){
       add(newElement);
     }
   }

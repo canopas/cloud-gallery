@@ -33,7 +33,7 @@ class ItemSelector extends StatelessWidget {
           ),
           if (isSelected)
             Align(
-              alignment: Alignment.bottomRight,
+              alignment: Alignment.topRight,
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(

@@ -12,15 +12,16 @@ part of 'home_screen_view_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$HomeViewState {
   Object? get error => throw _privateConstructorUsedError;
   bool get hasLocalMediaAccess => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
-  List<AppMedia> get medias => throw _privateConstructorUsedError;
-  List<String> get selectedMedias => throw _privateConstructorUsedError;
+  Map<DateTime, List<AppMedia>> get medias =>
+      throw _privateConstructorUsedError;
+  List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
   List<String> get uploadingMedias => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -38,8 +39,8 @@ abstract class $HomeViewStateCopyWith<$Res> {
       {Object? error,
       bool hasLocalMediaAccess,
       bool loading,
-      List<AppMedia> medias,
-      List<String> selectedMedias,
+      Map<DateTime, List<AppMedia>> medias,
+      List<AppMedia> selectedMedias,
       List<String> uploadingMedias});
 }
 
@@ -76,11 +77,11 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       medias: null == medias
           ? _value.medias
           : medias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
+              as Map<DateTime, List<AppMedia>>,
       selectedMedias: null == selectedMedias
           ? _value.selectedMedias
           : selectedMedias // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<AppMedia>,
       uploadingMedias: null == uploadingMedias
           ? _value.uploadingMedias
           : uploadingMedias // ignore: cast_nullable_to_non_nullable
@@ -101,8 +102,8 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       {Object? error,
       bool hasLocalMediaAccess,
       bool loading,
-      List<AppMedia> medias,
-      List<String> selectedMedias,
+      Map<DateTime, List<AppMedia>> medias,
+      List<AppMedia> selectedMedias,
       List<String> uploadingMedias});
 }
 
@@ -137,11 +138,11 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
       medias: null == medias
           ? _value._medias
           : medias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
+              as Map<DateTime, List<AppMedia>>,
       selectedMedias: null == selectedMedias
           ? _value._selectedMedias
           : selectedMedias // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<AppMedia>,
       uploadingMedias: null == uploadingMedias
           ? _value._uploadingMedias
           : uploadingMedias // ignore: cast_nullable_to_non_nullable
@@ -157,8 +158,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
       {this.error,
       this.hasLocalMediaAccess = false,
       this.loading = false,
-      final List<AppMedia> medias = const [],
-      final List<String> selectedMedias = const [],
+      final Map<DateTime, List<AppMedia>> medias = const {},
+      final List<AppMedia> selectedMedias = const [],
       final List<String> uploadingMedias = const []})
       : _medias = medias,
         _selectedMedias = selectedMedias,
@@ -172,19 +173,19 @@ class _$HomeViewStateImpl implements _HomeViewState {
   @override
   @JsonKey()
   final bool loading;
-  final List<AppMedia> _medias;
+  final Map<DateTime, List<AppMedia>> _medias;
   @override
   @JsonKey()
-  List<AppMedia> get medias {
-    if (_medias is EqualUnmodifiableListView) return _medias;
+  Map<DateTime, List<AppMedia>> get medias {
+    if (_medias is EqualUnmodifiableMapView) return _medias;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_medias);
+    return EqualUnmodifiableMapView(_medias);
   }
 
-  final List<String> _selectedMedias;
+  final List<AppMedia> _selectedMedias;
   @override
   @JsonKey()
-  List<String> get selectedMedias {
+  List<AppMedia> get selectedMedias {
     if (_selectedMedias is EqualUnmodifiableListView) return _selectedMedias;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_selectedMedias);
@@ -242,8 +243,8 @@ abstract class _HomeViewState implements HomeViewState {
       {final Object? error,
       final bool hasLocalMediaAccess,
       final bool loading,
-      final List<AppMedia> medias,
-      final List<String> selectedMedias,
+      final Map<DateTime, List<AppMedia>> medias,
+      final List<AppMedia> selectedMedias,
       final List<String> uploadingMedias}) = _$HomeViewStateImpl;
 
   @override
@@ -253,9 +254,9 @@ abstract class _HomeViewState implements HomeViewState {
   @override
   bool get loading;
   @override
-  List<AppMedia> get medias;
+  Map<DateTime, List<AppMedia>> get medias;
   @override
-  List<String> get selectedMedias;
+  List<AppMedia> get selectedMedias;
   @override
   List<String> get uploadingMedias;
   @override
