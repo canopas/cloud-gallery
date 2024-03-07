@@ -90,11 +90,11 @@ class _AppMediaItemState extends State<AppMediaItem>
         mainAxisSize: MainAxisSize.min,
         children: [
           if (widget.media.sources.contains(AppMediaSource.googleDrive))
-          SvgPicture.asset(
-            Assets.images.icons.googlePhotos,
-            height: 12,
-            width: 12,
-          ),
+            SvgPicture.asset(
+              Assets.images.icons.googlePhotos,
+              height: 12,
+              width: 12,
+            ),
           if (widget.isUploading) const AppCircularProgressIndicator(size: 12),
         ],
       ),
@@ -104,15 +104,15 @@ class _AppMediaItemState extends State<AppMediaItem>
   Widget _buildImageView({required BuildContext context}) {
     return LayoutBuilder(builder: (context, constraints) {
       return Image(
-        image: ResizeImage(
-          widget.media.sources.contains(AppMediaSource.local)
-              ? FileImage(File(widget.media.path))
-              : CachedNetworkImageProvider(widget.media.thumbnailPath!)
-                  as ImageProvider,
-          height: constraints.maxHeight.toInt(),
-          width: constraints.maxWidth.toInt(),
-          policy: ResizeImagePolicy.fit,
-        ),
+        image: widget.media.sources.contains(AppMediaSource.local)
+            ? ResizeImage(
+                FileImage(File(widget.media.path)),
+                height: constraints.maxHeight.toInt(),
+                width: constraints.maxWidth.toInt(),
+                policy: ResizeImagePolicy.fit,
+              )
+            : CachedNetworkImageProvider(widget.media.thumbnailPath!)
+                as ImageProvider,
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) {

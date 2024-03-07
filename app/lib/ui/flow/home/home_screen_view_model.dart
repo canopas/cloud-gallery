@@ -123,6 +123,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
     try {
       if (!_authService.hasUserSigned) {
         await _authService.signInWithGoogle();
+        loadMedias();
       }
       List<AppMedia> uploadingMedias = state.selectedMedias
           .where((element) =>
