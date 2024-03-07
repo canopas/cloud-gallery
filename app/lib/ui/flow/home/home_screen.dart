@@ -1,4 +1,5 @@
 import 'package:cloud_gallery/components/app_page.dart';
+import 'package:cloud_gallery/components/resume_detector.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
 import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
@@ -97,21 +98,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else if (medias.isEmpty && !hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
     }
-    return Stack(
-      alignment: Alignment.bottomRight,
-      children: [
-        _buildMediaList(
-          context: context,
-          medias: medias,
-          uploadingMedias: uploadingMedias,
-          selectedMedias: selectedMedias,
-        ),
-        if (selectedMedias.isNotEmpty)
-          Padding(
-            padding: context.systemPadding + const EdgeInsets.all(16),
-            child: const MultiSelectionDoneButton(),
+    return ResumeDetector(
+      onResume: notifier.loadMedias,
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          _buildMediaList(
+            context: context,
+            medias: medias,
+            uploadingMedias: uploadingMedias,
+            selectedMedias: selectedMedias,
           ),
-      ],
+          if (selectedMedias.isNotEmpty)
+            Padding(
+              padding: context.systemPadding + const EdgeInsets.all(16),
+              child: const MultiSelectionDoneButton(),
+            ),
+        ],
+      ),
     );
   }
 
@@ -134,7 +138,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       header: Container(
                         padding: const EdgeInsets.only(left: 16),
                         alignment: Alignment.centerLeft,
-
                         decoration: BoxDecoration(
                           color: context.colorScheme.surface,
                         ),
@@ -147,8 +150,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     pinned: true,
-                   floating: true,
-                   // floating: true,
                   ),
                   SliverPadding(
                     padding:
