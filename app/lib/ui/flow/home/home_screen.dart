@@ -1,5 +1,4 @@
 import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/components/resume_detector.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
 import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
@@ -15,6 +14,7 @@ import '../../../components/snack_bar.dart';
 import '../../../domain/assets/assets_paths.dart';
 import '../../navigation/app_router.dart';
 import 'components/app_media_item.dart';
+import 'components/hints.dart';
 import 'components/multi_selection_done_button.dart';
 import 'package:style/slivers/sticky_header_delegate.dart';
 
@@ -98,8 +98,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else if (medias.isEmpty && !hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
     }
-    return ResumeDetector(
-      onResume: notifier.loadMedias,
+    return RefreshIndicator.adaptive(
+      onRefresh: () async {
+        await notifier.loadMedias();
+      },
       child: Stack(
         alignment: Alignment.bottomRight,
         children: [
@@ -127,9 +129,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scrollbar(
       controller: _scrollController,
       interactive: true,
-      child: CustomScrollView(
-        controller: _scrollController,
-        slivers: medias.entries
+      child: CustomScrollView(controller: _scrollController, slivers: [
+        const SliverToBoxAdapter(
+          child: HomeScreenHints(),
+        ),
+        ...medias.entries
             .map(
               (e) => SliverMainAxisGroup(
                 slivers: [
@@ -185,7 +189,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             )
             .toList(),
-      ),
+      ]),
     );
   }
 

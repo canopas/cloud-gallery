@@ -2,6 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as google_drive;
 
+final googleUserAccountProvider = StateProvider<GoogleSignInAccount?>((ref) {
+  final googleSignIn = ref.read(googleSignInProvider);
+  googleSignIn.signInSilently(suppressErrors: true);
+  final subscription = googleSignIn.onCurrentUserChanged.listen((account) {
+    ref.controller.state = account;
+  });
+  ref.onDispose(() async {
+    await subscription.cancel();
+  });
+  return googleSignIn.currentUser;
+});
+
 final googleSignInProvider = Provider(
   (ref) => GoogleSignIn(
     scopes: [google_drive.DriveApi.driveScope],
@@ -9,14 +21,24 @@ final googleSignInProvider = Provider(
 );
 
 final authServiceProvider = Provider<AuthService>(
-  (ref) => AuthService(ref.read(googleSignInProvider)),
+  (ref) => AuthService(
+    ref.read(googleSignInProvider),
+  ),
 );
 
 class AuthService {
   final GoogleSignIn _googleSignIn;
 
   AuthService(this._googleSignIn) {
-    _googleSignIn.signInSilently(suppressErrors: true);
+    signInSilently();
+  }
+
+  Future<void> signInSilently() async {
+    try {
+      await _googleSignIn.signInSilently(suppressErrors: true);
+    } catch (_) {
+      rethrow;
+    }
   }
 
   Future<void> signInWithGoogle() async {
@@ -38,7 +60,10 @@ class AuthService {
     }
   }
 
-  bool get hasUserSigned => _googleSignIn.currentUser != null;
+  bool get signedInWithGoogle => _googleSignIn.currentUser != null;
 
-  GoogleSignInAccount? get user => _googleSignIn.currentUser;
+  GoogleSignInAccount? get googleAccount => _googleSignIn.currentUser;
+
+  Stream<GoogleSignInAccount?> get onGoogleAccountChange =>
+      _googleSignIn.onCurrentUserChanged;
 }

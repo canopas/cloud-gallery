@@ -29,5 +29,13 @@
   "system_theme_text": "System",
 
   "add_account_title": "Add account",
-  "version_text": "Version"
+  "version_text": "Version",
+
+  "greetings_hey_there_text": "Hey There!",
+  "greetings_hey_text": "Hey",
+
+  "hint_google_sign_in_message": "Sign in with Google and effortlessly link your Google Drive to your Cloud Gallery. Enjoy quick access to all your awesome content in one spot",
+  "hint_google_auto_backup_message": "Enable Auto Back Up to Google Drive and never lose your precious memories. Your photos and videos will be automatically backed up to your Google Drive",
+  "hint_action_auto_backup": "Enable Auto Back Up"
+
 }
