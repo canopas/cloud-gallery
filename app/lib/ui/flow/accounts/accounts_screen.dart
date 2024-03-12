@@ -3,6 +3,7 @@ import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
 import 'package:cloud_gallery/ui/flow/accounts/accounts_screen_view_model.dart';
 import 'package:cloud_gallery/ui/flow/accounts/components/settings_action_list.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +44,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
         children: [
           if (googleAccount != null)
             AccountsTab(
-              name: googleAccount.displayName ?? "Anonymous",
+              name: googleAccount.displayName ?? googleAccount.email,
               serviceDescription: context.l10n.common_google_drive,
               profileImage: googleAccount.photoUrl,
               actionList: ActionList(buttons: [
@@ -51,11 +52,16 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                   title: context.l10n.common_auto_back_up,
                   trailing: Consumer(
                     builder: (context, ref, child) {
-                      final autoBackUp = ref.watch(accountsStateNotifierProvider
-                          .select((value) => value.autoBackUp));
+                      final googleDriveAutoBackUp = ref
+                          .watch(AppPreferences.canTakeAutoBackUpInGoogleDrive);
                       return AppSwitch(
-                        value: autoBackUp,
-                        onChanged: notifier.setAutoBackUp,
+                        value: googleDriveAutoBackUp,
+                        onChanged: (bool value) {
+                          ref
+                              .read(AppPreferences
+                                  .canTakeAutoBackUpInGoogleDrive.notifier)
+                              .state = value;
+                        },
                       );
                     },
                   ),

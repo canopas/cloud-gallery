@@ -95,7 +95,11 @@ class _AppMediaItemState extends State<AppMediaItem>
               height: 12,
               width: 12,
             ),
-          if (widget.isUploading) const AppCircularProgressIndicator(size: 12),
+          if (widget.isUploading)
+            const Padding(
+              padding: EdgeInsets.all(2),
+              child: AppCircularProgressIndicator(size: 12),
+            ),
         ],
       ),
     );

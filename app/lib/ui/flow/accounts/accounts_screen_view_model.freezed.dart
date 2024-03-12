@@ -19,7 +19,6 @@ mixin _$AccountsState {
   String? get version => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
-  bool get autoBackUp => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AccountsStateCopyWith<AccountsState> get copyWith =>
@@ -33,10 +32,7 @@ abstract class $AccountsStateCopyWith<$Res> {
       _$AccountsStateCopyWithImpl<$Res, AccountsState>;
   @useResult
   $Res call(
-      {String? version,
-      Object? error,
-      GoogleSignInAccount? googleAccount,
-      bool autoBackUp});
+      {String? version, Object? error, GoogleSignInAccount? googleAccount});
 }
 
 /// @nodoc
@@ -55,7 +51,6 @@ class _$AccountsStateCopyWithImpl<$Res, $Val extends AccountsState>
     Object? version = freezed,
     Object? error = freezed,
     Object? googleAccount = freezed,
-    Object? autoBackUp = null,
   }) {
     return _then(_value.copyWith(
       version: freezed == version
@@ -67,10 +62,6 @@ class _$AccountsStateCopyWithImpl<$Res, $Val extends AccountsState>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
-      autoBackUp: null == autoBackUp
-          ? _value.autoBackUp
-          : autoBackUp // ignore: cast_nullable_to_non_nullable
-              as bool,
     ) as $Val);
   }
 }
@@ -84,10 +75,7 @@ abstract class _$$AccountsStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? version,
-      Object? error,
-      GoogleSignInAccount? googleAccount,
-      bool autoBackUp});
+      {String? version, Object? error, GoogleSignInAccount? googleAccount});
 }
 
 /// @nodoc
@@ -104,7 +92,6 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
     Object? version = freezed,
     Object? error = freezed,
     Object? googleAccount = freezed,
-    Object? autoBackUp = null,
   }) {
     return _then(_$AccountsStateImpl(
       version: freezed == version
@@ -116,10 +103,6 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
-      autoBackUp: null == autoBackUp
-          ? _value.autoBackUp
-          : autoBackUp // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
@@ -127,8 +110,7 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AccountsStateImpl implements _AccountsState {
-  const _$AccountsStateImpl(
-      {this.version, this.error, this.googleAccount, this.autoBackUp = false});
+  const _$AccountsStateImpl({this.version, this.error, this.googleAccount});
 
   @override
   final String? version;
@@ -136,13 +118,10 @@ class _$AccountsStateImpl implements _AccountsState {
   final Object? error;
   @override
   final GoogleSignInAccount? googleAccount;
-  @override
-  @JsonKey()
-  final bool autoBackUp;
 
   @override
   String toString() {
-    return 'AccountsState(version: $version, error: $error, googleAccount: $googleAccount, autoBackUp: $autoBackUp)';
+    return 'AccountsState(version: $version, error: $error, googleAccount: $googleAccount)';
   }
 
   @override
@@ -153,14 +132,12 @@ class _$AccountsStateImpl implements _AccountsState {
             (identical(other.version, version) || other.version == version) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.googleAccount, googleAccount) ||
-                other.googleAccount == googleAccount) &&
-            (identical(other.autoBackUp, autoBackUp) ||
-                other.autoBackUp == autoBackUp));
+                other.googleAccount == googleAccount));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, version,
-      const DeepCollectionEquality().hash(error), googleAccount, autoBackUp);
+      const DeepCollectionEquality().hash(error), googleAccount);
 
   @JsonKey(ignore: true)
   @override
@@ -173,8 +150,7 @@ abstract class _AccountsState implements AccountsState {
   const factory _AccountsState(
       {final String? version,
       final Object? error,
-      final GoogleSignInAccount? googleAccount,
-      final bool autoBackUp}) = _$AccountsStateImpl;
+      final GoogleSignInAccount? googleAccount}) = _$AccountsStateImpl;
 
   @override
   String? get version;
@@ -182,8 +158,6 @@ abstract class _AccountsState implements AccountsState {
   Object? get error;
   @override
   GoogleSignInAccount? get googleAccount;
-  @override
-  bool get autoBackUp;
   @override
   @JsonKey(ignore: true)
   _$$AccountsStateImplCopyWith<_$AccountsStateImpl> get copyWith =>
