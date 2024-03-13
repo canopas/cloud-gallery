@@ -44,17 +44,16 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
             tag: widget.heroTag,
             child: SizedBox(
               width: double.infinity,
-              child: Visibility(
-                visible: !widget.isLocal,
-                replacement: Image.file(File.fromUri(Uri.parse(widget.url)),
-                    fit: BoxFit.fitWidth),
-                child: CachedNetworkImage(
-                  imageUrl: widget.url,
-                  fit: BoxFit.fitWidth,
-                  progressIndicatorBuilder: (context, child, loadingProgress) =>
-                      const AppCircularProgressIndicator(),
-                ),
-              ),
+              child: widget.isLocal
+                  ? Image.file(File.fromUri(Uri.parse(widget.url)),
+                      fit: BoxFit.fitWidth)
+                  : CachedNetworkImage(
+                      imageUrl: widget.url,
+                      fit: BoxFit.fitWidth,
+                      progressIndicatorBuilder:
+                          (context, child, loadingProgress) =>
+                              const AppCircularProgressIndicator(),
+                    ),
             ),
           ),
         ),

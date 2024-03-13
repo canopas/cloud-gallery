@@ -9,8 +9,11 @@ class AppMediaView {
       required AppMedia media,
       required String heroTag}) {
     if (media.type.isImage) {
+      final path = media.sources.contains(AppMediaSource.local)
+          ? media.path
+          : media.webContentLink;
       AppRouter.imagePreview(
-              path: media.path,
+              path: path!,
               heroTag: heroTag,
               isLocal: media.sources.contains(AppMediaSource.local))
           .push(context);
