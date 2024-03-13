@@ -13,7 +13,7 @@ class AppMediaItem extends StatefulWidget {
   final void Function()? onTap;
   final void Function()? onLongTap;
   final bool isSelected;
-  final bool isUploading;
+  final UploadStatus? status;
 
   const AppMediaItem({
     super.key,
@@ -21,7 +21,7 @@ class AppMediaItem extends StatefulWidget {
     this.onTap,
     this.onLongTap,
     this.isSelected = false,
-    this.isUploading = false,
+    this.status,
   });
 
   @override
@@ -34,16 +34,17 @@ class _AppMediaItemState extends State<AppMediaItem>
 
   @override
   void initState() {
-    if (widget.media.type.isVideo &&
-        widget.media.sources.contains(AppMediaSource.local)) {
-      // if (widget.media.sources.contains(AppMediaSource.local)) {
-      //   _videoPlayerController =
-      //       VideoPlayerController.file(File(widget.media.path))
-      //         ..initialize().then((_) {
-      //           setState(() {});
-      //         });
-      // }
-    }
+    ///TODO: Video view
+    // if (widget.media.type.isVideo &&
+    //     widget.media.sources.contains(AppMediaSource.local)) {
+    //
+    //      _videoPlayerController =
+    //          VideoPlayerController.file(File(widget.media.path))
+    //            ..initialize().then((_) {
+    //             setState(() {});
+    //            });
+    //
+    // }
     super.initState();
   }
 
@@ -65,13 +66,10 @@ class _AppMediaItemState extends State<AppMediaItem>
         child: Stack(
           alignment: Alignment.bottomLeft,
           children: [
-            widget.media.type.isVideo &&
-                    widget.media.sources.contains(AppMediaSource.local)
+            widget.media.type.isVideo && widget.media.thumbnailLink == null
                 ? _buildVideoView(context: context)
                 : _buildImageView(context: context),
-            if (widget.media.sources.contains(AppMediaSource.googleDrive) ||
-                widget.isUploading)
-              _sourceIndicators(context: context),
+            _sourceIndicators(context: context),
           ],
         ),
       ),
@@ -79,29 +77,40 @@ class _AppMediaItemState extends State<AppMediaItem>
   }
 
   Widget _sourceIndicators({required BuildContext context}) {
-    return Container(
-      margin: const EdgeInsets.all(4),
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: context.colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.media.sources.contains(AppMediaSource.googleDrive))
-            SvgPicture.asset(
-              Assets.images.icons.googlePhotos,
-              height: 12,
-              width: 12,
+    return Row(
+      children: [
+        if (widget.media.sources.contains(AppMediaSource.googleDrive))
+          Container(
+            margin: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: context.colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
             ),
-          if (widget.isUploading)
-            const Padding(
-              padding: EdgeInsets.all(2),
-              child: AppCircularProgressIndicator(size: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.media.sources.contains(AppMediaSource.googleDrive))
+                  SvgPicture.asset(
+                    Assets.images.icons.googlePhotos,
+                    height: 12,
+                    width: 12,
+                  ),
+              ],
             ),
-        ],
-      ),
+          ),
+        if (widget.status == UploadStatus.uploading)
+          AppCircularProgressIndicator(
+            size: 22,
+            color: context.colorScheme.onPrimary,
+          ),
+        if (widget.status == UploadStatus.waiting)
+          Icon(
+            CupertinoIcons.time,
+            size: 22,
+            color: context.colorScheme.onPrimary,
+          ),
+      ],
     );
   }
 
@@ -115,7 +124,7 @@ class _AppMediaItemState extends State<AppMediaItem>
                 width: constraints.maxWidth.toInt(),
                 policy: ResizeImagePolicy.fit,
               )
-            : CachedNetworkImageProvider(widget.media.thumbnailPath!)
+            : CachedNetworkImageProvider(widget.media.thumbnailLink!)
                 as ImageProvider,
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {

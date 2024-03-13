@@ -1,7 +1,9 @@
 import 'package:cloud_gallery/components/app_page.dart';
+import 'package:cloud_gallery/ui/flow/media_preview/media_preview.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
 import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
+import 'package:collection/collection.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +126,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildMediaList(
       {required BuildContext context,
       required Map<DateTime, List<AppMedia>> medias,
-      required List<String> uploadingMedias,
+      required List<UploadProgress> uploadingMedias,
       required List<AppMedia> selectedMedias}) {
     return Scrollbar(
       controller: _scrollController,
@@ -161,19 +163,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     sliver: SliverGrid.builder(
                       itemBuilder: (context, index) {
                         final media = e.value[index];
-                        return AppMediaItem(
-                          key: ValueKey(media.id),
-                          onTap: () {
-                            if (selectedMedias.isNotEmpty) {
+                        return Hero(
+                          tag: "${AppRoutePath.home}/${media.id}",
+                          child: AppMediaItem(
+                            key: ValueKey(media.id),
+                            onTap: () {
+                              if (selectedMedias.isNotEmpty) {
+                                notifier.toggleMediaSelection(media);
+                              } else {
+                                AppMediaView.showPreview(
+                                  context: context,
+                                  media: media,
+                                  heroTag: "${AppRoutePath.home}/${media.id}",
+                                );
+                              }
+                            },
+                            onLongTap: () {
                               notifier.toggleMediaSelection(media);
-                            }
-                          },
-                          onLongTap: () {
-                            notifier.toggleMediaSelection(media);
-                          },
-                          isSelected: selectedMedias.contains(media),
-                          isUploading: uploadingMedias.contains(media.id),
-                          media: media,
+                            },
+                            isSelected: selectedMedias.contains(media),
+                            status: uploadingMedias
+                                .firstWhereOrNull(
+                                    (element) => element.mediaId == media.id)
+                                ?.status,
+                            media: media,
+                          ),
                         );
                       },
                       itemCount: e.value.length,
@@ -189,6 +203,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             )
             .toList(),
+        SliverToBoxAdapter(
+          child: SizedBox(height: context.systemPadding.bottom),
+        ),
       ]),
     );
   }

@@ -23,7 +23,8 @@ mixin _$HomeViewState {
   Map<DateTime, List<AppMedia>> get medias =>
       throw _privateConstructorUsedError;
   List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
-  List<String> get uploadingMedias => throw _privateConstructorUsedError;
+  List<UploadProgress> get uploadingMedias =>
+      throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeViewStateCopyWith<HomeViewState> get copyWith =>
@@ -43,7 +44,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
       GoogleSignInAccount? googleAccount,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<String> uploadingMedias});
+      List<UploadProgress> uploadingMedias});
 }
 
 /// @nodoc
@@ -92,7 +93,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       uploadingMedias: null == uploadingMedias
           ? _value.uploadingMedias
           : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<UploadProgress>,
     ) as $Val);
   }
 }
@@ -112,7 +113,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       GoogleSignInAccount? googleAccount,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<String> uploadingMedias});
+      List<UploadProgress> uploadingMedias});
 }
 
 /// @nodoc
@@ -159,7 +160,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
       uploadingMedias: null == uploadingMedias
           ? _value._uploadingMedias
           : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<UploadProgress>,
     ));
   }
 }
@@ -174,7 +175,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.googleAccount,
       final Map<DateTime, List<AppMedia>> medias = const {},
       final List<AppMedia> selectedMedias = const [],
-      final List<String> uploadingMedias = const []})
+      final List<UploadProgress> uploadingMedias = const []})
       : _medias = medias,
         _selectedMedias = selectedMedias,
         _uploadingMedias = uploadingMedias;
@@ -207,10 +208,10 @@ class _$HomeViewStateImpl implements _HomeViewState {
     return EqualUnmodifiableListView(_selectedMedias);
   }
 
-  final List<String> _uploadingMedias;
+  final List<UploadProgress> _uploadingMedias;
   @override
   @JsonKey()
-  List<String> get uploadingMedias {
+  List<UploadProgress> get uploadingMedias {
     if (_uploadingMedias is EqualUnmodifiableListView) return _uploadingMedias;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_uploadingMedias);
@@ -265,7 +266,7 @@ abstract class _HomeViewState implements HomeViewState {
       final GoogleSignInAccount? googleAccount,
       final Map<DateTime, List<AppMedia>> medias,
       final List<AppMedia> selectedMedias,
-      final List<String> uploadingMedias}) = _$HomeViewStateImpl;
+      final List<UploadProgress> uploadingMedias}) = _$HomeViewStateImpl;
 
   @override
   Object? get error;
@@ -280,7 +281,7 @@ abstract class _HomeViewState implements HomeViewState {
   @override
   List<AppMedia> get selectedMedias;
   @override
-  List<String> get uploadingMedias;
+  List<UploadProgress> get uploadingMedias;
   @override
   @JsonKey(ignore: true)
   _$$HomeViewStateImplCopyWith<_$HomeViewStateImpl> get copyWith =>

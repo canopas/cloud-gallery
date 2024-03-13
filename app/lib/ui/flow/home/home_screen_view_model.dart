@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_gallery/domain/extensions/date_extensions.dart';
 import 'package:collection/collection.dart';
+import 'package:data/errors/app_error.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
@@ -39,11 +40,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
   StreamSubscription? _googleAccountSubscription;
   bool _isAutoBackUpEnabled = false;
   bool _isAutoBackUpWorking = false;
-
-  String? _backUpFolderId;
-  List<AppMedia> _localMedias = [];
-  int? _localMediaCount;
   bool _loading = false;
+  String? _backUpFolderId;
+  int? _localMediaCount;
+  List<AppMedia> _localMedias = [];
   List<AppMedia> _googleDriveMedias = [];
 
   HomeViewStateNotifier(this._localMediaService, this._googleDriveService,
@@ -53,8 +53,13 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
         _authService.onGoogleAccountChange.listen((event) {
       state = state.copyWith(googleAccount: event);
       loadMedias();
+      if (_isAutoBackUpEnabled && !_isAutoBackUpWorking && event != null) {
+        _autoBackUpMedias();
+      }
     });
-    if (_isAutoBackUpEnabled) {
+    if (_isAutoBackUpEnabled &&
+        !_isAutoBackUpWorking &&
+        state.googleAccount != null) {
       _autoBackUpMedias();
     }
     loadMedias();
@@ -68,21 +73,49 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
 
   Future<void> _autoBackUpMedias() async {
     _backUpFolderId ??= await _googleDriveService.getBackupFolderId();
+
+    final backUpQueue = state.medias.values
+        .expand((element) => element)
+        .where(
+            (element) => !element.sources.contains(AppMediaSource.googleDrive))
+        .toList();
+
+    state = state.copyWith(
+      uploadingMedias: backUpQueue
+          .map((e) =>
+              UploadProgress(mediaId: e.id, status: UploadStatus.waiting))
+          .toList(),
+      error: null,
+    );
+
     _isAutoBackUpWorking = true;
-    for (final media in state.medias.values.expand((element) => element)) {
-      if (!_isAutoBackUpEnabled) {
-        _isAutoBackUpWorking = false;
-        return;
-      }
-      if (!media.sources.contains(AppMediaSource.googleDrive)) {
+
+    for (final media in backUpQueue) {
+      try {
+        if (!_isAutoBackUpEnabled) {
+          _isAutoBackUpWorking = false;
+          state = state.copyWith(
+            uploadingMedias: [],
+          );
+          return;
+        }
+
         state = state.copyWith(
-            uploadingMedias: state.uploadingMedias.toList()..add(media.id));
+          uploadingMedias: state.uploadingMedias.toList()
+            ..updateElement(
+                newElement: UploadProgress(
+                    mediaId: media.id, status: UploadStatus.uploading),
+                oldElement: UploadProgress(
+                    mediaId: media.id, status: UploadStatus.waiting)),
+        );
+
         await _googleDriveService.uploadInGoogleDrive(
           media: media,
           folderID: _backUpFolderId!,
         );
         state = state.copyWith(
-          uploadingMedias: state.uploadingMedias.toList()..remove(media.id),
+          uploadingMedias: state.uploadingMedias.toList()
+            ..removeWhere((element) => element.mediaId == media.id),
           medias: state.medias.map((key, value) {
             value.updateElement(
                 newElement: media.copyWith(
@@ -91,6 +124,16 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
                 oldElement: media);
             return MapEntry(key, value);
           }),
+        );
+      } catch (error) {
+        if (error is BackUpFolderNotFound) {
+          _backUpFolderId = await _googleDriveService.getBackupFolderId();
+          _autoBackUpMedias();
+        }
+        state = state.copyWith(
+          error: error,
+          uploadingMedias: state.uploadingMedias.toList()
+            ..removeWhere((element) => element.mediaId == media.id),
         );
       }
     }
@@ -153,8 +196,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
             .removeWhere((media) => media.id == googleDriveMedia.id);
         _localMedias.removeWhere((media) => media.id == localMedia.id);
         commonMedias.add(localMedia.copyWith(
-            sources: [AppMediaSource.local, AppMediaSource.googleDrive],
-            thumbnailPath: googleDriveMedia.thumbnailPath));
+          sources: [AppMediaSource.local, AppMediaSource.googleDrive],
+          thumbnailLink: googleDriveMedia.thumbnailLink,
+          webContentLink: googleDriveMedia.webContentLink,
+        ));
       });
     }
 
@@ -214,12 +259,23 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
           .toList();
 
       state = state.copyWith(
-        uploadingMedias: uploadingMedias.map((e) => e.id).toList(),
+        uploadingMedias: uploadingMedias
+            .map((e) =>
+                UploadProgress(mediaId: e.id, status: UploadStatus.waiting))
+            .toList(),
         error: null,
       );
       _backUpFolderId ??= await _googleDriveService.getBackupFolderId();
 
       for (final media in uploadingMedias) {
+        state = state.copyWith(
+          uploadingMedias: state.uploadingMedias.toList()
+            ..updateElement(
+                newElement: UploadProgress(
+                    mediaId: media.id, status: UploadStatus.uploading),
+                oldElement: UploadProgress(
+                    mediaId: media.id, status: UploadStatus.waiting)),
+        );
         await _googleDriveService.uploadInGoogleDrive(
           media: media,
           folderID: _backUpFolderId!,
@@ -234,12 +290,18 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
                 oldElement: media);
             return MapEntry(key, value);
           }),
-          uploadingMedias: state.uploadingMedias.toList()..remove(media.id),
+          uploadingMedias: state.uploadingMedias.toList()
+            ..removeWhere((element) => element.mediaId == media.id),
         );
       }
 
       state = state.copyWith(uploadingMedias: [], selectedMedias: []);
     } catch (error) {
+      if (error is BackUpFolderNotFound) {
+        _backUpFolderId = await _googleDriveService.getBackupFolderId();
+        uploadMediaOnGoogleDrive();
+        return;
+      }
       state = state.copyWith(error: error, uploadingMedias: []);
     }
   }
@@ -254,6 +316,6 @@ class HomeViewState with _$HomeViewState {
     GoogleSignInAccount? googleAccount,
     @Default({}) Map<DateTime, List<AppMedia>> medias,
     @Default([]) List<AppMedia> selectedMedias,
-    @Default([]) List<String> uploadingMedias,
+    @Default([]) List<UploadProgress> uploadingMedias,
   }) = _HomeViewState;
 }

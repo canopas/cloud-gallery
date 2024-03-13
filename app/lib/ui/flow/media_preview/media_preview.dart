@@ -15,7 +15,11 @@ class AppMediaView {
               isLocal: media.sources.contains(AppMediaSource.local))
           .push(context);
     } else if (media.type.isVideo) {
-
+      AppRouter.videoPreview(
+              path: media.path,
+              heroTag: heroTag,
+              isLocal: media.sources.contains(AppMediaSource.local))
+          .push(context);
     } else {
       showErrorSnackBar(context: context, error: 'Unable to open attachment');
     }

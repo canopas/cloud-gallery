@@ -14,6 +14,7 @@
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Something went wrong! Please try again later.",
   "user_google_sign_in_account_not_found_error": "You haven't signed in with Google account yet. Please sign in with Google account and try again.",
+  "back_up_folder_not_found_error": "Back up folder not found!",
 
   "on_board_description": "Effortlessly move, share, and organize your photos and videos in a breeze. Access all your clouds in one friendly place. Your moments, your way, simplified for you! 🚀",
 
