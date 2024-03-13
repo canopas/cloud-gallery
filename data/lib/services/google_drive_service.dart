@@ -13,8 +13,6 @@ final googleDriveServiceProvider = Provider<GoogleDriveService>(
 
 class GoogleDriveService {
   final String _backUpFolderName = "Cloud Gallery Backup";
-  final String _backUpFolderDescription =
-      "This folder is used to backup media from Cloud Gallery";
 
   final GoogleSignIn _googleSignIn;
 
@@ -25,7 +23,9 @@ class GoogleDriveService {
       throw const UserGoogleSignInAccountNotFound();
     }
     final client = await _googleSignIn.authenticatedClient();
-    return drive.DriveApi(client!);
+    final api = drive.DriveApi(client!);
+    client.close();
+    return api;
   }
 
   Future<String?> getBackupFolderId() async {
@@ -33,16 +33,14 @@ class GoogleDriveService {
       final driveApi = await _getGoogleDriveAPI();
 
       final response = await driveApi.files.list(
-        q: "name='$_backUpFolderName' and mimeType='application/vnd.google-apps.folder'",
+        q: "name='$_backUpFolderName' and trashed=false and mimeType='application/vnd.google-apps.folder'",
       );
 
-      if (response.files?.isNotEmpty ??
-          false || response.files?.first.trashed == false) {
+      if (response.files?.isNotEmpty ?? false) {
         return response.files?.first.id;
       } else {
         final folder = drive.File(
           name: _backUpFolderName,
-          description: _backUpFolderDescription,
           mimeType: 'application/vnd.google-apps.folder',
         );
         final googleDriveFolder = await driveApi.files.create(folder);
@@ -90,6 +88,9 @@ class GoogleDriveService {
         uploadMedia: drive.Media(localFile.openRead(), localFile.lengthSync()),
       );
     } catch (error) {
+      if (error is drive.DetailedApiRequestError && error.status == 404) {
+        throw const BackUpFolderNotFound();
+      }
       throw AppError.fromError(error);
     }
   }

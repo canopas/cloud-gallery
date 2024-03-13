@@ -6,6 +6,15 @@ part 'media.freezed.dart';
 
 part 'media.g.dart';
 
+enum UploadStatus { uploading, waiting, none, failed, success }
+
+class UploadProgress {
+  final String mediaId;
+  final UploadStatus status;
+
+  UploadProgress({required this.mediaId, required this.status});
+}
+
 enum AppMediaType {
   image,
   video,
@@ -76,8 +85,9 @@ class AppMedia with _$AppMedia {
   const factory AppMedia({
     required String id,
     String? name,
+    String? webContentLink,
     required String path,
-    String? thumbnailPath,
+    String? thumbnailLink,
     double? displayHeight,
     double? displayWidth,
     required AppMediaType type,
@@ -98,7 +108,7 @@ class AppMedia with _$AppMedia {
   factory AppMedia.fromGoogleDriveFile(drive.File file) {
     final type = AppMediaType.getType(
         mimeType: file.mimeType,
-        location: file.thumbnailLink ?? file.description ?? '');
+        location: file.webContentLink ?? file.description ?? '');
 
     final height = type.isImage
         ? file.imageMediaMetadata?.height?.toDouble()
@@ -120,11 +130,11 @@ class AppMedia with _$AppMedia {
                 milliseconds:
                     int.parse(file.videoMediaMetadata?.durationMillis ?? '0'))
             : null;
-
     return AppMedia(
       id: file.id!,
+      webContentLink: file.webContentLink,
       path: file.description ?? file.thumbnailLink ?? '',
-      thumbnailPath: file.thumbnailLink,
+      thumbnailLink: file.thumbnailLink,
       name: file.name,
       createdTime: file.createdTime,
       modifiedTime: file.modifiedTime,
@@ -135,6 +145,8 @@ class AppMedia with _$AppMedia {
       displayWidth: width,
       videoDuration: videoDuration,
       orientation: orientation,
+      latitude: file.imageMediaMetadata?.location?.latitude,
+      longitude: file.imageMediaMetadata?.location?.longitude,
       sources: [AppMediaSource.googleDrive],
     );
   }
@@ -149,6 +161,7 @@ class AppMedia with _$AppMedia {
     return AppMedia(
       id: asset.id,
       path: file.path,
+      name: asset.title,
       mimeType: asset.mimeType,
       size: length.toString(),
       type: type,

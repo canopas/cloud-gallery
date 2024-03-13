@@ -22,8 +22,9 @@ AppMedia _$AppMediaFromJson(Map<String, dynamic> json) {
 mixin _$AppMedia {
   String get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
+  String? get webContentLink => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
-  String? get thumbnailPath => throw _privateConstructorUsedError;
+  String? get thumbnailLink => throw _privateConstructorUsedError;
   double? get displayHeight => throw _privateConstructorUsedError;
   double? get displayWidth => throw _privateConstructorUsedError;
   AppMediaType get type => throw _privateConstructorUsedError;
@@ -51,8 +52,9 @@ abstract class $AppMediaCopyWith<$Res> {
   $Res call(
       {String id,
       String? name,
+      String? webContentLink,
       String path,
-      String? thumbnailPath,
+      String? thumbnailLink,
       double? displayHeight,
       double? displayWidth,
       AppMediaType type,
@@ -82,8 +84,9 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? webContentLink = freezed,
     Object? path = null,
-    Object? thumbnailPath = freezed,
+    Object? thumbnailLink = freezed,
     Object? displayHeight = freezed,
     Object? displayWidth = freezed,
     Object? type = null,
@@ -106,13 +109,17 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      webContentLink: freezed == webContentLink
+          ? _value.webContentLink
+          : webContentLink // ignore: cast_nullable_to_non_nullable
+              as String?,
       path: null == path
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
               as String,
-      thumbnailPath: freezed == thumbnailPath
-          ? _value.thumbnailPath
-          : thumbnailPath // ignore: cast_nullable_to_non_nullable
+      thumbnailLink: freezed == thumbnailLink
+          ? _value.thumbnailLink
+          : thumbnailLink // ignore: cast_nullable_to_non_nullable
               as String?,
       displayHeight: freezed == displayHeight
           ? _value.displayHeight
@@ -177,8 +184,9 @@ abstract class _$$AppMediaImplCopyWith<$Res>
   $Res call(
       {String id,
       String? name,
+      String? webContentLink,
       String path,
-      String? thumbnailPath,
+      String? thumbnailLink,
       double? displayHeight,
       double? displayWidth,
       AppMediaType type,
@@ -206,8 +214,9 @@ class __$$AppMediaImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? webContentLink = freezed,
     Object? path = null,
-    Object? thumbnailPath = freezed,
+    Object? thumbnailLink = freezed,
     Object? displayHeight = freezed,
     Object? displayWidth = freezed,
     Object? type = null,
@@ -230,13 +239,17 @@ class __$$AppMediaImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      webContentLink: freezed == webContentLink
+          ? _value.webContentLink
+          : webContentLink // ignore: cast_nullable_to_non_nullable
+              as String?,
       path: null == path
           ? _value.path
           : path // ignore: cast_nullable_to_non_nullable
               as String,
-      thumbnailPath: freezed == thumbnailPath
-          ? _value.thumbnailPath
-          : thumbnailPath // ignore: cast_nullable_to_non_nullable
+      thumbnailLink: freezed == thumbnailLink
+          ? _value.thumbnailLink
+          : thumbnailLink // ignore: cast_nullable_to_non_nullable
               as String?,
       displayHeight: freezed == displayHeight
           ? _value.displayHeight
@@ -296,8 +309,9 @@ class _$AppMediaImpl implements _AppMedia {
   const _$AppMediaImpl(
       {required this.id,
       this.name,
+      this.webContentLink,
       required this.path,
-      this.thumbnailPath,
+      this.thumbnailLink,
       this.displayHeight,
       this.displayWidth,
       required this.type,
@@ -320,9 +334,11 @@ class _$AppMediaImpl implements _AppMedia {
   @override
   final String? name;
   @override
+  final String? webContentLink;
+  @override
   final String path;
   @override
-  final String? thumbnailPath;
+  final String? thumbnailLink;
   @override
   final double? displayHeight;
   @override
@@ -356,7 +372,7 @@ class _$AppMediaImpl implements _AppMedia {
 
   @override
   String toString() {
-    return 'AppMedia(id: $id, name: $name, path: $path, thumbnailPath: $thumbnailPath, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
+    return 'AppMedia(id: $id, name: $name, webContentLink: $webContentLink, path: $path, thumbnailLink: $thumbnailLink, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
   }
 
   @override
@@ -366,9 +382,11 @@ class _$AppMediaImpl implements _AppMedia {
             other is _$AppMediaImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.webContentLink, webContentLink) ||
+                other.webContentLink == webContentLink) &&
             (identical(other.path, path) || other.path == path) &&
-            (identical(other.thumbnailPath, thumbnailPath) ||
-                other.thumbnailPath == thumbnailPath) &&
+            (identical(other.thumbnailLink, thumbnailLink) ||
+                other.thumbnailLink == thumbnailLink) &&
             (identical(other.displayHeight, displayHeight) ||
                 other.displayHeight == displayHeight) &&
             (identical(other.displayWidth, displayWidth) ||
@@ -398,8 +416,9 @@ class _$AppMediaImpl implements _AppMedia {
       runtimeType,
       id,
       name,
+      webContentLink,
       path,
-      thumbnailPath,
+      thumbnailLink,
       displayHeight,
       displayWidth,
       type,
@@ -431,8 +450,9 @@ abstract class _AppMedia implements AppMedia {
   const factory _AppMedia(
       {required final String id,
       final String? name,
+      final String? webContentLink,
       required final String path,
-      final String? thumbnailPath,
+      final String? thumbnailLink,
       final double? displayHeight,
       final double? displayWidth,
       required final AppMediaType type,
@@ -454,9 +474,11 @@ abstract class _AppMedia implements AppMedia {
   @override
   String? get name;
   @override
+  String? get webContentLink;
+  @override
   String get path;
   @override
-  String? get thumbnailPath;
+  String? get thumbnailLink;
   @override
   double? get displayHeight;
   @override

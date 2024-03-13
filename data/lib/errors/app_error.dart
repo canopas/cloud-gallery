@@ -41,6 +41,13 @@ class UserGoogleSignInAccountNotFound extends AppError {
                 "User google signed in account not found. Please sign in again");
 }
 
+class BackUpFolderNotFound extends AppError {
+  const BackUpFolderNotFound()
+      : super(
+            l10nCode: AppErrorL10nCodes.backUpFolderNotFound,
+            message: "Back up folder not found");
+}
+
 class SomethingWentWrongError extends AppError {
   const SomethingWentWrongError({String? message, String? statusCode})
       : super(
