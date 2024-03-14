@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
 import 'ui/app.dart';
 
 Future<void> main() async {
@@ -22,6 +23,16 @@ Future<void> main() async {
   }
 
   final container = await _configureContainerWithAsyncDependency();
+
+  Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
+  Workmanager().registerPeriodicTask(
+    initialDelay: const Duration(seconds: 10),
+      frequency: const Duration(seconds: 10),
+      "auto-back-up", "google-drive-auto-back-up",
+      tag: "google-drive-auto-back-up");
 
   runApp(
     UncontrolledProviderScope(
@@ -39,4 +50,19 @@ Future<ProviderContainer> _configureContainerWithAsyncDependency() async {
     ],
   );
   return container;
+}
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    for (var i = 1; i <= 15; i++) {
+      await Future.delayed(const Duration(seconds: 1));
+      print("Second: $i");
+    }
+
+    print("background service: code 2306");
+   final instance = await SharedPreferences.getInstance();
+   instance.setBool("is_onboard_complete", false);
+    return Future.value(true);
+  });
 }

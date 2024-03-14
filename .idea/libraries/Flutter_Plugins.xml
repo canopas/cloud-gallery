@@ -29,6 +29,10 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_ios-5.7.4" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager-3.0.0" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_displaymode-0.6.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_background_service_android-6.2.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_background_service-5.0.5" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_background_service_ios-5.0.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/workmanager-0.5.2" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
