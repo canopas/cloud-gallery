@@ -29,9 +29,10 @@ Future<void> main() async {
     isInDebugMode: true,
   );
   Workmanager().registerPeriodicTask(
-    initialDelay: const Duration(seconds: 10),
+      initialDelay: const Duration(seconds: 10),
       frequency: const Duration(seconds: 10),
-      "auto-back-up", "google-drive-auto-back-up",
+      "auto-back-up",
+      "google-drive-auto-back-up",
       tag: "google-drive-auto-back-up");
 
   runApp(
@@ -55,14 +56,7 @@ Future<ProviderContainer> _configureContainerWithAsyncDependency() async {
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    for (var i = 1; i <= 15; i++) {
-      await Future.delayed(const Duration(seconds: 1));
-      print("Second: $i");
-    }
-
-    print("background service: code 2306");
-   final instance = await SharedPreferences.getInstance();
-   instance.setBool("is_onboard_complete", false);
+    debugPrint("Native called background task: $task");
     return Future.value(true);
   });
 }

@@ -64,7 +64,6 @@ class GoogleDriveAutoBackUpRepo {
     final mediaCount = await _localMediaService.getMediaCount();
     final localMedias =
         await _localMediaService.getLocalMedia(start: 0, end: mediaCount);
-    print("localMedias: $localMedias");
     final googleDriveMedias = await _googleDriveService.getDriveMedias(
         backUpFolderId: backUpFolderId);
     final Set<String> googleDrivePaths =
