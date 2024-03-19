@@ -47,7 +47,7 @@ dependencies:
   # core
   firebase_core: ^2.24.2
   collection: ^1.18.0
-  workmanager: ^0.5.2
+  background_fetch: ^1.2.4
 
   # storage
   shared_preferences: ^2.2.2

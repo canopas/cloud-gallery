@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:background_fetch/background_fetch.dart';
 import 'package:cloud_gallery/firebase_options.dart';
 import 'package:data/storage/provider/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
+
 import 'ui/app.dart';
 
 Future<void> main() async {
@@ -24,16 +25,7 @@ Future<void> main() async {
 
   final container = await _configureContainerWithAsyncDependency();
 
-  Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true,
-  );
-  Workmanager().registerPeriodicTask(
-      initialDelay: const Duration(seconds: 10),
-      frequency: const Duration(seconds: 10),
-      "auto-back-up",
-      "google-drive-auto-back-up",
-      tag: "google-drive-auto-back-up");
+  _backgroundFetchTaskConfigure();
 
   runApp(
     UncontrolledProviderScope(
@@ -53,10 +45,43 @@ Future<ProviderContainer> _configureContainerWithAsyncDependency() async {
   return container;
 }
 
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    debugPrint("Native called background task: $task");
-    return Future.value(true);
+Future<void> _backgroundFetchTaskConfigure() async {
+  // Register to receive BackgroundFetch events after app is terminated.
+  await BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  // Optionally configure the plugin by setting the minimum time between
+  BackgroundFetch.configure(
+      BackgroundFetchConfig(
+        minimumFetchInterval: 15,
+        stopOnTerminate: false,
+        enableHeadless: true,
+        forceAlarmManager: true,
+      ), (String taskId) async {
+    if (taskId == 'com.canopas.googleDriveBackUp') {
+      for (var i = 0; i < 10; i++) {
+        print('BackgroundFetch: $i');
+        await Future.delayed(const Duration(seconds: 1));
+      }
+      final pref = await SharedPreferences.getInstance();
+      await pref.setBool('is_onboard_complete', false);
+      BackgroundFetch.finish(taskId);
+    }
+  }, (String taskId) async {
+    print("[BackgroundFetch Configure] taskId: $taskId timed out.");
   });
+  await BackgroundFetch.scheduleTask(TaskConfig(
+    taskId: 'com.canopas.googleDriveBackUp',
+    stopOnTerminate: false,
+    periodic: true,
+    enableHeadless: true,
+    forceAlarmManager: true,
+    delay: 0,
+  ));
+}
+
+@pragma('vm:entry-point')
+void backgroundFetchHeadlessTask(HeadlessTask task) async {
+  String taskId = task.taskId;
+  final pref = await SharedPreferences.getInstance();
+  await pref.setBool('is_onboard_complete', false);
+  BackgroundFetch.finish(taskId);
 }
