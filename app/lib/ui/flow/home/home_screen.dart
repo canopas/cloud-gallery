@@ -100,26 +100,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else if (medias.isEmpty && !hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
     }
-    return RefreshIndicator.adaptive(
-      onRefresh: () async {
-        await notifier.loadMedias();
-      },
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          _buildMediaList(
-            context: context,
-            medias: medias,
-            uploadingMedias: uploadingMedias,
-            selectedMedias: selectedMedias,
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        _buildMediaList(
+          context: context,
+          medias: medias,
+          uploadingMedias: uploadingMedias,
+          selectedMedias: selectedMedias,
+        ),
+        if (selectedMedias.isNotEmpty)
+          Padding(
+            padding: context.systemPadding + const EdgeInsets.all(16),
+            child: const MultiSelectionDoneButton(),
           ),
-          if (selectedMedias.isNotEmpty)
-            Padding(
-              padding: context.systemPadding + const EdgeInsets.all(16),
-              child: const MultiSelectionDoneButton(),
-            ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -135,74 +130,70 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         const SliverToBoxAdapter(
           child: HomeScreenHints(),
         ),
-        ...medias.entries
-            .map(
-              (e) => SliverMainAxisGroup(
-                slivers: [
-                  SliverPersistentHeader(
-                    delegate: SliverStickyHeaderDelegate(
-                      header: Container(
-                        padding: const EdgeInsets.only(left: 16),
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                          color: context.colorScheme.surface,
-                        ),
-                        child: Text(
-                          DateFormat("d MMMM, y").format(e.key),
-                          style: AppTextStyles.subtitle1.copyWith(
-                            color: context.colorScheme.textPrimary,
-                          ),
-                        ),
-                      ),
+        ...medias.entries.map((e) {
+          return SliverMainAxisGroup(
+            slivers: [
+              SliverPersistentHeader(
+                delegate: SliverStickyHeaderDelegate(
+                  header: Container(
+                    padding: const EdgeInsets.only(left: 16),
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.surface,
                     ),
-                    pinned: true,
-                  ),
-                  SliverPadding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                    sliver: SliverGrid.builder(
-                      itemBuilder: (context, index) {
-                        final media = e.value[index];
-                        return Hero(
-                          tag: "${AppRoutePath.home}/${media.id}",
-                          child: AppMediaItem(
-                            key: ValueKey(media.id),
-                            onTap: () {
-                              if (selectedMedias.isNotEmpty) {
-                                notifier.toggleMediaSelection(media);
-                              } else {
-                                AppMediaView.showPreview(
-                                  context: context,
-                                  media: media,
-                                  heroTag: "${AppRoutePath.home}/${media.id}",
-                                );
-                              }
-                            },
-                            onLongTap: () {
-                              notifier.toggleMediaSelection(media);
-                            },
-                            isSelected: selectedMedias.contains(media),
-                            status: uploadingMedias
-                                .firstWhereOrNull(
-                                    (element) => element.mediaId == media.id)
-                                ?.status,
-                            media: media,
-                          ),
-                        );
-                      },
-                      itemCount: e.value.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 4,
-                        mainAxisSpacing: 4,
+                    child: Text(
+                      DateFormat("d MMMM, y").format(e.key),
+                      style: AppTextStyles.subtitle1.copyWith(
+                        color: context.colorScheme.textPrimary,
                       ),
                     ),
                   ),
-                ],
+                ),
+                pinned: true,
               ),
-            )
-            .toList(),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                sliver: SliverGrid.builder(
+                  itemBuilder: (context, index) {
+                    final media = e.value[index];
+                    return Hero(
+                      tag: "${AppRoutePath.home}/${media.id}",
+                      child: AppMediaItem(
+                        key: ValueKey(media.id),
+                        onTap: () {
+                          if (selectedMedias.isNotEmpty) {
+                            notifier.toggleMediaSelection(media);
+                          } else {
+                            AppMediaView.showPreview(
+                              context: context,
+                              media: media,
+                              heroTag: "${AppRoutePath.home}/${media.id}",
+                            );
+                          }
+                        },
+                        onLongTap: () {
+                          notifier.toggleMediaSelection(media);
+                        },
+                        isSelected: selectedMedias.contains(media),
+                        status: uploadingMedias
+                            .firstWhereOrNull(
+                                (element) => element.mediaId == media.id)
+                            ?.status,
+                        media: media,
+                      ),
+                    );
+                  },
+                  itemCount: e.value.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                  ),
+                ),
+              ),
+            ],
+          );
+        }).toList(),
         SliverToBoxAdapter(
           child: SizedBox(height: context.systemPadding.bottom),
         ),

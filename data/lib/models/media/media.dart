@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
 import 'package:photo_manager/photo_manager.dart' show AssetEntity;
@@ -13,6 +14,16 @@ class UploadProgress {
   final UploadStatus status;
 
   UploadProgress({required this.mediaId, required this.status});
+
+  @override
+  bool operator ==(Object other) {
+    return other is UploadProgress &&
+        other.mediaId == mediaId &&
+        other.status == status;
+  }
+
+  @override
+  int get hashCode => mediaId.hashCode ^ status.hashCode;
 }
 
 enum AppMediaType {
@@ -85,7 +96,6 @@ class AppMedia with _$AppMedia {
   const factory AppMedia({
     required String id,
     String? name,
-    String? webContentLink,
     required String path,
     String? thumbnailLink,
     double? displayHeight,
@@ -108,7 +118,7 @@ class AppMedia with _$AppMedia {
   factory AppMedia.fromGoogleDriveFile(drive.File file) {
     final type = AppMediaType.getType(
         mimeType: file.mimeType,
-        location: file.webContentLink ?? file.description ?? '');
+        location: file.description ?? '');
 
     final height = type.isImage
         ? file.imageMediaMetadata?.height?.toDouble()
@@ -132,7 +142,6 @@ class AppMedia with _$AppMedia {
             : null;
     return AppMedia(
       id: file.id!,
-      webContentLink: file.webContentLink,
       path: file.description ?? file.thumbnailLink ?? '',
       thumbnailLink: file.thumbnailLink,
       name: file.name,
@@ -177,5 +186,11 @@ class AppMedia with _$AppMedia {
       displayHeight: asset.size.height,
       displayWidth: asset.size.width,
     );
+  }
+}
+
+extension AppMediaExtension on AppMedia {
+  Future<bool> get isExist async {
+    return await File(path).exists();
   }
 }

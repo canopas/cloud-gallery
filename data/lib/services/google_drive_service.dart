@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media_content/media_content.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -59,7 +60,7 @@ class GoogleDriveService {
       final response = await driveApi.files.list(
         q: "'$backUpFolderId' in parents and trashed=false",
         $fields:
-            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
+            "files(id, name, description, mimeType, thumbnailLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
       );
 
       return (response.files ?? [])
@@ -93,5 +94,12 @@ class GoogleDriveService {
       }
       throw AppError.fromError(error);
     }
+  }
+
+  Future<AppMediaContent> fetchMediaBytes(String mediaId) async {
+    final api = await _getGoogleDriveAPI();
+    final media = await api.files.get(mediaId,
+        downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
+    return AppMediaContent.fromGoogleDrive(media);
   }
 }

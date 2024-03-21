@@ -1,41 +1,42 @@
 import 'package:cloud_gallery/ui/flow/accounts/accounts_screen.dart';
-import 'package:cloud_gallery/ui/flow/media_preview/image_preview_screen.dart';
+import 'package:cloud_gallery/ui/flow/media_preview/image_preview/image_preview_screen.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/video_preview_screen.dart';
 import 'package:cloud_gallery/ui/flow/onboard/onboard_screen.dart';
+import 'package:data/models/media/media.dart';
 import 'package:go_router/go_router.dart';
 import '../flow/home/home_screen.dart';
 import 'app_route.dart';
 
 class AppRouter {
-  static AppRoute get home => AppRoute(
+  static AppRoute get home =>
+      AppRoute(
         AppRoutePath.home,
         builder: (context) => const HomeScreen(),
       );
 
-  static AppRoute get onBoard => AppRoute(
+  static AppRoute get onBoard =>
+      AppRoute(
         AppRoutePath.onBoard,
         builder: (context) => const OnBoardScreen(),
       );
 
-  static AppRoute get accounts => AppRoute(
+  static AppRoute get accounts =>
+      AppRoute(
         AppRoutePath.accounts,
         builder: (context) => const AccountsScreen(),
       );
 
-  static AppRoute imagePreview(
-          {required String path,
-          required String heroTag,
-          required bool isLocal}) =>
+  static AppRoute imagePreview({required AppMedia media,
+    required String heroTag}) =>
       AppRoute(
         AppRoutePath.imagePreview,
         builder: (context) =>
-            ImagePreviewScreen(url: path, isLocal: isLocal, heroTag: heroTag),
+            ImagePreviewScreen(media: media, heroTag: heroTag),
       );
 
-  static AppRoute videoPreview(
-          {required String path,
-          required String heroTag,
-          required bool isLocal}) =>
+  static AppRoute videoPreview({required String path,
+    required String heroTag,
+    required bool isLocal}) =>
       AppRoute(
         AppRoutePath.videoPreview,
         builder: (context) => const VideoPreviewScreen(),

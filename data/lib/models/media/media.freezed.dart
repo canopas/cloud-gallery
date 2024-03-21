@@ -22,7 +22,6 @@ AppMedia _$AppMediaFromJson(Map<String, dynamic> json) {
 mixin _$AppMedia {
   String get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
-  String? get webContentLink => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
   String? get thumbnailLink => throw _privateConstructorUsedError;
   double? get displayHeight => throw _privateConstructorUsedError;
@@ -52,7 +51,6 @@ abstract class $AppMediaCopyWith<$Res> {
   $Res call(
       {String id,
       String? name,
-      String? webContentLink,
       String path,
       String? thumbnailLink,
       double? displayHeight,
@@ -84,7 +82,6 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
   $Res call({
     Object? id = null,
     Object? name = freezed,
-    Object? webContentLink = freezed,
     Object? path = null,
     Object? thumbnailLink = freezed,
     Object? displayHeight = freezed,
@@ -108,10 +105,6 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String?,
-      webContentLink: freezed == webContentLink
-          ? _value.webContentLink
-          : webContentLink // ignore: cast_nullable_to_non_nullable
               as String?,
       path: null == path
           ? _value.path
@@ -184,7 +177,6 @@ abstract class _$$AppMediaImplCopyWith<$Res>
   $Res call(
       {String id,
       String? name,
-      String? webContentLink,
       String path,
       String? thumbnailLink,
       double? displayHeight,
@@ -214,7 +206,6 @@ class __$$AppMediaImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = freezed,
-    Object? webContentLink = freezed,
     Object? path = null,
     Object? thumbnailLink = freezed,
     Object? displayHeight = freezed,
@@ -238,10 +229,6 @@ class __$$AppMediaImplCopyWithImpl<$Res>
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String?,
-      webContentLink: freezed == webContentLink
-          ? _value.webContentLink
-          : webContentLink // ignore: cast_nullable_to_non_nullable
               as String?,
       path: null == path
           ? _value.path
@@ -309,7 +296,6 @@ class _$AppMediaImpl implements _AppMedia {
   const _$AppMediaImpl(
       {required this.id,
       this.name,
-      this.webContentLink,
       required this.path,
       this.thumbnailLink,
       this.displayHeight,
@@ -333,8 +319,6 @@ class _$AppMediaImpl implements _AppMedia {
   final String id;
   @override
   final String? name;
-  @override
-  final String? webContentLink;
   @override
   final String path;
   @override
@@ -372,7 +356,7 @@ class _$AppMediaImpl implements _AppMedia {
 
   @override
   String toString() {
-    return 'AppMedia(id: $id, name: $name, webContentLink: $webContentLink, path: $path, thumbnailLink: $thumbnailLink, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
+    return 'AppMedia(id: $id, name: $name, path: $path, thumbnailLink: $thumbnailLink, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
   }
 
   @override
@@ -382,8 +366,6 @@ class _$AppMediaImpl implements _AppMedia {
             other is _$AppMediaImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.webContentLink, webContentLink) ||
-                other.webContentLink == webContentLink) &&
             (identical(other.path, path) || other.path == path) &&
             (identical(other.thumbnailLink, thumbnailLink) ||
                 other.thumbnailLink == thumbnailLink) &&
@@ -416,7 +398,6 @@ class _$AppMediaImpl implements _AppMedia {
       runtimeType,
       id,
       name,
-      webContentLink,
       path,
       thumbnailLink,
       displayHeight,
@@ -450,7 +431,6 @@ abstract class _AppMedia implements AppMedia {
   const factory _AppMedia(
       {required final String id,
       final String? name,
-      final String? webContentLink,
       required final String path,
       final String? thumbnailLink,
       final double? displayHeight,
@@ -473,8 +453,6 @@ abstract class _AppMedia implements AppMedia {
   String get id;
   @override
   String? get name;
-  @override
-  String? get webContentLink;
   @override
   String get path;
   @override
