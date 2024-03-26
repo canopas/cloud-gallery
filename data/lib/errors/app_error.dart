@@ -48,6 +48,11 @@ class BackUpFolderNotFound extends AppError {
             message: "Back up folder not found");
 }
 
+class NoElementError extends AppError {
+  const NoElementError()
+      : super(message: "No element found!");
+}
+
 class SomethingWentWrongError extends AppError {
   const SomethingWentWrongError({String? message, String? statusCode})
       : super(
