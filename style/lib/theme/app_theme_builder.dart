@@ -32,7 +32,6 @@ class AppThemeBuilder {
         surfaceTintColor: colorScheme.surface,
         foregroundColor: colorScheme.textPrimary,
         scrolledUnderElevation: 3,
-
       ),
     );
   }
@@ -43,7 +42,7 @@ class AppThemeBuilder {
       brightness: colorScheme.brightness,
       primaryColor: colorScheme.primary,
       primaryContrastingColor: colorScheme.onPrimary,
-      barBackgroundColor: colorScheme.surface,
+      barBackgroundColor: colorScheme.barColor,
       scaffoldBackgroundColor: colorScheme.surface,
       textTheme: CupertinoTextThemeData(
         primaryColor: colorScheme.textPrimary,

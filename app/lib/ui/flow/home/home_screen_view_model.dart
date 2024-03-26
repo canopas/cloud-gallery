@@ -34,6 +34,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
   String? _backUpFolderId;
   bool _isGoogleDriveLoading = false;
   bool _isLocalMediaLoading = false;
+  bool _isMaxLocalMediaLoaded = false;
 
   HomeViewStateNotifier(
       this._localMediaService, this._googleDriveService, this._authService)
@@ -74,7 +75,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
   }
 
   Future<void> loadLocalMedia({bool append = false}) async {
-    if (_isLocalMediaLoading) return;
+    if (_isLocalMediaLoading || (_isMaxLocalMediaLoaded && append)) return;
+    if (_isMaxLocalMediaLoaded && !append) {
+      _isMaxLocalMediaLoaded = false;
+    }
     _isLocalMediaLoading = true;
     try {
       state = state.copyWith(loading: state.medias.isEmpty, error: null);
@@ -96,6 +100,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
         googleDriveMedias: _uploadedMedia,
       );
 
+      final lastLocalMedia = mergedMedia.last;
+
       state = state.copyWith(
         medias: _sortMedias(
           medias: append
@@ -106,9 +112,15 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
               : mergedMedia,
         ),
         loading: false,
+        lastLocalMediaId: lastLocalMedia.id,
       );
     } catch (e) {
-      state = state.copyWith(loading: false, error: e);
+      if (e is NoElementError) {
+        _isMaxLocalMediaLoaded = true;
+        state = state.copyWith(loading: false);
+      } else {
+        state = state.copyWith(loading: false, error: e);
+      }
     } finally {
       _isLocalMediaLoading = false;
     }
@@ -296,6 +308,7 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool hasLocalMediaAccess,
     @Default(false) bool loading,
     GoogleSignInAccount? googleAccount,
+    String? lastLocalMediaId,
     @Default({}) Map<DateTime, List<AppMedia>> medias,
     @Default([]) List<AppMedia> selectedMedias,
     @Default([]) List<UploadProgress> uploadingMedias,

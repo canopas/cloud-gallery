@@ -1,4 +1,5 @@
 import 'package:cloud_gallery/components/app_page.dart';
+import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/media_preview.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
@@ -18,7 +19,7 @@ import '../../navigation/app_router.dart';
 import 'components/app_media_item.dart';
 import 'components/hints.dart';
 import 'components/multi_selection_done_button.dart';
-import 'package:style/slivers/sticky_header_delegate.dart';
+import 'package:style/buttons/action_button.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -55,15 +56,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     _errorObserver();
-
     return AppPage(
+      //barBackgroundColor: context.colorScheme.surface,
       titleWidget: _titleWidget(context: context),
       actions: [
-        IconButton(
-          style: IconButton.styleFrom(
-            backgroundColor: context.colorScheme.containerNormalOnSurface,
-            minimumSize: const Size(28, 28),
-          ),
+        ActionButton(
           onPressed: () {
             AppRouter.accounts.push(context);
           },
@@ -79,25 +76,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _body({required BuildContext context}) {
-    //States
-    final medias =
-        ref.watch(homeViewStateNotifier.select((state) => state.medias));
-    final isLoading =
-        ref.watch(homeViewStateNotifier.select((state) => state.loading));
-
-    final selectedMedias = ref
-        .watch(homeViewStateNotifier.select((state) => state.selectedMedias));
-
-    final uploadingMedias = ref
-        .watch(homeViewStateNotifier.select((state) => state.uploadingMedias));
-
-    final hasLocalMediaAccess = ref.watch(
-        homeViewStateNotifier.select((state) => state.hasLocalMediaAccess));
+    //View State
+    final ({
+      Map<DateTime, List<AppMedia>> medias,
+      List<UploadProgress> uploadingMedias,
+      List<AppMedia> selectedMedias,
+      bool isLoading,
+      bool hasLocalMediaAccess,
+      String? lastLocalMediaId
+    }) state = ref.watch(homeViewStateNotifier.select((value) => (
+          medias: value.medias,
+          uploadingMedias: value.uploadingMedias,
+          selectedMedias: value.selectedMedias,
+          isLoading: value.loading,
+          hasLocalMediaAccess: value.hasLocalMediaAccess,
+          lastLocalMediaId: value.lastLocalMediaId,
+        )));
 
     //View
-    if (isLoading) {
+    if (state.isLoading) {
       return const Center(child: AppCircularProgressIndicator());
-    } else if (medias.isEmpty && !hasLocalMediaAccess) {
+    } else if (state.medias.isEmpty && !state.hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
     }
     return Stack(
@@ -105,11 +104,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       children: [
         _buildMediaList(
           context: context,
-          medias: medias,
-          uploadingMedias: uploadingMedias,
-          selectedMedias: selectedMedias,
+          medias: state.medias,
+          uploadingMedias: state.uploadingMedias,
+          selectedMedias: state.selectedMedias,
+          lastLocalMediaId: state.lastLocalMediaId,
         ),
-        if (selectedMedias.isNotEmpty)
+        if (state.selectedMedias.isNotEmpty)
           Padding(
             padding: context.systemPadding + const EdgeInsets.all(16),
             child: const MultiSelectionDoneButton(),
@@ -122,82 +122,82 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       {required BuildContext context,
       required Map<DateTime, List<AppMedia>> medias,
       required List<UploadProgress> uploadingMedias,
+      required String? lastLocalMediaId,
       required List<AppMedia> selectedMedias}) {
     return Scrollbar(
       controller: _scrollController,
       interactive: true,
-      child: CustomScrollView(controller: _scrollController, slivers: [
-        const SliverToBoxAdapter(
-          child: HomeScreenHints(),
-        ),
-        ...medias.entries.map((e) {
-          return SliverMainAxisGroup(
-            slivers: [
-              SliverPersistentHeader(
-                delegate: SliverStickyHeaderDelegate(
-                  header: Container(
-                    padding: const EdgeInsets.only(left: 16),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.surface,
-                    ),
-                    child: Text(
-                      DateFormat("d MMMM, y").format(e.key),
-                      style: AppTextStyles.subtitle1.copyWith(
-                        color: context.colorScheme.textPrimary,
-                      ),
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: medias.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return const HomeScreenHints();
+          } else {
+            final gridEntry = medias.entries.elementAt(index - 1);
+            return Column(
+              children: [
+                Container(
+                  height: 45,
+                  padding: const EdgeInsets.only(left: 16, top: 5),
+                  margin: EdgeInsets.zero,
+                  alignment: Alignment.centerLeft,
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.surface,
+                  ),
+                  child: Text(
+                    DateFormat("d MMMM, y").format(gridEntry.key),
+                    style: AppTextStyles.subtitle1.copyWith(
+                      color: context.colorScheme.textPrimary,
                     ),
                   ),
                 ),
-                pinned: true,
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                sliver: SliverGrid.builder(
-                  itemBuilder: (context, index) {
-                    final media = e.value[index];
-                    return Hero(
-                      tag: "${AppRoutePath.home}/${media.id}",
-                      child: AppMediaItem(
-                        key: ValueKey(media.id),
-                        onTap: () {
-                          if (selectedMedias.isNotEmpty) {
-                            notifier.toggleMediaSelection(media);
-                          } else {
-                            AppMediaView.showPreview(
-                              context: context,
-                              media: media,
-                              heroTag: "${AppRoutePath.home}/${media.id}",
-                            );
-                          }
-                        },
-                        onLongTap: () {
-                          notifier.toggleMediaSelection(media);
-                        },
-                        isSelected: selectedMedias.contains(media),
-                        status: uploadingMedias
-                            .firstWhereOrNull(
-                                (element) => element.mediaId == media.id)
-                            ?.status,
-                        media: media,
-                      ),
-                    );
-                  },
-                  itemCount: e.value.length,
+                GridView.builder(
+                  padding: const EdgeInsets.all(4),
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: 4,
                     mainAxisSpacing: 4,
                   ),
+                  itemCount: gridEntry.value.length,
+                  itemBuilder: (context, index) {
+                    final media = gridEntry.value[index];
+                    if (media.id == lastLocalMediaId) {
+                      runPostFrame(() {
+                        notifier.loadLocalMedia(append: true);
+                      });
+                    }
+                    return AppMediaItem(
+                      key: ValueKey(media.id),
+                      onTap: () {
+                        if (selectedMedias.isNotEmpty) {
+                          notifier.toggleMediaSelection(media);
+                        } else {
+                          AppMediaView.showPreview(
+                            context: context,
+                            media: media,
+                          );
+                        }
+                      },
+                      onLongTap: () {
+                        notifier.toggleMediaSelection(media);
+                      },
+                      isSelected: selectedMedias.contains(media),
+                      status: uploadingMedias
+                          .firstWhereOrNull(
+                              (element) => element.mediaId == media.id)
+                          ?.status,
+                      media: media,
+                    );
+                  },
                 ),
-              ),
-            ],
-          );
-        }).toList(),
-        SliverToBoxAdapter(
-          child: SizedBox(height: context.systemPadding.bottom),
-        ),
-      ]),
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 

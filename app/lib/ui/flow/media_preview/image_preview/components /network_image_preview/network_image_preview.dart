@@ -5,41 +5,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 
-import '../../../../../../domain/extensions/widget_extensions.dart';
-
-class NetworkImagePreview extends ConsumerStatefulWidget {
+class NetworkImagePreview extends ConsumerWidget {
   final AppMedia media;
-  final String heroTag;
 
-  const NetworkImagePreview(
-      {super.key, required this.media, required this.heroTag});
+  const NetworkImagePreview({super.key, required this.media});
 
   @override
-  ConsumerState<NetworkImagePreview> createState() =>
-      _NetworkImagePreviewState();
-}
-
-class _NetworkImagePreviewState extends ConsumerState<NetworkImagePreview> {
-  late NetworkImagePreviewStateNotifier notifier;
-
-  @override
-  void initState() {
-    notifier = ref.read(networkImagePreviewStateNotifierProvider.notifier);
-    runPostFrame(() {
-      notifier.loadImage(widget.media.id);
-    });
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(networkImagePreviewStateNotifierProvider);
 
     if (state.loading) {
       return const Center(child: AppCircularProgressIndicator());
     } else if (state.mediaBytes != null) {
       return Hero(
-        tag: widget.heroTag,
+        tag: media,
         child: Image.memory(Uint8List.fromList(state.mediaBytes!),
             fit: BoxFit.fitWidth),
       );

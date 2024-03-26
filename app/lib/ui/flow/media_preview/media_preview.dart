@@ -6,14 +6,12 @@ import 'package:flutter/cupertino.dart';
 class AppMediaView {
   static void showPreview(
       {required BuildContext context,
-      required AppMedia media,
-      required String heroTag}) {
+      required AppMedia media}) {
     if (media.type.isImage) {
-      AppRouter.imagePreview(media: media, heroTag: heroTag).push(context);
+      AppRouter.imagePreview(media: media).push(context);
     } else if (media.type.isVideo) {
       AppRouter.videoPreview(
               path: media.path,
-              heroTag: heroTag,
               isLocal: media.sources.contains(AppMediaSource.local))
           .push(context);
     } else {

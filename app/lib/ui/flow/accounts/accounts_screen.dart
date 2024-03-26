@@ -39,56 +39,58 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
 
     return AppPage(
       title: context.l10n.common_accounts,
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          if (googleAccount != null)
-            AccountsTab(
-              name: googleAccount.displayName ?? googleAccount.email,
-              serviceDescription: context.l10n.common_google_drive,
-              profileImage: googleAccount.photoUrl,
-              actionList: ActionList(buttons: [
-                ActionListButton(
-                  title: context.l10n.common_auto_back_up,
-                  trailing: Consumer(
-                    builder: (context, ref, child) {
-                      final googleDriveAutoBackUp = ref
-                          .watch(AppPreferences.canTakeAutoBackUpInGoogleDrive);
-                      return AppSwitch(
-                        value: googleDriveAutoBackUp,
-                        onChanged: (bool value) {
-                          ref
-                              .read(AppPreferences
-                                  .canTakeAutoBackUpInGoogleDrive.notifier)
-                              .state = value;
-                        },
-                      );
-                    },
+      bodyBuilder: (context) {
+        return ListView(
+          padding: context.systemPadding + const EdgeInsets.all(16),
+          children: [
+            if (googleAccount != null)
+              AccountsTab(
+                name: googleAccount.displayName ?? googleAccount.email,
+                serviceDescription: context.l10n.common_google_drive,
+                profileImage: googleAccount.photoUrl,
+                actionList: ActionList(buttons: [
+                  ActionListButton(
+                    title: context.l10n.common_auto_back_up,
+                    trailing: Consumer(
+                      builder: (context, ref, child) {
+                        final googleDriveAutoBackUp = ref.watch(
+                            AppPreferences.canTakeAutoBackUpInGoogleDrive);
+                        return AppSwitch(
+                          value: googleDriveAutoBackUp,
+                          onChanged: (bool value) {
+                            ref
+                                .read(AppPreferences
+                                    .canTakeAutoBackUpInGoogleDrive.notifier)
+                                .state = value;
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-                ActionListButton(
-                  title: context.l10n.common_sign_out,
-                  onPressed: notifier.signOutWithGoogle,
-                ),
-              ]),
-              backgroundColor: AppColors.googleDriveColor.withAlpha(50),
-            ),
-          if (googleAccount == null)
-            OnTapScale(
-              onTap: () {
-                notifier.signInWithGoogle();
-              },
-              child: AccountsTab(
-                name: context.l10n.add_account_title,
-                backgroundColor: context.colorScheme.containerNormal,
+                  ActionListButton(
+                    title: context.l10n.common_sign_out,
+                    onPressed: notifier.signOutWithGoogle,
+                  ),
+                ]),
+                backgroundColor: AppColors.googleDriveColor.withAlpha(50),
               ),
-            ),
-          const SizedBox(height: 16),
-          const SettingsActionList(),
-          const SizedBox(height: 16),
-          _buildVersion(context: context),
-        ],
-      ),
+            if (googleAccount == null)
+              OnTapScale(
+                onTap: () {
+                  notifier.signInWithGoogle();
+                },
+                child: AccountsTab(
+                  name: context.l10n.add_account_title,
+                  backgroundColor: context.colorScheme.containerNormal,
+                ),
+              ),
+            const SizedBox(height: 16),
+            const SettingsActionList(),
+            const SizedBox(height: 16),
+            _buildVersion(context: context),
+          ],
+        );
+      },
     );
   }
 
