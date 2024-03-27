@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../domain/assets/assets_paths.dart';
 import 'package:style/animations/item_selector.dart';
 
@@ -30,47 +31,47 @@ class AppMediaItem extends StatefulWidget {
 
 class _AppMediaItemState extends State<AppMediaItem>
     with AutomaticKeepAliveClientMixin {
-  //VideoPlayerController? _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
 
   @override
   void initState() {
     ///TODO: Video view
-    // if (widget.media.type.isVideo &&
-    //     widget.media.sources.contains(AppMediaSource.local)) {
-    //
-    //      _videoPlayerController =
-    //          VideoPlayerController.file(File(widget.media.path))
-    //            ..initialize().then((_) {
-    //             setState(() {});
-    //            });
-    //
-    // }
+    if (widget.media.type.isVideo &&
+        widget.media.sources.contains(AppMediaSource.local)) {
+      _videoPlayerController =
+          VideoPlayerController.file(File(widget.media.path))
+            ..initialize().then((_) {
+              setState(() {});
+            });
+    }
     super.initState();
   }
 
   @override
   void dispose() {
-    // _videoPlayerController?.dispose();
+    _videoPlayerController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ItemSelector(
-      onTap: widget.onTap,
-      onLongTap: widget.onLongTap,
-      isSelected: widget.isSelected,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        child: Stack(
-          alignment: Alignment.bottomLeft,
-          children: [
-            widget.media.type.isVideo && widget.media.thumbnailLink == null
-                ? _buildVideoView(context: context)
-                : _buildImageView(context: context),
-            _sourceIndicators(context: context),
-          ],
+    return LayoutBuilder(
+      builder: (context, constraints) => ItemSelector(
+        onTap: widget.onTap,
+        onLongTap: widget.onLongTap,
+        isSelected: widget.isSelected,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: Stack(
+            alignment: Alignment.bottomLeft,
+            children: [
+              widget.media.type.isVideo && widget.media.thumbnailLink == null
+                  ? _buildVideoView(context: context)
+                  : _buildImageView(context: context, constraints: constraints),
+              _sourceIndicators(context: context),
+            ],
+          ),
         ),
       ),
     );
@@ -114,9 +115,11 @@ class _AppMediaItemState extends State<AppMediaItem>
     );
   }
 
-  Widget _buildImageView({required BuildContext context}) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Image(
+  Widget _buildImageView(
+      {required BuildContext context, required BoxConstraints constraints}) {
+    return Hero(
+      tag: widget.media,
+      child: Image(
         image: widget.media.sources.contains(AppMediaSource.local)
             ? ResizeImage(
                 FileImage(File(widget.media.path)),
@@ -162,8 +165,8 @@ class _AppMediaItemState extends State<AppMediaItem>
         },
         width: double.maxFinite,
         height: double.maxFinite,
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildVideoView({required BuildContext context}) {
@@ -174,7 +177,7 @@ class _AppMediaItemState extends State<AppMediaItem>
           decoration: BoxDecoration(
             color: context.colorScheme.containerNormalOnSurface,
           ),
-          // child: VideoPlayer(_videoPlayerController!),
+          child: VideoPlayer(_videoPlayerController!),
         ),
         Icon(CupertinoIcons.play_arrow_solid,
             color: context.colorScheme.onPrimary),

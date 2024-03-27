@@ -10,7 +10,6 @@ _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
     _$AppMediaImpl(
       id: json['id'] as String,
       name: json['name'] as String?,
-      webContentLink: json['webContentLink'] as String?,
       path: json['path'] as String,
       thumbnailLink: json['thumbnailLink'] as String?,
       displayHeight: (json['displayHeight'] as num?)?.toDouble(),
@@ -41,7 +40,6 @@ Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'webContentLink': instance.webContentLink,
       'path': instance.path,
       'thumbnailLink': instance.thumbnailLink,
       'displayHeight': instance.displayHeight,

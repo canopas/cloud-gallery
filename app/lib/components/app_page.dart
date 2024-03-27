@@ -9,8 +9,11 @@ class AppPage extends StatelessWidget {
   final Widget? leading;
   final Widget? floatingActionButton;
   final Widget? body;
+  final Widget Function(BuildContext context)? bodyBuilder;
   final bool automaticallyImplyLeading;
   final bool? resizeToAvoidBottomInset;
+  final Color? backgroundColor;
+  final Color? barBackgroundColor;
 
   const AppPage({
     super.key,
@@ -21,7 +24,10 @@ class AppPage extends StatelessWidget {
     this.body,
     this.floatingActionButton,
     this.resizeToAvoidBottomInset,
+    this.bodyBuilder,
     this.automaticallyImplyLeading = true,
+    this.barBackgroundColor,
+    this.backgroundColor,
   });
 
   @override
@@ -39,6 +45,7 @@ class AppPage extends StatelessWidget {
                 leading == null
             ? null
             : CupertinoNavigationBar(
+                backgroundColor: barBackgroundColor,
                 leading: leading,
                 middle: titleWidget ?? _title(context),
                 border: null,
@@ -56,10 +63,15 @@ class AppPage extends StatelessWidget {
                     : null,
               ),
         resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? true,
+        backgroundColor: backgroundColor,
         child: Stack(
           alignment: Alignment.bottomRight,
           children: [
-            body ?? const SizedBox(),
+            body ??
+                Builder(
+                  builder: (context) =>
+                      bodyBuilder?.call(context) ?? const SizedBox(),
+                ),
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(right: 16, bottom: 16),
@@ -76,12 +88,18 @@ class AppPage extends StatelessWidget {
                 leading == null
             ? null
             : AppBar(
+                backgroundColor: barBackgroundColor,
                 title: titleWidget ?? _title(context),
                 actions: actions,
                 leading: leading,
                 automaticallyImplyLeading: automaticallyImplyLeading,
               ),
-        body: body,
+        body: body ??
+            Builder(
+              builder: (context) =>
+                  bodyBuilder?.call(context) ?? const SizedBox(),
+            ),
+        backgroundColor: backgroundColor,
         floatingActionButton: floatingActionButton,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       );
@@ -91,4 +109,47 @@ class AppPage extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       );
+}
+
+class AdaptiveAppBar extends StatelessWidget {
+  final String text;
+  final Widget? leading;
+  final List<Widget>? actions;
+  final bool iosTransitionBetweenRoutes;
+  final bool automaticallyImplyLeading;
+
+  const AdaptiveAppBar(
+      {super.key,
+      required this.text,
+      this.leading,
+      this.actions,
+      this.iosTransitionBetweenRoutes = true,
+      this.automaticallyImplyLeading = true});
+
+  @override
+  Widget build(BuildContext context) {
+    return Platform.isIOS || Platform.isMacOS
+        ? CupertinoNavigationBar(
+            transitionBetweenRoutes: iosTransitionBetweenRoutes,
+            middle: Text(text),
+            previousPageTitle:
+                MaterialLocalizations.of(context).backButtonTooltip,
+            automaticallyImplyLeading: automaticallyImplyLeading,
+            leading: leading,
+            trailing: actions == null
+                ? null
+                : actions!.length == 1
+                    ? actions!.first
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: actions!,
+                      ),
+          )
+        : AppBar(
+            leading: leading,
+            actions: actions,
+            automaticallyImplyLeading: automaticallyImplyLeading,
+            title: Text(text),
+          );
+  }
 }
