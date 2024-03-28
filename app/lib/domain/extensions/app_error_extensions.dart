@@ -13,6 +13,8 @@ extension AppErrorExtensions on Object {
           return context.l10n.something_went_wrong_error;
         case AppErrorL10nCodes.googleSignInUserNotFoundError:
           return context.l10n.user_google_sign_in_account_not_found_error;
+        case AppErrorL10nCodes.backUpFolderNotFound:
+          return context.l10n.back_up_folder_not_found_error;
         default:
           return (this as AppError).message ??
               context.l10n.something_went_wrong_error;

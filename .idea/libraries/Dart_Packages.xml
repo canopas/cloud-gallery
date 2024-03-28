@@ -1014,7 +1014,7 @@
         <entry key="video_player">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/video_player-2.8.2/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/video_player-2.8.3/lib" />
             </list>
           </value>
         </entry>
@@ -1252,7 +1252,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.11+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.11+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player-2.8.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player-2.8.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_android-2.4.12/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.5.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_platform_interface-6.2.2/lib" />

@@ -1,15 +1,38 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' show Size;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
-import 'package:photo_manager/photo_manager.dart' show AssetEntity;
+import 'package:photo_manager/photo_manager.dart'
+    show AssetEntity, ThumbnailFormat, ThumbnailSize;
 
 part 'media.freezed.dart';
 
 part 'media.g.dart';
 
+enum UploadStatus { uploading, waiting, none, failed, success }
+
+class UploadProgress {
+  final String mediaId;
+  final UploadStatus status;
+
+  UploadProgress({required this.mediaId, required this.status});
+
+  @override
+  bool operator ==(Object other) {
+    return other is UploadProgress &&
+        other.mediaId == mediaId &&
+        other.status == status;
+  }
+
+  @override
+  int get hashCode => mediaId.hashCode ^ status.hashCode;
+}
+
 enum AppMediaType {
+  other,
   image,
-  video,
-  other;
+  video;
 
   bool get isImage => this == AppMediaType.image;
 
@@ -77,7 +100,7 @@ class AppMedia with _$AppMedia {
     required String id,
     String? name,
     required String path,
-    String? thumbnailPath,
+    String? thumbnailLink,
     double? displayHeight,
     double? displayWidth,
     required AppMediaType type,
@@ -97,8 +120,7 @@ class AppMedia with _$AppMedia {
 
   factory AppMedia.fromGoogleDriveFile(drive.File file) {
     final type = AppMediaType.getType(
-        mimeType: file.mimeType,
-        location: file.thumbnailLink ?? file.description ?? '');
+        mimeType: file.mimeType, location: file.description ?? '');
 
     final height = type.isImage
         ? file.imageMediaMetadata?.height?.toDouble()
@@ -120,11 +142,10 @@ class AppMedia with _$AppMedia {
                 milliseconds:
                     int.parse(file.videoMediaMetadata?.durationMillis ?? '0'))
             : null;
-
     return AppMedia(
       id: file.id!,
       path: file.description ?? file.thumbnailLink ?? '',
-      thumbnailPath: file.thumbnailLink,
+      thumbnailLink: file.thumbnailLink,
       name: file.name,
       createdTime: file.createdTime,
       modifiedTime: file.modifiedTime,
@@ -135,6 +156,8 @@ class AppMedia with _$AppMedia {
       displayWidth: width,
       videoDuration: videoDuration,
       orientation: orientation,
+      latitude: file.imageMediaMetadata?.location?.latitude,
+      longitude: file.imageMediaMetadata?.location?.longitude,
       sources: [AppMediaSource.googleDrive],
     );
   }
@@ -149,6 +172,7 @@ class AppMedia with _$AppMedia {
     return AppMedia(
       id: asset.id,
       path: file.path,
+      name: asset.title,
       mimeType: asset.mimeType,
       size: length.toString(),
       type: type,
@@ -163,6 +187,21 @@ class AppMedia with _$AppMedia {
       modifiedTime: asset.modifiedDateTime,
       displayHeight: asset.size.height,
       displayWidth: asset.size.width,
+    );
+  }
+}
+
+extension AppMediaExtension on AppMedia {
+  Future<bool> get isExist async {
+    return await File(path).exists();
+  }
+
+  Future<Uint8List?> thumbnailDataWithSize(Size size) async {
+    return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0)
+        .thumbnailDataWithSize(
+      ThumbnailSize(size.width.toInt(), size.height.toInt()),
+      format: ThumbnailFormat.jpeg,
+      quality: 70,
     );
   }
 }

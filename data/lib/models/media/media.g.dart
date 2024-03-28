@@ -11,7 +11,7 @@ _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String?,
       path: json['path'] as String,
-      thumbnailPath: json['thumbnailPath'] as String?,
+      thumbnailLink: json['thumbnailLink'] as String?,
       displayHeight: (json['displayHeight'] as num?)?.toDouble(),
       displayWidth: (json['displayWidth'] as num?)?.toDouble(),
       type: $enumDecode(_$AppMediaTypeEnumMap, json['type']),
@@ -41,7 +41,7 @@ Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
       'id': instance.id,
       'name': instance.name,
       'path': instance.path,
-      'thumbnailPath': instance.thumbnailPath,
+      'thumbnailLink': instance.thumbnailLink,
       'displayHeight': instance.displayHeight,
       'displayWidth': instance.displayWidth,
       'type': _$AppMediaTypeEnumMap[instance.type]!,
@@ -58,9 +58,9 @@ Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
     };
 
 const _$AppMediaTypeEnumMap = {
+  AppMediaType.other: 'other',
   AppMediaType.image: 'image',
   AppMediaType.video: 'video',
-  AppMediaType.other: 'other',
 };
 
 const _$AppMediaOrientationEnumMap = {
