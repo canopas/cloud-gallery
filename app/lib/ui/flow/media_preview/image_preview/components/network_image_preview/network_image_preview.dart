@@ -1,9 +1,9 @@
 import 'dart:typed_data';
-import 'package:cloud_gallery/ui/flow/media_preview/image_preview/components%20/network_image_preview/network_image_preview_view_model.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
+import 'network_image_preview_view_model.dart';
 
 class NetworkImagePreview extends ConsumerWidget {
   final AppMedia media;

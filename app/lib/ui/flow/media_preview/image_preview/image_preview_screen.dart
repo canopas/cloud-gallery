@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:cloud_gallery/ui/flow/media_preview/image_preview/components%20/network_image_preview/network_image_preview.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import '../../../../components/app_page.dart';
 import '../../../../domain/extensions/widget_extensions.dart';
-import 'components /network_image_preview/network_image_preview_view_model.dart';
+import 'components/network_image_preview/network_image_preview.dart';
+import 'components/network_image_preview/network_image_preview_view_model.dart';
 
 class ImagePreviewScreen extends ConsumerStatefulWidget {
   final AppMedia media;
