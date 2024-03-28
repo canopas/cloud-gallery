@@ -10,6 +10,9 @@
   "common_google_drive": "Google Drive",
   "common_term_and_condition": "Terms and Conditions",
   "common_privacy_policy": "Privacy Policy",
+  "common_today": "Today",
+  "common_yesterday": "Yesterday",
+  "common_tomorrow": "Tomorrow",
 
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Something went wrong! Please try again later.",

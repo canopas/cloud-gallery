@@ -42,9 +42,6 @@ class LocalMediaService {
       );
       return files.whereNotNull().toList();
     } catch (e) {
-      if (e is StateError && e.message.contains('No element')) {
-        throw const NoElementError();
-      }
       throw AppError.fromError(e);
     }
   }

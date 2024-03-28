@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:cloud_gallery/domain/extensions/date_extensions.dart';
 import 'package:cloud_gallery/domain/extensions/map_extensions.dart';
+import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
 import 'package:collection/collection.dart';
 import 'package:data/errors/app_error.dart';
 import 'package:data/models/media/media.dart';
@@ -95,12 +95,15 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
                 ? 30
                 : loadedLocalMediaCount,
       );
+
+      if (localMedia.length < 30) {
+        _isMaxLocalMediaLoaded = true;
+      }
+
       final mergedMedia = _mergeCommonMedia(
         localMedias: localMedia,
         googleDriveMedias: _uploadedMedia,
       );
-
-      final lastLocalMedia = mergedMedia.last;
 
       state = state.copyWith(
         medias: _sortMedias(
@@ -112,15 +115,12 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
               : mergedMedia,
         ),
         loading: false,
-        lastLocalMediaId: lastLocalMedia.id,
+        lastLocalMediaId: mergedMedia.length > 10
+            ? mergedMedia.elementAt(mergedMedia.length - 10).id
+            : state.lastLocalMediaId,
       );
     } catch (e) {
-      if (e is NoElementError) {
-        _isMaxLocalMediaLoaded = true;
-        state = state.copyWith(loading: false);
-      } else {
-        state = state.copyWith(loading: false, error: e);
-      }
+      state = state.copyWith(loading: false, error: e);
     } finally {
       _isLocalMediaLoading = false;
     }
@@ -242,6 +242,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
   }) {
     // If one of the lists is empty, return the other list.
     if (googleDriveMedias.isEmpty) return localMedias;
+    if (localMedias.isEmpty) return [];
 
     // Convert the lists to mutable lists.
     localMedias = localMedias.toList();

@@ -58,9 +58,9 @@ Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
     };
 
 const _$AppMediaTypeEnumMap = {
+  AppMediaType.other: 'other',
   AppMediaType.image: 'image',
   AppMediaType.video: 'video',
-  AppMediaType.other: 'other',
 };
 
 const _$AppMediaOrientationEnumMap = {

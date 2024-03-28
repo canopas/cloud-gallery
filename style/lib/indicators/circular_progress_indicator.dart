@@ -19,6 +19,7 @@ class AppCircularProgressIndicator extends StatelessWidget {
       width: size,
       height: size,
       child: CircularProgressIndicator.adaptive(
+        strokeWidth: size / 8,
         value: value,
         valueColor: AlwaysStoppedAnimation<Color>(
           color ?? context.colorScheme.primary,

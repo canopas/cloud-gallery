@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' show Size;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
-import 'package:photo_manager/photo_manager.dart' show AssetEntity;
+import 'package:photo_manager/photo_manager.dart'
+    show AssetEntity, ThumbnailFormat, ThumbnailSize;
 
 part 'media.freezed.dart';
 
@@ -27,9 +30,9 @@ class UploadProgress {
 }
 
 enum AppMediaType {
+  other,
   image,
-  video,
-  other;
+  video;
 
   bool get isImage => this == AppMediaType.image;
 
@@ -117,8 +120,7 @@ class AppMedia with _$AppMedia {
 
   factory AppMedia.fromGoogleDriveFile(drive.File file) {
     final type = AppMediaType.getType(
-        mimeType: file.mimeType,
-        location: file.description ?? '');
+        mimeType: file.mimeType, location: file.description ?? '');
 
     final height = type.isImage
         ? file.imageMediaMetadata?.height?.toDouble()
@@ -192,5 +194,14 @@ class AppMedia with _$AppMedia {
 extension AppMediaExtension on AppMedia {
   Future<bool> get isExist async {
     return await File(path).exists();
+  }
+
+  Future<Uint8List?> thumbnailDataWithSize(Size size) async {
+    return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0)
+        .thumbnailDataWithSize(
+      ThumbnailSize(size.width.toInt(), size.height.toInt()),
+      format: ThumbnailFormat.jpeg,
+      quality: 70,
+    );
   }
 }

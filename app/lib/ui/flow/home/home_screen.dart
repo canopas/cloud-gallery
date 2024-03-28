@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_gallery/components/app_page.dart';
 import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
+import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/media_preview.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
@@ -9,7 +12,6 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_style.dart';
@@ -146,7 +148,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     color: context.colorScheme.surface,
                   ),
                   child: Text(
-                    DateFormat("d MMMM, y").format(gridEntry.key),
+                    gridEntry.key.format(context, DateFormatType.relative),
                     style: AppTextStyles.subtitle1.copyWith(
                       color: context.colorScheme.textPrimary,
                     ),
@@ -156,8 +158,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   padding: const EdgeInsets.all(4),
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: context.mediaQuerySize.width > 600
+                        ? context.mediaQuerySize.width ~/ 180
+                        : context.mediaQuerySize.width ~/ 100,
                     crossAxisSpacing: 4,
                     mainAxisSpacing: 4,
                   ),
@@ -204,7 +208,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _titleWidget({required BuildContext context}) {
     return Row(
       children: [
-        const SizedBox(width: 16),
+        if(Platform.isIOS)
+          const SizedBox(width: 10),
         Image.asset(
           Assets.images.appIcon,
           width: 28,
