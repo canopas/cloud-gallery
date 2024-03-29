@@ -60,7 +60,7 @@ class GoogleDriveService {
       final response = await driveApi.files.list(
         q: "'$backUpFolderId' in parents and trashed=false",
         $fields:
-            "files(id, name, description, mimeType, thumbnailLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
+            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
       );
 
       return (response.files ?? [])

@@ -200,7 +200,7 @@ extension AppMediaExtension on AppMedia {
     return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0)
         .thumbnailDataWithSize(
       ThumbnailSize(size.width.toInt(), size.height.toInt()),
-      format: ThumbnailFormat.jpeg,
+      format: ThumbnailFormat.png,
       quality: 70,
     );
   }
