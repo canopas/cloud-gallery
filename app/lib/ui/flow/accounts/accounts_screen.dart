@@ -13,6 +13,7 @@ import 'package:style/text/app_text_style.dart';
 import 'package:style/theme/colors.dart';
 import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/switch.dart';
+import '../../../components/snack_bar.dart';
 import 'components/account_tab.dart';
 
 class AccountsScreen extends ConsumerStatefulWidget {
@@ -32,11 +33,20 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
     runPostFrame(() => notifier.init());
   }
 
+  void _errorObserver() {
+    ref.listen(accountsStateNotifierProvider.select((value) => value.error),
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context: context, error: next);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _errorObserver();
     final googleAccount = ref.watch(
         accountsStateNotifierProvider.select((value) => value.googleAccount));
-
     return AppPage(
       title: context.l10n.common_accounts,
       bodyBuilder: (context) {

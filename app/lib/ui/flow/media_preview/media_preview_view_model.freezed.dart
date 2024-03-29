@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$MediaPreviewState {
   Object? get error => throw _privateConstructorUsedError;
   int get currentIndex => throw _privateConstructorUsedError;
+  bool get showManu => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MediaPreviewStateCopyWith<MediaPreviewState> get copyWith =>
@@ -30,7 +31,7 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
           MediaPreviewState value, $Res Function(MediaPreviewState) then) =
       _$MediaPreviewStateCopyWithImpl<$Res, MediaPreviewState>;
   @useResult
-  $Res call({Object? error, int currentIndex});
+  $Res call({Object? error, int currentIndex, bool showManu});
 }
 
 /// @nodoc
@@ -48,6 +49,7 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
   $Res call({
     Object? error = freezed,
     Object? currentIndex = null,
+    Object? showManu = null,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
@@ -55,6 +57,10 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
+      showManu: null == showManu
+          ? _value.showManu
+          : showManu // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -67,7 +73,7 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       __$$MediaPreviewStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Object? error, int currentIndex});
+  $Res call({Object? error, int currentIndex, bool showManu});
 }
 
 /// @nodoc
@@ -83,6 +89,7 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
   $Res call({
     Object? error = freezed,
     Object? currentIndex = null,
+    Object? showManu = null,
   }) {
     return _then(_$MediaPreviewStateImpl(
       error: freezed == error ? _value.error : error,
@@ -90,6 +97,10 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
+      showManu: null == showManu
+          ? _value.showManu
+          : showManu // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -97,17 +108,21 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$MediaPreviewStateImpl implements _MediaPreviewState {
-  const _$MediaPreviewStateImpl({this.error, this.currentIndex = 0});
+  const _$MediaPreviewStateImpl(
+      {this.error, this.currentIndex = 0, this.showManu = true});
 
   @override
   final Object? error;
   @override
   @JsonKey()
   final int currentIndex;
+  @override
+  @JsonKey()
+  final bool showManu;
 
   @override
   String toString() {
-    return 'MediaPreviewState(error: $error, currentIndex: $currentIndex)';
+    return 'MediaPreviewState(error: $error, currentIndex: $currentIndex, showManu: $showManu)';
   }
 
   @override
@@ -117,12 +132,14 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
             other is _$MediaPreviewStateImpl &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.currentIndex, currentIndex) ||
-                other.currentIndex == currentIndex));
+                other.currentIndex == currentIndex) &&
+            (identical(other.showManu, showManu) ||
+                other.showManu == showManu));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(error), currentIndex);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(error), currentIndex, showManu);
 
   @JsonKey(ignore: true)
   @override
@@ -134,12 +151,16 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
 abstract class _MediaPreviewState implements MediaPreviewState {
   const factory _MediaPreviewState(
-      {final Object? error, final int currentIndex}) = _$MediaPreviewStateImpl;
+      {final Object? error,
+      final int currentIndex,
+      final bool showManu}) = _$MediaPreviewStateImpl;
 
   @override
   Object? get error;
   @override
   int get currentIndex;
+  @override
+  bool get showManu;
   @override
   @JsonKey(ignore: true)
   _$$MediaPreviewStateImplCopyWith<_$MediaPreviewStateImpl> get copyWith =>

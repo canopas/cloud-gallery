@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:cloud_gallery/components/app_page.dart';
 import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
 import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
-import 'package:cloud_gallery/ui/flow/media_preview/media_preview.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
 import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
@@ -59,7 +57,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     _errorObserver();
     return AppPage(
-      //barBackgroundColor: context.colorScheme.surface,
       titleWidget: _titleWidget(context: context),
       actions: [
         ActionButton(
@@ -179,10 +176,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         if (selectedMedias.isNotEmpty) {
                           notifier.toggleMediaSelection(media);
                         } else {
-                          AppMediaView.showPreview(
-                            context: context,
-                            media: media,
-                          );
+                          AppRouter.preview(
+                                  medias: medias.values
+                                      .expand((element) => element)
+                                      .toList(),
+                                  startingMediaId: media.id)
+                              .push(context);
                         }
                       },
                       onLongTap: () {
@@ -208,8 +207,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _titleWidget({required BuildContext context}) {
     return Row(
       children: [
-        if(Platform.isIOS)
-          const SizedBox(width: 10),
+        if (Platform.isIOS) const SizedBox(width: 10),
         Image.asset(
           Assets.images.appIcon,
           width: 28,

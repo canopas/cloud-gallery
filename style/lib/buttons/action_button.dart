@@ -23,7 +23,7 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       return CupertinoButton(
         minSize: size,
         borderRadius: BorderRadius.circular(size),
@@ -35,6 +35,7 @@ class ActionButton extends StatelessWidget {
     } else {
       return IconButton(
         style: IconButton.styleFrom(
+          tapTargetSize: MaterialTapTargetSize.padded,
           backgroundColor:
               backgroundColor ?? context.colorScheme.containerNormal,
           minimumSize: Size(size, size),

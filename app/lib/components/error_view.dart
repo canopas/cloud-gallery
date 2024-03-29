@@ -1,0 +1,68 @@
+import 'package:flutter/cupertino.dart';
+import 'package:style/buttons/primary_button.dart';
+import 'package:style/extensions/context_extensions.dart';
+import 'package:style/text/app_text_style.dart';
+
+class ErrorViewAction {
+  final String title;
+  final VoidCallback onPressed;
+
+  const ErrorViewAction({required this.title, required this.onPressed});
+}
+
+class ErrorView extends StatelessWidget {
+  final Widget? icon;
+  final String title;
+  final String message;
+  final ErrorViewAction? action;
+
+  const ErrorView({
+    super.key,
+    this.icon,
+    required this.title,
+    this.message = '',
+    this.action,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: double.infinity),
+            icon ??
+                Icon(
+                  CupertinoIcons.exclamationmark_circle,
+                  color: context.colorScheme.containerHighOnSurface,
+                  size: 100,
+                ),
+            const SizedBox(height: 20),
+            Text(title,
+                style: AppTextStyles.subtitle2.copyWith(
+                  color: context.colorScheme.textPrimary,
+                )),
+            const SizedBox(height: 20),
+            Text(
+              message,
+              style: AppTextStyles.body2.copyWith(
+                color: context.colorScheme.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (action != null) ...[
+              const SizedBox(height: 20),
+              PrimaryButton(
+                onPressed: action!.onPressed,
+                child: Text(action!.title),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
