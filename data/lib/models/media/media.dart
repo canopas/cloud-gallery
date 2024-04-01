@@ -98,6 +98,7 @@ enum AppMediaSource {
 class AppMedia with _$AppMedia {
   const factory AppMedia({
     required String id,
+    String? driveMediaRefId,
     String? name,
     required String path,
     String? thumbnailLink,
@@ -204,4 +205,12 @@ extension AppMediaExtension on AppMedia {
       quality: 70,
     );
   }
+
+  bool get isGoogleDriveStored =>
+      sources.contains(AppMediaSource.googleDrive) && sources.length == 1;
+
+  bool get isLocalStored =>
+      sources.contains(AppMediaSource.local) && sources.length == 1;
+
+  bool get isCommonStored => sources.length > 1;
 }

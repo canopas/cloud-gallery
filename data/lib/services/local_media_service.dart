@@ -45,4 +45,12 @@ class LocalMediaService {
       throw AppError.fromError(e);
     }
   }
+
+  Future<List<String>> deleteMedias(List<String> medias) async {
+    try {
+      return await PhotoManager.editor.deleteWithIds(medias);
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
 }

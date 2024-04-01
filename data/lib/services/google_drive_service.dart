@@ -73,6 +73,15 @@ class GoogleDriveService {
     }
   }
 
+  Future<void> deleteMedia(String id) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+      await driveApi.files.delete(id);
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
   Future<void> uploadInGoogleDrive(
       {required String folderID, required AppMedia media}) async {
     final localFile = File(media.path);

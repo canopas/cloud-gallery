@@ -9,6 +9,7 @@ part of 'media.dart';
 _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
     _$AppMediaImpl(
       id: json['id'] as String,
+      driveMediaRefId: json['driveMediaRefId'] as String?,
       name: json['name'] as String?,
       path: json['path'] as String,
       thumbnailLink: json['thumbnailLink'] as String?,
@@ -39,6 +40,7 @@ _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'driveMediaRefId': instance.driveMediaRefId,
       'name': instance.name,
       'path': instance.path,
       'thumbnailLink': instance.thumbnailLink,
