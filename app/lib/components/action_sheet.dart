@@ -22,7 +22,7 @@ class AppSheetAction extends StatelessWidget {
     return OnTapScale(
       onTap: onPressed,
       child: SizedBox(
-        height: 45,
+        height: 50,
         width: double.infinity,
         child: Row(
           children: [

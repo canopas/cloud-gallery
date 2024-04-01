@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:cloud_gallery/domain/extensions/map_extensions.dart';
-import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
-import 'package:collection/collection.dart';
 import 'package:data/errors/app_error.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/services/auth_service.dart';
@@ -11,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:style/extensions/list_extensions.dart';
+import 'home_view_model_helper_mixin.dart';
 
 part 'home_screen_view_model.freezed.dart';
 
@@ -24,7 +23,8 @@ final homeViewStateNotifier =
   );
 });
 
-class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
+class HomeViewStateNotifier extends StateNotifier<HomeViewState>
+    with HomeViewModelHelperMixin {
   final GoogleDriveService _googleDriveService;
   final AuthService _authService;
   final LocalMediaService _localMediaService;
@@ -46,8 +46,9 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
       if (event == null) {
         _uploadedMedia.clear();
         state = state.copyWith(
-          medias: _sortMedias(
-              medias: _removeGoogleDriveRefFromMedias(state.medias)),
+          medias: sortMedias(
+            medias: removeGoogleDriveRefFromMedias(state.medias),
+          ),
         );
       }
     });
@@ -100,19 +101,28 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
         _isMaxLocalMediaLoaded = true;
       }
 
-      final mergedMedia = _mergeCommonMedia(
+      final mergedMedia = mergeCommonMedia(
         localMedias: localMedia,
         googleDriveMedias: _uploadedMedia,
       );
+      List<AppMedia> googleDriveMedia = [];
+
+      if (!append) {
+        googleDriveMedia = state.medias.values
+            .expand((element) => element.where((element) =>
+                element.sources.contains(AppMediaSource.googleDrive) &&
+                element.sources.length == 1))
+            .toList();
+      }
 
       state = state.copyWith(
-        medias: _sortMedias(
+        medias: sortMedias(
           medias: append
               ? [
                   ...state.medias.values.expand((element) => element).toList(),
                   ...mergedMedia
                 ]
-              : mergedMedia,
+              : [...mergedMedia, ...googleDriveMedia],
         ),
         loading: false,
         lastLocalMediaId: mergedMedia.length > 10
@@ -138,7 +148,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
       );
 
       // Separate media by its local existence
-      List googleDriveMedia = [];
+      List<AppMedia> googleDriveMedia = [];
       List<AppMedia> uploadedMedia = [];
       for (var media in driveMedias) {
         if (await media.isExist) {
@@ -151,9 +161,9 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
 
       //override google drive media if exist.
       state = state.copyWith(
-        medias: _sortMedias(medias: [
-          ..._mergeCommonMedia(
-            localMedias: _removeGoogleDriveRefFromMedias(state.medias),
+        medias: sortMedias(medias: [
+          ...mergeCommonMedia(
+            localMedias: removeGoogleDriveRefFromMedias(state.medias),
             googleDriveMedias: uploadedMedia,
           ),
           ...googleDriveMedia
@@ -171,6 +181,42 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
     final selectedMedias = state.selectedMedias.toList();
     selectedMedias.addOrRemove(element: media);
     state = state.copyWith(selectedMedias: selectedMedias);
+  }
+
+  Future<void> deleteMediasFromLocal() async {
+    try {
+      final medias = state.selectedMedias
+          .where((element) => element.sources.contains(AppMediaSource.local))
+          .map((e) => e.id)
+          .toList();
+
+      await _localMediaService.deleteMedias(medias);
+      state = state.copyWith(
+        selectedMedias: [],
+      );
+      await loadLocalMedia();
+    } catch (e) {
+      state = state.copyWith(error: e);
+    }
+  }
+
+  Future<void> deleteMediasFromGoogleDrive() async {
+    try {
+      final medias = state.selectedMedias
+          .where(
+              (element) => element.sources.contains(AppMediaSource.googleDrive))
+          .map((e) => e.isCommonStored ? e.driveMediaRefId ?? '' : e.id)
+          .toList();
+      for (final media in medias) {
+        await _googleDriveService.deleteMedia(media);
+      }
+      state = state.copyWith(
+        selectedMedias: [],
+      );
+      loadGoogleDriveMedia();
+    } catch (e) {
+      state = state.copyWith(error: e);
+    }
   }
 
   Future<void> uploadMediaOnGoogleDrive() async {
@@ -233,66 +279,6 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState> {
       }
       state = state.copyWith(error: error, uploadingMedias: []);
     }
-  }
-
-  //Helper functions
-  List<AppMedia> _mergeCommonMedia({
-    required List<AppMedia> localMedias,
-    required List<AppMedia> googleDriveMedias,
-  }) {
-    // If one of the lists is empty, return the other list.
-    if (googleDriveMedias.isEmpty) return localMedias;
-    if (localMedias.isEmpty) return [];
-
-    // Convert the lists to mutable lists.
-    localMedias = localMedias.toList();
-    googleDriveMedias = googleDriveMedias.toList();
-
-    final mergedMedias = <AppMedia>[];
-
-    // Add common media to mergedMedias and remove them from the lists.
-    for (AppMedia localMedia in localMedias.toList()) {
-      googleDriveMedias
-          .toList()
-          .where((googleDriveMedia) => googleDriveMedia.path == localMedia.path)
-          .forEach((googleDriveMedia) {
-        localMedias.removeWhere((media) => media.id == localMedia.id);
-
-        mergedMedias.add(localMedia.copyWith(
-          sources: [AppMediaSource.local, AppMediaSource.googleDrive],
-          thumbnailLink: googleDriveMedia.thumbnailLink,
-        ));
-      });
-    }
-
-    return [...mergedMedias, ...localMedias];
-  }
-
-  Map<DateTime, List<AppMedia>> _sortMedias({required List<AppMedia> medias}) {
-    medias.sort((a, b) => (b.createdTime ?? DateTime.now())
-        .compareTo(a.createdTime ?? DateTime.now()));
-    return groupBy<AppMedia, DateTime>(
-      medias,
-      (AppMedia media) =>
-          media.createdTime?.dateOnly ?? DateTime.now().dateOnly,
-    );
-  }
-
-  List<AppMedia> _removeGoogleDriveRefFromMedias(
-      Map<DateTime, List<AppMedia>> medias) {
-    final allMedias = medias.values.expand((element) => element).toList();
-    for (int index = 0; index < allMedias.length; index++) {
-      if (allMedias[index].sources.length > 1) {
-        allMedias[index] = allMedias[index].copyWith(
-          sources: allMedias[index].sources.toList()
-            ..remove(AppMediaSource.googleDrive),
-          thumbnailLink: null,
-        );
-      } else if (allMedias.contains(AppMediaSource.googleDrive)) {
-        allMedias.removeAt(index);
-      }
-    }
-    return allMedias;
   }
 
   @override

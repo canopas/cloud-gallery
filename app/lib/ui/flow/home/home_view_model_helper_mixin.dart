@@ -1,14 +1,8 @@
 import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
 import 'package:collection/collection.dart';
 import 'package:data/models/media/media.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final homeViewModelHelperProvider = Provider<HomeViewModelHelper>((ref) {
-  return const HomeViewModelHelper();
-});
-
-class HomeViewModelHelper {
-
+mixin HomeViewModelHelperMixin {
   List<AppMedia> mergeCommonMedia({
     required List<AppMedia> localMedias,
     required List<AppMedia> googleDriveMedias,
@@ -34,7 +28,7 @@ class HomeViewModelHelper {
         mergedMedias.add(localMedia.copyWith(
           sources: [AppMediaSource.local, AppMediaSource.googleDrive],
           thumbnailLink: googleDriveMedia.thumbnailLink,
-          driveRefId: googleDriveMedia.id,
+          driveMediaRefId: googleDriveMedia.id,
         ));
       });
     }
@@ -56,13 +50,14 @@ class HomeViewModelHelper {
       Map<DateTime, List<AppMedia>> medias) {
     final allMedias = medias.values.expand((element) => element).toList();
     for (int index = 0; index < allMedias.length; index++) {
-      if (allMedias[index].sources.length > 1) {
+      if (allMedias[index].isCommonStored) {
         allMedias[index] = allMedias[index].copyWith(
           sources: allMedias[index].sources.toList()
             ..remove(AppMediaSource.googleDrive),
           thumbnailLink: null,
+          driveMediaRefId: null,
         );
-      } else if (allMedias.contains(AppMediaSource.googleDrive)) {
+      } else if (allMedias[index].isGoogleDriveStored) {
         allMedias.removeAt(index);
       }
     }
