@@ -148,6 +148,7 @@ class AppMedia with _$AppMedia {
       path: file.description ?? file.thumbnailLink ?? '',
       thumbnailLink: file.thumbnailLink,
       name: file.name,
+      driveMediaRefId: file.id,
       createdTime: file.createdTime,
       modifiedTime: file.modifiedTime,
       mimeType: file.mimeType,
