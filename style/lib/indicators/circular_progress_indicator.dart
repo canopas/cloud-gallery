@@ -18,14 +18,22 @@ class AppCircularProgressIndicator extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: CircularProgressIndicator.adaptive(
-        strokeWidth: size / 8,
-        value: value,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          color ?? context.colorScheme.primary,
-        ),
-        strokeCap: StrokeCap.round,
-      ),
+      child: value != null
+          ? CircularProgressIndicator(
+              strokeWidth: size / 8,
+              value: value,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                color ?? context.colorScheme.primary,
+              ),
+              strokeCap: StrokeCap.round,
+            )
+          : CircularProgressIndicator.adaptive(
+              strokeWidth: size / 8,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                color ?? context.colorScheme.primary,
+              ),
+              strokeCap: StrokeCap.round,
+            ),
     );
   }
 }

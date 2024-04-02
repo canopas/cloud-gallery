@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data/models/media_content/media_content.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,7 @@ final networkImagePreviewStateNotifierProvider = StateNotifierProvider<
 class NetworkImagePreviewStateNotifier
     extends StateNotifier<NetworkImagePreviewState> {
   final GoogleDriveService _googleDriveServices;
+  late StreamSubscription _subscription;
 
   NetworkImagePreviewStateNotifier(this._googleDriveServices)
       : super(const NetworkImagePreviewState());
@@ -22,14 +25,42 @@ class NetworkImagePreviewStateNotifier
       state = state.copyWith(loading: true, error: null);
       final mediaContent = await _googleDriveServices.fetchMediaBytes(mediaId);
       final mediaByte = <int>[];
-      await for (var mediaBytes in mediaContent.stream) {
-        mediaByte.addAll(mediaBytes);
-      }
-      state = state.copyWith(
-          mediaContent: mediaContent, mediaBytes: mediaByte, loading: false);
+      final length = mediaContent.length ?? 0;
+
+      _subscription = mediaContent.stream.listen(
+        (byteChunk) {
+          mediaByte.addAll(byteChunk);
+          state = state.copyWith(
+              progress: length <= 0 ? 0 : mediaByte.length / length);
+        },
+        onDone: () {
+          state = state.copyWith(
+            mediaContent: mediaContent,
+            mediaBytes: mediaByte,
+            loading: false,
+          );
+          _subscription.cancel();
+        },
+        onError: (error) {
+          state = state.copyWith(
+            error: error,
+            loading: false,
+          );
+          _subscription.cancel();
+        },
+      );
     } catch (error) {
-      state = state.copyWith(error: error, loading: false);
+      state = state.copyWith(
+        error: error,
+        loading: false,
+      );
     }
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 }
 
@@ -39,6 +70,7 @@ class NetworkImagePreviewState with _$NetworkImagePreviewState {
     @Default(false) bool loading,
     AppMediaContent? mediaContent,
     List<int>? mediaBytes,
+    @Default(0.0) double progress,
     Object? error,
   }) = _NetworkImagePreviewState;
 }

@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$MediaPreviewState {
   Object? get error => throw _privateConstructorUsedError;
+  List<AppMedia> get medias => throw _privateConstructorUsedError;
   int get currentIndex => throw _privateConstructorUsedError;
   bool get showManu => throw _privateConstructorUsedError;
 
@@ -31,7 +32,8 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
           MediaPreviewState value, $Res Function(MediaPreviewState) then) =
       _$MediaPreviewStateCopyWithImpl<$Res, MediaPreviewState>;
   @useResult
-  $Res call({Object? error, int currentIndex, bool showManu});
+  $Res call(
+      {Object? error, List<AppMedia> medias, int currentIndex, bool showManu});
 }
 
 /// @nodoc
@@ -48,11 +50,16 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
   @override
   $Res call({
     Object? error = freezed,
+    Object? medias = null,
     Object? currentIndex = null,
     Object? showManu = null,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
+      medias: null == medias
+          ? _value.medias
+          : medias // ignore: cast_nullable_to_non_nullable
+              as List<AppMedia>,
       currentIndex: null == currentIndex
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
@@ -73,7 +80,8 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       __$$MediaPreviewStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Object? error, int currentIndex, bool showManu});
+  $Res call(
+      {Object? error, List<AppMedia> medias, int currentIndex, bool showManu});
 }
 
 /// @nodoc
@@ -88,11 +96,16 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? error = freezed,
+    Object? medias = null,
     Object? currentIndex = null,
     Object? showManu = null,
   }) {
     return _then(_$MediaPreviewStateImpl(
       error: freezed == error ? _value.error : error,
+      medias: null == medias
+          ? _value._medias
+          : medias // ignore: cast_nullable_to_non_nullable
+              as List<AppMedia>,
       currentIndex: null == currentIndex
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
@@ -109,10 +122,23 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
 
 class _$MediaPreviewStateImpl implements _MediaPreviewState {
   const _$MediaPreviewStateImpl(
-      {this.error, this.currentIndex = 0, this.showManu = true});
+      {this.error,
+      final List<AppMedia> medias = const [],
+      this.currentIndex = 0,
+      this.showManu = true})
+      : _medias = medias;
 
   @override
   final Object? error;
+  final List<AppMedia> _medias;
+  @override
+  @JsonKey()
+  List<AppMedia> get medias {
+    if (_medias is EqualUnmodifiableListView) return _medias;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_medias);
+  }
+
   @override
   @JsonKey()
   final int currentIndex;
@@ -122,7 +148,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
   @override
   String toString() {
-    return 'MediaPreviewState(error: $error, currentIndex: $currentIndex, showManu: $showManu)';
+    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showManu: $showManu)';
   }
 
   @override
@@ -131,6 +157,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
         (other.runtimeType == runtimeType &&
             other is _$MediaPreviewStateImpl &&
             const DeepCollectionEquality().equals(other.error, error) &&
+            const DeepCollectionEquality().equals(other._medias, _medias) &&
             (identical(other.currentIndex, currentIndex) ||
                 other.currentIndex == currentIndex) &&
             (identical(other.showManu, showManu) ||
@@ -138,8 +165,12 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(error), currentIndex, showManu);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(error),
+      const DeepCollectionEquality().hash(_medias),
+      currentIndex,
+      showManu);
 
   @JsonKey(ignore: true)
   @override
@@ -152,11 +183,14 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 abstract class _MediaPreviewState implements MediaPreviewState {
   const factory _MediaPreviewState(
       {final Object? error,
+      final List<AppMedia> medias,
       final int currentIndex,
       final bool showManu}) = _$MediaPreviewStateImpl;
 
   @override
   Object? get error;
+  @override
+  List<AppMedia> get medias;
   @override
   int get currentIndex;
   @override

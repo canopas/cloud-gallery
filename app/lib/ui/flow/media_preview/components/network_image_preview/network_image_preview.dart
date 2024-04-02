@@ -17,7 +17,7 @@ class NetworkImagePreview extends ConsumerWidget {
     final state = ref.watch(networkImagePreviewStateNotifierProvider);
 
     if (state.loading) {
-      return const Center(child: AppCircularProgressIndicator());
+      return Center(child: AppCircularProgressIndicator(value: state.progress));
     } else if (state.mediaBytes != null) {
       return Hero(
         tag: media,

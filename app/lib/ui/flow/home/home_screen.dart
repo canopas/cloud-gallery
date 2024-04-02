@@ -60,6 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       titleWidget: _titleWidget(context: context),
       actions: [
         ActionButton(
+          backgroundColor: context.colorScheme.containerNormalOnSurface,
           onPressed: () {
             AppRouter.accounts.push(context);
           },
@@ -69,6 +70,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             size: 18,
           ),
         ),
+        if(!Platform.isIOS && !Platform.isMacOS)
+        const SizedBox(width: 16),
       ],
       body: _body(context: context),
     );

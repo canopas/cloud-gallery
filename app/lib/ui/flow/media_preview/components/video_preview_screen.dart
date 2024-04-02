@@ -2,23 +2,25 @@ import 'dart:io';
 import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:flutter/material.dart';
 import 'package:style/animations/on_tap_scale.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
+import 'package:style/text/app_text_style.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPreview extends StatefulWidget {
   final AppMedia media;
+  final bool showActions;
 
-  const VideoPreview({super.key, required this.media});
+  const VideoPreview({super.key, required this.media, this.showActions = true});
 
   @override
   State<VideoPreview> createState() => _VideoPreviewState();
 }
 
-class _VideoPreviewState extends State<VideoPreview>  with SingleTickerProviderStateMixin{
+class _VideoPreviewState extends State<VideoPreview>
+    with SingleTickerProviderStateMixin {
   bool _isInitialized = false;
   bool _isBuffering = false;
   Duration _position = Duration.zero;
@@ -26,7 +28,6 @@ class _VideoPreviewState extends State<VideoPreview>  with SingleTickerProviderS
 
   late VideoPlayerController _videoController;
   late AnimationController _playPauseController;
-
 
   @override
   void dispose() {
@@ -55,9 +56,9 @@ class _VideoPreviewState extends State<VideoPreview>  with SingleTickerProviderS
     super.initState();
   }
 
-
   _videoControllerListener() {
-    if (_videoController.value.position == _videoController.value.duration && _videoController.value.isCompleted ) {
+    if (_videoController.value.position == _videoController.value.duration &&
+        _videoController.value.isCompleted) {
       _playPauseController.forward();
     }
     _isInitialized = _videoController.value.isInitialized;
@@ -96,110 +97,112 @@ class _VideoPreviewState extends State<VideoPreview>  with SingleTickerProviderS
   }
 
   Widget _videoActions(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: [
-      OnTapScale(
-        onTap: () {
-          _videoController.seekTo(
-            Duration(seconds: _position.inSeconds - 10),
-          );
-        },
-        child: const Padding(
-          padding:
-          EdgeInsets.only(left: 22, right: 18, top: 18, bottom: 18),
-          child: Icon(
-            CupertinoIcons.gobackward_10,
-            color: Colors.white,
-            size: 32,
-          ),
-        ),
-      ),
-      OnTapScale(
-        onTap: () async {
-          if (_videoController.value.isPlaying) {
-           await  _playPauseController.forward();
-            _videoController.pause();
-          } else {
-            await _playPauseController.reverse();
-            _videoController.play();
-          }
-        },
-        child: AnimatedIcon(
-          icon: AnimatedIcons.pause_play,
-          progress: _playPauseController,
-          color: Colors.white,
-          size: 64,
-        ),
-      ),
-      OnTapScale(
-        onTap: () {
-          _videoController.seekTo(Duration(seconds: _position.inSeconds + 10),
-          );
-        },
-        child: const Padding(
-          padding:
-          EdgeInsets.only(left: 18, right: 22, top: 18, bottom: 18),
-          child: Icon(
-            CupertinoIcons.goforward_10,
-            color: Colors.white,
-            size: 32,
-          ),
-        ),
-      ),
-    ],
-  );
-
-  Widget _videoDurationSlider(BuildContext context) => Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SizedBox(
-            height: 30,
-            child: Material(
-              color: Colors.transparent,
-              child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  trackHeight: 4,
-                  activeTrackColor: Colors.white,
-                  thumbShape: SliderComponentShape.noThumb,
-                  inactiveTrackColor: Colors.grey.shade500,
-                ),
-                child: Slider(
-                  value: _position.inSeconds.toDouble(),
-                  max: _maxDuration.inSeconds.toDouble(),
-                  min: 0,
-                  onChanged: (value) {
-                    setState(() {
-                      _position = Duration(seconds: value.toInt());
-                    });
-                    _videoController.seekTo(Duration(seconds: value.toInt()));
-                  },
-                ),
+          OnTapScale(
+            onTap: () {
+              _videoController.seekTo(
+                Duration(seconds: _position.inSeconds - 10),
+              );
+            },
+            child: const Padding(
+              padding:
+                  EdgeInsets.only(left: 22, right: 18, top: 18, bottom: 18),
+              child: Icon(
+                CupertinoIcons.gobackward_10,
+                color: Colors.white,
+                size: 32,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _position.format,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  _maxDuration.format,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+          OnTapScale(
+            onTap: () async {
+              if (_videoController.value.isPlaying) {
+                await _playPauseController.forward();
+                _videoController.pause();
+              } else {
+                await _playPauseController.reverse();
+                _videoController.play();
+              }
+            },
+            child: AnimatedIcon(
+              icon: AnimatedIcons.pause_play,
+              progress: _playPauseController,
+              color: Colors.white,
+              size: 64,
+            ),
+          ),
+          OnTapScale(
+            onTap: () {
+              _videoController.seekTo(
+                Duration(seconds: _position.inSeconds + 10),
+              );
+            },
+            child: const Padding(
+              padding:
+                  EdgeInsets.only(left: 18, right: 22, top: 18, bottom: 18),
+              child: Icon(
+                CupertinoIcons.goforward_10,
+                color: Colors.white,
+                size: 32,
+              ),
             ),
           ),
         ],
+      );
+
+  Widget _videoDurationSlider(BuildContext context) => Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          color: context.colorScheme.containerHighInverse,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 30,
+                child: Material(
+                  color: Colors.transparent,
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 4,
+                      activeTrackColor: Colors.white,
+                      thumbShape: SliderComponentShape.noThumb,
+                      inactiveTrackColor: Colors.grey.shade500,
+                    ),
+                    child: Slider(
+                      value: _position.inSeconds.toDouble(),
+                      max: _maxDuration.inSeconds.toDouble(),
+                      min: 0,
+                      activeColor: context.colorScheme.surfaceInverse,
+                      inactiveColor: context.colorScheme.containerNormal,
+                      onChanged: (value) {
+                        setState(() {
+                          _position = Duration(seconds: value.toInt());
+                        });
+                        _videoController
+                            .seekTo(Duration(seconds: value.toInt()));
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(_position.format,
+                        style: AppTextStyles.caption
+                            .copyWith(color: context.colorScheme.textPrimary)),
+                    Text(_maxDuration.format,
+                        style: AppTextStyles.caption
+                            .copyWith(color: context.colorScheme.textPrimary)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       );
 }
