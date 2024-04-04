@@ -1,8 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
-
 import '../errors/app_error.dart';
 
 final localMediaServiceProvider = Provider<LocalMediaService>(
@@ -52,5 +54,19 @@ class LocalMediaService {
     } catch (e) {
       throw AppError.fromError(e);
     }
+  }
+
+  Future<AssetEntity?> saveMedia(AppMedia media, Uint8List bytes) async {
+    if (media.type.isVideo) {
+      final tempDir = await getTemporaryDirectory();
+      final tempVideoFile = File('${tempDir.path}/temp_video.mp4');
+      await tempVideoFile.writeAsBytes(bytes);
+      return await PhotoManager.editor.saveVideo(tempVideoFile,
+          title: media.name ?? "${DateTime.now()}_cloud_gallery");
+    } else if (media.type.isImage) {
+      return await PhotoManager.editor.saveImage(bytes,
+          title: media.name ?? "${DateTime.now()}_cloud_gallery");
+    }
+    return null;
   }
 }

@@ -44,7 +44,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                   ),
                   title: context.l10n.back_up_on_google_drive_text,
                   onPressed: () {
-                    notifier.uploadMediaOnGoogleDrive();
+                    notifier.backUpMediaOnGoogleDrive();
                     context.pop();
                   },
                 ),

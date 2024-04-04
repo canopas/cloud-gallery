@@ -10,23 +10,30 @@ part 'media.freezed.dart';
 
 part 'media.g.dart';
 
-enum UploadStatus { uploading, waiting, none, failed, success }
+enum AppMediaProcessStatus {
+  waiting,
+  uploading,
+  uploadingFailed,
+  uploadingSuccess,
+  deleting,
+  failedDelete,
+  successDelete,
+  none;
 
-class UploadProgress {
-  final String mediaId;
-  final UploadStatus status;
+  bool get isProcessing =>
+      this == AppMediaProcessStatus.uploading ||
+      this == AppMediaProcessStatus.deleting;
 
-  UploadProgress({required this.mediaId, required this.status});
+  bool get isWaiting => this == AppMediaProcessStatus.waiting;
+}
 
-  @override
-  bool operator ==(Object other) {
-    return other is UploadProgress &&
-        other.mediaId == mediaId &&
-        other.status == status;
-  }
-
-  @override
-  int get hashCode => mediaId.hashCode ^ status.hashCode;
+@freezed
+class AppMediaProcess with _$AppMediaProcess {
+  const factory AppMediaProcess({
+    required String mediaId,
+    required AppMediaProcessStatus status,
+    Object? response,
+  }) = _AppMediaProcess;
 }
 
 enum AppMediaType {

@@ -60,7 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       titleWidget: _titleWidget(context: context),
       actions: [
         ActionButton(
-          backgroundColor: context.colorScheme.containerNormalOnSurface,
+          backgroundColor: context.colorScheme.containerNormal,
           onPressed: () {
             AppRouter.accounts.push(context);
           },
@@ -81,14 +81,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     //View State
     final ({
       Map<DateTime, List<AppMedia>> medias,
-      List<UploadProgress> uploadingMedias,
+      List<AppMediaProcess> mediaProcesses,
       List<AppMedia> selectedMedias,
       bool isLoading,
       bool hasLocalMediaAccess,
       String? lastLocalMediaId
     }) state = ref.watch(homeViewStateNotifier.select((value) => (
           medias: value.medias,
-          uploadingMedias: value.uploadingMedias,
+           mediaProcesses: value.mediaProcesses,
           selectedMedias: value.selectedMedias,
           isLoading: value.loading,
           hasLocalMediaAccess: value.hasLocalMediaAccess,
@@ -107,7 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _buildMediaList(
           context: context,
           medias: state.medias,
-          uploadingMedias: state.uploadingMedias,
+          mediaProcesses: state.mediaProcesses,
           selectedMedias: state.selectedMedias,
           lastLocalMediaId: state.lastLocalMediaId,
         ),
@@ -123,7 +123,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildMediaList(
       {required BuildContext context,
       required Map<DateTime, List<AppMedia>> medias,
-      required List<UploadProgress> uploadingMedias,
+      required List<AppMediaProcess> mediaProcesses,
       required String? lastLocalMediaId,
       required List<AppMedia> selectedMedias}) {
     return Scrollbar(
@@ -191,9 +191,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         notifier.toggleMediaSelection(media);
                       },
                       isSelected: selectedMedias.contains(media),
-                      status: uploadingMedias
+                      status: mediaProcesses
                           .firstWhereOrNull(
-                              (element) => element.mediaId == media.id)
+                              (element) => element.mediaId == media.id || element.mediaId == media.driveMediaRefId)
                           ?.status,
                       media: media,
                     );

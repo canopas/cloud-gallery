@@ -82,7 +82,7 @@ class GoogleDriveService {
     }
   }
 
-  Future<void> uploadInGoogleDrive(
+  Future<AppMedia> uploadInGoogleDrive(
       {required String folderID, required AppMedia media}) async {
     final localFile = File(media.path);
     try {
@@ -93,10 +93,11 @@ class GoogleDriveService {
         description: media.path,
         parents: [folderID],
       );
-      await driveApi.files.create(
+      final googleDriveFile = await driveApi.files.create(
         file,
         uploadMedia: drive.Media(localFile.openRead(), localFile.lengthSync()),
       );
+      return AppMedia.fromGoogleDriveFile(googleDriveFile);
     } catch (error) {
       if (error is drive.DetailedApiRequestError && error.status == 404) {
         throw const BackUpFolderNotFound();

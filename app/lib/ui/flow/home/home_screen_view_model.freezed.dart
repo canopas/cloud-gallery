@@ -24,7 +24,7 @@ mixin _$HomeViewState {
   Map<DateTime, List<AppMedia>> get medias =>
       throw _privateConstructorUsedError;
   List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
-  List<UploadProgress> get uploadingMedias =>
+  List<AppMediaProcess> get mediaProcesses =>
       throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -46,7 +46,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
       String? lastLocalMediaId,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<UploadProgress> uploadingMedias});
+      List<AppMediaProcess> mediaProcesses});
 }
 
 /// @nodoc
@@ -69,7 +69,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? lastLocalMediaId = freezed,
     Object? medias = null,
     Object? selectedMedias = null,
-    Object? uploadingMedias = null,
+    Object? mediaProcesses = null,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
@@ -97,10 +97,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.selectedMedias
           : selectedMedias // ignore: cast_nullable_to_non_nullable
               as List<AppMedia>,
-      uploadingMedias: null == uploadingMedias
-          ? _value.uploadingMedias
-          : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<UploadProgress>,
+      mediaProcesses: null == mediaProcesses
+          ? _value.mediaProcesses
+          : mediaProcesses // ignore: cast_nullable_to_non_nullable
+              as List<AppMediaProcess>,
     ) as $Val);
   }
 }
@@ -121,7 +121,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       String? lastLocalMediaId,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<UploadProgress> uploadingMedias});
+      List<AppMediaProcess> mediaProcesses});
 }
 
 /// @nodoc
@@ -142,7 +142,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? lastLocalMediaId = freezed,
     Object? medias = null,
     Object? selectedMedias = null,
-    Object? uploadingMedias = null,
+    Object? mediaProcesses = null,
   }) {
     return _then(_$HomeViewStateImpl(
       error: freezed == error ? _value.error : error,
@@ -170,10 +170,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value._selectedMedias
           : selectedMedias // ignore: cast_nullable_to_non_nullable
               as List<AppMedia>,
-      uploadingMedias: null == uploadingMedias
-          ? _value._uploadingMedias
-          : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<UploadProgress>,
+      mediaProcesses: null == mediaProcesses
+          ? _value._mediaProcesses
+          : mediaProcesses // ignore: cast_nullable_to_non_nullable
+              as List<AppMediaProcess>,
     ));
   }
 }
@@ -189,10 +189,10 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.lastLocalMediaId,
       final Map<DateTime, List<AppMedia>> medias = const {},
       final List<AppMedia> selectedMedias = const [],
-      final List<UploadProgress> uploadingMedias = const []})
+      final List<AppMediaProcess> mediaProcesses = const []})
       : _medias = medias,
         _selectedMedias = selectedMedias,
-        _uploadingMedias = uploadingMedias;
+        _mediaProcesses = mediaProcesses;
 
   @override
   final Object? error;
@@ -224,18 +224,18 @@ class _$HomeViewStateImpl implements _HomeViewState {
     return EqualUnmodifiableListView(_selectedMedias);
   }
 
-  final List<UploadProgress> _uploadingMedias;
+  final List<AppMediaProcess> _mediaProcesses;
   @override
   @JsonKey()
-  List<UploadProgress> get uploadingMedias {
-    if (_uploadingMedias is EqualUnmodifiableListView) return _uploadingMedias;
+  List<AppMediaProcess> get mediaProcesses {
+    if (_mediaProcesses is EqualUnmodifiableListView) return _mediaProcesses;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_uploadingMedias);
+    return EqualUnmodifiableListView(_mediaProcesses);
   }
 
   @override
   String toString() {
-    return 'HomeViewState(error: $error, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, googleAccount: $googleAccount, lastLocalMediaId: $lastLocalMediaId, medias: $medias, selectedMedias: $selectedMedias, uploadingMedias: $uploadingMedias)';
+    return 'HomeViewState(error: $error, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, googleAccount: $googleAccount, lastLocalMediaId: $lastLocalMediaId, medias: $medias, selectedMedias: $selectedMedias, mediaProcesses: $mediaProcesses)';
   }
 
   @override
@@ -255,7 +255,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
             const DeepCollectionEquality()
                 .equals(other._selectedMedias, _selectedMedias) &&
             const DeepCollectionEquality()
-                .equals(other._uploadingMedias, _uploadingMedias));
+                .equals(other._mediaProcesses, _mediaProcesses));
   }
 
   @override
@@ -268,7 +268,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       lastLocalMediaId,
       const DeepCollectionEquality().hash(_medias),
       const DeepCollectionEquality().hash(_selectedMedias),
-      const DeepCollectionEquality().hash(_uploadingMedias));
+      const DeepCollectionEquality().hash(_mediaProcesses));
 
   @JsonKey(ignore: true)
   @override
@@ -286,7 +286,7 @@ abstract class _HomeViewState implements HomeViewState {
       final String? lastLocalMediaId,
       final Map<DateTime, List<AppMedia>> medias,
       final List<AppMedia> selectedMedias,
-      final List<UploadProgress> uploadingMedias}) = _$HomeViewStateImpl;
+      final List<AppMediaProcess> mediaProcesses}) = _$HomeViewStateImpl;
 
   @override
   Object? get error;
@@ -303,7 +303,7 @@ abstract class _HomeViewState implements HomeViewState {
   @override
   List<AppMedia> get selectedMedias;
   @override
-  List<UploadProgress> get uploadingMedias;
+  List<AppMediaProcess> get mediaProcesses;
   @override
   @JsonKey(ignore: true)
   _$$HomeViewStateImplCopyWith<_$HomeViewStateImpl> get copyWith =>

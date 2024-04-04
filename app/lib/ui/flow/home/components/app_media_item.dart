@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
 import 'package:data/models/media/media.dart';
@@ -17,7 +16,7 @@ class AppMediaItem extends StatefulWidget {
   final void Function()? onTap;
   final void Function()? onLongTap;
   final bool isSelected;
-  final UploadStatus? status;
+  final AppMediaProcessStatus? status;
 
   const AppMediaItem({
     super.key,
@@ -171,14 +170,14 @@ class _AppMediaItemState extends State<AppMediaItem>
               ],
             ),
           ),
-        if (widget.status == UploadStatus.uploading)
+        if (widget.status?.isProcessing ?? false)
           _BackgroundContainer(
             child: AppCircularProgressIndicator(
               size: 16,
               color: context.colorScheme.surfaceInverse,
             ),
           ),
-        if (widget.status == UploadStatus.waiting)
+        if (widget.status?.isWaiting ?? false)
           _BackgroundContainer(
             child: Icon(
               CupertinoIcons.time,

@@ -14,6 +14,155 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+/// @nodoc
+mixin _$AppMediaProcess {
+  String get mediaId => throw _privateConstructorUsedError;
+  AppMediaProcessStatus get status => throw _privateConstructorUsedError;
+  Object? get response => throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AppMediaProcessCopyWith<AppMediaProcess> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AppMediaProcessCopyWith<$Res> {
+  factory $AppMediaProcessCopyWith(
+          AppMediaProcess value, $Res Function(AppMediaProcess) then) =
+      _$AppMediaProcessCopyWithImpl<$Res, AppMediaProcess>;
+  @useResult
+  $Res call({String mediaId, AppMediaProcessStatus status, Object? response});
+}
+
+/// @nodoc
+class _$AppMediaProcessCopyWithImpl<$Res, $Val extends AppMediaProcess>
+    implements $AppMediaProcessCopyWith<$Res> {
+  _$AppMediaProcessCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mediaId = null,
+    Object? status = null,
+    Object? response = freezed,
+  }) {
+    return _then(_value.copyWith(
+      mediaId: null == mediaId
+          ? _value.mediaId
+          : mediaId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppMediaProcessStatus,
+      response: freezed == response ? _value.response : response,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AppMediaProcessImplCopyWith<$Res>
+    implements $AppMediaProcessCopyWith<$Res> {
+  factory _$$AppMediaProcessImplCopyWith(_$AppMediaProcessImpl value,
+          $Res Function(_$AppMediaProcessImpl) then) =
+      __$$AppMediaProcessImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String mediaId, AppMediaProcessStatus status, Object? response});
+}
+
+/// @nodoc
+class __$$AppMediaProcessImplCopyWithImpl<$Res>
+    extends _$AppMediaProcessCopyWithImpl<$Res, _$AppMediaProcessImpl>
+    implements _$$AppMediaProcessImplCopyWith<$Res> {
+  __$$AppMediaProcessImplCopyWithImpl(
+      _$AppMediaProcessImpl _value, $Res Function(_$AppMediaProcessImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mediaId = null,
+    Object? status = null,
+    Object? response = freezed,
+  }) {
+    return _then(_$AppMediaProcessImpl(
+      mediaId: null == mediaId
+          ? _value.mediaId
+          : mediaId // ignore: cast_nullable_to_non_nullable
+              as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppMediaProcessStatus,
+      response: freezed == response ? _value.response : response,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AppMediaProcessImpl implements _AppMediaProcess {
+  const _$AppMediaProcessImpl(
+      {required this.mediaId, required this.status, this.response});
+
+  @override
+  final String mediaId;
+  @override
+  final AppMediaProcessStatus status;
+  @override
+  final Object? response;
+
+  @override
+  String toString() {
+    return 'AppMediaProcess(mediaId: $mediaId, status: $status, response: $response)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AppMediaProcessImpl &&
+            (identical(other.mediaId, mediaId) || other.mediaId == mediaId) &&
+            (identical(other.status, status) || other.status == status) &&
+            const DeepCollectionEquality().equals(other.response, response));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, mediaId, status,
+      const DeepCollectionEquality().hash(response));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AppMediaProcessImplCopyWith<_$AppMediaProcessImpl> get copyWith =>
+      __$$AppMediaProcessImplCopyWithImpl<_$AppMediaProcessImpl>(
+          this, _$identity);
+}
+
+abstract class _AppMediaProcess implements AppMediaProcess {
+  const factory _AppMediaProcess(
+      {required final String mediaId,
+      required final AppMediaProcessStatus status,
+      final Object? response}) = _$AppMediaProcessImpl;
+
+  @override
+  String get mediaId;
+  @override
+  AppMediaProcessStatus get status;
+  @override
+  Object? get response;
+  @override
+  @JsonKey(ignore: true)
+  _$$AppMediaProcessImplCopyWith<_$AppMediaProcessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 AppMedia _$AppMediaFromJson(Map<String, dynamic> json) {
   return _AppMedia.fromJson(json);
 }

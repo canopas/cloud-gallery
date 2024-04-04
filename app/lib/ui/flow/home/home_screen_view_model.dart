@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_gallery/domain/extensions/map_extensions.dart';
 import 'package:data/errors/app_error.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/repositories/google_drive_repo.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:data/services/local_media_service.dart';
@@ -20,15 +21,19 @@ final homeViewStateNotifier =
     ref.read(localMediaServiceProvider),
     ref.read(googleDriveServiceProvider),
     ref.read(authServiceProvider),
+    ref.read(googleDriveRepoProvider),
   );
 });
 
 class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     with HomeViewModelHelperMixin {
-  final GoogleDriveService _googleDriveService;
   final AuthService _authService;
+  final GoogleDriveService _googleDriveService;
+  final GoogleDriveRepo _googleDriveRepo;
   final LocalMediaService _localMediaService;
+
   StreamSubscription? _googleAccountSubscription;
+  StreamSubscription? _googleDriveProcessSubscription;
 
   List<AppMedia> _uploadedMedia = [];
   String? _backUpFolderId;
@@ -36,23 +41,61 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   bool _isLocalMediaLoading = false;
   bool _isMaxLocalMediaLoaded = false;
 
-  HomeViewStateNotifier(
-      this._localMediaService, this._googleDriveService, this._authService)
+  HomeViewStateNotifier(this._localMediaService, this._googleDriveService,
+      this._authService, this._googleDriveRepo)
       : super(const HomeViewState()) {
+    _listenUserGoogleAccount();
+    _listenGoogleDriveProcess();
+    _loadInitialMedia();
+  }
+
+  void _listenUserGoogleAccount() {
     _googleAccountSubscription =
         _authService.onGoogleAccountChange.listen((event) async {
       state = state.copyWith(googleAccount: event);
-      await loadGoogleDriveMedia();
-      if (event == null) {
+      _googleDriveRepo.terminateAllProcess();
+      if (event != null) {
+        _backUpFolderId = await _googleDriveService.getBackupFolderId();
+        await loadGoogleDriveMedia();
+      } else {
+        _backUpFolderId = null;
         _uploadedMedia.clear();
         state = state.copyWith(
-          medias: sortMedias(
-            medias: removeGoogleDriveRefFromMedias(state.medias),
-          ),
+          medias: removeGoogleDriveRefFromMedias(medias: state.medias),
         );
       }
     });
-    _loadInitialMedia();
+  }
+
+  void _listenGoogleDriveProcess() {
+    _googleDriveProcessSubscription =
+        _googleDriveRepo.mediaProcessStream.listen((event) {
+      final uploadSuccessIds = event
+          .where((element) =>
+              element.status == AppMediaProcessStatus.uploadingSuccess)
+          .map((e) => e.mediaId);
+
+      final deleteSuccessIds = event
+          .where((element) =>
+              element.status == AppMediaProcessStatus.successDelete)
+          .map((e) => e.mediaId);
+
+      if (uploadSuccessIds.isNotEmpty) {
+        state = state.copyWith(
+            medias: addGoogleDriveRefInMedias(
+                medias: state.medias,
+                event: event,
+                uploadSuccessIds: uploadSuccessIds.toList()));
+      }
+      if (deleteSuccessIds.isNotEmpty) {
+        state = state.copyWith(
+            medias: removeGoogleDriveRefFromMedias(
+                medias: state.medias,
+                removeFromIds: deleteSuccessIds.toList()));
+      }
+
+      state = state.copyWith(mediaProcesses: event);
+    });
   }
 
   void _loadInitialMedia() async {
@@ -163,7 +206,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       state = state.copyWith(
         medias: sortMedias(medias: [
           ...mergeCommonMedia(
-            localMedias: removeGoogleDriveRefFromMedias(state.medias),
+            localMedias: removeGoogleDriveRefFromMedias(medias: state.medias)
+                .values
+                .expand((element) => element)
+                .toList(),
             googleDriveMedias: uploadedMedia,
           ),
           ...googleDriveMedia
@@ -189,11 +235,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           .where((element) => element.sources.contains(AppMediaSource.local))
           .map((e) => e.id)
           .toList();
-
       await _localMediaService.deleteMedias(medias);
-      state = state.copyWith(
-        selectedMedias: [],
-      );
+      state = state.copyWith(selectedMedias: []);
       await loadLocalMedia();
     } catch (e) {
       state = state.copyWith(error: e);
@@ -202,24 +245,23 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
   Future<void> deleteMediasFromGoogleDrive() async {
     try {
-      final medias = state.selectedMedias
+      final mediaGoogleDriveIds = state.selectedMedias
           .where(
-              (element) => element.sources.contains(AppMediaSource.googleDrive))
-          .map((e) => e.isCommonStored ? e.driveMediaRefId ?? '' : e.id)
+            (element) =>
+                element.sources.contains(AppMediaSource.googleDrive) &&
+                element.driveMediaRefId != null,
+          )
+          .map((e) => e.driveMediaRefId!)
           .toList();
-      for (final media in medias) {
-        await _googleDriveService.deleteMedia(media);
-      }
-      state = state.copyWith(
-        selectedMedias: [],
-      );
-      loadGoogleDriveMedia();
+
+      _googleDriveRepo.deleteMediasInGoogleDrive(mediaIds: mediaGoogleDriveIds);
+      state = state.copyWith(selectedMedias: []);
     } catch (e) {
       state = state.copyWith(error: e);
     }
   }
 
-  Future<void> uploadMediaOnGoogleDrive() async {
+  Future<void> backUpMediaOnGoogleDrive() async {
     try {
       if (!_authService.signedInWithGoogle) {
         await _authService.signInWithGoogle();
@@ -230,60 +272,28 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           .where((element) =>
               !element.sources.contains(AppMediaSource.googleDrive))
           .toList();
-
-      state = state.copyWith(
-        uploadingMedias: uploadingMedias
-            .map((e) =>
-                UploadProgress(mediaId: e.id, status: UploadStatus.waiting))
-            .toList(),
-        error: null,
-      );
-
       _backUpFolderId ??= await _googleDriveService.getBackupFolderId();
 
-      for (final media in uploadingMedias) {
-        state = state.copyWith(
-          uploadingMedias: state.uploadingMedias.toList()
-            ..updateElement(
-                newElement: UploadProgress(
-                    mediaId: media.id, status: UploadStatus.uploading),
-                oldElement: UploadProgress(
-                    mediaId: media.id, status: UploadStatus.waiting)),
-        );
+      _googleDriveRepo.uploadMediasInGoogleDrive(
+        medias: uploadingMedias,
+        backUpFolderId: _backUpFolderId!,
+      );
 
-        await _googleDriveService.uploadInGoogleDrive(
-          media: media,
-          folderID: _backUpFolderId!,
-        );
-
-        state = state.copyWith(
-          medias: state.medias.map((key, value) {
-            value.updateElement(
-                newElement: media.copyWith(
-                    sources: media.sources.toList()
-                      ..add(AppMediaSource.googleDrive)),
-                oldElement: media);
-            return MapEntry(key, value);
-          }),
-          uploadingMedias: state.uploadingMedias.toList()
-            ..removeWhere((element) => element.mediaId == media.id),
-        );
-      }
-
-      state = state.copyWith(uploadingMedias: [], selectedMedias: []);
+      state = state.copyWith(selectedMedias: []);
     } catch (error) {
       if (error is BackUpFolderNotFound) {
         _backUpFolderId = await _googleDriveService.getBackupFolderId();
-        uploadMediaOnGoogleDrive();
+        backUpMediaOnGoogleDrive();
         return;
       }
-      state = state.copyWith(error: error, uploadingMedias: []);
+      state = state.copyWith(error: error);
     }
   }
 
   @override
   Future<void> dispose() async {
     await _googleAccountSubscription?.cancel();
+    await _googleDriveProcessSubscription?.cancel();
     super.dispose();
   }
 }
@@ -298,6 +308,6 @@ class HomeViewState with _$HomeViewState {
     String? lastLocalMediaId,
     @Default({}) Map<DateTime, List<AppMedia>> medias,
     @Default([]) List<AppMedia> selectedMedias,
-    @Default([]) List<UploadProgress> uploadingMedias,
+    @Default([]) List<AppMediaProcess> mediaProcesses,
   }) = _HomeViewState;
 }
