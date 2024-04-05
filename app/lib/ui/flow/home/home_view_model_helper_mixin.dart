@@ -21,7 +21,6 @@ mixin HomeViewModelHelperMixin {
     // Add common media to mergedMedias and remove them from the lists.
     for (AppMedia localMedia in localMedias.toList()) {
       googleDriveMedias
-          .toList()
           .where((googleDriveMedia) => googleDriveMedia.path == localMedia.path)
           .forEach((googleDriveMedia) {
         localMedias.removeWhere((media) => media.id == localMedia.id);

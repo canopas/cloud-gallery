@@ -19,7 +19,7 @@ mixin _$MediaPreviewState {
   Object? get error => throw _privateConstructorUsedError;
   List<AppMedia> get medias => throw _privateConstructorUsedError;
   int get currentIndex => throw _privateConstructorUsedError;
-  bool get showManu => throw _privateConstructorUsedError;
+  bool get showActions => throw _privateConstructorUsedError;
   bool get isVideoInitialized => throw _privateConstructorUsedError;
   bool get isVideoBuffering => throw _privateConstructorUsedError;
   Duration get videoPosition => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       {Object? error,
       List<AppMedia> medias,
       int currentIndex,
-      bool showManu,
+      bool showActions,
       bool isVideoInitialized,
       bool isVideoBuffering,
       Duration videoPosition,
@@ -65,7 +65,7 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
     Object? error = freezed,
     Object? medias = null,
     Object? currentIndex = null,
-    Object? showManu = null,
+    Object? showActions = null,
     Object? isVideoInitialized = null,
     Object? isVideoBuffering = null,
     Object? videoPosition = null,
@@ -82,9 +82,9 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      showManu: null == showManu
-          ? _value.showManu
-          : showManu // ignore: cast_nullable_to_non_nullable
+      showActions: null == showActions
+          ? _value.showActions
+          : showActions // ignore: cast_nullable_to_non_nullable
               as bool,
       isVideoInitialized: null == isVideoInitialized
           ? _value.isVideoInitialized
@@ -122,7 +122,7 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       {Object? error,
       List<AppMedia> medias,
       int currentIndex,
-      bool showManu,
+      bool showActions,
       bool isVideoInitialized,
       bool isVideoBuffering,
       Duration videoPosition,
@@ -144,7 +144,7 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
     Object? error = freezed,
     Object? medias = null,
     Object? currentIndex = null,
-    Object? showManu = null,
+    Object? showActions = null,
     Object? isVideoInitialized = null,
     Object? isVideoBuffering = null,
     Object? videoPosition = null,
@@ -161,9 +161,9 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
-      showManu: null == showManu
-          ? _value.showManu
-          : showManu // ignore: cast_nullable_to_non_nullable
+      showActions: null == showActions
+          ? _value.showActions
+          : showActions // ignore: cast_nullable_to_non_nullable
               as bool,
       isVideoInitialized: null == isVideoInitialized
           ? _value.isVideoInitialized
@@ -196,7 +196,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       {this.error,
       final List<AppMedia> medias = const [],
       this.currentIndex = 0,
-      this.showManu = true,
+      this.showActions = true,
       this.isVideoInitialized = false,
       this.isVideoBuffering = false,
       this.videoPosition = Duration.zero,
@@ -220,7 +220,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   final int currentIndex;
   @override
   @JsonKey()
-  final bool showManu;
+  final bool showActions;
   @override
   @JsonKey()
   final bool isVideoInitialized;
@@ -239,7 +239,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
   @override
   String toString() {
-    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showManu: $showManu, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying)';
+    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying)';
   }
 
   @override
@@ -251,8 +251,8 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
             const DeepCollectionEquality().equals(other._medias, _medias) &&
             (identical(other.currentIndex, currentIndex) ||
                 other.currentIndex == currentIndex) &&
-            (identical(other.showManu, showManu) ||
-                other.showManu == showManu) &&
+            (identical(other.showActions, showActions) ||
+                other.showActions == showActions) &&
             (identical(other.isVideoInitialized, isVideoInitialized) ||
                 other.isVideoInitialized == isVideoInitialized) &&
             (identical(other.isVideoBuffering, isVideoBuffering) ||
@@ -271,7 +271,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       const DeepCollectionEquality().hash(error),
       const DeepCollectionEquality().hash(_medias),
       currentIndex,
-      showManu,
+      showActions,
       isVideoInitialized,
       isVideoBuffering,
       videoPosition,
@@ -291,7 +291,7 @@ abstract class _MediaPreviewState implements MediaPreviewState {
       {final Object? error,
       final List<AppMedia> medias,
       final int currentIndex,
-      final bool showManu,
+      final bool showActions,
       final bool isVideoInitialized,
       final bool isVideoBuffering,
       final Duration videoPosition,
@@ -305,7 +305,7 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   @override
   int get currentIndex;
   @override
-  bool get showManu;
+  bool get showActions;
   @override
   bool get isVideoInitialized;
   @override

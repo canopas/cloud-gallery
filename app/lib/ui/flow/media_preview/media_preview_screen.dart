@@ -131,7 +131,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         children: [
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: notifier.toggleManu,
+            onTap: notifier.toggleActionVisibility,
             child: PageView.builder(
               onPageChanged: notifier.changeVisibleMediaIndex,
               controller: _pageController,
@@ -185,7 +185,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           final media = ref.watch(
               _provider.select((state) => state.medias[state.currentIndex]));
           final showManu =
-              ref.watch(_provider.select((state) => state.showManu));
+              ref.watch(_provider.select((state) => state.showActions));
           return CrossFadeAnimation(
             showChild: showManu,
             child: AdaptiveAppBar(
@@ -312,7 +312,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             bool isPlaying,
             Duration position,
           }) state = ref.watch(_provider.select((state) => (
-                showActions: state.showManu &&
+                showActions: state.showActions &&
                     state.medias[state.currentIndex].type.isVideo &&
                     state.isVideoInitialized,
                 isPlaying: state.isVideoPlaying,
@@ -352,7 +352,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           Duration duration,
           Duration position
         }) state = ref.watch(_provider.select((state) => (
-              showDurationSlider: state.showManu &&
+              showDurationSlider: state.showActions &&
                   state.medias[state.currentIndex].type.isVideo &&
                   state.isVideoInitialized,
               duration: state.videoMaxDuration,

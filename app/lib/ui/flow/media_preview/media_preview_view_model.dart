@@ -28,8 +28,8 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     state = state.copyWith(currentIndex: index);
   }
 
-  void toggleManu() {
-    state = state.copyWith(showManu: !state.showManu);
+  void toggleActionVisibility() {
+    state = state.copyWith(showActions: !state.showActions);
   }
 
   Future<void> deleteMediaFromLocal(String id) async {
@@ -81,7 +81,7 @@ class MediaPreviewState with _$MediaPreviewState {
     Object? error,
     @Default([]) List<AppMedia> medias,
     @Default(0) int currentIndex,
-    @Default(true) bool showManu,
+    @Default(true) bool showActions,
     @Default(false) bool isVideoInitialized,
     @Default(false) bool isVideoBuffering,
     @Default(Duration.zero) Duration videoPosition,
