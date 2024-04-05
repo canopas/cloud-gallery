@@ -9,6 +9,7 @@ class VideoDurationSlider extends StatelessWidget {
   final bool showSlider;
   final Duration duration;
   final void Function(Duration duration) onChanged;
+  final void Function(Duration duration) onChangeEnd;
   final Duration position;
 
   const VideoDurationSlider(
@@ -16,6 +17,7 @@ class VideoDurationSlider extends StatelessWidget {
         required this.showSlider,
         required this.duration,
         required this.position,
+        required this.onChangeEnd,
         required this.onChanged});
 
   @override
@@ -58,7 +60,8 @@ class VideoDurationSlider extends StatelessWidget {
                           min: 0,
                           activeColor: context.colorScheme.primary,
                           inactiveColor: context.colorScheme.outline,
-                          onChanged: (value) => onChanged.call(Duration(seconds: value.toInt())),
+                          onChangeEnd: (value) => onChangeEnd.call(Duration(seconds: value.toInt())),
+                          onChanged: (double value) => onChanged.call(Duration(seconds: value.toInt())),
                         ),
                       ),
                     ),

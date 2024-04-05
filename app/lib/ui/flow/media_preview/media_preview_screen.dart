@@ -2,26 +2,20 @@ import 'dart:io';
 import 'package:cloud_gallery/components/app_page.dart';
 import 'package:cloud_gallery/components/error_view.dart';
 import 'package:cloud_gallery/components/snack_bar.dart';
-import 'package:cloud_gallery/domain/assets/assets_paths.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
-import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
+import 'package:cloud_gallery/ui/flow/media_preview/components/download_require_view.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/components/image_preview_screen.dart';
+import 'package:cloud_gallery/ui/flow/media_preview/components/top_bar.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/components/video_player_components/video_actions.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/media_preview_view_model.dart';
 import 'package:data/models/media/media.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:style/buttons/action_button.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
-import 'package:style/text/app_text_style.dart';
 import 'package:video_player/video_player.dart';
-import '../../../components/app_dialog.dart';
-import 'package:style/animations/cross_fade_animation.dart';
 import 'components/video_player_components/video_duration_slider.dart';
 
 class MediaPreview extends ConsumerStatefulWidget {
@@ -126,25 +120,37 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _observeError();
     _updateVideoControllerOnMediaChange();
     final medias = ref.watch(_provider.select((state) => state.medias));
+    final showActions =
+        ref.watch(_provider.select((state) => state.showActions));
 
-    return AppPage(
-      body: Stack(
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: notifier.toggleActionVisibility,
-            child: PageView.builder(
-              onPageChanged: notifier.changeVisibleMediaIndex,
-              controller: _pageController,
-              itemCount: medias.length,
-              itemBuilder: (context, index) =>
-                  _preview(context: context, media: medias[index]),
+    return DismissiblePage(
+      onProgress: (progress) {
+        if (progress > 0 && showActions) {
+          notifier.toggleActionVisibility();
+        }
+      },
+      onDismiss: () {
+        context.pop();
+      },
+      child: AppPage(
+        body: Stack(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: notifier.toggleActionVisibility,
+              child: PageView.builder(
+                onPageChanged: notifier.changeVisibleMediaIndex,
+                controller: _pageController,
+                itemCount: medias.length,
+                itemBuilder: (context, index) =>
+                    _preview(context: context, media: medias[index]),
+              ),
             ),
-          ),
-          _actions(context: context),
-          _videoActions(context),
-          _videoDurationSlider(context),
-        ],
+            PreviewTopBar(provider: _provider),
+            _videoActions(context),
+            _videoDurationSlider(context),
+          ],
+        ),
       ),
     );
   }
@@ -172,31 +178,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         }),
       );
     } else if (media.type.isVideo && media.isGoogleDriveStored) {
-      return Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.network(
-              height: double.infinity,
-              width: double.infinity,
-              media.thumbnailLink!,
-              fit: BoxFit.cover,
-            ),
-            Container(
-              color: Colors.black38,
-              child: ErrorView(
-                foregroundColor: context.colorScheme.onPrimary,
-                icon: Icon(CupertinoIcons.cloud_download,
-                    size: 68, color: context.colorScheme.onPrimary),
-                title: "Download Required",
-                message:
-                    "To watch the video, simply download it first. Tap the download button to begin.",
-                action: ErrorViewAction(title: "Download", onPressed: () {}),
-              ),
-            ),
-          ],
-        ),
-      );
+      return DownloadRequireView(media: media);
     } else if (media.type.isImage) {
       return ImagePreview(media: media);
     } else {
@@ -206,131 +188,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       );
     }
   }
-
-  Widget _actions({required BuildContext context}) => Consumer(
-        builder: (context, ref, child) {
-          final media = ref.watch(
-              _provider.select((state) => state.medias[state.currentIndex]));
-          final showManu =
-              ref.watch(_provider.select((state) => state.showActions));
-          return CrossFadeAnimation(
-            showChild: showManu,
-            child: AdaptiveAppBar(
-              text:
-                  media.createdTime?.format(context, DateFormatType.relative) ??
-                      '',
-              actions: [
-                ActionButton(
-                  onPressed: () {
-                    ///TODO: media details
-                  },
-                  icon: Icon(
-                    CupertinoIcons.info,
-                    color: context.colorScheme.textSecondary,
-                    size: 22,
-                  ),
-                ),
-                ActionButton(
-                  onPressed: () async {
-                    if (media.isCommonStored && media.driveMediaRefId != null) {
-                      showMenu(
-                          context: context,
-                          position: RelativeRect.fromLTRB(
-                              double.infinity,
-                              kToolbarHeight +
-                                  MediaQuery.of(context).padding.top,
-                              0,
-                              0),
-                          surfaceTintColor: context.colorScheme.surface,
-                          color: context.colorScheme.surface,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          items: <PopupMenuEntry>[
-                            PopupMenuItem(
-                              onTap: () async {
-                                await showDeleteAlert(
-                                    context: context,
-                                    onDelete: () {
-                                      notifier.deleteMediaFromGoogleDrive(
-                                          media.driveMediaRefId);
-                                      context.pop();
-                                    });
-                              },
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    Assets.images.icons.googlePhotos,
-                                    width: 20,
-                                    height: 20,
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Text("Delete from Google Drive",
-                                      style: AppTextStyles.body2.copyWith(
-                                        color: context.colorScheme.textPrimary,
-                                      )),
-                                ],
-                              ),
-                            ),
-                            PopupMenuItem(
-                              onTap: () async {
-                                await showDeleteAlert(
-                                    context: context,
-                                    onDelete: () {
-                                      notifier.deleteMediaFromLocal(media.id);
-                                      context.pop();
-                                    });
-                              },
-                              child: Row(
-                                children: [
-                                  Icon(CupertinoIcons.trash,
-                                      color: context.colorScheme.textSecondary,
-                                      size: 22),
-                                  const SizedBox(width: 16),
-                                  Text(
-                                    "Delete from Device",
-                                    style: AppTextStyles.body2.copyWith(
-                                      color: context.colorScheme.textPrimary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ]);
-                    } else if (media.isGoogleDriveStored &&
-                        media.driveMediaRefId != null) {
-                      await showDeleteAlert(
-                          context: context,
-                          onDelete: () {
-                            notifier.deleteMediaFromGoogleDrive(
-                                media.driveMediaRefId);
-                            context.pop();
-                          });
-                    } else if (media.isLocalStored) {
-                      await showDeleteAlert(
-                          context: context,
-                          onDelete: () {
-                            notifier.deleteMediaFromLocal(media.id);
-                            context.pop();
-                          });
-                    }
-                  },
-                  icon: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Icon(
-                      CupertinoIcons.delete,
-                      color: context.colorScheme.textSecondary,
-                      size: 22,
-                    ),
-                  ),
-                ),
-                if (!Platform.isIOS && !Platform.isMacOS)
-                  const SizedBox(width: 8),
-              ],
-            ),
-          );
-        },
-      );
 
   Widget _videoActions(BuildContext context) => Consumer(
         builder: (context, ref, child) {
@@ -389,33 +246,82 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           showSlider: state.showDurationSlider,
           duration: state.duration,
           position: state.position,
+          onChangeEnd: (duration) {
+            _videoPlayerController?.seekTo(duration);
+          },
           onChanged: (duration) {
             notifier.updateVideoPosition(duration);
-            _videoPlayerController?.seekTo(duration);
           },
         );
       });
+}
 
-  Future<void> showDeleteAlert(
-      {required BuildContext context, required VoidCallback onDelete}) async {
-    await showAppAlertDialog(
-      context: context,
-      title: "Delete",
-      message:
-          "Are you sure you want to delete this media? It will be permanently removed.",
-      actions: [
-        AppAlertAction(
-          title: "Cancel",
-          onPressed: () {
-            context.pop();
-          },
-        ),
-        AppAlertAction(
-          isDestructiveAction: true,
-          title: "Delete",
-          onPressed: onDelete,
-        ),
-      ],
+class DismissiblePage extends StatefulWidget {
+  final Widget child;
+  final double threshold;
+  final void Function(double progress)? onProgress;
+  final void Function()? onDismiss;
+  final double scaleDownPercentage;
+
+  const DismissiblePage({
+    Key? key,
+    required this.child,
+    this.threshold = 200,
+    this.onProgress,
+    this.onDismiss,
+    this.scaleDownPercentage = 0.25,
+  }) : super(key: key);
+
+  @override
+  State<DismissiblePage> createState() => _DismissiblePageState();
+}
+
+class _DismissiblePageState extends State<DismissiblePage> {
+  double _startY = 0.0;
+  double displacement = 0.0;
+  double percentage = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onVerticalDragStart: (DragStartDetails details) {
+        _startY = details.globalPosition.dy;
+      },
+      onVerticalDragUpdate: (DragUpdateDetails details) {
+        if ((details.globalPosition.dy - _startY) > 0) {
+          setState(() {
+            displacement = details.globalPosition.dy - _startY;
+            percentage = (displacement / widget.threshold).clamp(0, 1);
+          });
+        }
+        widget.onProgress?.call(percentage);
+      },
+      onVerticalDragEnd: (DragEndDetails details) {
+        if (displacement > widget.threshold) {
+          widget.onDismiss?.call();
+        } else {
+          setState(() {
+            displacement = 0.0;
+            percentage = 0.0;
+          });
+        }
+      },
+      child: Stack(
+        children: [
+          Container(
+            color: Colors.black.withOpacity(1 - percentage),
+            height: double.infinity,
+            width: double.infinity,
+          ),
+          Transform.translate(
+            offset: Offset(0, displacement),
+            child: Transform.scale(
+              scale: 1 - (percentage * widget.scaleDownPercentage),
+              child: widget.child,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
