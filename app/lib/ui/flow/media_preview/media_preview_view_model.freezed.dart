@@ -20,6 +20,11 @@ mixin _$MediaPreviewState {
   List<AppMedia> get medias => throw _privateConstructorUsedError;
   int get currentIndex => throw _privateConstructorUsedError;
   bool get showManu => throw _privateConstructorUsedError;
+  bool get isVideoInitialized => throw _privateConstructorUsedError;
+  bool get isVideoBuffering => throw _privateConstructorUsedError;
+  Duration get videoPosition => throw _privateConstructorUsedError;
+  Duration get videoMaxDuration => throw _privateConstructorUsedError;
+  bool get isVideoPlaying => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MediaPreviewStateCopyWith<MediaPreviewState> get copyWith =>
@@ -33,7 +38,15 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       _$MediaPreviewStateCopyWithImpl<$Res, MediaPreviewState>;
   @useResult
   $Res call(
-      {Object? error, List<AppMedia> medias, int currentIndex, bool showManu});
+      {Object? error,
+      List<AppMedia> medias,
+      int currentIndex,
+      bool showManu,
+      bool isVideoInitialized,
+      bool isVideoBuffering,
+      Duration videoPosition,
+      Duration videoMaxDuration,
+      bool isVideoPlaying});
 }
 
 /// @nodoc
@@ -53,6 +66,11 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
     Object? medias = null,
     Object? currentIndex = null,
     Object? showManu = null,
+    Object? isVideoInitialized = null,
+    Object? isVideoBuffering = null,
+    Object? videoPosition = null,
+    Object? videoMaxDuration = null,
+    Object? isVideoPlaying = null,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
@@ -68,6 +86,26 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.showManu
           : showManu // ignore: cast_nullable_to_non_nullable
               as bool,
+      isVideoInitialized: null == isVideoInitialized
+          ? _value.isVideoInitialized
+          : isVideoInitialized // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isVideoBuffering: null == isVideoBuffering
+          ? _value.isVideoBuffering
+          : isVideoBuffering // ignore: cast_nullable_to_non_nullable
+              as bool,
+      videoPosition: null == videoPosition
+          ? _value.videoPosition
+          : videoPosition // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      videoMaxDuration: null == videoMaxDuration
+          ? _value.videoMaxDuration
+          : videoMaxDuration // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      isVideoPlaying: null == isVideoPlaying
+          ? _value.isVideoPlaying
+          : isVideoPlaying // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -81,7 +119,15 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Object? error, List<AppMedia> medias, int currentIndex, bool showManu});
+      {Object? error,
+      List<AppMedia> medias,
+      int currentIndex,
+      bool showManu,
+      bool isVideoInitialized,
+      bool isVideoBuffering,
+      Duration videoPosition,
+      Duration videoMaxDuration,
+      bool isVideoPlaying});
 }
 
 /// @nodoc
@@ -99,6 +145,11 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
     Object? medias = null,
     Object? currentIndex = null,
     Object? showManu = null,
+    Object? isVideoInitialized = null,
+    Object? isVideoBuffering = null,
+    Object? videoPosition = null,
+    Object? videoMaxDuration = null,
+    Object? isVideoPlaying = null,
   }) {
     return _then(_$MediaPreviewStateImpl(
       error: freezed == error ? _value.error : error,
@@ -114,6 +165,26 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.showManu
           : showManu // ignore: cast_nullable_to_non_nullable
               as bool,
+      isVideoInitialized: null == isVideoInitialized
+          ? _value.isVideoInitialized
+          : isVideoInitialized // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isVideoBuffering: null == isVideoBuffering
+          ? _value.isVideoBuffering
+          : isVideoBuffering // ignore: cast_nullable_to_non_nullable
+              as bool,
+      videoPosition: null == videoPosition
+          ? _value.videoPosition
+          : videoPosition // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      videoMaxDuration: null == videoMaxDuration
+          ? _value.videoMaxDuration
+          : videoMaxDuration // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      isVideoPlaying: null == isVideoPlaying
+          ? _value.isVideoPlaying
+          : isVideoPlaying // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -125,7 +196,12 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       {this.error,
       final List<AppMedia> medias = const [],
       this.currentIndex = 0,
-      this.showManu = true})
+      this.showManu = true,
+      this.isVideoInitialized = false,
+      this.isVideoBuffering = false,
+      this.videoPosition = Duration.zero,
+      this.videoMaxDuration = Duration.zero,
+      this.isVideoPlaying = false})
       : _medias = medias;
 
   @override
@@ -145,10 +221,25 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   @override
   @JsonKey()
   final bool showManu;
+  @override
+  @JsonKey()
+  final bool isVideoInitialized;
+  @override
+  @JsonKey()
+  final bool isVideoBuffering;
+  @override
+  @JsonKey()
+  final Duration videoPosition;
+  @override
+  @JsonKey()
+  final Duration videoMaxDuration;
+  @override
+  @JsonKey()
+  final bool isVideoPlaying;
 
   @override
   String toString() {
-    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showManu: $showManu)';
+    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showManu: $showManu, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying)';
   }
 
   @override
@@ -161,7 +252,17 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
             (identical(other.currentIndex, currentIndex) ||
                 other.currentIndex == currentIndex) &&
             (identical(other.showManu, showManu) ||
-                other.showManu == showManu));
+                other.showManu == showManu) &&
+            (identical(other.isVideoInitialized, isVideoInitialized) ||
+                other.isVideoInitialized == isVideoInitialized) &&
+            (identical(other.isVideoBuffering, isVideoBuffering) ||
+                other.isVideoBuffering == isVideoBuffering) &&
+            (identical(other.videoPosition, videoPosition) ||
+                other.videoPosition == videoPosition) &&
+            (identical(other.videoMaxDuration, videoMaxDuration) ||
+                other.videoMaxDuration == videoMaxDuration) &&
+            (identical(other.isVideoPlaying, isVideoPlaying) ||
+                other.isVideoPlaying == isVideoPlaying));
   }
 
   @override
@@ -170,7 +271,12 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       const DeepCollectionEquality().hash(error),
       const DeepCollectionEquality().hash(_medias),
       currentIndex,
-      showManu);
+      showManu,
+      isVideoInitialized,
+      isVideoBuffering,
+      videoPosition,
+      videoMaxDuration,
+      isVideoPlaying);
 
   @JsonKey(ignore: true)
   @override
@@ -185,7 +291,12 @@ abstract class _MediaPreviewState implements MediaPreviewState {
       {final Object? error,
       final List<AppMedia> medias,
       final int currentIndex,
-      final bool showManu}) = _$MediaPreviewStateImpl;
+      final bool showManu,
+      final bool isVideoInitialized,
+      final bool isVideoBuffering,
+      final Duration videoPosition,
+      final Duration videoMaxDuration,
+      final bool isVideoPlaying}) = _$MediaPreviewStateImpl;
 
   @override
   Object? get error;
@@ -195,6 +306,16 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   int get currentIndex;
   @override
   bool get showManu;
+  @override
+  bool get isVideoInitialized;
+  @override
+  bool get isVideoBuffering;
+  @override
+  Duration get videoPosition;
+  @override
+  Duration get videoMaxDuration;
+  @override
+  bool get isVideoPlaying;
   @override
   @JsonKey(ignore: true)
   _$$MediaPreviewStateImplCopyWith<_$MediaPreviewStateImpl> get copyWith =>

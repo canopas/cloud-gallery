@@ -47,6 +47,32 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
       state = state.copyWith(error: error);
     }
   }
+
+
+  void  updateVideoPosition(Duration position) {
+    if(state.videoPosition == position) return;
+    state = state.copyWith(videoPosition: position);
+  }
+
+  void updateVideoPlaying(bool isPlaying) {
+    if(state.isVideoPlaying == isPlaying) return;
+    state = state.copyWith(isVideoPlaying: isPlaying);
+  }
+
+  void updateVideoBuffering(bool isBuffering) {
+    if(state.isVideoBuffering == isBuffering) return;
+    state = state.copyWith(isVideoBuffering: isBuffering);
+  }
+
+  void updateVideoInitialized(bool isInitialized) {
+    if(state.isVideoInitialized == isInitialized) return;
+    state = state.copyWith(isVideoInitialized: isInitialized);
+  }
+
+  void updateVideoMaxDuration(Duration maxDuration) {
+    if(state.videoMaxDuration == maxDuration) return;
+    state = state.copyWith(videoMaxDuration: maxDuration);
+  }
 }
 
 @freezed
@@ -56,5 +82,10 @@ class MediaPreviewState with _$MediaPreviewState {
     @Default([]) List<AppMedia> medias,
     @Default(0) int currentIndex,
     @Default(true) bool showManu,
+    @Default(false) bool isVideoInitialized,
+    @Default(false) bool isVideoBuffering,
+    @Default(Duration.zero) Duration videoPosition,
+    @Default(Duration.zero) Duration videoMaxDuration,
+    @Default(false) bool isVideoPlaying,
   }) = _MediaPreviewState;
 }

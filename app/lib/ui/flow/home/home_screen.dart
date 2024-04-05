@@ -60,6 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       titleWidget: _titleWidget(context: context),
       actions: [
         ActionButton(
+          size: 36,
           backgroundColor: context.colorScheme.containerNormal,
           onPressed: () {
             AppRouter.accounts.push(context);
@@ -183,7 +184,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   medias: medias.values
                                       .expand((element) => element)
                                       .toList(),
-                                  startingMediaId: media.id)
+                                  startFrom: media.id)
                               .push(context);
                         }
                       },

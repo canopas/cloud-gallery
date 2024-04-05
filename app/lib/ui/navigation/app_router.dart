@@ -24,12 +24,12 @@ class AppRouter {
       );
 
   static AppRoute preview(
-          {required List<AppMedia> medias, required String startingMediaId}) =>
+          {required List<AppMedia> medias, required String startFrom}) =>
       AppRoute(
         AppRoutePath.preview,
         builder: (context) => MediaPreview(
           medias: medias,
-          startingMediaId: startingMediaId,
+          startFrom: startFrom,
         ),
       );
 
