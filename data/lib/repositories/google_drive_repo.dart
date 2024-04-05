@@ -14,11 +14,10 @@ class GoogleDriveRepo {
   final StreamController<List<AppMediaProcess>> _mediaProcessController =
       StreamController<List<AppMediaProcess>>.broadcast();
 
-  final Set<AppMediaProcess> _mediaProcessValue = {};
+  Set<AppMediaProcess> _mediaProcessValue = {};
 
   void _updateMediaProcess(Iterable<AppMediaProcess> process) {
-    _mediaProcessValue.clear();
-    _mediaProcessValue.addAll(process);
+    _mediaProcessValue = process.toSet();
     _mediaProcessController.add(mediaProcessValue);
   }
 
