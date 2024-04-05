@@ -53,14 +53,14 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         MediaPreviewState(currentIndex: currentIndex, medias: widget.medias));
     notifier = ref.read(_provider.notifier);
 
-    _pageController =
-        PageController(initialPage: currentIndex, keepPage: true);
+    _pageController = PageController(initialPage: currentIndex, keepPage: true);
 
     if (widget.medias[currentIndex].type.isVideo &&
         widget.medias[currentIndex].sources.contains(AppMediaSource.local)) {
       runPostFrame(() => _initializeVideoControllerWithListener(
           path: widget.medias[currentIndex].path));
-    }
+    } else if (widget.medias[currentIndex].type.isVideo &&
+        widget.medias[currentIndex].isGoogleDriveStored) {}
     super.initState();
   }
 
@@ -69,7 +69,8 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _videoPlayerController = VideoPlayerController.file(File(path));
     _videoPlayerController?.addListener(_observeVideoController);
     await _videoPlayerController?.initialize();
-    notifier.updateVideoInitialized(_videoPlayerController?.value.isInitialized ?? false);
+    notifier.updateVideoInitialized(
+        _videoPlayerController?.value.isInitialized ?? false);
     await _videoPlayerController?.play();
   }
 
@@ -169,6 +170,32 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             );
           }
         }),
+      );
+    } else if (media.type.isVideo && media.isGoogleDriveStored) {
+      return Center(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.network(
+              height: double.infinity,
+              width: double.infinity,
+              media.thumbnailLink!,
+              fit: BoxFit.cover,
+            ),
+            Container(
+              color: Colors.black38,
+              child: ErrorView(
+                foregroundColor: context.colorScheme.onPrimary,
+                icon: Icon(CupertinoIcons.cloud_download,
+                    size: 68, color: context.colorScheme.onPrimary),
+                title: "Download Required",
+                message:
+                    "To watch the video, simply download it first. Tap the download button to begin.",
+                action: ErrorViewAction(title: "Download", onPressed: () {}),
+              ),
+            ),
+          ],
+        ),
       );
     } else if (media.type.isImage) {
       return ImagePreview(media: media);
@@ -358,7 +385,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               duration: state.videoMaxDuration,
               position: state.videoPosition
             )));
-
         return VideoDurationSlider(
           showSlider: state.showDurationSlider,
           duration: state.duration,
