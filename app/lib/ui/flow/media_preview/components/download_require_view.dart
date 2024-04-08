@@ -1,6 +1,7 @@
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:style/extensions/context_extensions.dart';
 import '../../../../components/error_view.dart';
 
@@ -14,11 +15,14 @@ class DownloadRequireView extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Image.network(
-            height: double.infinity,
-            width: double.infinity,
-            media.thumbnailLink!,
-            fit: BoxFit.cover,
+          Hero(
+            tag: media,
+            child: Image.network(
+              height: double.infinity,
+              width: double.infinity,
+              media.thumbnailLink!,
+              fit: BoxFit.cover,
+            ),
           ),
           Container(
             color: Colors.black38,

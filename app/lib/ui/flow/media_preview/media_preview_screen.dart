@@ -17,6 +17,7 @@ import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:video_player/video_player.dart';
 import 'components/video_player_components/video_duration_slider.dart';
+import 'package:style/animations/dismissible_page.dart';
 
 class MediaPreview extends ConsumerStatefulWidget {
   final List<AppMedia> medias;
@@ -124,6 +125,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         ref.watch(_provider.select((state) => state.showActions));
 
     return DismissiblePage(
+      backgroundColor: context.colorScheme.surface,
       onProgress: (progress) {
         if (progress > 0 && showActions) {
           notifier.toggleActionVisibility();
@@ -132,7 +134,10 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       onDismiss: () {
         context.pop();
       },
-      child: AppPage(
+      child: (progress) => AppPage(
+        backgroundColor: progress == 0
+            ? context.colorScheme.surface
+            : Colors.transparent,
         body: Stack(
           children: [
             GestureDetector(
@@ -170,9 +175,12 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               color: context.colorScheme.onPrimary,
             );
           } else {
-            return AspectRatio(
-              aspectRatio: _videoPlayerController!.value.aspectRatio,
-              child: VideoPlayer(_videoPlayerController!),
+            return Hero(
+              tag: media,
+              child: AspectRatio(
+                aspectRatio: _videoPlayerController!.value.aspectRatio,
+                child: VideoPlayer(_videoPlayerController!),
+              ),
             );
           }
         }),
@@ -256,72 +264,3 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       });
 }
 
-class DismissiblePage extends StatefulWidget {
-  final Widget child;
-  final double threshold;
-  final void Function(double progress)? onProgress;
-  final void Function()? onDismiss;
-  final double scaleDownPercentage;
-
-  const DismissiblePage({
-    Key? key,
-    required this.child,
-    this.threshold = 200,
-    this.onProgress,
-    this.onDismiss,
-    this.scaleDownPercentage = 0.25,
-  }) : super(key: key);
-
-  @override
-  State<DismissiblePage> createState() => _DismissiblePageState();
-}
-
-class _DismissiblePageState extends State<DismissiblePage> {
-  double _startY = 0.0;
-  double displacement = 0.0;
-  double percentage = 0.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragStart: (DragStartDetails details) {
-        _startY = details.globalPosition.dy;
-      },
-      onVerticalDragUpdate: (DragUpdateDetails details) {
-        if ((details.globalPosition.dy - _startY) > 0) {
-          setState(() {
-            displacement = details.globalPosition.dy - _startY;
-            percentage = (displacement / widget.threshold).clamp(0, 1);
-          });
-        }
-        widget.onProgress?.call(percentage);
-      },
-      onVerticalDragEnd: (DragEndDetails details) {
-        if (displacement > widget.threshold) {
-          widget.onDismiss?.call();
-        } else {
-          setState(() {
-            displacement = 0.0;
-            percentage = 0.0;
-          });
-        }
-      },
-      child: Stack(
-        children: [
-          Container(
-            color: Colors.black.withOpacity(1 - percentage),
-            height: double.infinity,
-            width: double.infinity,
-          ),
-          Transform.translate(
-            offset: Offset(0, displacement),
-            child: Transform.scale(
-              scale: 1 - (percentage * widget.scaleDownPercentage),
-              child: widget.child,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
