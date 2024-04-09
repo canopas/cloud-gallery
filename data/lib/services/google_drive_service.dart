@@ -83,7 +83,9 @@ class GoogleDriveService {
   }
 
   Future<AppMedia> uploadInGoogleDrive(
-      {required String folderID, required AppMedia media}) async {
+      {required String folderID,
+      required AppMedia media,
+      void Function(int total, int chunk)? onProgress}) async {
     final localFile = File(media.path);
     try {
       final driveApi = await _getGoogleDriveAPI();
@@ -93,9 +95,17 @@ class GoogleDriveService {
         description: media.path,
         parents: [folderID],
       );
+      final fileLength = localFile.lengthSync();
+      int chunk = 0;
       final googleDriveFile = await driveApi.files.create(
         file,
-        uploadMedia: drive.Media(localFile.openRead(), localFile.lengthSync()),
+        uploadMedia: drive.Media(
+            localFile.openRead().map((event) {
+              chunk += event.length;
+              onProgress?.call(fileLength, chunk);
+              return event;
+            }),
+            fileLength),
       );
       return AppMedia.fromGoogleDriveFile(googleDriveFile);
     } catch (error) {

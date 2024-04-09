@@ -6,6 +6,7 @@ import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
 import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
 import 'package:collection/collection.dart';
+import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,8 +72,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             size: 18,
           ),
         ),
-        if(!Platform.isIOS && !Platform.isMacOS)
-        const SizedBox(width: 16),
+        if (!Platform.isIOS && !Platform.isMacOS) const SizedBox(width: 16),
       ],
       body: _body(context: context),
     );
@@ -82,14 +82,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     //View State
     final ({
       Map<DateTime, List<AppMedia>> medias,
-      List<AppMediaProcess> mediaProcesses,
+      List<AppProcess> mediaProcesses,
       List<AppMedia> selectedMedias,
       bool isLoading,
       bool hasLocalMediaAccess,
       String? lastLocalMediaId
     }) state = ref.watch(homeViewStateNotifier.select((value) => (
           medias: value.medias,
-           mediaProcesses: value.mediaProcesses,
+          mediaProcesses: value.mediaProcesses,
           selectedMedias: value.selectedMedias,
           isLoading: value.loading,
           hasLocalMediaAccess: value.hasLocalMediaAccess,
@@ -124,7 +124,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildMediaList(
       {required BuildContext context,
       required Map<DateTime, List<AppMedia>> medias,
-      required List<AppMediaProcess> mediaProcesses,
+      required List<AppProcess> mediaProcesses,
       required String? lastLocalMediaId,
       required List<AppMedia> selectedMedias}) {
     return Scrollbar(
@@ -192,10 +192,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         notifier.toggleMediaSelection(media);
                       },
                       isSelected: selectedMedias.contains(media),
-                      status: mediaProcesses
-                          .firstWhereOrNull(
-                              (element) => element.mediaId == media.id || element.mediaId == media.driveMediaRefId)
-                          ?.status,
+                      process: mediaProcesses.firstWhereOrNull(
+                          (process) => process.id == media.id),
                       media: media,
                     );
                   },

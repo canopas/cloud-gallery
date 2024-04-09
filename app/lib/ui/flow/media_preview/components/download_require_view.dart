@@ -1,7 +1,6 @@
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:style/extensions/context_extensions.dart';
 import '../../../../components/error_view.dart';
 

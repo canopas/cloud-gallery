@@ -1,6 +1,7 @@
 import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
 import 'package:collection/collection.dart';
 import 'package:data/extensions/iterable_extension.dart';
+import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 
 mixin HomeViewModelHelperMixin {
@@ -52,11 +53,11 @@ mixin HomeViewModelHelperMixin {
     return medias.map((key, mediaList) {
       for (int index = 0; index < mediaList.length; index++) {
         if (mediaList[index].isGoogleDriveStored &&
-            (removeFromIds?.contains(mediaList[index].driveMediaRefId) ??
+            (removeFromIds?.contains(mediaList[index].id) ??
                 true)) {
           mediaList.removeAt(index);
         } else if (mediaList[index].isCommonStored &&
-            (removeFromIds?.contains(mediaList[index].driveMediaRefId) ??
+            (removeFromIds?.contains(mediaList[index].id) ??
                 true)) {
           mediaList[index] = mediaList[index].copyWith(
             sources: mediaList[index].sources.toList()
@@ -70,30 +71,30 @@ mixin HomeViewModelHelperMixin {
     });
   }
 
-  Map<DateTime, List<AppMedia>> addGoogleDriveRefInMedias(
-      {required Map<DateTime, List<AppMedia>> medias,
-      required List<AppMediaProcess> event,
-      required List<String> uploadSuccessIds}) {
+  Map<DateTime, List<AppMedia>> addGoogleDriveRefInMedias({
+    required Map<DateTime, List<AppMedia>> medias,
+    required List<AppProcess> process,
+  }) {
+    final processIds = process.map((e) => e.id).toList();
     return medias.map((key, value) {
       return MapEntry(
           key,
           value
-              .updateWhere(
-                where: (media) => uploadSuccessIds.contains(media.id),
-                update: (media) {
-                  final res = event
-                      .where((element) => element.mediaId == media.id)
-                      .first
-                      .response as AppMedia?;
-                  return media.copyWith(
-                    thumbnailLink: res?.thumbnailLink,
-                    driveMediaRefId: res?.id,
-                    sources: media.sources.toList()
-                      ..add(AppMediaSource.googleDrive),
-                  );
-                },
-              )
-              .toList());
+            ..updateWhere(
+              where: (media) => processIds.contains(media.id),
+              update: (media) {
+                final res = process
+                    .where((element) => element.id == media.id)
+                    .first
+                    .response as AppMedia?;
+                return media.copyWith(
+                  thumbnailLink: res?.thumbnailLink,
+                  driveMediaRefId: res?.id,
+                  sources: media.sources.toList()
+                    ..add(AppMediaSource.googleDrive),
+                );
+              },
+            ));
     });
   }
 }

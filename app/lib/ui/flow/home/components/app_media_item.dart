@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
+import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -16,7 +17,7 @@ class AppMediaItem extends StatefulWidget {
   final void Function()? onTap;
   final void Function()? onLongTap;
   final bool isSelected;
-  final AppMediaProcessStatus? status;
+  final AppProcess? process;
 
   const AppMediaItem({
     super.key,
@@ -24,7 +25,7 @@ class AppMediaItem extends StatefulWidget {
     this.onTap,
     this.onLongTap,
     this.isSelected = false,
-    this.status,
+    this.process,
   });
 
   @override
@@ -170,14 +171,30 @@ class _AppMediaItemState extends State<AppMediaItem>
               ],
             ),
           ),
-        if (widget.status?.isProcessing ?? false)
+        if (widget.process?.status.isProcessing ?? false)
           _BackgroundContainer(
-            child: AppCircularProgressIndicator(
-              size: 16,
-              color: context.colorScheme.surfaceInverse,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppCircularProgressIndicator(
+                  size: 16,
+                  value: widget.process?.progress?.percentageInPoint,
+                  color: context.colorScheme.surfaceInverse,
+                ),
+                if (widget.process?.progress != null) ...[
+                  const SizedBox(width: 4),
+                  Text(
+                    '${widget.process?.progress?.percentage.toStringAsFixed(0)}%',
+                    style: AppTextStyles.caption.copyWith(
+                      color: context.colorScheme.surfaceInverse,
+                    ),
+                  ),
+                ]
+
+              ],
             ),
           ),
-        if (widget.status?.isWaiting ?? false)
+        if (widget.process?.status.isWaiting ?? false)
           _BackgroundContainer(
             child: Icon(
               CupertinoIcons.time,

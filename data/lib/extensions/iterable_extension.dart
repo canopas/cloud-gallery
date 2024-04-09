@@ -1,7 +1,11 @@
-extension IterableExtension<T> on Iterable<T> {
-  Iterable<T> updateWhere(
-      {required bool Function(T element) where,
-        required T Function(T element) update}) {
-    return map((element) => where(element) ? update(element) : element).toList();
+extension ListExtension<E> on List<E> {
+  void updateWhere(
+      {required bool Function(E element) where,
+        required E Function(E element) update}) {
+    for (var i = 0; i < length; i++) {
+      if (where(elementAt(i))) {
+        this[i] = update(elementAt(i));
+      }
+    }
   }
 }

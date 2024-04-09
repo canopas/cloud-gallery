@@ -24,8 +24,7 @@ mixin _$HomeViewState {
   Map<DateTime, List<AppMedia>> get medias =>
       throw _privateConstructorUsedError;
   List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
-  List<AppMediaProcess> get mediaProcesses =>
-      throw _privateConstructorUsedError;
+  List<AppProcess> get mediaProcesses => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeViewStateCopyWith<HomeViewState> get copyWith =>
@@ -46,7 +45,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
       String? lastLocalMediaId,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<AppMediaProcess> mediaProcesses});
+      List<AppProcess> mediaProcesses});
 }
 
 /// @nodoc
@@ -100,7 +99,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       mediaProcesses: null == mediaProcesses
           ? _value.mediaProcesses
           : mediaProcesses // ignore: cast_nullable_to_non_nullable
-              as List<AppMediaProcess>,
+              as List<AppProcess>,
     ) as $Val);
   }
 }
@@ -121,7 +120,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       String? lastLocalMediaId,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<AppMediaProcess> mediaProcesses});
+      List<AppProcess> mediaProcesses});
 }
 
 /// @nodoc
@@ -173,7 +172,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
       mediaProcesses: null == mediaProcesses
           ? _value._mediaProcesses
           : mediaProcesses // ignore: cast_nullable_to_non_nullable
-              as List<AppMediaProcess>,
+              as List<AppProcess>,
     ));
   }
 }
@@ -189,7 +188,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.lastLocalMediaId,
       final Map<DateTime, List<AppMedia>> medias = const {},
       final List<AppMedia> selectedMedias = const [],
-      final List<AppMediaProcess> mediaProcesses = const []})
+      final List<AppProcess> mediaProcesses = const []})
       : _medias = medias,
         _selectedMedias = selectedMedias,
         _mediaProcesses = mediaProcesses;
@@ -224,10 +223,10 @@ class _$HomeViewStateImpl implements _HomeViewState {
     return EqualUnmodifiableListView(_selectedMedias);
   }
 
-  final List<AppMediaProcess> _mediaProcesses;
+  final List<AppProcess> _mediaProcesses;
   @override
   @JsonKey()
-  List<AppMediaProcess> get mediaProcesses {
+  List<AppProcess> get mediaProcesses {
     if (_mediaProcesses is EqualUnmodifiableListView) return _mediaProcesses;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_mediaProcesses);
@@ -286,7 +285,7 @@ abstract class _HomeViewState implements HomeViewState {
       final String? lastLocalMediaId,
       final Map<DateTime, List<AppMedia>> medias,
       final List<AppMedia> selectedMedias,
-      final List<AppMediaProcess> mediaProcesses}) = _$HomeViewStateImpl;
+      final List<AppProcess> mediaProcesses}) = _$HomeViewStateImpl;
 
   @override
   Object? get error;
@@ -303,7 +302,7 @@ abstract class _HomeViewState implements HomeViewState {
   @override
   List<AppMedia> get selectedMedias;
   @override
-  List<AppMediaProcess> get mediaProcesses;
+  List<AppProcess> get mediaProcesses;
   @override
   @JsonKey(ignore: true)
   _$$HomeViewStateImplCopyWith<_$HomeViewStateImpl> get copyWith =>

@@ -6,22 +6,22 @@ part 'app_process.freezed.dart';
 
 enum AppProcessStatus {
   waiting,
-  upload,
-  uploadSuccess,
-  uploadFailed,
-  delete,
-  deleteSuccess,
-  deleteFailed,
-  download,
-  downloadSuccess,
-  downloadFailed;
+  uploading,
+  deleting,
+  downloading,
+  success,
+  failed;
 
   bool get isProcessing =>
-      this == AppProcessStatus.upload ||
-      this == AppProcessStatus.delete ||
-      this == AppProcessStatus.download;
+      this == AppProcessStatus.uploading ||
+      this == AppProcessStatus.deleting ||
+      this == AppProcessStatus.downloading;
 
   bool get isWaiting => this == AppProcessStatus.waiting;
+
+  bool get isSuccess => this == AppProcessStatus.success;
+
+  bool get isFailed => this == AppProcessStatus.failed;
 }
 
 @freezed
@@ -31,7 +31,21 @@ class AppProcess with _$AppProcess {
     required AppMedia media,
     required AppProcessStatus status,
     Object? response,
-    @Default(0) double progress,
+    @Default(null)
+    AppProcessProgress? progress,
   }) = _AppProcess;
 }
 
+@freezed
+class AppProcessProgress with _$AppProcessProgress {
+  const factory AppProcessProgress({required int total, required int chunk}) =
+      _AppProcessProgress;
+}
+
+extension AppProcessProgressExtension on AppProcessProgress {
+  /// Get the percentage of the progress 0.0 - 1.0
+  double get percentageInPoint => total == 0 ? 0 : chunk / total;
+
+  /// Get the percentage of the progress 0 - 100
+  double get percentage => percentageInPoint*100;
+}

@@ -10,32 +10,6 @@ part 'media.freezed.dart';
 
 part 'media.g.dart';
 
-enum AppMediaProcessStatus {
-  waiting,
-  uploading,
-  uploadingFailed,
-  uploadingSuccess,
-  deleting,
-  failedDelete,
-  successDelete,
-  none;
-
-  bool get isProcessing =>
-      this == AppMediaProcessStatus.uploading ||
-      this == AppMediaProcessStatus.deleting;
-
-  bool get isWaiting => this == AppMediaProcessStatus.waiting;
-}
-
-@freezed
-class AppMediaProcess with _$AppMediaProcess {
-  const factory AppMediaProcess({
-    required String mediaId,
-    required AppMediaProcessStatus status,
-    Object? response,
-  }) = _AppMediaProcess;
-}
-
 enum AppMediaType {
   other,
   image,

@@ -20,7 +20,7 @@ mixin _$AppProcess {
   AppMedia get media => throw _privateConstructorUsedError;
   AppProcessStatus get status => throw _privateConstructorUsedError;
   Object? get response => throw _privateConstructorUsedError;
-  double get progress => throw _privateConstructorUsedError;
+  AppProcessProgress? get progress => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $AppProcessCopyWith<AppProcess> get copyWith =>
@@ -38,9 +38,10 @@ abstract class $AppProcessCopyWith<$Res> {
       AppMedia media,
       AppProcessStatus status,
       Object? response,
-      double progress});
+      AppProcessProgress? progress});
 
   $AppMediaCopyWith<$Res> get media;
+  $AppProcessProgressCopyWith<$Res>? get progress;
 }
 
 /// @nodoc
@@ -60,7 +61,7 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
     Object? media = null,
     Object? status = null,
     Object? response = freezed,
-    Object? progress = null,
+    Object? progress = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -76,10 +77,10 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
           : status // ignore: cast_nullable_to_non_nullable
               as AppProcessStatus,
       response: freezed == response ? _value.response : response,
-      progress: null == progress
+      progress: freezed == progress
           ? _value.progress
           : progress // ignore: cast_nullable_to_non_nullable
-              as double,
+              as AppProcessProgress?,
     ) as $Val);
   }
 
@@ -88,6 +89,18 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
   $AppMediaCopyWith<$Res> get media {
     return $AppMediaCopyWith<$Res>(_value.media, (value) {
       return _then(_value.copyWith(media: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $AppProcessProgressCopyWith<$Res>? get progress {
+    if (_value.progress == null) {
+      return null;
+    }
+
+    return $AppProcessProgressCopyWith<$Res>(_value.progress!, (value) {
+      return _then(_value.copyWith(progress: value) as $Val);
     });
   }
 }
@@ -105,10 +118,12 @@ abstract class _$$AppProcessImplCopyWith<$Res>
       AppMedia media,
       AppProcessStatus status,
       Object? response,
-      double progress});
+      AppProcessProgress? progress});
 
   @override
   $AppMediaCopyWith<$Res> get media;
+  @override
+  $AppProcessProgressCopyWith<$Res>? get progress;
 }
 
 /// @nodoc
@@ -126,7 +141,7 @@ class __$$AppProcessImplCopyWithImpl<$Res>
     Object? media = null,
     Object? status = null,
     Object? response = freezed,
-    Object? progress = null,
+    Object? progress = freezed,
   }) {
     return _then(_$AppProcessImpl(
       id: null == id
@@ -142,10 +157,10 @@ class __$$AppProcessImplCopyWithImpl<$Res>
           : status // ignore: cast_nullable_to_non_nullable
               as AppProcessStatus,
       response: freezed == response ? _value.response : response,
-      progress: null == progress
+      progress: freezed == progress
           ? _value.progress
           : progress // ignore: cast_nullable_to_non_nullable
-              as double,
+              as AppProcessProgress?,
     ));
   }
 }
@@ -158,7 +173,7 @@ class _$AppProcessImpl implements _AppProcess {
       required this.media,
       required this.status,
       this.response,
-      this.progress = 0});
+      this.progress = null});
 
   @override
   final String id;
@@ -170,7 +185,7 @@ class _$AppProcessImpl implements _AppProcess {
   final Object? response;
   @override
   @JsonKey()
-  final double progress;
+  final AppProcessProgress? progress;
 
   @override
   String toString() {
@@ -207,7 +222,7 @@ abstract class _AppProcess implements AppProcess {
       required final AppMedia media,
       required final AppProcessStatus status,
       final Object? response,
-      final double progress}) = _$AppProcessImpl;
+      final AppProcessProgress? progress}) = _$AppProcessImpl;
 
   @override
   String get id;
@@ -218,9 +233,145 @@ abstract class _AppProcess implements AppProcess {
   @override
   Object? get response;
   @override
-  double get progress;
+  AppProcessProgress? get progress;
   @override
   @JsonKey(ignore: true)
   _$$AppProcessImplCopyWith<_$AppProcessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+mixin _$AppProcessProgress {
+  int get total => throw _privateConstructorUsedError;
+  int get chunk => throw _privateConstructorUsedError;
+
+  @JsonKey(ignore: true)
+  $AppProcessProgressCopyWith<AppProcessProgress> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AppProcessProgressCopyWith<$Res> {
+  factory $AppProcessProgressCopyWith(
+          AppProcessProgress value, $Res Function(AppProcessProgress) then) =
+      _$AppProcessProgressCopyWithImpl<$Res, AppProcessProgress>;
+  @useResult
+  $Res call({int total, int chunk});
+}
+
+/// @nodoc
+class _$AppProcessProgressCopyWithImpl<$Res, $Val extends AppProcessProgress>
+    implements $AppProcessProgressCopyWith<$Res> {
+  _$AppProcessProgressCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? chunk = null,
+  }) {
+    return _then(_value.copyWith(
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      chunk: null == chunk
+          ? _value.chunk
+          : chunk // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AppProcessProgressImplCopyWith<$Res>
+    implements $AppProcessProgressCopyWith<$Res> {
+  factory _$$AppProcessProgressImplCopyWith(_$AppProcessProgressImpl value,
+          $Res Function(_$AppProcessProgressImpl) then) =
+      __$$AppProcessProgressImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int total, int chunk});
+}
+
+/// @nodoc
+class __$$AppProcessProgressImplCopyWithImpl<$Res>
+    extends _$AppProcessProgressCopyWithImpl<$Res, _$AppProcessProgressImpl>
+    implements _$$AppProcessProgressImplCopyWith<$Res> {
+  __$$AppProcessProgressImplCopyWithImpl(_$AppProcessProgressImpl _value,
+      $Res Function(_$AppProcessProgressImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? total = null,
+    Object? chunk = null,
+  }) {
+    return _then(_$AppProcessProgressImpl(
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      chunk: null == chunk
+          ? _value.chunk
+          : chunk // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AppProcessProgressImpl implements _AppProcessProgress {
+  const _$AppProcessProgressImpl({required this.total, required this.chunk});
+
+  @override
+  final int total;
+  @override
+  final int chunk;
+
+  @override
+  String toString() {
+    return 'AppProcessProgress(total: $total, chunk: $chunk)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AppProcessProgressImpl &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.chunk, chunk) || other.chunk == chunk));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, total, chunk);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AppProcessProgressImplCopyWith<_$AppProcessProgressImpl> get copyWith =>
+      __$$AppProcessProgressImplCopyWithImpl<_$AppProcessProgressImpl>(
+          this, _$identity);
+}
+
+abstract class _AppProcessProgress implements AppProcessProgress {
+  const factory _AppProcessProgress(
+      {required final int total,
+      required final int chunk}) = _$AppProcessProgressImpl;
+
+  @override
+  int get total;
+  @override
+  int get chunk;
+  @override
+  @JsonKey(ignore: true)
+  _$$AppProcessProgressImplCopyWith<_$AppProcessProgressImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
