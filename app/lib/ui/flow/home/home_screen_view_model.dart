@@ -76,13 +76,17 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         .where((element) => element.status.isSuccess)
         .map((e) => e.id);
 
+    final successDownloads = _googleDriveProcessRepo.downloadQueue
+        .where((element) => element.status.isSuccess);
+
     if (successUploads.isNotEmpty) {
       state = state.copyWith(
-          medias: addGoogleDriveRefInMedias(
+          medias: addGoogleDriveMediaRef(
         medias: state.medias,
         process: successUploads.toList(),
       ));
     }
+
     if (successDeletes.isNotEmpty) {
       state = state.copyWith(
           medias: removeGoogleDriveRefFromMedias(
@@ -91,11 +95,22 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       ));
     }
 
-    state = state.copyWith(mediaProcesses: [
-      ..._googleDriveProcessRepo.uploadQueue,
-      ..._googleDriveProcessRepo.deleteQueue,
-      ..._googleDriveProcessRepo.downloadQueue,
-    ]);
+    if (successDownloads.isNotEmpty) {
+      state = state.copyWith(
+          medias: addLocalMediaRef(
+        medias: state.medias,
+        process: successDownloads.toList(),
+      ));
+    }
+
+    state = state.copyWith(
+        mediaProcesses: [
+          ..._googleDriveProcessRepo.uploadQueue,
+          ..._googleDriveProcessRepo.deleteQueue,
+          ..._googleDriveProcessRepo.downloadQueue,
+        ],
+        showTransfer: _googleDriveProcessRepo.uploadQueue.isNotEmpty ||
+            _googleDriveProcessRepo.downloadQueue.isNotEmpty);
   }
 
   void _loadInitialMedia() async {
@@ -294,6 +309,7 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool hasLocalMediaAccess,
     @Default(false) bool loading,
     GoogleSignInAccount? googleAccount,
+    @Default(false) bool showTransfer,
     String? lastLocalMediaId,
     @Default({}) Map<DateTime, List<AppMedia>> medias,
     @Default([]) List<AppMedia> selectedMedias,

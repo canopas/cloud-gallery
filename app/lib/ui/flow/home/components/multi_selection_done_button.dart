@@ -25,7 +25,8 @@ class MultiSelectionDoneButton extends ConsumerWidget {
         .any((element) => element.sources.contains(AppMediaSource.googleDrive));
     final bool showDeleteFromDeviceButton = selectedMedias
         .any((element) => element.sources.contains(AppMediaSource.local));
-    final bool showUploadToDriveButton = selectedMedias.any((element) => !element.sources.contains(AppMediaSource.googleDrive));
+    final bool showUploadToDriveButton = selectedMedias.any(
+        (element) => !element.sources.contains(AppMediaSource.googleDrive));
     return FloatingActionButton(
       elevation: 3,
       backgroundColor: context.colorScheme.primary,
@@ -51,22 +52,23 @@ class MultiSelectionDoneButton extends ConsumerWidget {
               if (showDeleteFromDeviceButton)
                 AppSheetAction(
                   icon: const Icon(CupertinoIcons.delete),
-                  title: "Delete from device",
+                  title: context.l10n.common_delete_from_device,
                   onPressed: () {
                     showAppAlertDialog(
                       context: context,
-                      title: "Delete selected medias",
-                      message: "Are you sure you want to delete these items?",
+                      title: context.l10n.common_delete_from_device,
+                      message: context
+                          .l10n.delete_media_from_device_confirmation_message,
                       actions: [
                         AppAlertAction(
-                          title: "Cancel",
+                          title: context.l10n.common_cancel,
                           onPressed: () {
                             context.pop();
                           },
                         ),
                         AppAlertAction(
                           isDestructiveAction: true,
-                          title: "Delete",
+                          title: context.l10n.common_delete,
                           onPressed: () {
                             notifier.deleteMediasFromLocal();
                             context.pop();
@@ -79,22 +81,23 @@ class MultiSelectionDoneButton extends ConsumerWidget {
               if (showDeleteFromDriveButton)
                 AppSheetAction(
                   icon: const Icon(CupertinoIcons.delete),
-                  title: "Delete from Google Drive",
+                  title: context.l10n.common_delete_from_google_drive,
                   onPressed: () {
                     showAppAlertDialog(
                       context: context,
-                      title: "Delete selected medias",
-                      message: "Are you sure you want to delete these items?",
+                      title: context.l10n.common_delete_from_google_drive,
+                      message: context.l10n
+                          .delete_media_from_google_drive_confirmation_message,
                       actions: [
                         AppAlertAction(
-                          title: "Cancel",
+                          title: context.l10n.common_cancel,
                           onPressed: () {
                             context.pop();
                           },
                         ),
                         AppAlertAction(
                           isDestructiveAction: true,
-                          title: "Delete",
+                          title: context.l10n.common_delete,
                           onPressed: () {
                             notifier.deleteMediasFromGoogleDrive();
                             context.pop();

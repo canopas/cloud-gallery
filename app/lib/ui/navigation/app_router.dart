@@ -1,4 +1,5 @@
 import 'package:cloud_gallery/ui/flow/accounts/accounts_screen.dart';
+import 'package:cloud_gallery/ui/flow/media_transfer/media_transfer_screen.dart';
 import 'package:cloud_gallery/ui/flow/onboard/onboard_screen.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,11 @@ class AppRouter {
         builder: (context) => const AccountsScreen(),
       );
 
+  static AppRoute get mediaTransfer => AppRoute(
+    AppRoutePath.transfer,
+    builder: (context) => const MediaTransferScreen(),
+  );
+
   static AppRoute preview(
           {required List<AppMedia> medias, required String startFrom}) =>
       AppRoute(
@@ -37,6 +43,7 @@ class AppRouter {
     home.goRoute,
     onBoard.goRoute,
     accounts.goRoute,
+    mediaTransfer.goRoute,
     GoRoute(
       path: AppRoutePath.preview,
       pageBuilder: (context, state) {
@@ -58,4 +65,5 @@ class AppRoutePath {
   static const onBoard = '/on-board';
   static const accounts = '/accounts';
   static const preview = '/preview';
+  static const transfer = '/transfer';
 }

@@ -17,6 +17,8 @@ class AppSegmentedButton<T> extends StatelessWidget {
   final List<AppButtonSegment> segments;
   final TextStyle segmentTextStyle;
   final Function(T value) onSelectionChanged;
+  final VisualDensity? visualDensity;
+  final MaterialTapTargetSize tapTargetSize;
   final T selected;
 
   const AppSegmentedButton({
@@ -25,6 +27,8 @@ class AppSegmentedButton<T> extends StatelessWidget {
     this.segmentTextStyle = AppTextStyles.caption,
     required this.selected,
     required this.onSelectionChanged,
+    this.visualDensity = VisualDensity.compact,
+    this.tapTargetSize = MaterialTapTargetSize.shrinkWrap,
     this.size,
   });
 
@@ -54,7 +58,7 @@ class AppSegmentedButton<T> extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           side: BorderSide.none,
         ),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        tapTargetSize: tapTargetSize,
         fixedSize: size,
         minimumSize: const Size(0, 0),
         side: BorderSide.none,
@@ -62,7 +66,7 @@ class AppSegmentedButton<T> extends StatelessWidget {
         selectedForegroundColor: context.colorScheme.onPrimary,
         selectedBackgroundColor: context.colorScheme.primary,
         backgroundColor: context.colorScheme.containerNormal,
-        visualDensity: VisualDensity.compact,
+        visualDensity: visualDensity,
       ),
     );
   }

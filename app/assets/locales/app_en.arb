@@ -14,12 +14,21 @@
   "common_yesterday": "Yesterday",
   "common_tomorrow": "Tomorrow",
 
+  "common_upload":"Upload",
+  "common_download":"Download",
+  "common_delete": "Delete",
+  "common_delete_from_google_drive": "Delete from Google Drive",
+  "common_delete_from_device": "Delete from Device",
+  "common_cancel": "Cancel",
+
+
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Something went wrong! Please try again later.",
   "user_google_sign_in_account_not_found_error": "You haven't signed in with Google account yet. Please sign in with Google account and try again.",
   "back_up_folder_not_found_error": "Back up folder not found!",
 
   "unable_to_load_media_error": "Unable to load media!",
+
   "unable_to_load_media_message": "Oops! It looks like we're having trouble loading the media right now. Please try again later.",
 
   "on_board_description": "Effortlessly move, share, and organize your photos and videos in a breeze. Access all your clouds in one friendly place. Your moments, your way, simplified for you! 🚀",
@@ -43,6 +52,19 @@
 
   "hint_google_sign_in_message": "Sign in with Google and effortlessly link your Google Drive to your Cloud Gallery. Enjoy quick access to all your awesome content in one spot",
   "hint_google_auto_backup_message": "Enable Auto Back Up to Google Drive and never lose your precious memories. Your photos and videos will be automatically backed up to your Google Drive",
-  "hint_action_auto_backup": "Enable Auto Back Up"
+  "hint_action_auto_backup": "Enable Auto Back Up",
+
+  "delete_media_from_device_confirmation_message": "Are you sure you want to delete this media? It will be permanently deleted from your device.",
+  "delete_media_from_google_drive_confirmation_message": "Are you sure you want to delete this media? It will be permanently deleted from your Google Drive.",
+
+  "waiting_in_queue_text": "Waiting in Queue...",
+
+  "transfer_screen_title": "Transfer",
+
+  "empty_upload_title":"No Files Being Uploads",
+  "empty_upload_message":  "No uploads are happening right now. If you have files to upload, go ahead and start uploading.",
+
+  "empty_download_title":"No Files Being Downloads",
+  "empty_download_message":  "No downloads are happening right now. If you have files to download, go ahead and start downloading."
 
 }

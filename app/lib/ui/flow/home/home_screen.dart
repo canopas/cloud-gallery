@@ -60,6 +60,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       titleWidget: _titleWidget(context: context),
       actions: [
+        Consumer(
+          builder: (context, ref, child) {
+            final showTransferButton = ref.watch(homeViewStateNotifier.select(
+                (value) => value.showTransfer));
+            return Visibility(
+              visible: showTransferButton,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ActionButton(
+                  size: 36,
+                  backgroundColor: context.colorScheme.containerNormal,
+                  onPressed: () {
+                    AppRouter.mediaTransfer.push(context);
+                  },
+                  icon: Icon(
+                    CupertinoIcons.arrow_up_arrow_down,
+                    color: context.colorScheme.textSecondary,
+                    size: 18,
+                  ),
+                ),
+              ),
+            );
+          }
+        ),
         ActionButton(
           size: 36,
           backgroundColor: context.colorScheme.containerNormal,

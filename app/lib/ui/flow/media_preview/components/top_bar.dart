@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +65,7 @@ class PreviewTopBar extends StatelessWidget {
                     items: <PopupMenuEntry>[
                       PopupMenuItem(
                         onTap: () async {
-                          await showDeleteAlert(
+                          _showDeleteFromDriveDialog(
                               context: context,
                               onDelete: () {
                                 notifier.deleteMediaFromGoogleDrive(
@@ -81,7 +81,7 @@ class PreviewTopBar extends StatelessWidget {
                               height: 20,
                             ),
                             const SizedBox(width: 16),
-                            Text("Delete from Google Drive",
+                            Text(context.l10n.common_delete_from_google_drive,
                                 style: AppTextStyles.body2.copyWith(
                                   color: context.colorScheme.textPrimary,
                                 )),
@@ -90,7 +90,7 @@ class PreviewTopBar extends StatelessWidget {
                       ),
                       PopupMenuItem(
                         onTap: () async {
-                          await showDeleteAlert(
+                          _showDeleteFromDeviceDialog(
                               context: context,
                               onDelete: () {
                                 notifier.deleteMediaFromLocal(media.id);
@@ -104,7 +104,7 @@ class PreviewTopBar extends StatelessWidget {
                                 size: 22),
                             const SizedBox(width: 16),
                             Text(
-                              "Delete from Device",
+                              context.l10n.common_delete_from_device,
                               style: AppTextStyles.body2.copyWith(
                                 color: context.colorScheme.textPrimary,
                               ),
@@ -116,7 +116,7 @@ class PreviewTopBar extends StatelessWidget {
                   );
                 } else if (media.isGoogleDriveStored &&
                     media.driveMediaRefId != null) {
-                  await showDeleteAlert(
+                  _showDeleteFromDriveDialog(
                       context: context,
                       onDelete: () {
                         notifier
@@ -124,7 +124,7 @@ class PreviewTopBar extends StatelessWidget {
                         context.pop();
                       });
                 } else if (media.isLocalStored) {
-                  await showDeleteAlert(
+                  _showDeleteFromDeviceDialog(
                       context: context,
                       onDelete: () {
                         notifier.deleteMediaFromLocal(media.id);
@@ -148,23 +148,46 @@ class PreviewTopBar extends StatelessWidget {
     });
   }
 
-  Future<void> showDeleteAlert(
-      {required BuildContext context, required VoidCallback onDelete}) async {
+  Future<void> _showDeleteFromDriveDialog(
+      {required BuildContext context,
+      required void Function() onDelete}) async {
     await showAppAlertDialog(
       context: context,
-      title: "Delete",
-      message:
-          "Are you sure you want to delete this media? It will be permanently removed.",
+      title: context.l10n.common_delete_from_google_drive,
+      message: context.l10n.delete_media_from_google_drive_confirmation_message,
       actions: [
         AppAlertAction(
-          title: "Cancel",
+          title: context.l10n.common_cancel,
           onPressed: () {
             context.pop();
           },
         ),
         AppAlertAction(
           isDestructiveAction: true,
-          title: "Delete",
+          title: context.l10n.common_delete,
+          onPressed: onDelete,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _showDeleteFromDeviceDialog(
+      {required BuildContext context,
+      required void Function() onDelete}) async {
+    await showAppAlertDialog(
+      context: context,
+      title: context.l10n.common_delete_from_device,
+      message: context.l10n.delete_media_from_device_confirmation_message,
+      actions: [
+        AppAlertAction(
+          title: context.l10n.common_cancel,
+          onPressed: () {
+            context.pop();
+          },
+        ),
+        AppAlertAction(
+          isDestructiveAction: true,
+          title: context.l10n.common_delete,
           onPressed: onDelete,
         ),
       ],

@@ -190,7 +190,6 @@ class _AppMediaItemState extends State<AppMediaItem>
                     ),
                   ),
                 ]
-
               ],
             ),
           ),

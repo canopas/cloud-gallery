@@ -53,12 +53,10 @@ mixin HomeViewModelHelperMixin {
     return medias.map((key, mediaList) {
       for (int index = 0; index < mediaList.length; index++) {
         if (mediaList[index].isGoogleDriveStored &&
-            (removeFromIds?.contains(mediaList[index].id) ??
-                true)) {
+            (removeFromIds?.contains(mediaList[index].id) ?? true)) {
           mediaList.removeAt(index);
         } else if (mediaList[index].isCommonStored &&
-            (removeFromIds?.contains(mediaList[index].id) ??
-                true)) {
+            (removeFromIds?.contains(mediaList[index].id) ?? true)) {
           mediaList[index] = mediaList[index].copyWith(
             sources: mediaList[index].sources.toList()
               ..remove(AppMediaSource.googleDrive),
@@ -71,7 +69,7 @@ mixin HomeViewModelHelperMixin {
     });
   }
 
-  Map<DateTime, List<AppMedia>> addGoogleDriveRefInMedias({
+  Map<DateTime, List<AppMedia>> addGoogleDriveMediaRef({
     required Map<DateTime, List<AppMedia>> medias,
     required List<AppProcess> process,
   }) {
@@ -91,6 +89,35 @@ mixin HomeViewModelHelperMixin {
                   thumbnailLink: res?.thumbnailLink,
                   driveMediaRefId: res?.id,
                   sources: media.sources.toList()
+                    ..add(AppMediaSource.googleDrive),
+                );
+              },
+            ));
+    });
+  }
+
+  Map<DateTime, List<AppMedia>> addLocalMediaRef({
+    required Map<DateTime, List<AppMedia>> medias,
+    required List<AppProcess> process,
+  }) {
+    final processIds = process.map((e) => e.id).toList();
+    return medias.map((key, value) {
+      return MapEntry(
+          key,
+          value
+            ..updateWhere(
+              where: (media) => processIds.contains(media.id),
+              update: (media) {
+                final res = process
+                    .where((element) => element.id == media.id)
+                    .first
+                    .response as AppMedia?;
+
+                if (res == null) return media;
+                return res.copyWith(
+                  thumbnailLink: media.thumbnailLink,
+                  driveMediaRefId: media.id,
+                  sources: res.sources.toList()
                     ..add(AppMediaSource.googleDrive),
                 );
               },
