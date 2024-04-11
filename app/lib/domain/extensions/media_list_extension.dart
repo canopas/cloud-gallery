@@ -32,7 +32,7 @@ extension MediaListExtension on List<AppMedia> {
             .first
             .response as AppMedia?;
         if (res == null) return media;
-        return media.margeGoogleDriveMedia(res);
+        return media.mergeGoogleDriveMedia(res);
       },
     );
   }

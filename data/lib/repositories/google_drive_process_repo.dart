@@ -195,7 +195,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
         where: (element) => element.id == process.id,
         update: (element) => element.copyWith(
             status: AppProcessStatus.success,
-            response: localMedia?.margeGoogleDriveMedia(updatedMedia)),
+            response: localMedia?.mergeGoogleDriveMedia(updatedMedia)),
       );
     } catch (error) {
       _downloadQueue.updateWhere(

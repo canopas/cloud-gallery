@@ -36,7 +36,7 @@ extension AppMediaExtension on AppMedia {
     );
   }
 
-  AppMedia margeGoogleDriveMedia(AppMedia media){
+  AppMedia mergeGoogleDriveMedia(AppMedia media){
     return copyWith(
       thumbnailLink: media.thumbnailLink,
       driveMediaRefId: media.driveMediaRefId,

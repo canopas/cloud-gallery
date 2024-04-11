@@ -27,7 +27,7 @@ mixin HomeViewModelHelperMixin {
           .forEach((googleDriveMedia) {
         localMedias.removeWhere((media) => media.id == localMedia.id);
 
-        mergedMedias.add(localMedia.margeGoogleDriveMedia(googleDriveMedia));
+        mergedMedias.add(localMedia.mergeGoogleDriveMedia(googleDriveMedia));
       });
     }
 
