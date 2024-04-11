@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 
 class ActionButton extends StatelessWidget {
   final void Function() onPressed;
   final Widget icon;
   final bool progress;
+  final MaterialTapTargetSize tapTargetSize;
   final Color? backgroundColor;
   final double size;
   final EdgeInsets padding;
@@ -16,18 +16,19 @@ class ActionButton extends StatelessWidget {
       {super.key,
       required this.onPressed,
       required this.icon,
-      this.size = 30,
+      this.size = 40,
+      this.tapTargetSize = MaterialTapTargetSize.padded,
       this.backgroundColor,
       this.progress = false,
       this.padding = const EdgeInsets.all(0)});
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isMacOS) {
       return CupertinoButton(
         minSize: size,
         borderRadius: BorderRadius.circular(size),
-        color: backgroundColor ?? context.colorScheme.containerNormal,
+        color: backgroundColor,
         onPressed: onPressed,
         padding: padding,
         child: progress ? const AppCircularProgressIndicator() : icon,
@@ -35,8 +36,8 @@ class ActionButton extends StatelessWidget {
     } else {
       return IconButton(
         style: IconButton.styleFrom(
-          backgroundColor:
-              backgroundColor ?? context.colorScheme.containerNormal,
+          tapTargetSize: tapTargetSize,
+          backgroundColor: backgroundColor,
           minimumSize: Size(size, size),
         ),
         onPressed: onPressed,

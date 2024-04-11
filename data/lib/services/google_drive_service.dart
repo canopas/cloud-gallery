@@ -60,7 +60,7 @@ class GoogleDriveService {
       final response = await driveApi.files.list(
         q: "'$backUpFolderId' in parents and trashed=false",
         $fields:
-            "files(id, name, description, mimeType, thumbnailLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
+            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
       );
 
       return (response.files ?? [])
@@ -73,8 +73,30 @@ class GoogleDriveService {
     }
   }
 
-  Future<void> uploadInGoogleDrive(
-      {required String folderID, required AppMedia media}) async {
+  Future<AppMedia> updateMediaDescription(String id, String description) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+      final file = drive.File(description: description);
+      final updatedFile = await driveApi.files.update(file, id);
+      return AppMedia.fromGoogleDriveFile(updatedFile);
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  Future<void> deleteMedia(String id) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+      await driveApi.files.delete(id);
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  Future<AppMedia> uploadInGoogleDrive(
+      {required String folderID,
+      required AppMedia media,
+      void Function(int total, int chunk)? onProgress}) async {
     final localFile = File(media.path);
     try {
       final driveApi = await _getGoogleDriveAPI();
@@ -84,10 +106,19 @@ class GoogleDriveService {
         description: media.path,
         parents: [folderID],
       );
-      await driveApi.files.create(
+      final fileLength = localFile.lengthSync();
+      int chunk = 0;
+      final googleDriveFile = await driveApi.files.create(
         file,
-        uploadMedia: drive.Media(localFile.openRead(), localFile.lengthSync()),
+        uploadMedia: drive.Media(
+            localFile.openRead().map((event) {
+              chunk += event.length;
+              onProgress?.call(fileLength, chunk);
+              return event;
+            }),
+            fileLength),
       );
+      return AppMedia.fromGoogleDriveFile(googleDriveFile);
     } catch (error) {
       if (error is drive.DetailedApiRequestError && error.status == 404) {
         throw const BackUpFolderNotFound();

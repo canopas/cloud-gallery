@@ -19,6 +19,7 @@ mixin _$NetworkImagePreviewState {
   bool get loading => throw _privateConstructorUsedError;
   AppMediaContent? get mediaContent => throw _privateConstructorUsedError;
   List<int>? get mediaBytes => throw _privateConstructorUsedError;
+  double get progress => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -36,6 +37,7 @@ abstract class $NetworkImagePreviewStateCopyWith<$Res> {
       {bool loading,
       AppMediaContent? mediaContent,
       List<int>? mediaBytes,
+      double progress,
       Object? error});
 
   $AppMediaContentCopyWith<$Res>? get mediaContent;
@@ -58,6 +60,7 @@ class _$NetworkImagePreviewStateCopyWithImpl<$Res,
     Object? loading = null,
     Object? mediaContent = freezed,
     Object? mediaBytes = freezed,
+    Object? progress = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -73,6 +76,10 @@ class _$NetworkImagePreviewStateCopyWithImpl<$Res,
           ? _value.mediaBytes
           : mediaBytes // ignore: cast_nullable_to_non_nullable
               as List<int>?,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -103,6 +110,7 @@ abstract class _$$NetworkImagePreviewStateImplCopyWith<$Res>
       {bool loading,
       AppMediaContent? mediaContent,
       List<int>? mediaBytes,
+      double progress,
       Object? error});
 
   @override
@@ -125,6 +133,7 @@ class __$$NetworkImagePreviewStateImplCopyWithImpl<$Res>
     Object? loading = null,
     Object? mediaContent = freezed,
     Object? mediaBytes = freezed,
+    Object? progress = null,
     Object? error = freezed,
   }) {
     return _then(_$NetworkImagePreviewStateImpl(
@@ -140,6 +149,10 @@ class __$$NetworkImagePreviewStateImplCopyWithImpl<$Res>
           ? _value._mediaBytes
           : mediaBytes // ignore: cast_nullable_to_non_nullable
               as List<int>?,
+      progress: null == progress
+          ? _value.progress
+          : progress // ignore: cast_nullable_to_non_nullable
+              as double,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -152,6 +165,7 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
       {this.loading = false,
       this.mediaContent,
       final List<int>? mediaBytes,
+      this.progress = 0.0,
       this.error})
       : _mediaBytes = mediaBytes;
 
@@ -171,11 +185,14 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
   }
 
   @override
+  @JsonKey()
+  final double progress;
+  @override
   final Object? error;
 
   @override
   String toString() {
-    return 'NetworkImagePreviewState(loading: $loading, mediaContent: $mediaContent, mediaBytes: $mediaBytes, error: $error)';
+    return 'NetworkImagePreviewState(loading: $loading, mediaContent: $mediaContent, mediaBytes: $mediaBytes, progress: $progress, error: $error)';
   }
 
   @override
@@ -188,6 +205,8 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
                 other.mediaContent == mediaContent) &&
             const DeepCollectionEquality()
                 .equals(other._mediaBytes, _mediaBytes) &&
+            (identical(other.progress, progress) ||
+                other.progress == progress) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -197,6 +216,7 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
       loading,
       mediaContent,
       const DeepCollectionEquality().hash(_mediaBytes),
+      progress,
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -212,6 +232,7 @@ abstract class _NetworkImagePreviewState implements NetworkImagePreviewState {
       {final bool loading,
       final AppMediaContent? mediaContent,
       final List<int>? mediaBytes,
+      final double progress,
       final Object? error}) = _$NetworkImagePreviewStateImpl;
 
   @override
@@ -220,6 +241,8 @@ abstract class _NetworkImagePreviewState implements NetworkImagePreviewState {
   AppMediaContent? get mediaContent;
   @override
   List<int>? get mediaBytes;
+  @override
+  double get progress;
   @override
   Object? get error;
   @override

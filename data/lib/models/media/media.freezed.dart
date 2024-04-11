@@ -21,6 +21,7 @@ AppMedia _$AppMediaFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AppMedia {
   String get id => throw _privateConstructorUsedError;
+  String? get driveMediaRefId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
   String? get thumbnailLink => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $AppMediaCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String? driveMediaRefId,
       String? name,
       String path,
       String? thumbnailLink,
@@ -81,6 +83,7 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
   @override
   $Res call({
     Object? id = null,
+    Object? driveMediaRefId = freezed,
     Object? name = freezed,
     Object? path = null,
     Object? thumbnailLink = freezed,
@@ -102,6 +105,10 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      driveMediaRefId: freezed == driveMediaRefId
+          ? _value.driveMediaRefId
+          : driveMediaRefId // ignore: cast_nullable_to_non_nullable
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -176,6 +183,7 @@ abstract class _$$AppMediaImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
+      String? driveMediaRefId,
       String? name,
       String path,
       String? thumbnailLink,
@@ -205,6 +213,7 @@ class __$$AppMediaImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? driveMediaRefId = freezed,
     Object? name = freezed,
     Object? path = null,
     Object? thumbnailLink = freezed,
@@ -226,6 +235,10 @@ class __$$AppMediaImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      driveMediaRefId: freezed == driveMediaRefId
+          ? _value.driveMediaRefId
+          : driveMediaRefId // ignore: cast_nullable_to_non_nullable
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -295,6 +308,7 @@ class __$$AppMediaImplCopyWithImpl<$Res>
 class _$AppMediaImpl implements _AppMedia {
   const _$AppMediaImpl(
       {required this.id,
+      this.driveMediaRefId,
       this.name,
       required this.path,
       this.thumbnailLink,
@@ -317,6 +331,8 @@ class _$AppMediaImpl implements _AppMedia {
 
   @override
   final String id;
+  @override
+  final String? driveMediaRefId;
   @override
   final String? name;
   @override
@@ -356,7 +372,7 @@ class _$AppMediaImpl implements _AppMedia {
 
   @override
   String toString() {
-    return 'AppMedia(id: $id, name: $name, path: $path, thumbnailLink: $thumbnailLink, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
+    return 'AppMedia(id: $id, driveMediaRefId: $driveMediaRefId, name: $name, path: $path, thumbnailLink: $thumbnailLink, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
   }
 
   @override
@@ -365,6 +381,8 @@ class _$AppMediaImpl implements _AppMedia {
         (other.runtimeType == runtimeType &&
             other is _$AppMediaImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.driveMediaRefId, driveMediaRefId) ||
+                other.driveMediaRefId == driveMediaRefId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.path, path) || other.path == path) &&
             (identical(other.thumbnailLink, thumbnailLink) ||
@@ -397,6 +415,7 @@ class _$AppMediaImpl implements _AppMedia {
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      driveMediaRefId,
       name,
       path,
       thumbnailLink,
@@ -430,6 +449,7 @@ class _$AppMediaImpl implements _AppMedia {
 abstract class _AppMedia implements AppMedia {
   const factory _AppMedia(
       {required final String id,
+      final String? driveMediaRefId,
       final String? name,
       required final String path,
       final String? thumbnailLink,
@@ -451,6 +471,8 @@ abstract class _AppMedia implements AppMedia {
 
   @override
   String get id;
+  @override
+  String? get driveMediaRefId;
   @override
   String? get name;
   @override

@@ -20,12 +20,12 @@ mixin _$HomeViewState {
   bool get hasLocalMediaAccess => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
+  bool get showTransfer => throw _privateConstructorUsedError;
   String? get lastLocalMediaId => throw _privateConstructorUsedError;
   Map<DateTime, List<AppMedia>> get medias =>
       throw _privateConstructorUsedError;
   List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
-  List<UploadProgress> get uploadingMedias =>
-      throw _privateConstructorUsedError;
+  List<AppProcess> get mediaProcesses => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeViewStateCopyWith<HomeViewState> get copyWith =>
@@ -43,10 +43,11 @@ abstract class $HomeViewStateCopyWith<$Res> {
       bool hasLocalMediaAccess,
       bool loading,
       GoogleSignInAccount? googleAccount,
+      bool showTransfer,
       String? lastLocalMediaId,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<UploadProgress> uploadingMedias});
+      List<AppProcess> mediaProcesses});
 }
 
 /// @nodoc
@@ -66,10 +67,11 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? hasLocalMediaAccess = null,
     Object? loading = null,
     Object? googleAccount = freezed,
+    Object? showTransfer = null,
     Object? lastLocalMediaId = freezed,
     Object? medias = null,
     Object? selectedMedias = null,
-    Object? uploadingMedias = null,
+    Object? mediaProcesses = null,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
@@ -85,6 +87,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
+      showTransfer: null == showTransfer
+          ? _value.showTransfer
+          : showTransfer // ignore: cast_nullable_to_non_nullable
+              as bool,
       lastLocalMediaId: freezed == lastLocalMediaId
           ? _value.lastLocalMediaId
           : lastLocalMediaId // ignore: cast_nullable_to_non_nullable
@@ -97,10 +103,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.selectedMedias
           : selectedMedias // ignore: cast_nullable_to_non_nullable
               as List<AppMedia>,
-      uploadingMedias: null == uploadingMedias
-          ? _value.uploadingMedias
-          : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<UploadProgress>,
+      mediaProcesses: null == mediaProcesses
+          ? _value.mediaProcesses
+          : mediaProcesses // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
     ) as $Val);
   }
 }
@@ -118,10 +124,11 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       bool hasLocalMediaAccess,
       bool loading,
       GoogleSignInAccount? googleAccount,
+      bool showTransfer,
       String? lastLocalMediaId,
       Map<DateTime, List<AppMedia>> medias,
       List<AppMedia> selectedMedias,
-      List<UploadProgress> uploadingMedias});
+      List<AppProcess> mediaProcesses});
 }
 
 /// @nodoc
@@ -139,10 +146,11 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? hasLocalMediaAccess = null,
     Object? loading = null,
     Object? googleAccount = freezed,
+    Object? showTransfer = null,
     Object? lastLocalMediaId = freezed,
     Object? medias = null,
     Object? selectedMedias = null,
-    Object? uploadingMedias = null,
+    Object? mediaProcesses = null,
   }) {
     return _then(_$HomeViewStateImpl(
       error: freezed == error ? _value.error : error,
@@ -158,6 +166,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
+      showTransfer: null == showTransfer
+          ? _value.showTransfer
+          : showTransfer // ignore: cast_nullable_to_non_nullable
+              as bool,
       lastLocalMediaId: freezed == lastLocalMediaId
           ? _value.lastLocalMediaId
           : lastLocalMediaId // ignore: cast_nullable_to_non_nullable
@@ -170,10 +182,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value._selectedMedias
           : selectedMedias // ignore: cast_nullable_to_non_nullable
               as List<AppMedia>,
-      uploadingMedias: null == uploadingMedias
-          ? _value._uploadingMedias
-          : uploadingMedias // ignore: cast_nullable_to_non_nullable
-              as List<UploadProgress>,
+      mediaProcesses: null == mediaProcesses
+          ? _value._mediaProcesses
+          : mediaProcesses // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
     ));
   }
 }
@@ -186,13 +198,14 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.hasLocalMediaAccess = false,
       this.loading = false,
       this.googleAccount,
+      this.showTransfer = false,
       this.lastLocalMediaId,
       final Map<DateTime, List<AppMedia>> medias = const {},
       final List<AppMedia> selectedMedias = const [],
-      final List<UploadProgress> uploadingMedias = const []})
+      final List<AppProcess> mediaProcesses = const []})
       : _medias = medias,
         _selectedMedias = selectedMedias,
-        _uploadingMedias = uploadingMedias;
+        _mediaProcesses = mediaProcesses;
 
   @override
   final Object? error;
@@ -204,6 +217,9 @@ class _$HomeViewStateImpl implements _HomeViewState {
   final bool loading;
   @override
   final GoogleSignInAccount? googleAccount;
+  @override
+  @JsonKey()
+  final bool showTransfer;
   @override
   final String? lastLocalMediaId;
   final Map<DateTime, List<AppMedia>> _medias;
@@ -224,18 +240,18 @@ class _$HomeViewStateImpl implements _HomeViewState {
     return EqualUnmodifiableListView(_selectedMedias);
   }
 
-  final List<UploadProgress> _uploadingMedias;
+  final List<AppProcess> _mediaProcesses;
   @override
   @JsonKey()
-  List<UploadProgress> get uploadingMedias {
-    if (_uploadingMedias is EqualUnmodifiableListView) return _uploadingMedias;
+  List<AppProcess> get mediaProcesses {
+    if (_mediaProcesses is EqualUnmodifiableListView) return _mediaProcesses;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_uploadingMedias);
+    return EqualUnmodifiableListView(_mediaProcesses);
   }
 
   @override
   String toString() {
-    return 'HomeViewState(error: $error, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, googleAccount: $googleAccount, lastLocalMediaId: $lastLocalMediaId, medias: $medias, selectedMedias: $selectedMedias, uploadingMedias: $uploadingMedias)';
+    return 'HomeViewState(error: $error, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, googleAccount: $googleAccount, showTransfer: $showTransfer, lastLocalMediaId: $lastLocalMediaId, medias: $medias, selectedMedias: $selectedMedias, mediaProcesses: $mediaProcesses)';
   }
 
   @override
@@ -249,13 +265,15 @@ class _$HomeViewStateImpl implements _HomeViewState {
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.googleAccount, googleAccount) ||
                 other.googleAccount == googleAccount) &&
+            (identical(other.showTransfer, showTransfer) ||
+                other.showTransfer == showTransfer) &&
             (identical(other.lastLocalMediaId, lastLocalMediaId) ||
                 other.lastLocalMediaId == lastLocalMediaId) &&
             const DeepCollectionEquality().equals(other._medias, _medias) &&
             const DeepCollectionEquality()
                 .equals(other._selectedMedias, _selectedMedias) &&
             const DeepCollectionEquality()
-                .equals(other._uploadingMedias, _uploadingMedias));
+                .equals(other._mediaProcesses, _mediaProcesses));
   }
 
   @override
@@ -265,10 +283,11 @@ class _$HomeViewStateImpl implements _HomeViewState {
       hasLocalMediaAccess,
       loading,
       googleAccount,
+      showTransfer,
       lastLocalMediaId,
       const DeepCollectionEquality().hash(_medias),
       const DeepCollectionEquality().hash(_selectedMedias),
-      const DeepCollectionEquality().hash(_uploadingMedias));
+      const DeepCollectionEquality().hash(_mediaProcesses));
 
   @JsonKey(ignore: true)
   @override
@@ -283,10 +302,11 @@ abstract class _HomeViewState implements HomeViewState {
       final bool hasLocalMediaAccess,
       final bool loading,
       final GoogleSignInAccount? googleAccount,
+      final bool showTransfer,
       final String? lastLocalMediaId,
       final Map<DateTime, List<AppMedia>> medias,
       final List<AppMedia> selectedMedias,
-      final List<UploadProgress> uploadingMedias}) = _$HomeViewStateImpl;
+      final List<AppProcess> mediaProcesses}) = _$HomeViewStateImpl;
 
   @override
   Object? get error;
@@ -297,13 +317,15 @@ abstract class _HomeViewState implements HomeViewState {
   @override
   GoogleSignInAccount? get googleAccount;
   @override
+  bool get showTransfer;
+  @override
   String? get lastLocalMediaId;
   @override
   Map<DateTime, List<AppMedia>> get medias;
   @override
   List<AppMedia> get selectedMedias;
   @override
-  List<UploadProgress> get uploadingMedias;
+  List<AppProcess> get mediaProcesses;
   @override
   @JsonKey(ignore: true)
   _$$HomeViewStateImplCopyWith<_$HomeViewStateImpl> get copyWith =>

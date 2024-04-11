@@ -1,8 +1,10 @@
 import 'dart:typed_data';
+import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
+import '../../../../../components/error_view.dart';
 import 'network_image_preview_view_model.dart';
 
 class NetworkImagePreview extends ConsumerWidget {
@@ -15,7 +17,7 @@ class NetworkImagePreview extends ConsumerWidget {
     final state = ref.watch(networkImagePreviewStateNotifierProvider);
 
     if (state.loading) {
-      return const Center(child: AppCircularProgressIndicator());
+      return Center(child: AppCircularProgressIndicator(value: state.progress));
     } else if (state.mediaBytes != null) {
       return Hero(
         tag: media,
@@ -23,7 +25,10 @@ class NetworkImagePreview extends ConsumerWidget {
             fit: BoxFit.fitWidth),
       );
     } else if (state.error != null) {
-      return const Center(child: Text('Error'));
+      return ErrorView(
+        title: context.l10n.unable_to_load_media_error,
+        message: context.l10n.unable_to_load_media_message,
+      );
     }
     return const Placeholder();
   }

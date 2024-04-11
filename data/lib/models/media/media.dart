@@ -1,33 +1,12 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' show Size;
+import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
 import 'package:photo_manager/photo_manager.dart'
-    show AssetEntity, ThumbnailFormat, ThumbnailSize;
+    show AssetEntity;
 
 part 'media.freezed.dart';
 
 part 'media.g.dart';
-
-enum UploadStatus { uploading, waiting, none, failed, success }
-
-class UploadProgress {
-  final String mediaId;
-  final UploadStatus status;
-
-  UploadProgress({required this.mediaId, required this.status});
-
-  @override
-  bool operator ==(Object other) {
-    return other is UploadProgress &&
-        other.mediaId == mediaId &&
-        other.status == status;
-  }
-
-  @override
-  int get hashCode => mediaId.hashCode ^ status.hashCode;
-}
 
 enum AppMediaType {
   other,
@@ -98,6 +77,7 @@ enum AppMediaSource {
 class AppMedia with _$AppMedia {
   const factory AppMedia({
     required String id,
+    String? driveMediaRefId,
     String? name,
     required String path,
     String? thumbnailLink,
@@ -147,6 +127,7 @@ class AppMedia with _$AppMedia {
       path: file.description ?? file.thumbnailLink ?? '',
       thumbnailLink: file.thumbnailLink,
       name: file.name,
+      driveMediaRefId: file.id,
       createdTime: file.createdTime,
       modifiedTime: file.modifiedTime,
       mimeType: file.mimeType,
@@ -191,17 +172,3 @@ class AppMedia with _$AppMedia {
   }
 }
 
-extension AppMediaExtension on AppMedia {
-  Future<bool> get isExist async {
-    return await File(path).exists();
-  }
-
-  Future<Uint8List?> thumbnailDataWithSize(Size size) async {
-    return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0)
-        .thumbnailDataWithSize(
-      ThumbnailSize(size.width.toInt(), size.height.toInt()),
-      format: ThumbnailFormat.jpeg,
-      quality: 70,
-    );
-  }
-}

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:style/extensions/context_extensions.dart';
 
 class AppPage extends StatelessWidget {
   final String? title;
@@ -145,11 +146,16 @@ class AdaptiveAppBar extends StatelessWidget {
                         children: actions!,
                       ),
           )
-        : AppBar(
-            leading: leading,
-            actions: actions,
-            automaticallyImplyLeading: automaticallyImplyLeading,
-            title: Text(text),
-          );
+        : Column(
+          children: [
+            AppBar(
+                backgroundColor: context.colorScheme.barColor,
+                leading: leading,
+                actions: actions,
+                automaticallyImplyLeading: automaticallyImplyLeading,
+                title: Text(text),
+              ),
+          ],
+        );
   }
 }
