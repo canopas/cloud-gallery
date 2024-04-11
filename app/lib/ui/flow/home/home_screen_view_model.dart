@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:cloud_gallery/domain/extensions/map_extensions.dart';
+import 'package:cloud_gallery/domain/extensions/media_list_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:data/repositories/google_drive_process_repo.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
@@ -62,7 +64,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         _backUpFolderId = null;
         _uploadedMedia.clear();
         state = state.copyWith(
-          medias: removeGoogleDriveRefFromMedias(medias: state.medias),
+          medias: removeGoogleDriveRefFromMediaMap(medias: state.medias),
         );
       }
     });
@@ -81,7 +83,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
     if (successUploads.isNotEmpty) {
       state = state.copyWith(
-          medias: addGoogleDriveMediaRef(
+          medias: addGoogleDriveRefInMediaMap(
         medias: state.medias,
         process: successUploads.toList(),
       ));
@@ -89,7 +91,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
     if (successDeletes.isNotEmpty) {
       state = state.copyWith(
-          medias: removeGoogleDriveRefFromMedias(
+          medias: removeGoogleDriveRefFromMediaMap(
         medias: state.medias,
         removeFromIds: successDeletes.toList(),
       ));
@@ -97,7 +99,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
     if (successDownloads.isNotEmpty) {
       state = state.copyWith(
-          medias: addLocalMediaRef(
+          medias: replaceMediaRefInMediaMap(
         medias: state.medias,
         process: successDownloads.toList(),
       ));
@@ -221,10 +223,9 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       state = state.copyWith(
         medias: sortMedias(medias: [
           ...mergeCommonMedia(
-            localMedias: removeGoogleDriveRefFromMedias(medias: state.medias)
-                .values
-                .expand((element) => element)
-                .toList(),
+            localMedias:
+                state.medias.values.expand((element) => element).toList()
+                  ..removeGoogleDriveRefFromMedias(),
             googleDriveMedias: uploadedMedia,
           ),
           ...googleDriveMedia

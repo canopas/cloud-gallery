@@ -10,6 +10,7 @@ import 'package:cloud_gallery/ui/flow/media_preview/components/top_bar.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/components/video_player_components/video_actions.dart';
 import 'package:cloud_gallery/ui/flow/media_preview/media_preview_view_model.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -135,9 +136,8 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         context.pop();
       },
       child: (progress) => AppPage(
-        backgroundColor: progress == 0
-            ? context.colorScheme.surface
-            : Colors.transparent,
+        backgroundColor:
+            progress == 0 ? context.colorScheme.surface : Colors.transparent,
         body: Stack(
           children: [
             GestureDetector(
@@ -186,7 +186,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         }),
       );
     } else if (media.type.isVideo && media.isGoogleDriveStored) {
-      return DownloadRequireView(media: media);
+      return _googleDriveVideoView(context: context, media: media);
     } else if (media.type.isImage) {
       return ImagePreview(media: media);
     } else {
@@ -195,6 +195,24 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         message: context.l10n.unable_to_load_media_message,
       );
     }
+  }
+
+  Widget _googleDriveVideoView(
+      {required BuildContext context, required AppMedia media}) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final process = ref.watch(_provider.select((value) => value
+            .downloadProcess
+            .where((element) => element.id == media.id)
+            .firstOrNull));
+        return DownloadRequireView(
+            media: media,
+            downloadProcess: process,
+            onDownload: () {
+              notifier.downloadMediaFromGoogleDrive(media: media);
+            });
+      },
+    );
   }
 
   Widget _videoActions(BuildContext context) => Consumer(
@@ -263,4 +281,3 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         );
       });
 }
-

@@ -4,6 +4,7 @@ import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/domain/formatter/byte_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +13,18 @@ import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_style.dart';
 
-class ProcessItem extends StatelessWidget {
+class ProcessItem extends StatefulWidget {
   final AppProcess process;
   final void Function() onCancelTap;
 
   const ProcessItem(
       {super.key, required this.process, required this.onCancelTap});
+
+  @override
+  State<ProcessItem> createState() => _ProcessItemState();
+}
+
+class _ProcessItemState extends State<ProcessItem> {
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +38,10 @@ class ProcessItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                process.media.name != null &&
-                        process.media.name!.trim().isNotEmpty
-                    ? process.media.name!
-                    : process.media.path,
+                widget.process.media.name != null &&
+                        widget.process.media.name!.trim().isNotEmpty
+                    ? widget.process.media.name!
+                    : widget.process.media.path,
                 style: AppTextStyles.body.copyWith(
                   color: context.colorScheme.textPrimary,
                 ),
@@ -42,16 +49,16 @@ class ProcessItem extends StatelessWidget {
                 maxLines: 1,
               ),
               const SizedBox(height: 8),
-              if (process.status.isWaiting)
+              if (widget.process.status.isWaiting)
                 Text(
                   context.l10n.waiting_in_queue_text,
                   style: AppTextStyles.body2.copyWith(
                     color: context.colorScheme.textSecondary,
                   ),
                 ),
-              if (process.progress != null && process.status.isProcessing) ...[
+              if (widget.process.progress != null && widget.process.status.isProcessing) ...[
                 LinearProgressIndicator(
-                  value: process.progress?.percentageInPoint,
+                  value: widget.process.progress?.percentageInPoint,
                   backgroundColor: context.colorScheme.outline,
                   borderRadius: BorderRadius.circular(4),
                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -62,13 +69,13 @@ class ProcessItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${process.progress?.chunk.formatBytes}  ${process.progress?.percentage.toStringAsFixed(2)}%',
+                      '${widget.process.progress?.chunk.formatBytes}  ${widget.process.progress?.percentage.toStringAsFixed(2)}%',
                       style: AppTextStyles.body2.copyWith(
                         color: context.colorScheme.textSecondary,
                       ),
                     ),
                     Text(
-                      '${process.progress?.total.formatBytes}',
+                      '${widget.process.progress?.total.formatBytes}',
                       style: AppTextStyles.body2.copyWith(
                         color: context.colorScheme.textSecondary,
                       ),
@@ -79,9 +86,9 @@ class ProcessItem extends StatelessWidget {
             ],
           ),
         ),
-        if (process.status.isWaiting)
+        if (widget.process.status.isWaiting)
           ActionButton(
-            onPressed: onCancelTap,
+            onPressed: widget.onCancelTap,
             icon: const Icon(CupertinoIcons.xmark),
           )
       ],
@@ -89,9 +96,9 @@ class ProcessItem extends StatelessWidget {
   }
 
   Widget _buildThumbnailView({required BuildContext context}) {
-    if (process.media.sources.contains(AppMediaSource.local)) {
+    if (widget.process.media.sources.contains(AppMediaSource.local)) {
       return FutureByteLoader(
-        bytes: process.media.thumbnailDataWithSize(const Size(100, 100)),
+        bytes: widget.process.media.loadThumbnail(size: const Size(100, 100)),
         builder: (context, bytes) => Container(
           width: 60,
           height: 60,
@@ -109,7 +116,7 @@ class ProcessItem extends StatelessWidget {
       );
     } else {
       return CachedNetworkImage(
-          imageUrl: process.media.thumbnailLink!,
+          imageUrl: widget.process.media.thumbnailLink!,
           width: 80,
           height: 80,
           fit: BoxFit.cover,

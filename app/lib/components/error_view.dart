@@ -42,15 +42,15 @@ class ErrorView extends StatelessWidget {
                   color: context.colorScheme.containerHighOnSurface,
                   size: 100,
                 ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
             Text(title,
-                style: AppTextStyles.subtitle2.copyWith(
+                style: AppTextStyles.subtitle1.copyWith(
                   color: foregroundColor?? context.colorScheme.textPrimary,
                 )),
             const SizedBox(height: 20),
             Text(
               message,
-              style: AppTextStyles.body2.copyWith(
+              style: AppTextStyles.subtitle2.copyWith(
                 color: foregroundColor ??context.colorScheme.textSecondary,
               ),
               textAlign: TextAlign.center,

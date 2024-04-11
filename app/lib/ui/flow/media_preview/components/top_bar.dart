@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

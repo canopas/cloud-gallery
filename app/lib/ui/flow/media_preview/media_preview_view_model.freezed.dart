@@ -25,6 +25,9 @@ mixin _$MediaPreviewState {
   Duration get videoPosition => throw _privateConstructorUsedError;
   Duration get videoMaxDuration => throw _privateConstructorUsedError;
   bool get isVideoPlaying => throw _privateConstructorUsedError;
+  List<AppProcess> get uploadProcess => throw _privateConstructorUsedError;
+  List<AppProcess> get downloadProcess => throw _privateConstructorUsedError;
+  List<AppProcess> get deleteProcess => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MediaPreviewStateCopyWith<MediaPreviewState> get copyWith =>
@@ -46,7 +49,10 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       bool isVideoBuffering,
       Duration videoPosition,
       Duration videoMaxDuration,
-      bool isVideoPlaying});
+      bool isVideoPlaying,
+      List<AppProcess> uploadProcess,
+      List<AppProcess> downloadProcess,
+      List<AppProcess> deleteProcess});
 }
 
 /// @nodoc
@@ -71,6 +77,9 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
     Object? isVideoPlaying = null,
+    Object? uploadProcess = null,
+    Object? downloadProcess = null,
+    Object? deleteProcess = null,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
@@ -106,6 +115,18 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.isVideoPlaying
           : isVideoPlaying // ignore: cast_nullable_to_non_nullable
               as bool,
+      uploadProcess: null == uploadProcess
+          ? _value.uploadProcess
+          : uploadProcess // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
+      downloadProcess: null == downloadProcess
+          ? _value.downloadProcess
+          : downloadProcess // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
+      deleteProcess: null == deleteProcess
+          ? _value.deleteProcess
+          : deleteProcess // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
     ) as $Val);
   }
 }
@@ -127,7 +148,10 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       bool isVideoBuffering,
       Duration videoPosition,
       Duration videoMaxDuration,
-      bool isVideoPlaying});
+      bool isVideoPlaying,
+      List<AppProcess> uploadProcess,
+      List<AppProcess> downloadProcess,
+      List<AppProcess> deleteProcess});
 }
 
 /// @nodoc
@@ -150,6 +174,9 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
     Object? isVideoPlaying = null,
+    Object? uploadProcess = null,
+    Object? downloadProcess = null,
+    Object? deleteProcess = null,
   }) {
     return _then(_$MediaPreviewStateImpl(
       error: freezed == error ? _value.error : error,
@@ -185,6 +212,18 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.isVideoPlaying
           : isVideoPlaying // ignore: cast_nullable_to_non_nullable
               as bool,
+      uploadProcess: null == uploadProcess
+          ? _value._uploadProcess
+          : uploadProcess // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
+      downloadProcess: null == downloadProcess
+          ? _value._downloadProcess
+          : downloadProcess // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
+      deleteProcess: null == deleteProcess
+          ? _value._deleteProcess
+          : deleteProcess // ignore: cast_nullable_to_non_nullable
+              as List<AppProcess>,
     ));
   }
 }
@@ -201,8 +240,14 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       this.isVideoBuffering = false,
       this.videoPosition = Duration.zero,
       this.videoMaxDuration = Duration.zero,
-      this.isVideoPlaying = false})
-      : _medias = medias;
+      this.isVideoPlaying = false,
+      final List<AppProcess> uploadProcess = const [],
+      final List<AppProcess> downloadProcess = const [],
+      final List<AppProcess> deleteProcess = const []})
+      : _medias = medias,
+        _uploadProcess = uploadProcess,
+        _downloadProcess = downloadProcess,
+        _deleteProcess = deleteProcess;
 
   @override
   final Object? error;
@@ -236,10 +281,36 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   @override
   @JsonKey()
   final bool isVideoPlaying;
+  final List<AppProcess> _uploadProcess;
+  @override
+  @JsonKey()
+  List<AppProcess> get uploadProcess {
+    if (_uploadProcess is EqualUnmodifiableListView) return _uploadProcess;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_uploadProcess);
+  }
+
+  final List<AppProcess> _downloadProcess;
+  @override
+  @JsonKey()
+  List<AppProcess> get downloadProcess {
+    if (_downloadProcess is EqualUnmodifiableListView) return _downloadProcess;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_downloadProcess);
+  }
+
+  final List<AppProcess> _deleteProcess;
+  @override
+  @JsonKey()
+  List<AppProcess> get deleteProcess {
+    if (_deleteProcess is EqualUnmodifiableListView) return _deleteProcess;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_deleteProcess);
+  }
 
   @override
   String toString() {
-    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying)';
+    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadProcess: $uploadProcess, downloadProcess: $downloadProcess, deleteProcess: $deleteProcess)';
   }
 
   @override
@@ -262,7 +333,13 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
             (identical(other.videoMaxDuration, videoMaxDuration) ||
                 other.videoMaxDuration == videoMaxDuration) &&
             (identical(other.isVideoPlaying, isVideoPlaying) ||
-                other.isVideoPlaying == isVideoPlaying));
+                other.isVideoPlaying == isVideoPlaying) &&
+            const DeepCollectionEquality()
+                .equals(other._uploadProcess, _uploadProcess) &&
+            const DeepCollectionEquality()
+                .equals(other._downloadProcess, _downloadProcess) &&
+            const DeepCollectionEquality()
+                .equals(other._deleteProcess, _deleteProcess));
   }
 
   @override
@@ -276,7 +353,10 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       isVideoBuffering,
       videoPosition,
       videoMaxDuration,
-      isVideoPlaying);
+      isVideoPlaying,
+      const DeepCollectionEquality().hash(_uploadProcess),
+      const DeepCollectionEquality().hash(_downloadProcess),
+      const DeepCollectionEquality().hash(_deleteProcess));
 
   @JsonKey(ignore: true)
   @override
@@ -296,7 +376,10 @@ abstract class _MediaPreviewState implements MediaPreviewState {
       final bool isVideoBuffering,
       final Duration videoPosition,
       final Duration videoMaxDuration,
-      final bool isVideoPlaying}) = _$MediaPreviewStateImpl;
+      final bool isVideoPlaying,
+      final List<AppProcess> uploadProcess,
+      final List<AppProcess> downloadProcess,
+      final List<AppProcess> deleteProcess}) = _$MediaPreviewStateImpl;
 
   @override
   Object? get error;
@@ -316,6 +399,12 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   Duration get videoMaxDuration;
   @override
   bool get isVideoPlaying;
+  @override
+  List<AppProcess> get uploadProcess;
+  @override
+  List<AppProcess> get downloadProcess;
+  @override
+  List<AppProcess> get deleteProcess;
   @override
   @JsonKey(ignore: true)
   _$$MediaPreviewStateImplCopyWith<_$MediaPreviewStateImpl> get copyWith =>

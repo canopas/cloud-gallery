@@ -1,8 +1,9 @@
+import 'package:cloud_gallery/domain/extensions/media_list_extension.dart';
 import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
 import 'package:collection/collection.dart';
-import 'package:data/extensions/iterable_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 
 mixin HomeViewModelHelperMixin {
   List<AppMedia> mergeCommonMedia({
@@ -26,11 +27,7 @@ mixin HomeViewModelHelperMixin {
           .forEach((googleDriveMedia) {
         localMedias.removeWhere((media) => media.id == localMedia.id);
 
-        mergedMedias.add(localMedia.copyWith(
-          sources: [AppMediaSource.local, AppMediaSource.googleDrive],
-          thumbnailLink: googleDriveMedia.thumbnailLink,
-          driveMediaRefId: googleDriveMedia.id,
-        ));
+        mergedMedias.add(localMedia.margeGoogleDriveMedia(googleDriveMedia));
       });
     }
 
@@ -47,29 +44,16 @@ mixin HomeViewModelHelperMixin {
     );
   }
 
-  Map<DateTime, List<AppMedia>> removeGoogleDriveRefFromMedias(
+  Map<DateTime, List<AppMedia>> removeGoogleDriveRefFromMediaMap(
       {required Map<DateTime, List<AppMedia>> medias,
       List<String>? removeFromIds}) {
-    return medias.map((key, mediaList) {
-      for (int index = 0; index < mediaList.length; index++) {
-        if (mediaList[index].isGoogleDriveStored &&
-            (removeFromIds?.contains(mediaList[index].id) ?? true)) {
-          mediaList.removeAt(index);
-        } else if (mediaList[index].isCommonStored &&
-            (removeFromIds?.contains(mediaList[index].id) ?? true)) {
-          mediaList[index] = mediaList[index].copyWith(
-            sources: mediaList[index].sources.toList()
-              ..remove(AppMediaSource.googleDrive),
-            thumbnailLink: null,
-            driveMediaRefId: null,
-          );
-        }
-      }
-      return MapEntry(key, mediaList);
+    return medias.map((key, value) {
+      return MapEntry(key,
+          value..removeGoogleDriveRefFromMedias(removeFromIds: removeFromIds));
     });
   }
 
-  Map<DateTime, List<AppMedia>> addGoogleDriveMediaRef({
+  Map<DateTime, List<AppMedia>> addGoogleDriveRefInMediaMap({
     required Map<DateTime, List<AppMedia>> medias,
     required List<AppProcess> process,
   }) {
@@ -78,50 +62,19 @@ mixin HomeViewModelHelperMixin {
       return MapEntry(
           key,
           value
-            ..updateWhere(
-              where: (media) => processIds.contains(media.id),
-              update: (media) {
-                final res = process
-                    .where((element) => element.id == media.id)
-                    .first
-                    .response as AppMedia?;
-                return media.copyWith(
-                  thumbnailLink: res?.thumbnailLink,
-                  driveMediaRefId: res?.id,
-                  sources: media.sources.toList()
-                    ..add(AppMediaSource.googleDrive),
-                );
-              },
-            ));
+            ..addGoogleDriveRefInMedias(
+                process: process, processIds: processIds));
     });
   }
 
-  Map<DateTime, List<AppMedia>> addLocalMediaRef({
+  Map<DateTime, List<AppMedia>> replaceMediaRefInMediaMap({
     required Map<DateTime, List<AppMedia>> medias,
     required List<AppProcess> process,
   }) {
     final processIds = process.map((e) => e.id).toList();
     return medias.map((key, value) {
-      return MapEntry(
-          key,
-          value
-            ..updateWhere(
-              where: (media) => processIds.contains(media.id),
-              update: (media) {
-                final res = process
-                    .where((element) => element.id == media.id)
-                    .first
-                    .response as AppMedia?;
-
-                if (res == null) return media;
-                return res.copyWith(
-                  thumbnailLink: media.thumbnailLink,
-                  driveMediaRefId: media.id,
-                  sources: res.sources.toList()
-                    ..add(AppMediaSource.googleDrive),
-                );
-              },
-            ));
+      return MapEntry(key,
+          value..replaceMediaRefInMedias(process: process, processIds: processIds));
     });
   }
 }

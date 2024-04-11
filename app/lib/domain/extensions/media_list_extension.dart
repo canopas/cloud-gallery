@@ -1,8 +1,9 @@
 import 'package:data/extensions/iterable_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 
-extension MediaListHelper on List<AppMedia> {
+extension MediaListExtension on List<AppMedia> {
   void removeGoogleDriveRefFromMedias({List<String>? removeFromIds}) {
     for (int index = 0; index < length; index++) {
       if (this[index].isGoogleDriveStored &&
@@ -20,28 +21,27 @@ extension MediaListHelper on List<AppMedia> {
     }
   }
 
-  void addGoogleDriveRefInMedia(
-      {required List<AppProcess> process, required List<String> processIds}) {
+  void addGoogleDriveRefInMedias(
+      {required List<AppProcess> process, List<String>? processIds}) {
+    processIds ??= process.map((e) => e.id).toList();
     updateWhere(
-      where: (media) => processIds.contains(media.id),
+      where: (media) => processIds?.contains(media.id) ?? false,
       update: (media) {
         final res = process
             .where((element) => element.id == media.id)
             .first
             .response as AppMedia?;
-        return media.copyWith(
-          thumbnailLink: res?.thumbnailLink,
-          driveMediaRefId: res?.id,
-          sources: media.sources.toList()..add(AppMediaSource.googleDrive),
-        );
+        if (res == null) return media;
+        return media.margeGoogleDriveMedia(res);
       },
     );
   }
 
-  void addLocalRefInMedias(
-      {required List<AppProcess> process, required List<String> processIds}) {
+  void replaceMediaRefInMedias(
+      {required List<AppProcess> process, List<String>? processIds}) {
+    processIds ??= process.map((e) => e.id).toList();
     updateWhere(
-      where: (media) => processIds.contains(media.id),
+      where: (media) => processIds?.contains(media.id) ?? false,
       update: (media) {
         final res = process
             .where((element) => element.id == media.id)
@@ -49,11 +49,7 @@ extension MediaListHelper on List<AppMedia> {
             .response as AppMedia?;
 
         if (res == null) return media;
-        return res.copyWith(
-          thumbnailLink: media.thumbnailLink,
-          driveMediaRefId: media.id,
-          sources: res.sources.toList()..add(AppMediaSource.googleDrive),
-        );
+        return res;
       },
     );
   }
