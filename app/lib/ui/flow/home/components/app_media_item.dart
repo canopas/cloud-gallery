@@ -1,16 +1,42 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../../domain/assets/assets_paths.dart';
 import 'package:style/animations/item_selector.dart';
+import 'package:photo_manager/photo_manager.dart'
+    show AssetEntity, ThumbnailFormat, ThumbnailSize;
+
+class ThumbNailParameter {
+  final RootIsolateToken token;
+  final Size size;
+  final String id;
+  final AppMediaType type;
+
+  ThumbNailParameter(this.token,this.size, this.id, this.type);
+}
+
+FutureOr thumbnailDataWithSize(ThumbNailParameter thumbNailParameter) async {
+  BackgroundIsolateBinaryMessenger.ensureInitialized(thumbNailParameter.token);
+
+  return await AssetEntity(id: thumbNailParameter.id, typeInt: thumbNailParameter.type.index, width: 0, height: 0)
+      .thumbnailDataWithSize(
+    ThumbnailSize(thumbNailParameter.size.width.toInt(), thumbNailParameter.size.height.toInt()),
+    format: ThumbnailFormat.png,
+    quality: 70,
+  );
+}
+
+
 
 class AppMediaItem extends StatefulWidget {
   final AppMedia media;
@@ -34,19 +60,28 @@ class AppMediaItem extends StatefulWidget {
 
 class _AppMediaItemState extends State<AppMediaItem>
     with AutomaticKeepAliveClientMixin {
-  late Future<Uint8List?> thumbnailByte;
+  late Future<dynamic> thumbnailByte;
 
   @override
   void initState() {
     if (widget.media.sources.contains(AppMediaSource.local)) {
-      _loadImage();
+    //  _loadImage();
     }
     super.initState();
   }
 
-  _loadImage() async {
-    thumbnailByte = widget.media.thumbnailDataWithSize(const Size(300, 300));
+  Future _loadImage() async {
+    var rootToken = RootIsolateToken.instance!;
+    final ThumbNailParameter thumbNailParameter= ThumbNailParameter(rootToken,const Size(300,300), widget.media.id, widget.media.type);
+    final bytes=await  compute(
+     thumbnailDataWithSize, thumbNailParameter
+    );
+
+    return bytes;
+    //thumbnailByte = widget.media.thumbnailDataWithSize(const Size(300, 300));
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +105,8 @@ class _AppMediaItemState extends State<AppMediaItem>
       ),
     );
   }
+
+
 
   Widget _videoDuration(BuildContext context) => Align(
         alignment: Alignment.bottomRight,
@@ -98,7 +135,7 @@ class _AppMediaItemState extends State<AppMediaItem>
       {required BuildContext context, required BoxConstraints constraints}) {
     if (widget.media.sources.contains(AppMediaSource.local)) {
       return FutureBuilder(
-        future: thumbnailByte,
+        future: _loadImage(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
