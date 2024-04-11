@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:data/extensions/iterable_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
@@ -164,7 +163,6 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   Future<void> _downloadFromGoogleDrive(AppProcess process) async {
-    StreamSubscription? subscription;
     try {
       _downloadQueue.updateWhere(
         where: (element) => element.id == process.id,
@@ -176,30 +174,19 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
       final mediaContent = await _googleDriveService
           .fetchMediaBytes(process.media.driveMediaRefId!);
 
-      List<int> bytes = [];
-
-      subscription = mediaContent.stream.listen((chunk) {
-        bytes.addAll(chunk);
-        _downloadQueue.updateWhere(
-          where: (element) => element.id == process.id,
-          update: (element) => element.copyWith(
-              progress: AppProcessProgress(
-                  total: mediaContent.length ?? 0, chunk: bytes.length)),
-        );
-        notifyListeners();
-      }, onError: (error) {
-        _downloadQueue.updateWhere(
-          where: (element) => element.id == process.id,
-          update: (element) =>
-              element.copyWith(status: AppProcessStatus.failed),
-        );
-        notifyListeners();
-        subscription?.cancel();
-      });
-      await subscription.asFuture();
-
       final localMedia = await _localMediaService.saveMedia(
-          process.media, Uint8List.fromList(bytes));
+        content: mediaContent,
+        onProgress: (total, chunk) {
+          _downloadQueue.updateWhere(
+            where: (element) => element.id == process.id,
+            update: (element) => element.copyWith(
+                progress: AppProcessProgress(total: total, chunk: chunk)),
+          );
+          notifyListeners();
+        },
+        mimeType: process.media.mimeType,
+        type: process.media.type,
+      );
 
       final updatedMedia = await _googleDriveService.updateMediaDescription(
           process.media.id, localMedia?.path ?? "");
@@ -210,14 +197,12 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
             status: AppProcessStatus.success,
             response: localMedia?.margeGoogleDriveMedia(updatedMedia)),
       );
-
-      notifyListeners();
-      subscription.cancel();
     } catch (error) {
       _downloadQueue.updateWhere(
         where: (element) => element.id == process.id,
         update: (element) => element.copyWith(status: AppProcessStatus.failed),
       );
+    } finally {
       notifyListeners();
     }
   }

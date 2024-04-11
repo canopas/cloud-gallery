@@ -61,7 +61,7 @@ class DownloadRequireView extends StatelessWidget {
                   ],
                 ),
                 title:
-                    "${downloadProcess?.progress?.chunk.formatBytes ?? "0.0 B"} - ${downloadProcess?.progress?.total.formatBytes ?? "0.0 B"} ${downloadProcess?.progress?.percentage ?? "0.0"}%",
+                    "${downloadProcess?.progress?.chunk.formatBytes ?? "0.0 B"} - ${downloadProcess?.progress?.total.formatBytes ?? "0.0 B"} ${downloadProcess?.progress?.percentage.toStringAsFixed(0) ?? "0.0"}%",
                 message: context.l10n.download_in_progress_text),
           ],
           if (downloadProcess?.status.isWaiting ?? false) ...[

@@ -69,7 +69,7 @@ class _ProcessItemState extends State<ProcessItem> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${widget.process.progress?.chunk.formatBytes}  ${widget.process.progress?.percentage.toStringAsFixed(2)}%',
+                      '${widget.process.progress?.chunk.formatBytes}  ${widget.process.progress?.percentage.toStringAsFixed(0)}%',
                       style: AppTextStyles.body2.copyWith(
                         color: context.colorScheme.textSecondary,
                       ),

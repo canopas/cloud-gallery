@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media_content/media_content.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -56,25 +57,52 @@ class LocalMediaService {
     }
   }
 
-  Future<AppMedia?> saveMedia(AppMedia media, Uint8List bytes) async {
-    final extension = media.mimeType?.trim().isNotEmpty ?? false
-        ? media.mimeType!.split('/').last
-        : media.type.isVideo
-            ? 'mp4'
-            : 'jpg';
-    AssetEntity? asset;
-    if (media.type.isVideo) {
+  Future<AppMedia?> saveMedia({
+    required AppMediaType type,
+    required String? mimeType,
+    required AppMediaContent content,
+    required void Function(int total, int chunk) onProgress,
+  }) async {
+    try {
+      final extension = mimeType?.trim().isNotEmpty ?? false
+          ? mimeType!.split('/').last
+          : type.isVideo
+              ? 'mp4'
+              : 'jpg';
+
+      AssetEntity? asset;
+
       final tempDir = await getTemporaryDirectory();
-      final tempVideoFile = File('${tempDir.path}/temp_video');
-      await tempVideoFile.writeAsBytes(bytes);
-      asset = await PhotoManager.editor.saveVideo(
-        tempVideoFile,
-        title: "${media.name ?? DateTime.now()}_gd_cloud_gallery.$extension",
-      );
-    } else if (media.type.isImage) {
-      asset = await PhotoManager.editor.saveImage(bytes,
-          title: "${media.name ?? DateTime.now()}_gd_cloud_gallery.$extension");
+      final tempFile = File(
+          '${tempDir.path}${DateTime.now()}_gd_cloud_gallery_temp.$extension');
+      await tempFile.create();
+
+      int chunkLength = 0;
+
+      StreamSubscription<List<int>> subscription =
+          content.stream.listen((chunk) {
+        chunkLength += chunk.length;
+        onProgress(content.length ?? 0, chunkLength);
+        tempFile.writeAsBytesSync(chunk, mode: FileMode.append);
+      });
+      await subscription.asFuture();
+      subscription.cancel();
+
+      if (type.isVideo) {
+        asset = await PhotoManager.editor.saveVideo(
+          tempFile,
+          title: "${DateTime.now()}_gd_cloud_gallery.$extension",
+        );
+      } else if (type.isImage) {
+        asset = await PhotoManager.editor.saveImageWithPath(
+          tempFile.path,
+          title: "${DateTime.now()}_gd_cloud_gallery.$extension",
+        );
+      }
+      await tempFile.delete();
+      return asset != null ? AppMedia.fromAssetEntity(asset) : null;
+    } catch (e) {
+      throw AppError.fromError(e);
     }
-    return asset != null ? AppMedia.fromAssetEntity(asset) : null;
   }
 }
