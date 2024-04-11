@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:data/extensions/iterable_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:data/services/local_media_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -186,17 +187,6 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
                   total: mediaContent.length ?? 0, chunk: bytes.length)),
         );
         notifyListeners();
-      }, onDone: () async {
-        final res = await _localMediaService.saveMedia(
-            process.media, Uint8List.fromList(bytes));
-
-        _downloadQueue.updateWhere(
-          where: (element) => element.id == process.id,
-          update: (element) =>
-              element.copyWith(status: AppProcessStatus.success, response: res),
-        );
-        notifyListeners();
-        subscription?.cancel();
       }, onError: (error) {
         _downloadQueue.updateWhere(
           where: (element) => element.id == process.id,
@@ -206,6 +196,23 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
         notifyListeners();
         subscription?.cancel();
       });
+      await subscription.asFuture();
+
+      final localMedia = await _localMediaService.saveMedia(
+          process.media, Uint8List.fromList(bytes));
+
+      final updatedMedia = await _googleDriveService.updateMediaDescription(
+          process.media.id, localMedia?.path ?? "");
+
+      _downloadQueue.updateWhere(
+        where: (element) => element.id == process.id,
+        update: (element) => element.copyWith(
+            status: AppProcessStatus.success,
+            response: localMedia?.margeGoogleDriveMedia(updatedMedia)),
+      );
+
+      notifyListeners();
+      subscription.cancel();
     } catch (error) {
       _downloadQueue.updateWhere(
         where: (element) => element.id == process.id,

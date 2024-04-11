@@ -73,6 +73,17 @@ class GoogleDriveService {
     }
   }
 
+  Future<AppMedia> updateMediaDescription(String id, String description) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+      final file = drive.File(description: description);
+      final updatedFile = await driveApi.files.update(file, id);
+      return AppMedia.fromGoogleDriveFile(updatedFile);
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
   Future<void> deleteMedia(String id) async {
     try {
       final driveApi = await _getGoogleDriveAPI();

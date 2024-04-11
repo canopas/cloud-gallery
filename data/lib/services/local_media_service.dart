@@ -56,17 +56,25 @@ class LocalMediaService {
     }
   }
 
-  Future<AssetEntity?> saveMedia(AppMedia media, Uint8List bytes) async {
+  Future<AppMedia?> saveMedia(AppMedia media, Uint8List bytes) async {
+    final extension = media.mimeType?.trim().isNotEmpty ?? false
+        ? media.mimeType!.split('/').last
+        : media.type.isVideo
+            ? 'mp4'
+            : 'jpg';
+    AssetEntity? asset;
     if (media.type.isVideo) {
       final tempDir = await getTemporaryDirectory();
-      final tempVideoFile = File('${tempDir.path}/temp_video.mp4');
+      final tempVideoFile = File('${tempDir.path}/temp_video');
       await tempVideoFile.writeAsBytes(bytes);
-      return await PhotoManager.editor.saveVideo(tempVideoFile,
-          title: media.name ?? "${DateTime.now()}_cloud_gallery");
+      asset = await PhotoManager.editor.saveVideo(
+        tempVideoFile,
+        title: "${media.name ?? DateTime.now()}_gd_cloud_gallery.$extension",
+      );
     } else if (media.type.isImage) {
-      return await PhotoManager.editor.saveImage(bytes,
-          title: media.name ?? "${DateTime.now()}_cloud_gallery");
+      asset = await PhotoManager.editor.saveImage(bytes,
+          title: "${media.name ?? DateTime.now()}_gd_cloud_gallery.$extension");
     }
-    return null;
+    return asset != null ? AppMedia.fromAssetEntity(asset) : null;
   }
 }

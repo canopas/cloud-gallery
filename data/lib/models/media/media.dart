@@ -1,10 +1,8 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' show Size;
+import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
 import 'package:photo_manager/photo_manager.dart'
-    show AssetEntity, ThumbnailFormat, ThumbnailSize;
+    show AssetEntity;
 
 part 'media.freezed.dart';
 
@@ -174,25 +172,3 @@ class AppMedia with _$AppMedia {
   }
 }
 
-extension AppMediaExtension on AppMedia {
-  Future<bool> get isExist async {
-    return await File(path).exists();
-  }
-
-  Future<Uint8List?> thumbnailDataWithSize(Size size) async {
-    return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0)
-        .thumbnailDataWithSize(
-      ThumbnailSize(size.width.toInt(), size.height.toInt()),
-      format: ThumbnailFormat.png,
-      quality: 70,
-    );
-  }
-
-  bool get isGoogleDriveStored =>
-      sources.contains(AppMediaSource.googleDrive) && sources.length == 1;
-
-  bool get isLocalStored =>
-      sources.contains(AppMediaSource.local) && sources.length == 1;
-
-  bool get isCommonStored => sources.length > 1;
-}
