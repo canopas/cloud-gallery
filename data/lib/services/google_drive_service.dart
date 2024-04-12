@@ -103,7 +103,7 @@ class GoogleDriveService {
 
       final file = drive.File(
         name: media.name ?? localFile.path.split('/').last,
-        description: media.path,
+        description: media.id,
         parents: [folderID],
       );
       final fileLength = localFile.lengthSync();

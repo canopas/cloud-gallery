@@ -23,7 +23,7 @@ mixin HomeViewModelHelperMixin {
     // Add common media to mergedMedias and remove them from the lists.
     for (AppMedia localMedia in localMedias.toList()) {
       googleDriveMedias
-          .where((googleDriveMedia) => googleDriveMedia.path == localMedia.path)
+          .where((googleDriveMedia) => googleDriveMedia.path == localMedia.id)
           .forEach((googleDriveMedia) {
         localMedias.removeWhere((media) => media.id == localMedia.id);
 
@@ -73,8 +73,11 @@ mixin HomeViewModelHelperMixin {
   }) {
     final processIds = process.map((e) => e.id).toList();
     return medias.map((key, value) {
-      return MapEntry(key,
-          value..replaceMediaRefInMedias(process: process, processIds: processIds));
+      return MapEntry(
+          key,
+          value
+            ..replaceMediaRefInMedias(
+                process: process, processIds: processIds));
     });
   }
 }

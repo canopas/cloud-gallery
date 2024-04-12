@@ -124,7 +124,7 @@ class AppMedia with _$AppMedia {
             : null;
     return AppMedia(
       id: file.id!,
-      path: file.description ?? file.thumbnailLink ?? '',
+      path: file.description ?? '',
       thumbnailLink: file.thumbnailLink,
       name: file.name,
       driveMediaRefId: file.id,
