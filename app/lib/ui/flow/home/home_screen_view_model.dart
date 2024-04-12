@@ -3,7 +3,6 @@ import 'package:cloud_gallery/domain/extensions/map_extensions.dart';
 import 'package:cloud_gallery/domain/extensions/media_list_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
-import 'package:data/models/media/media_extension.dart';
 import 'package:data/repositories/google_drive_process_repo.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
@@ -211,7 +210,9 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       List<AppMedia> googleDriveMedia = [];
       List<AppMedia> uploadedMedia = [];
       for (var media in driveMedias) {
-        if (await media.isExist) {
+        if (media.path.trim().isNotEmpty &&
+            await _localMediaService.isLocalFileExist(
+                type: media.type, id: media.path)) {
           uploadedMedia.add(media);
         } else {
           googleDriveMedia.add(media);

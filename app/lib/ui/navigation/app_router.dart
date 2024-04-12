@@ -5,6 +5,7 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import '../flow/home/home_screen.dart';
+import '../flow/media_metadata_details/media_metadata_details.dart';
 import '../flow/media_preview/media_preview_screen.dart';
 import 'app_route.dart';
 
@@ -39,11 +40,24 @@ class AppRouter {
         ),
       );
 
+  static AppRoute mediaMetaDataDetails(
+      {required AppMedia media}) =>
+      AppRoute(
+        AppRoutePath.metaDataDetails,
+        builder: (context) => MediaMetadataDetailsScreen(
+          media: media,
+        ),
+      );
+
   static final routes = <GoRoute>[
     home.goRoute,
     onBoard.goRoute,
     accounts.goRoute,
     mediaTransfer.goRoute,
+    GoRoute(
+      path: AppRoutePath.metaDataDetails,
+      builder: (context, state) => state.widget(context),
+    ),
     GoRoute(
       path: AppRoutePath.preview,
       pageBuilder: (context, state) {
@@ -66,4 +80,5 @@ class AppRoutePath {
   static const accounts = '/accounts';
   static const preview = '/preview';
   static const transfer = '/transfer';
+  static const metaDataDetails = '/metadata-details';
 }

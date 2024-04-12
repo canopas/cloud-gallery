@@ -39,7 +39,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
               if (showUploadToDriveButton)
                 AppSheetAction(
                   icon: SvgPicture.asset(
-                    Assets.images.icons.googlePhotos,
+                    Assets.images.icons.googleDrive,
                     height: 24,
                     width: 24,
                   ),

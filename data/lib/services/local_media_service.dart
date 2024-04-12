@@ -15,6 +15,11 @@ final localMediaServiceProvider = Provider<LocalMediaService>(
 class LocalMediaService {
   const LocalMediaService();
 
+
+  Future<bool> isLocalFileExist({required AppMediaType type, required String id}) async {
+     return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0).isLocallyAvailable();
+  }
+
   Future<bool> requestPermission() async {
     final state = await PhotoManager.requestPermissionExtend();
     return state.hasAccess;

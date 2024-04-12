@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'media.dart';
 
 extension AppMediaExtension on AppMedia {
-  Future<bool> get isExist async {
-    return await File(path).exists();
-  }
-
   Future<Uint8List?> loadThumbnail({Size size = const Size(300, 300)}) async {
     var rootToken = RootIsolateToken.instance!;
     final ThumbNailParameter thumbNailParameter =
