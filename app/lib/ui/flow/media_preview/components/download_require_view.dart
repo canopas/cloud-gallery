@@ -30,7 +30,7 @@ class DownloadRequireView extends StatelessWidget {
             child: Image.network(
               height: double.infinity,
               width: double.infinity,
-              media.thumbnailLink!,
+              media.thumbnailLink ?? '',
               fit: BoxFit.cover,
             ),
           ),

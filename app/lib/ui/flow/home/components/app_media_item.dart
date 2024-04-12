@@ -1,6 +1,5 @@
-import 'dart:async';
 import 'dart:typed_data';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_gallery/components/thumbnail_builder.dart';
 import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
@@ -35,7 +34,7 @@ class AppMediaItem extends StatefulWidget {
 
 class _AppMediaItemState extends State<AppMediaItem>
     with AutomaticKeepAliveClientMixin {
-  late Future<Uint8List?> thumbnailByte;
+  Future<Uint8List?>? thumbnailByte;
 
   @override
   void initState() {
@@ -93,63 +92,13 @@ class _AppMediaItemState extends State<AppMediaItem>
 
   Widget _buildMediaView(
       {required BuildContext context, required BoxConstraints constraints}) {
-    if (widget.media.sources.contains(AppMediaSource.local)) {
-      return FutureBuilder(
-        future: thumbnailByte,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData) {
-            return Hero(
-              tag: widget.media,
-              child: Image.memory(
-                snapshot.data!,
-                width: constraints.maxWidth,
-                height: constraints.maxHeight,
-                fit: BoxFit.cover,
-              ),
-            );
-          } else {
-            return _buildPlaceholder(context: context, showLoader: false);
-          }
-        },
-      );
-    } else {
-      return Hero(
-        tag: widget.media,
-        child: CachedNetworkImage(
-            imageUrl: widget.media.thumbnailLink ?? '',
-            width: constraints.maxWidth,
-            height: constraints.maxHeight,
-            fit: BoxFit.cover,
-            errorWidget: (context, url, error) => _buildErrorWidget(context),
-            progressIndicatorBuilder: (context, url, progress) =>
-                _buildPlaceholder(
-                  context: context,
-                  value: progress.progress,
-                )),
-      );
-    }
+    return AppMediaThumbnail(
+      size: constraints.biggest,
+      thumbnailByte: thumbnailByte,
+      media: widget.media,
+      heroTag: widget.media,
+    );
   }
-
-  Widget _buildPlaceholder(
-          {required BuildContext context,
-          double? value,
-          bool showLoader = true}) =>
-      Container(
-        color: context.colorScheme.containerHighOnSurface,
-        alignment: Alignment.center,
-        child: showLoader ? AppCircularProgressIndicator(value: value) : null,
-      );
-
-  Widget _buildErrorWidget(BuildContext context) => Container(
-        color: context.colorScheme.containerNormalOnSurface,
-        alignment: Alignment.center,
-        child: Icon(
-          CupertinoIcons.exclamationmark_circle,
-          color: context.colorScheme.onPrimary,
-          size: 32,
-        ),
-      );
 
   Widget _sourceIndicators({required BuildContext context}) {
     return Row(
@@ -161,7 +110,7 @@ class _AppMediaItemState extends State<AppMediaItem>
               children: [
                 if (widget.media.sources.contains(AppMediaSource.googleDrive))
                   SvgPicture.asset(
-                    Assets.images.icons.googlePhotos,
+                    Assets.images.icons.googleDrive,
                     height: 14,
                     width: 14,
                   ),

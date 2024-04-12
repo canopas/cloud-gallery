@@ -9,5 +9,5 @@ class PathImages {
 }
 
 class PathIcons {
-  String get googlePhotos => 'assets/images/icons/google_photos.svg';
+  String get googleDrive => 'assets/images/icons/google-drive.svg';
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
+import 'package:cloud_gallery/ui/navigation/app_router.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,11 +40,11 @@ class PreviewTopBar extends StatelessWidget {
           actions: [
             ActionButton(
               onPressed: () {
-                ///TODO: media details
+                AppRouter.mediaMetaDataDetails(media: media).push(context);
               },
               icon: Icon(
                 CupertinoIcons.info,
-                color: context.colorScheme.textSecondary,
+               color: context.colorScheme.textPrimary,
                 size: 22,
               ),
             ),
@@ -76,7 +77,7 @@ class PreviewTopBar extends StatelessWidget {
                         child: Row(
                           children: [
                             SvgPicture.asset(
-                              Assets.images.icons.googlePhotos,
+                              Assets.images.icons.googleDrive,
                               width: 20,
                               height: 20,
                             ),

@@ -20,7 +20,7 @@
   "common_delete_from_google_drive": "Delete from Google Drive",
   "common_delete_from_device": "Delete from Device",
   "common_cancel": "Cancel",
-
+  "common_not_available": "N/A",
 
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Something went wrong! Please try again later.",
@@ -71,6 +71,18 @@
   "download_in_progress_text": "Download in progress",
 
   "download_require_text": "Download required",
-  "download_require_message": "To watch the video, simply download it first. Tap the download button to begin downloading the video."
+  "download_require_message": "To watch the video, simply download it first. Tap the download button to begin downloading the video.",
 
+  "name_text": "Name",
+  "size_text": "Size",
+  "created_at_text": "Created at",
+  "modified_at_text": "Modified at",
+  "mimetype_text": "MIME Type",
+  "duration_text": "Duration",
+  "location_text": "Location",
+  "resolution_text": "Resolution",
+  "orientation_text": "Orientation",
+  "path_text": "Path",
+  "display_size_text": "Display Size",
+  "source_text": "Source"
 }
