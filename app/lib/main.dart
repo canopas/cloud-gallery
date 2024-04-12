@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
 import 'ui/app.dart';
 
 Future<void> main() async {
@@ -22,6 +23,13 @@ Future<void> main() async {
   }
 
   final container = await _configureContainerWithAsyncDependency();
+
+  Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: true,
+  );
+
+  Workmanager().registerOneOffTask("cloud-gallery-background-process", "simpleTask");
 
   runApp(
     UncontrolledProviderScope(
@@ -39,4 +47,12 @@ Future<ProviderContainer> _configureContainerWithAsyncDependency() async {
     ],
   );
   return container;
+}
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) {
+    print("task executed");
+    return Future.value(true);
+  });
 }

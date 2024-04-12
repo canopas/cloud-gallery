@@ -1088,6 +1088,13 @@
             </list>
           </value>
         </entry>
+        <entry key="workmanager">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/workmanager-0.5.2/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="xdg_directories">
           <value>
             <list>
@@ -1263,6 +1270,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web-0.4.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/web_socket_channel-2.4.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/win32-5.2.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/workmanager-0.5.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xdg_directories-1.0.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/xml-6.5.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/yaml-3.1.2/lib" />
