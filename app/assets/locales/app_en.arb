@@ -73,6 +73,9 @@
   "download_require_text": "Download required",
   "download_require_message": "To watch the video, simply download it first. Tap the download button to begin downloading the video.",
 
+  "download_from_google_drive_text": "Download from Google Drive",
+  "download_from_google_drive_alert_message": " Are you sure you want to download this media? It will be saved to your gallery.",
+
   "name_text": "Name",
   "size_text": "Size",
   "created_at_text": "Created at",
