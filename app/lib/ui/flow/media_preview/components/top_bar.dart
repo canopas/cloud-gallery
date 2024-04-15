@@ -44,8 +44,22 @@ class PreviewTopBar extends StatelessWidget {
               },
               icon: Icon(
                 CupertinoIcons.info,
-               color: context.colorScheme.textPrimary,
+                color: context.colorScheme.textSecondary,
                 size: 22,
+              ),
+            ),
+            if(media.isGoogleDriveStored)
+            ActionButton(
+              onPressed: () {
+                notifier.downloadMediaFromGoogleDrive(media: media);
+              },
+              icon: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Icon(
+                  CupertinoIcons.cloud_download,
+                  color: context.colorScheme.textSecondary,
+                  size: 22,
+                ),
               ),
             ),
             ActionButton(

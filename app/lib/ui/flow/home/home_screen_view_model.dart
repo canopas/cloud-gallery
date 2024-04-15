@@ -3,6 +3,7 @@ import 'package:cloud_gallery/domain/extensions/map_extensions.dart';
 import 'package:cloud_gallery/domain/extensions/media_list_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:data/repositories/google_drive_process_repo.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
@@ -271,6 +272,17 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       _googleDriveProcessRepo.deleteMediasFromGoogleDrive(
           medias: medias.toList());
       state = state.copyWith(selectedMedias: []);
+    } catch (e) {
+      state = state.copyWith(error: e);
+    }
+  }
+
+  Future<void> downloadMediaFromGoogleDrive() async {
+    try {
+      final medias =
+          state.selectedMedias.where((element) => element.isGoogleDriveStored);
+      _googleDriveProcessRepo.downloadMediasFromGoogleDrive(
+          medias: medias.toList());
     } catch (e) {
       state = state.copyWith(error: e);
     }
