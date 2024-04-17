@@ -30,11 +30,11 @@ class HintView extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16),
+                  padding: const EdgeInsets.only(top: 4, left: 16),
                   child: Text(
                     title,
                     style: AppTextStyles.subtitle2.copyWith(
@@ -43,14 +43,18 @@ class HintView extends StatelessWidget {
                   ),
                 ),
               ),
-              ActionButton(
-                backgroundColor: context.colorScheme.containerNormal,
-                size: 28,
-                onPressed: onClose,
-                icon: Icon(
-                  CupertinoIcons.xmark,
-                  color: context.colorScheme.textSecondary,
-                  size: 18,
+              Padding(
+                padding: const EdgeInsets.all(8.0).copyWith(bottom: 4),
+                child: ActionButton(
+                  backgroundColor: context.colorScheme.containerNormal,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  size: 28,
+                  onPressed: onClose,
+                  icon: Icon(
+                    CupertinoIcons.xmark,
+                    color: context.colorScheme.textSecondary,
+                    size: 18,
+                  ),
                 ),
               ),
             ],

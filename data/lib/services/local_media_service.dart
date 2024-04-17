@@ -15,9 +15,10 @@ final localMediaServiceProvider = Provider<LocalMediaService>(
 class LocalMediaService {
   const LocalMediaService();
 
-
-  Future<bool> isLocalFileExist({required AppMediaType type, required String id}) async {
-     return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0).isLocallyAvailable();
+  Future<bool> isLocalFileExist(
+      {required AppMediaType type, required String id}) async {
+    return await AssetEntity(id: id, typeInt: type.index, width: 0, height: 0)
+        .isLocallyAvailable();
   }
 
   Future<bool> requestPermission() async {
@@ -66,6 +67,7 @@ class LocalMediaService {
     required AppMediaType type,
     required String? mimeType,
     required AppMediaContent content,
+    required bool Function()? terminate,
     required void Function(int total, int chunk) onProgress,
   }) async {
     try {
@@ -83,14 +85,24 @@ class LocalMediaService {
       await tempFile.create();
 
       int chunkLength = 0;
+      bool terminated = false;
 
-      StreamSubscription<List<int>> subscription =
-          content.stream.listen((chunk) {
+      StreamSubscription<List<int>>? subscription;
+      subscription = content.stream.listen((chunk) {
+        if (terminated) {
+          subscription?.cancel();
+          return;
+        }
+        terminated = terminate?.call() ?? false;
         chunkLength += chunk.length;
         onProgress(content.length ?? 0, chunkLength);
         tempFile.writeAsBytesSync(chunk, mode: FileMode.append);
       });
       await subscription.asFuture();
+      if (terminated) {
+        await tempFile.delete();
+        return null;
+      }
       subscription.cancel();
 
       if (type.isVideo) {
@@ -111,3 +123,5 @@ class LocalMediaService {
     }
   }
 }
+
+

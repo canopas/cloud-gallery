@@ -50,16 +50,14 @@ class PreviewTopBar extends StatelessWidget {
             ),
             if(media.isGoogleDriveStored)
             ActionButton(
+              padding: const EdgeInsets.all(4),
               onPressed: () {
                 notifier.downloadMediaFromGoogleDrive(media: media);
               },
-              icon: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(
-                  CupertinoIcons.cloud_download,
-                  color: context.colorScheme.textSecondary,
-                  size: 22,
-                ),
+              icon: Icon(
+                CupertinoIcons.cloud_download,
+                color: context.colorScheme.textSecondary,
+                size: 22,
               ),
             ),
             ActionButton(

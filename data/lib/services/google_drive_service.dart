@@ -93,14 +93,15 @@ class GoogleDriveService {
     }
   }
 
-  Future<AppMedia> uploadInGoogleDrive(
+  Future<AppMedia?> uploadInGoogleDrive(
       {required String folderID,
       required AppMedia media,
+      bool Function()? terminate,
       void Function(int total, int chunk)? onProgress}) async {
     final localFile = File(media.path);
     try {
       final driveApi = await _getGoogleDriveAPI();
-
+      bool terminated = false;
       final file = drive.File(
         name: media.name ?? localFile.path.split('/').last,
         description: media.id,
@@ -112,6 +113,10 @@ class GoogleDriveService {
         file,
         uploadMedia: drive.Media(
             localFile.openRead().map((event) {
+              if (terminated) {
+                return [];
+              }
+              terminated = terminate?.call() ?? false;
               chunk += event.length;
               onProgress?.call(fileLength, chunk);
               return event;
@@ -120,6 +125,9 @@ class GoogleDriveService {
       );
       return AppMedia.fromGoogleDriveFile(googleDriveFile);
     } catch (error) {
+      if(error is drive.ApiRequestError && (error.message?.contains("Received less bytes than indicated by [Media.length].") ?? false)) {
+        return null;
+      }
       if (error is drive.DetailedApiRequestError && error.status == 404) {
         throw const BackUpFolderNotFound();
       }

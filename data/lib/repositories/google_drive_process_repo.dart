@@ -82,7 +82,9 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
           );
           notifyListeners();
         },
+        terminate: () => _uploadQueue.firstOrNull?.status.isTerminated ?? true,
       );
+      if(res == null) return;
       _uploadQueue.updateWhere(
         where: (element) => element.id == process.id,
         update: (element) => element.copyWith(
@@ -184,10 +186,12 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
           );
           notifyListeners();
         },
+        terminate: () => _downloadQueue.firstOrNull?.status.isTerminated ?? true,
         mimeType: process.media.mimeType,
         type: process.media.type,
       );
 
+      if(localMedia == null) return;
       final updatedMedia = await _googleDriveService.updateMediaDescription(
           process.media.id, localMedia?.path ?? "");
 
@@ -215,7 +219,8 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void terminateUploadProcess(String id) {
-    _uploadQueue.removeWhere((element) => element.id == id);
+    _uploadQueue.updateWhere(where: (element) => element.id == id,
+       update:  (element) => element.copyWith(status: AppProcessStatus.terminated));
     notifyListeners();
   }
 
@@ -225,7 +230,8 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void terminateDownloadProcess(String id) {
-    _downloadQueue.removeWhere((element) => element.id == id);
+    _uploadQueue.updateWhere(where: (element) => element.id == id,
+        update:  (element) => element.copyWith(status: AppProcessStatus.terminated));
     notifyListeners();
   }
 }

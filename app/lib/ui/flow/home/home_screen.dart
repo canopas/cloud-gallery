@@ -69,6 +69,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: ActionButton(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   size: 36,
                   backgroundColor: context.colorScheme.containerNormal,
                   onPressed: () {
@@ -87,6 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ActionButton(
           size: 36,
           backgroundColor: context.colorScheme.containerNormal,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           onPressed: () {
             AppRouter.accounts.push(context);
           },

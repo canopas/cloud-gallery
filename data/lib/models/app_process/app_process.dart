@@ -10,6 +10,7 @@ enum AppProcessStatus {
   deleting,
   downloading,
   success,
+  terminated,
   failed;
 
   bool get isProcessing =>
@@ -22,6 +23,8 @@ enum AppProcessStatus {
   bool get isSuccess => this == AppProcessStatus.success;
 
   bool get isFailed => this == AppProcessStatus.failed;
+
+  bool get isTerminated => this == AppProcessStatus.terminated;
 }
 
 @freezed
