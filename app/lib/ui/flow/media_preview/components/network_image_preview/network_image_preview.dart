@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:io';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,11 +18,13 @@ class NetworkImagePreview extends ConsumerWidget {
 
     if (state.loading) {
       return Center(child: AppCircularProgressIndicator(value: state.progress));
-    } else if (state.mediaBytes != null) {
+    } else if (state.filePath != null) {
       return Hero(
         tag: media,
-        child: Image.memory(Uint8List.fromList(state.mediaBytes!),
-            fit: BoxFit.fitWidth),
+        child: Image.file(
+          File(state.filePath!),
+          fit: BoxFit.fitWidth,
+        ),
       );
     } else if (state.error != null) {
       return ErrorView(
@@ -30,6 +32,6 @@ class NetworkImagePreview extends ConsumerWidget {
         message: context.l10n.unable_to_load_media_message,
       );
     }
-    return const Placeholder();
+    return const SizedBox();
   }
 }

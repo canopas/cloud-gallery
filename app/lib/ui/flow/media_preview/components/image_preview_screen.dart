@@ -3,6 +3,7 @@ import 'package:cloud_gallery/components/app_page.dart';
 import 'package:cloud_gallery/components/error_view.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../domain/extensions/widget_extensions.dart';
@@ -28,8 +29,9 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
   void initState() {
     if (!widget.media.sources.contains(AppMediaSource.local)) {
       notifier = ref.read(networkImagePreviewStateNotifierProvider.notifier);
-      runPostFrame(() {
-        notifier.loadImage(widget.media.id);
+      runPostFrame(() async {
+        await notifier.loadImageFromGoogleDrive(
+            id: widget.media.id, extension: widget.media.extension);
       });
     }
     super.initState();

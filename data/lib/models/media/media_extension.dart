@@ -31,7 +31,7 @@ extension AppMediaExtension on AppMedia {
     );
   }
 
-  AppMedia mergeGoogleDriveMedia(AppMedia media){
+  AppMedia mergeGoogleDriveMedia(AppMedia media) {
     return copyWith(
       thumbnailLink: media.thumbnailLink,
       driveMediaRefId: media.driveMediaRefId,
@@ -46,6 +46,13 @@ extension AppMediaExtension on AppMedia {
       sources.contains(AppMediaSource.local) && sources.length == 1;
 
   bool get isCommonStored => sources.length > 1;
+
+  String get extension {
+    if (mimeType?.trim().isNotEmpty ?? false) return mimeType!.split('/').last;
+    if (type.isVideo) return 'mp4';
+    if (type.isImage) return 'jpg';
+    return '';
+  }
 }
 
 class ThumbNailParameter {

@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:data/models/media/media.dart';
-import 'package:data/models/media_content/media_content.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../errors/app_error.dart';
 
@@ -63,60 +61,23 @@ class LocalMediaService {
     }
   }
 
-  Future<AppMedia?> saveMedia({
+  Future<AppMedia?> saveInGallery({
+    required String saveFromLocation,
     required AppMediaType type,
-    required String? mimeType,
-    required AppMediaContent content,
-    required bool Function()? terminate,
-    required void Function(int total, int chunk) onProgress,
   }) async {
+    AssetEntity? asset;
     try {
-      final extension = mimeType?.trim().isNotEmpty ?? false
-          ? mimeType!.split('/').last
-          : type.isVideo
-              ? 'mp4'
-              : 'jpg';
-
-      AssetEntity? asset;
-
-      final tempDir = await getTemporaryDirectory();
-      final tempFile = File(
-          '${tempDir.path}${DateTime.now()}_gd_cloud_gallery_temp.$extension');
-      await tempFile.create();
-
-      int chunkLength = 0;
-      bool terminated = false;
-
-      StreamSubscription<List<int>>? subscription;
-      subscription = content.stream.listen((chunk) {
-        if (terminated) {
-          subscription?.cancel();
-          return;
-        }
-        terminated = terminate?.call() ?? false;
-        chunkLength += chunk.length;
-        onProgress(content.length ?? 0, chunkLength);
-        tempFile.writeAsBytesSync(chunk, mode: FileMode.append);
-      });
-      await subscription.asFuture();
-      if (terminated) {
-        await tempFile.delete();
-        return null;
-      }
-      subscription.cancel();
-
       if (type.isVideo) {
         asset = await PhotoManager.editor.saveVideo(
-          tempFile,
-          title: "${DateTime.now()}_gd_cloud_gallery.$extension",
+         File(saveFromLocation),
+          title: saveFromLocation.split('/').last,
         );
       } else if (type.isImage) {
         asset = await PhotoManager.editor.saveImageWithPath(
-          tempFile.path,
-          title: "${DateTime.now()}_gd_cloud_gallery.$extension",
+          saveFromLocation,
+          title: saveFromLocation.split('/').last,
         );
       }
-      await tempFile.delete();
       return asset != null ? AppMedia.fromAssetEntity(asset) : null;
     } catch (e) {
       throw AppError.fromError(e);
