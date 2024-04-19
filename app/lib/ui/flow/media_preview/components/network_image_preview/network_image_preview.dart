@@ -4,6 +4,7 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
+import '../../../../../components/app_page.dart';
 import '../../../../../components/error_view.dart';
 import 'network_image_preview_view_model.dart';
 
@@ -21,10 +22,14 @@ class NetworkImagePreview extends ConsumerWidget {
     } else if (state.filePath != null) {
       return Hero(
         tag: media,
-        child: Image.file(
-          File(state.filePath!),
-          fit: BoxFit.fitWidth,
-        ),
+        child: Image.file(File(state.filePath!), fit: BoxFit.fitWidth,
+            errorBuilder: (context, error, stackTrace) {
+          return AppPage(
+              body: ErrorView(
+            title: context.l10n.unable_to_load_media_error,
+            message: context.l10n.unable_to_load_media_message,
+          ));
+        }),
       );
     } else if (state.error != null) {
       return ErrorView(

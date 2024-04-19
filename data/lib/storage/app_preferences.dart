@@ -12,6 +12,11 @@ class AppPreferences {
     defaultValue: null,
   );
 
+  static StateProvider<bool> notifications = createPrefProvider<bool>(
+    prefKey: "show_notifications",
+    defaultValue: true,
+  );
+
   static StateProvider<bool> canTakeAutoBackUpInGoogleDrive =
       createPrefProvider<bool>(
     prefKey: "google_drive_auto_backup",
