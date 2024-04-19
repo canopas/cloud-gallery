@@ -96,7 +96,6 @@ class _ProcessItemState extends State<ProcessItem> {
             ],
           ),
         ),
-        if (widget.process.status.isWaiting)
           ActionButton(
             onPressed: widget.onCancelTap,
             icon: const Icon(CupertinoIcons.xmark),

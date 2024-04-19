@@ -1,6 +1,10 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:data/apis/google_drive/google_drive_endpoint.dart';
+import 'package:data/apis/network/client.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media_content/media_content.dart';
+import 'package:dio/dio.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,15 +13,18 @@ import '../errors/app_error.dart';
 import 'auth_service.dart';
 
 final googleDriveServiceProvider = Provider<GoogleDriveService>(
-  (ref) => GoogleDriveService(ref.read(googleSignInProvider)),
+  (ref) => GoogleDriveService(
+    ref.read(googleSignInProvider),
+    ref.read(googleAuthenticatedDioProvider),
+  ),
 );
 
 class GoogleDriveService {
   final String _backUpFolderName = "Cloud Gallery Backup";
-
+  final Dio _client;
   final GoogleSignIn _googleSignIn;
 
-  const GoogleDriveService(this._googleSignIn);
+  GoogleDriveService(this._googleSignIn, this._client);
 
   Future<drive.DriveApi> _getGoogleDriveAPI() async {
     if (_googleSignIn.currentUser == null) {
@@ -96,41 +103,55 @@ class GoogleDriveService {
   Future<AppMedia> uploadInGoogleDrive(
       {required String folderID,
       required AppMedia media,
-      void Function(int total, int chunk)? onProgress}) async {
+      CancelToken? cancelToken,
+      void Function(int chunk, int total)? onProgress}) async {
     final localFile = File(media.path);
     try {
-      final driveApi = await _getGoogleDriveAPI();
-
       final file = drive.File(
         name: media.name ?? localFile.path.split('/').last,
+        mimeType: media.mimeType,
         description: media.id,
         parents: [folderID],
       );
-      final fileLength = localFile.lengthSync();
-      int chunk = 0;
-      final googleDriveFile = await driveApi.files.create(
-        file,
-        uploadMedia: drive.Media(
-            localFile.openRead().map((event) {
-              chunk += event.length;
-              onProgress?.call(fileLength, chunk);
-              return event;
-            }),
-            fileLength),
+
+      final res = await _client.req(
+        UploadGoogleDriveFile(
+          request: file,
+          content: AppMediaContent(
+            stream: localFile.openRead(),
+            length: localFile.lengthSync(),
+            contentType: 'application/octet-stream',
+          ),
+          onProgress: onProgress,
+          cancellationToken: cancelToken,
+        ),
       );
-      return AppMedia.fromGoogleDriveFile(googleDriveFile);
+
+      return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
     } catch (error) {
-      if (error is drive.DetailedApiRequestError && error.status == 404) {
+      if (error is AppError && error.statusCode == 404) {
         throw const BackUpFolderNotFound();
       }
       throw AppError.fromError(error);
     }
   }
 
-  Future<AppMediaContent> fetchMediaBytes(String mediaId) async {
-    final api = await _getGoogleDriveAPI();
-    final media = await api.files.get(mediaId,
-        downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
-    return AppMediaContent.fromGoogleDrive(media);
+  Future<void> downloadFromGoogleDrive(
+      {required String id,
+      required String saveLocation,
+      void Function(int chunk, int total)? onProgress,
+      CancelToken? cancelToken}) async {
+    try {
+      await _client.downloadReq(
+        DownloadGoogleDriveFileContent(
+          id: id,
+          cancellationToken: cancelToken,
+          saveLocation: saveLocation,
+          onProgress: onProgress,
+        ),
+      );
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
   }
 }

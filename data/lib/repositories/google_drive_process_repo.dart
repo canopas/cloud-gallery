@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:data/extensions/iterable_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:data/services/local_media_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import '../errors/app_error.dart';
 import '../models/media/media.dart';
 
@@ -71,10 +74,19 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
 
       _backUpFolderID ??= await _googleDriveService.getBackupFolderId();
 
+      final cancelToken = CancelToken();
+
       final res = await _googleDriveService.uploadInGoogleDrive(
         folderID: _backUpFolderID!,
         media: process.media,
-        onProgress: (total, chunk) {
+        onProgress: (chunk, total) {
+          if (_uploadQueue
+                  .firstWhereOrNull((element) => element.id == process.id)
+                  ?.status
+                  .isTerminated ??
+              true) {
+            cancelToken.cancel();
+          }
           _uploadQueue.updateWhere(
             where: (element) => element.id == process.id,
             update: (element) => element.copyWith(
@@ -82,6 +94,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
           );
           notifyListeners();
         },
+        cancelToken: cancelToken,
       );
       _uploadQueue.updateWhere(
         where: (element) => element.id == process.id,
@@ -91,7 +104,9 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
         ),
       );
     } catch (error) {
-      if (error is BackUpFolderNotFound) {
+      if(error is RequestCancelledByUser){
+        return;
+      } else if (error is BackUpFolderNotFound) {
         _backUpFolderID = await _googleDriveService.getBackupFolderId();
         _uploadInGoogleDrive(process);
         return;
@@ -163,6 +178,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   Future<void> _downloadFromGoogleDrive(AppProcess process) async {
+    String? tempFileLocation;
     try {
       _downloadQueue.updateWhere(
         where: (element) => element.id == process.id,
@@ -171,39 +187,66 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
       );
       notifyListeners();
 
-      final mediaContent = await _googleDriveService
-          .fetchMediaBytes(process.media.driveMediaRefId!);
+      final tempDir = await getTemporaryDirectory();
+      tempFileLocation =
+          "${tempDir.path}/${process.media.id}.${process.media.extension}";
 
-      final localMedia = await _localMediaService.saveMedia(
-        content: mediaContent,
-        onProgress: (total, chunk) {
+      final cancelToken = CancelToken();
+
+      await _googleDriveService.downloadFromGoogleDrive(
+        id: process.media.driveMediaRefId!,
+        saveLocation: tempFileLocation,
+        onProgress: (received, total) {
+          if (_downloadQueue
+                  .firstWhereOrNull((element) => element.id == process.id)
+                  ?.status
+                  .isTerminated ??
+              true) {
+            cancelToken.cancel();
+          }
           _downloadQueue.updateWhere(
             where: (element) => element.id == process.id,
             update: (element) => element.copyWith(
-                progress: AppProcessProgress(total: total, chunk: chunk)),
+                progress: AppProcessProgress(total: total, chunk: received)),
           );
           notifyListeners();
         },
-        mimeType: process.media.mimeType,
+        cancelToken: cancelToken,
+      );
+
+      final localMedia = await _localMediaService.saveInGallery(
+        saveFromLocation: tempFileLocation,
         type: process.media.type,
       );
 
+      if (localMedia == null) {
+        throw const UnableToSaveFileInGallery();
+      }
+
       final updatedMedia = await _googleDriveService.updateMediaDescription(
-          process.media.id, localMedia?.path ?? "");
+        process.media.id,
+        localMedia.id,
+      );
 
       _downloadQueue.updateWhere(
         where: (element) => element.id == process.id,
         update: (element) => element.copyWith(
             status: AppProcessStatus.success,
-            response: localMedia?.mergeGoogleDriveMedia(updatedMedia)),
+            response: localMedia.mergeGoogleDriveMedia(updatedMedia)),
       );
     } catch (error) {
+      if(error is RequestCancelledByUser){
+        return;
+      }
       _downloadQueue.updateWhere(
         where: (element) => element.id == process.id,
         update: (element) => element.copyWith(status: AppProcessStatus.failed),
       );
     } finally {
       notifyListeners();
+      if (tempFileLocation != null) {
+        await File(tempFileLocation).delete();
+      }
     }
   }
 
@@ -215,7 +258,10 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void terminateUploadProcess(String id) {
-    _uploadQueue.removeWhere((element) => element.id == id);
+    _uploadQueue.updateWhere(
+        where: (element) => element.id == id,
+        update: (element) =>
+            element.copyWith(status: AppProcessStatus.terminated));
     notifyListeners();
   }
 
@@ -225,7 +271,10 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void terminateDownloadProcess(String id) {
-    _downloadQueue.removeWhere((element) => element.id == id);
+    _uploadQueue.updateWhere(
+        where: (element) => element.id == id,
+        update: (element) =>
+            element.copyWith(status: AppProcessStatus.terminated));
     notifyListeners();
   }
 }

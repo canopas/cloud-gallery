@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/segmented_button.dart';
+import 'package:style/buttons/switch.dart';
 
 class SettingsActionList extends ConsumerWidget {
   const SettingsActionList({super.key});
@@ -11,7 +12,17 @@ class SettingsActionList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(AppPreferences.isDarkMode);
+    final notifications = ref.watch(AppPreferences.notifications);
     return ActionList(buttons: [
+      ActionListButton(
+        title: context.l10n.notification_text,
+        trailing: AppSwitch(
+          value: notifications,
+          onChanged: (value) {
+            ref.read(AppPreferences.notifications.notifier).state = value;
+          },
+        ),
+      ),
       ActionListButton(
         title: context.l10n.theme_text,
         trailing: AppSegmentedButton(

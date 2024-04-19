@@ -40,6 +40,7 @@
   "load_local_media_button_text": "Load local media",
 
   "theme_text": "Theme",
+  "notification_text": "Notification",
   "light_theme_text": "Light",
   "dark_theme_text": "Dark",
   "system_theme_text": "System",

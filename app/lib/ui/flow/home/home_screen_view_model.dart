@@ -8,6 +8,7 @@ import 'package:data/repositories/google_drive_process_repo.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:data/services/local_media_service.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,16 +20,23 @@ part 'home_screen_view_model.freezed.dart';
 final homeViewStateNotifier =
     StateNotifierProvider.autoDispose<HomeViewStateNotifier, HomeViewState>(
         (ref) {
-  return HomeViewStateNotifier(
+  final homeView = HomeViewStateNotifier(
     ref.read(localMediaServiceProvider),
     ref.read(googleDriveServiceProvider),
     ref.read(authServiceProvider),
     ref.read(googleDriveProcessRepoProvider),
+    ref.read(AppPreferences.canTakeAutoBackUpInGoogleDrive),
   );
+
+  ref.listen(AppPreferences.canTakeAutoBackUpInGoogleDrive, (previous, next) {
+    homeView.updateAutoBackUpStatus(next);
+  });
+  return homeView;
 });
 
 class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     with HomeViewModelHelperMixin {
+  bool _autoBackUpStatus;
   final AuthService _authService;
   final GoogleDriveService _googleDriveService;
   final GoogleDriveProcessRepo _googleDriveProcessRepo;
@@ -43,12 +51,26 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   bool _isMaxLocalMediaLoaded = false;
 
   HomeViewStateNotifier(this._localMediaService, this._googleDriveService,
-      this._authService, this._googleDriveProcessRepo)
+      this._authService, this._googleDriveProcessRepo, this._autoBackUpStatus)
       : super(const HomeViewState()) {
     _listenUserGoogleAccount();
     _googleDriveProcessRepo.setBackUpFolderId(_backUpFolderId);
     _googleDriveProcessRepo.addListener(_listenGoogleDriveProcess);
     _loadInitialMedia();
+    _checkAutoBackUp();
+  }
+
+  void updateAutoBackUpStatus(bool status) {
+    _autoBackUpStatus = status;
+    _checkAutoBackUp();
+  }
+
+  void _checkAutoBackUp() {
+    if (_autoBackUpStatus) {
+      _googleDriveProcessRepo.uploadMediasInGoogleDrive(
+        medias: state.medias.valuesWhere((element) => element.isLocalStored),
+      );
+    }
   }
 
   void _listenUserGoogleAccount() {
@@ -115,7 +137,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
             _googleDriveProcessRepo.downloadQueue.isNotEmpty);
   }
 
-  void _loadInitialMedia() async {
+  Future<void> _loadInitialMedia() async {
     state = state.copyWith(loading: true, error: null);
     final hasAccess = await _localMediaService.requestPermission();
     state = state.copyWith(hasLocalMediaAccess: hasAccess, loading: false);
