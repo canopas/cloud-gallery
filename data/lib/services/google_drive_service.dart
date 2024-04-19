@@ -129,7 +129,6 @@ class GoogleDriveService {
 
       return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
     } catch (error) {
-      print(error);
       if (error is AppError && error.statusCode == 404) {
         throw const BackUpFolderNotFound();
       }
