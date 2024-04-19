@@ -121,14 +121,16 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
   Widget build(BuildContext context) {
     _observeError();
     _updateVideoControllerOnMediaChange();
-    final medias = ref.watch(_provider.select((state) => state.medias));
-    final showActions =
-        ref.watch(_provider.select((state) => state.showActions));
 
+    final ({List<AppMedia> medias, bool showActions}) state =
+        ref.watch(_provider.select((state) => (
+              medias: state.medias,
+              showActions: state.showActions,
+            )));
     return DismissiblePage(
       backgroundColor: context.colorScheme.surface,
       onProgress: (progress) {
-        if (progress > 0 && showActions) {
+        if (progress > 0 && state.showActions) {
           notifier.toggleActionVisibility();
         }
       },
@@ -146,9 +148,9 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               child: PageView.builder(
                 onPageChanged: notifier.changeVisibleMediaIndex,
                 controller: _pageController,
-                itemCount: medias.length,
+                itemCount: state.medias.length,
                 itemBuilder: (context, index) =>
-                    _preview(context: context, media: medias[index]),
+                    _preview(context: context, media: state.medias[index]),
               ),
             ),
             PreviewTopBar(provider: _provider),

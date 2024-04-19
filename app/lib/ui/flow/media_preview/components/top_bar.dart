@@ -60,6 +60,18 @@ class PreviewTopBar extends StatelessWidget {
                 size: 22,
               ),
             ),
+            if(media.isLocalStored)
+              ActionButton(
+                padding: const EdgeInsets.all(4),
+                onPressed: () {
+                  notifier.uploadMediaInGoogleDrive(media: media);
+                },
+                icon: Icon(
+                  CupertinoIcons.cloud_upload,
+                  color: context.colorScheme.textSecondary,
+                  size: 22,
+                ),
+              ),
             ActionButton(
               onPressed: () async {
                 if (media.isCommonStored && media.driveMediaRefId != null) {
