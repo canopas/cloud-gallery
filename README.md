@@ -64,7 +64,6 @@ Cloud Gallery utilizes the latest Flutter app development technologies and adher
 - State Management (Riverpod)
 - Error Handling
 - Code Generation
-- Code Separation
 - Responsive Design
 
 <br/>
