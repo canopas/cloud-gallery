@@ -26,24 +26,26 @@ management, offering convenience and accessibility.
 
 ## Technologies Stack
 Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
-- Dart
-- Flutter
-- Google Drive API
-- Navigation 2.0
-- Firebase
-- Riverpod
-- Http
-- Photo manager
-- Push Notifications
+- [Dart](https://dart.dev/)
+- [Flutter](https://flutter.dev/)
+- [Google Drive API](https://developers.google.com/drive/api/guides/about-sdk)
+- [googleapis SDK](https://pub.dev/packages/googleapis)
+- [Navigation 2.0 (Go Router)](https://pub.dev/packages/go_router)
+- [Firebase](https://firebase.google.com/)
+- [Riverpod](https://riverpod.dev/)
+- [Dio](https://pub.dev/packages/dio)
+- [Photo manager](https://pub.dev/packages/photo_manager)
 
 #### Best Practices
+- Clean Architecture (MVVM)
 - Flutter Modularization
 - Localization
 - Dependency Injection
-- Responsive Design
-- Project Structure
 - State Management (Riverpod)
 - Error Handling
+- Code Generation
+- Code Separation
+- Responsive Design
 
 ## Created & Maintained By
 Cloud Gallery is owned and maintained by the Canopas team.
@@ -53,7 +55,7 @@ You can follow them on Twitter at @canopassoftware for project updates and relea
 <a href="https://canopas.com/contact"><img src="./cta/cta_btn.png" width=300></a>
 
 
-## Licence 📄
+## License 📄
 
 **Cloud Gallery** is licensed under the Apache License, Version 2.0.
 
