@@ -24,7 +24,7 @@ management, offering convenience and accessibility.
 - **User-Friendly Interface**: With an intuitive and user-friendly interface, Cloud Gallery makes it easy to manage your media files, ensuring a hassle-free experience.
 > **Note**: Cloud Gallery is currently in active development 🚧, with plans to incorporate additional features shortly. Stay tuned for updates!
 
-## What's Coming Next 🚀
+## What's Coming Next? 🚀
 - **Dropbox Integration**: Cloud Gallery will soon support Dropbox integration, allowing users to access and manage their media files dropbox.
 - **Sharing Between Clouds**: Easily share your media files between Google Drive and Dropbox, making it convenient to access and manage your files across multiple cloud providers.
 - **Auto Backup In Multiple Cloud**: Cloud Gallery will soon support backup in multiple cloud providers, ensuring that your media files are securely stored across multiple platforms.
