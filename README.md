@@ -22,7 +22,7 @@ management, offering convenience and accessibility.
 - **Secure User Data**: We prioritize your privacy and security. Cloud Gallery utilizes your Google Drive storage, ensuring that your data remains secure within your own account.
 - **Cross-Platform Compatibility**: Whether you're using an Android or iOS device, Cloud Gallery offers seamless compatibility across platforms.
 - **User-Friendly Interface**: With an intuitive and user-friendly interface, Cloud Gallery makes it easy to manage your media files, ensuring a hassle-free experience.
-
+> **Note**: Cloud Gallery is currently in active development 🚧, with plans to incorporate additional features shortly. Stay tuned for updates!
 
 ## Technologies Stack
 Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
@@ -45,3 +45,30 @@ Cloud Gallery utilizes the latest Flutter app development technologies and adher
 - State Management (Riverpod)
 - Error Handling
 
+## Created & Maintained By
+Cloud Gallery is owned and maintained by the Canopas team.
+
+You can follow them on Twitter at @canopassoftware for project updates and releases. If you are interested in building apps or designing products, please let us know. We'd love to hear from you!
+
+<a href="https://canopas.com/contact"><img src="./cta/cta_btn.png" width=300></a>
+
+
+## Licence 📄
+
+**Cloud Gallery** is licensed under the Apache License, Version 2.0.
+
+```
+Copyright 2024 Canopas Software LLP
+
+Licensed under the Apache License, Version 2.0 (the "License");
+You won't be using this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
