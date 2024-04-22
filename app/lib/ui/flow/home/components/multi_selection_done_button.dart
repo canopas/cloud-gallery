@@ -43,10 +43,20 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             children: [
               if (showUploadToDriveButton)
                 AppSheetAction(
-                  icon: SvgPicture.asset(
-                    Assets.images.icons.googleDrive,
-                    height: 24,
-                    width: 24,
+                  icon: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 0, right: 8),
+                        child: Icon(CupertinoIcons.cloud_upload,
+                            color: context.colorScheme.textSecondary, size: 22),
+                      ),
+                      SvgPicture.asset(
+                        Assets.images.icons.googleDrive,
+                        width: 14,
+                        height: 14,
+                      ),
+                    ],
                   ),
                   title: context.l10n.back_up_on_google_drive_text,
                   onPressed: () {

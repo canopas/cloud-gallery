@@ -47,10 +47,10 @@ mixin HomeViewModelHelperMixin {
   Map<DateTime, List<AppMedia>> removeGoogleDriveRefFromMediaMap(
       {required Map<DateTime, List<AppMedia>> medias,
       List<String>? removeFromIds}) {
-    return medias.map((key, value) {
-      return MapEntry(key,
-          value..removeGoogleDriveRefFromMedias(removeFromIds: removeFromIds));
-    });
+    return sortMedias(
+      medias: medias.values.expand((element) => element).toList()
+        ..removeGoogleDriveRefFromMedias(removeFromIds: removeFromIds),
+    );
   }
 
   Map<DateTime, List<AppMedia>> addGoogleDriveRefInMediaMap({
