@@ -59,6 +59,8 @@ management, offering convenience and accessibility.
   </tr> 
 </table>
 
+<br/>
+
 ## Features 🌟
 
 - **Sync with Google Drive**:  Easily access and manage your photos and videos stored on your device
