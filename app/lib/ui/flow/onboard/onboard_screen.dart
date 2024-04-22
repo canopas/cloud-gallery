@@ -4,6 +4,7 @@ import 'package:cloud_gallery/ui/navigation/app_router.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
@@ -16,26 +17,44 @@ class OnBoardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppPage(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _appLogo(context),
-              _onBoardDescription(context),
-              _getStartedButton(
-                context: context,
-                onGetStartedTap: () {
-                  ref.read(AppPreferences.isOnBoardComplete.notifier).state =
-                      true;
-                  AppRouter.home.go(context);
-                },
-              )
-            ],
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  context.colorScheme.primary.withOpacity(0.2),
+                  Colors.transparent,
+                ],
+              ),
+            ),
           ),
-        ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _appLogo(context),
+                  _onBoardDescription(context),
+                  _getStartedButton(
+                    context: context,
+                    onGetStartedTap: () {
+                      ref
+                          .read(AppPreferences.isOnBoardComplete.notifier)
+                          .state = true;
+                      AppRouter.home.go(context);
+                    },
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

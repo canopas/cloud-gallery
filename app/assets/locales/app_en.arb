@@ -14,6 +14,8 @@
   "common_yesterday": "Yesterday",
   "common_tomorrow": "Tomorrow",
 
+  "common_info":"Info",
+  "common_share":"Share",
   "common_upload":"Upload",
   "common_download":"Download",
   "common_delete": "Delete",
