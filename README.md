@@ -2,7 +2,7 @@
 
 # Cloud Gallery: All Your Memories in One Spot
 
-## Overview 
+## Overview
 Cloud Gallery is a Flutter application designed to seamlessly manage user media across multiple
 cloud providers like Google Drive, Dropbox, while also allowing users to access and organize their
 local media. With intuitive features and a user-friendly interface, Cloud Gallery simplifies media
@@ -13,7 +13,7 @@ management, offering convenience and accessibility.
 <a href= "https://play.google.com/store/apps/details?id=com.canopas.cloudGallery"><img src="./cta/google play.png" width="200" ></img> 
 <a href="https://apps.apple.com/us/app/"><img src="./cta/app store.png" width="200"></img>
 
-## Features
+## Features 🌟
 - **Sync with Google Drive**:  Easily access and manage your photos and videos stored on your device and Google Drive account directly in one place. Enjoy the convenience of having your memories at your fingertips, wherever you go.
 - **Auto Backup In Google Drive**: Worried about losing your cherished memories? Cloud Gallery's auto backup feature ensures that your local photos and videos are automatically backed up to your Google Drive account, keeping them safe and secure.
 - **Effortless Uploads & Downloads**: Effortless Uploads & Downloads: Easily upload photos and videos from your device's local storage to your Google Drive account, and download files from Google Drive to your device with just a tap.
@@ -24,7 +24,7 @@ management, offering convenience and accessibility.
 - **User-Friendly Interface**: With an intuitive and user-friendly interface, Cloud Gallery makes it easy to manage your media files, ensuring a hassle-free experience.
 > **Note**: Cloud Gallery is currently in active development 🚧, with plans to incorporate additional features shortly. Stay tuned for updates!
 
-## Technologies Stack
+## Technologies Stack 🖥️
 Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best practices. Below is the current technologies stack used in the development process:
 - [Dart](https://dart.dev/)
 - [Flutter](https://flutter.dev/)
