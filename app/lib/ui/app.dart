@@ -60,7 +60,6 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
     if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
       return CupertinoApp.router(
-        debugShowCheckedModeBanner: false,
         onGenerateTitle: (context) => context.l10n.app_name,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -71,7 +70,6 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
       );
     }
     return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => context.l10n.app_name,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
