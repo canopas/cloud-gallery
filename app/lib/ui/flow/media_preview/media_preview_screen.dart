@@ -153,7 +153,14 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
                     _preview(context: context, media: state.medias[index]),
               ),
             ),
-            PreviewTopBar(provider: _provider),
+            PreviewTopBar(
+              provider: _provider,
+              onAction: () {
+                if(_videoPlayerController != null && (_videoPlayerController?.value.isInitialized ?? false)){
+                  _videoPlayerController?.pause();
+                }
+              },
+            ),
             _videoActions(context),
             _videoDurationSlider(context),
           ],

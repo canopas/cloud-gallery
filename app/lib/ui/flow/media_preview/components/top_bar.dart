@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/navigation/app_router.dart';
+import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +17,15 @@ import '../../../../components/app_page.dart';
 import '../../../../domain/assets/assets_paths.dart';
 import '../../../../domain/formatter/date_formatter.dart';
 import '../media_preview_view_model.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PreviewTopBar extends StatelessWidget {
   final AutoDisposeStateNotifierProvider<MediaPreviewStateNotifier,
       MediaPreviewState> provider;
+  final void Function() onAction;
 
-  const PreviewTopBar({super.key, required this.provider});
+  const PreviewTopBar(
+      {super.key, required this.provider, required this.onAction});
 
   @override
   Widget build(BuildContext context) {
@@ -40,130 +44,177 @@ class PreviewTopBar extends StatelessWidget {
           actions: [
             ActionButton(
               onPressed: () {
-                AppRouter.mediaMetaDataDetails(media: media).push(context);
-              },
-              icon: Icon(
-                CupertinoIcons.info,
-                color: context.colorScheme.textSecondary,
-                size: 22,
-              ),
-            ),
-            if(media.isGoogleDriveStored)
-            ActionButton(
-              padding: const EdgeInsets.all(4),
-              onPressed: () {
-                notifier.downloadMediaFromGoogleDrive(media: media);
-              },
-              icon: Icon(
-                CupertinoIcons.cloud_download,
-                color: context.colorScheme.textSecondary,
-                size: 22,
-              ),
-            ),
-            if(media.isLocalStored)
-              ActionButton(
-                padding: const EdgeInsets.all(4),
-                onPressed: () {
-                  notifier.uploadMediaInGoogleDrive(media: media);
-                },
-                icon: Icon(
-                  CupertinoIcons.cloud_upload,
-                  color: context.colorScheme.textSecondary,
-                  size: 22,
-                ),
-              ),
-            ActionButton(
-              onPressed: () async {
-                if (media.isCommonStored && media.driveMediaRefId != null) {
-                  showMenu(
+                showMenu(
                     context: context,
-                    position: RelativeRect.fromLTRB(
-                        double.infinity,
-                        kToolbarHeight + MediaQuery.of(context).padding.top,
-                        0,
-                        0),
+                    position: RelativeRect.fromSize(
+                      Rect.fromLTRB(context.mediaQuerySize.width, 50, 0, 0),
+                      // Placeholder rect, will be overwritten
+                      context.mediaQuerySize, // Size of the screen
+                    ),
+                    elevation: 1,
                     surfaceTintColor: context.colorScheme.surface,
                     color: context.colorScheme.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    items: <PopupMenuEntry>[
+                    items: [
                       PopupMenuItem(
-                        onTap: () async {
-                          _showDeleteFromDriveDialog(
-                              context: context,
-                              onDelete: () {
-                                notifier.deleteMediaFromGoogleDrive(
-                                    media.driveMediaRefId);
-                                context.pop();
-                              });
+                        onTap: () {
+                          onAction();
+                          AppRouter.mediaMetaDataDetails(media: media)
+                              .push(context);
                         },
                         child: Row(
                           children: [
-                            SvgPicture.asset(
-                              Assets.images.icons.googleDrive,
-                              width: 20,
-                              height: 20,
+                            Icon(
+                              CupertinoIcons.info,
+                              color: context.colorScheme.textSecondary,
+                              size: 22,
                             ),
                             const SizedBox(width: 16),
-                            Text(context.l10n.common_delete_from_google_drive,
+                            Text(context.l10n.common_info,
                                 style: AppTextStyles.body2.copyWith(
                                   color: context.colorScheme.textPrimary,
                                 )),
                           ],
                         ),
                       ),
-                      PopupMenuItem(
-                        onTap: () async {
-                          _showDeleteFromDeviceDialog(
-                              context: context,
-                              onDelete: () {
-                                notifier.deleteMediaFromLocal(media.id);
-                                context.pop();
-                              });
-                        },
-                        child: Row(
-                          children: [
-                            Icon(CupertinoIcons.trash,
+                      if (media.isGoogleDriveStored)
+                        PopupMenuItem(
+                          onTap: () {
+                            notifier.downloadMediaFromGoogleDrive(media: media);
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.cloud_download,
                                 color: context.colorScheme.textSecondary,
-                                size: 22),
-                            const SizedBox(width: 16),
-                            Text(
-                              context.l10n.common_delete_from_device,
-                              style: AppTextStyles.body2.copyWith(
-                                color: context.colorScheme.textPrimary,
+                                size: 22,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 16),
+                              Text(
+                                context.l10n.common_download,
+                                style: AppTextStyles.body2.copyWith(
+                                  color: context.colorScheme.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                } else if (media.isGoogleDriveStored &&
-                    media.driveMediaRefId != null) {
-                  _showDeleteFromDriveDialog(
-                      context: context,
-                      onDelete: () {
-                        notifier
-                            .deleteMediaFromGoogleDrive(media.driveMediaRefId);
-                        context.pop();
-                      });
-                } else if (media.isLocalStored) {
-                  _showDeleteFromDeviceDialog(
-                      context: context,
-                      onDelete: () {
-                        notifier.deleteMediaFromLocal(media.id);
-                        context.pop();
-                      });
-                }
+                      if (media.isLocalStored)
+                        PopupMenuItem(
+                          onTap: () {
+                            notifier.uploadMediaInGoogleDrive(media: media);
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.cloud_upload,
+                                color: context.colorScheme.textSecondary,
+                                size: 22,
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                context.l10n.common_upload,
+                                style: AppTextStyles.body2.copyWith(
+                                  color: context.colorScheme.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (media.sources.contains(AppMediaSource.googleDrive))
+                        PopupMenuItem(
+                          onTap: () async {
+                            _showDeleteFromDriveDialog(
+                                context: context,
+                                onDelete: () {
+                                  notifier.deleteMediaFromGoogleDrive(
+                                      media.driveMediaRefId);
+                                  context.pop();
+                                });
+                          },
+                          child: Row(
+                            children: [
+                              Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 2, right: 2),
+                                    child: Icon(CupertinoIcons.trash,
+                                        color: context.colorScheme.textSecondary,
+                                        size: 22),
+                                  ),
+                                  SvgPicture.asset(
+                                    Assets.images.icons.googleDrive,
+                                    width: 14,
+                                    height: 14,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 16),
+                              Text(context.l10n.common_delete_from_google_drive,
+                                  style: AppTextStyles.body2.copyWith(
+                                    color: context.colorScheme.textPrimary,
+                                  )),
+                            ],
+                          ),
+                        ),
+                      if (media.sources.contains(AppMediaSource.local))
+                        PopupMenuItem(
+                          onTap: () async {
+                            _showDeleteFromDeviceDialog(
+                                context: context,
+                                onDelete: () {
+                                  notifier.deleteMediaFromLocal(media.id);
+                                  context.pop();
+                                });
+                          },
+                          child: Row(
+                            children: [
+                              Icon(CupertinoIcons.trash,
+                                  color: context.colorScheme.textSecondary,
+                                  size: 22),
+                              const SizedBox(width: 16),
+                              Text(
+                                (media.isLocalStored)
+                                    ? context.l10n.common_delete
+                                    : context.l10n.common_delete_from_device,
+                                style: AppTextStyles.body2.copyWith(
+                                  color: context.colorScheme.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if(media.isLocalStored)
+                        PopupMenuItem(
+                          onTap: () async {
+                             await Share.shareXFiles([XFile(media.path)]);
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Platform.isIOS? CupertinoIcons.share: Icons.share_rounded,
+                                color: context.colorScheme.textSecondary,
+                                size: 22,
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                context.l10n.common_share,
+                                style: AppTextStyles.body2.copyWith(
+                                  color: context.colorScheme.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ]);
               },
-              icon: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(
-                  CupertinoIcons.delete,
-                  color: context.colorScheme.textSecondary,
-                  size: 22,
-                ),
+              icon: Icon(
+                Icons.more_vert_rounded,
+                color: context.colorScheme.textSecondary,
+                size: 22,
               ),
             ),
             if (!Platform.isIOS && !Platform.isMacOS) const SizedBox(width: 8),
