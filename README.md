@@ -30,7 +30,7 @@ management, offering convenience and accessibility.
 
 <table>
   <tr>
- <th  width="33%" >On-Board</th>
+ <th  width="33%" >On-board</th>
   <th width="33%" >Home</th>
   <th  width="33%" >Accounts</th>
   </tr>
@@ -133,7 +133,7 @@ practices. Below is the current technologies stack used in the development proce
 
 <br/>
 
-## Feedback & Suggestions 📢
+## Feedback & Suggestions ✨ 
 
 We value
 your [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions).
