@@ -2,7 +2,7 @@
 
 # Cloud Gallery: All Your Memories in One Spot
 Enjoy all your media in one spot! Easily view and manage photos, videos from Google Drive, Dropbox, and your device, all in a simple, user-friendly interface.
-
+<img src="./screenshots/cloud-gallery-banner.jpg" />
 <br/>
 
 ## Overview
