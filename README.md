@@ -9,6 +9,10 @@ local media. With intuitive features and a user-friendly interface, Cloud Galler
 management, offering convenience and accessibility.
 
 
+## Download App
+<a href= "https://play.google.com/store/apps/details?id=com.canopas.cloudGallery"><img src="./cta/google play.png" width="200" ></img> 
+<a href="https://apps.apple.com/us/app/"><img src="./cta/app store.png" width="200"></img>
+
 ## Features
 - **Sync with Google Drive**:  Easily access and manage your photos and videos stored on your device and Google Drive account directly in one place. Enjoy the convenience of having your memories at your fingertips, wherever you go.
 - **Auto Backup In Google Drive**: Worried about losing your cherished memories? Cloud Gallery's auto backup feature ensures that your local photos and videos are automatically backed up to your Google Drive account, keeping them safe and secure.
