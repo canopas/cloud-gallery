@@ -144,7 +144,7 @@ You can follow them on Twitter at [@canopassoftware](https://twitter.com/canopas
 project updates and releases. If you are interested in building apps or designing products, please
 let us know. We'd love to hear from you!
 
-<a href="https://canopas.com/contact"><img src="./cta/cta-button.png" height=80></a>
+<a href="https://canopas.com/contact"><img src="./cta/cta-button.png" height=40></a>
 
 <br/>
 
