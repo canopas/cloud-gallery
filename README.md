@@ -1,5 +1,8 @@
-# Cloud Gallery
+<p align="center"> <a href="https://canopas.com/contact"><img src="./cta/cta_banner.png"></a></p>
+# Cloud Gallery: All Your Memories in One Spot
 
+
+## Overview 
 Cloud Gallery is a Flutter application designed to seamlessly manage user media across multiple
 cloud providers like Google Drive, Dropbox, while also allowing users to access and organize their
 local media. With intuitive features and a user-friendly interface, Cloud Gallery simplifies media
@@ -14,3 +17,27 @@ management, offering convenience and accessibility.
 - **Stay Organized**: Arrange and categorize your photos and videos in your Google Drive account, making it easy to find and manage your media files.
 - **Secure User Data**: We prioritize your privacy and security. Cloud Gallery utilizes your Google Drive storage, ensuring that your data remains secure within your own account.
 - **Cross-Platform Compatibility**: Whether you're using an Android or iOS device, Cloud Gallery offers seamless compatibility across platforms.
+- **User-Friendly Interface**: With an intuitive and user-friendly interface, Cloud Gallery makes it easy to manage your media files, ensuring a hassle-free experience.
+
+
+## Technologies Stack
+Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
+- Dart
+- Flutter
+- Google Drive API
+- Navigation 2.0
+- Firebase
+- Riverpod
+- Http
+- Photo manager
+- Push Notifications
+
+#### Best Practices
+- Flutter Modularization
+- Localization
+- Dependency Injection
+- Responsive Design
+- Project Structure
+- State Management (Riverpod)
+- Error Handling
+
