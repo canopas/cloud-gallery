@@ -22,7 +22,7 @@ management, offering convenience and accessibility.
 
 ## Download App
 
-<a href= "https://play.google.com/store/apps/"><img src="./cta/google-play.png" width="200" ></img>
+<a href= "https://play.google.com/store/apps/"><img src="./cta/google-play.png" width="200" ></img>   
 <a href="https://apps.apple.com/us/app/"><img src="./cta/app-store.png" width="200"></img>
 
 <br/>
@@ -98,9 +98,9 @@ management, offering convenience and accessibility.
   it convenient to access and manage your files across multiple cloud providers.
 - **Auto Backup In Multiple Cloud**: Cloud Gallery will soon support backup in multiple cloud
   providers, ensuring that your media files are securely stored across multiple platforms.
-- **Enhanced Security Features**: We're working on enhancing our security features to ensure that
+- **Enhance Security Features**: We're working on enhancing our security features to ensure that
   your data remains safe and secure.
-- **Improved User Experience**: We're continuously working on improving the user experience, with
+- **Improve User Experience**: We're continuously working on improving the user experience, with
   plans to incorporate additional features and enhancements shortly.
 - **Bug Fixes & Performance Improvements**: We're actively working on addressing any bugs and
   performance issues to ensure a seamless user experience.
