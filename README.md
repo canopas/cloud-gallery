@@ -1,5 +1,7 @@
 <p align="center"> <a href="https://canopas.com/contact"><img src="./cta/cta_banner.png"></a></p>
 
+<br/>
+
 # Cloud Gallery: All Your Memories in One Spot
 
 Enjoy all your media in one spot! Easily view and manage photos, videos from Google Drive, Dropbox,
