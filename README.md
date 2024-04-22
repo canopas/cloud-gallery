@@ -6,6 +6,7 @@ Enjoy all your media in one spot! Easily view and manage photos, videos from Goo
 and your device, all in a simple, user-friendly interface.
 
 <img src="./screenshots/cloud-gallery-banner.jpg" />
+
 <br/>
 
 ## Overview
@@ -23,6 +24,8 @@ management, offering convenience and accessibility.
 <a href="https://apps.apple.com/us/app/"><img src="./cta/app store.png" width="200"></img>
 
 <br/>
+
+## Screenshots 📸
 
 <table>
   <tr>
