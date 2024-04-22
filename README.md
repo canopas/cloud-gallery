@@ -25,7 +25,7 @@ management, offering convenience and accessibility.
 > **Note**: Cloud Gallery is currently in active development 🚧, with plans to incorporate additional features shortly. Stay tuned for updates!
 
 ## Technologies Stack
-Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
+Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best practices. Below is the current technologies stack used in the development process:
 - [Dart](https://dart.dev/)
 - [Flutter](https://flutter.dev/)
 - [Google Drive API](https://developers.google.com/drive/api/guides/about-sdk)
