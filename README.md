@@ -30,31 +30,34 @@ management, offering convenience and accessibility.
 
 <table>
   <tr>
+ <th  width="33%" >On-Board</th>
   <th width="33%" >Home</th>
   <th  width="33%" >Accounts</th>
-   <th  width="33%" >Multiple Media Selection</th>
   </tr>
     <tr>
+  <td><img src="./screenshots/onboard-light.png"/></td>
   <td><img src="./screenshots/home-light.png"/></td>
   <td> <img src="./screenshots/accounts-light.png"/> </td>
-  <td><img src="./screenshots/selection-light.png" /></td>
-  </tr>  
- <tr>
-  <th  width="33%">Upload & Download</th>
-   <th  width="33%">Metadata Details</th>
-<th  width="33%">Video Preview</th>
-  </tr>
-    <tr>
-  <td> <img src="./screenshots/transfer-light.png"  /> </td>
-  <td> <img src="./screenshots/media-details-light.png" /> </td>
- <td> <img src="./screenshots/video-preview-light.png"  /> </td>
 
   </tr>  
+ <tr>
+ <th  width="33%" >Multiple Media Selection</th>
+  <th  width="33%">Upload & Download</th>
+   <th  width="33%">Metadata Details</th>
+
+  </tr>
+    <tr>
+ <td><img src="./screenshots/selection-light.png" /></td>
+  <td> <img src="./screenshots/transfer-light.png"  /> </td>
+  <td> <img src="./screenshots/media-details-light.png" /> </td>
+  </tr>  
 <tr>
+<th  width="33%">Video Preview</th>
   <th width="33%">Image Preview</th>
   <th  width="33%">Preview Actions</th>
   </tr>
     <tr>
+ <td> <img src="./screenshots/video-preview-light.png"  /> </td>
   <td><img src="./screenshots/image-preview-light.png" /></td>
   <td> <img src="./screenshots/image-preview-menu-light.png"  /> </td>
   </tr> 
@@ -70,7 +73,7 @@ management, offering convenience and accessibility.
 - **Auto Backup In Google Drive**: Worried about losing your cherished memories? Cloud Gallery's
   auto backup feature ensures that your local photos and videos are automatically backed up to your
   Google Drive account, keeping them safe and secure.
-- **Effortless Uploads & Downloads**: Effortless Uploads & Downloads: Easily upload photos and
+- **Effortless Uploads & Downloads**: Easily upload photos and
   videos from your device's local storage to your Google Drive account, and download files from
   Google Drive to your device with just a tap.
 - **Access media in Multiple Devices**: Access your media seamlessly across multiple devices with
@@ -97,14 +100,8 @@ management, offering convenience and accessibility.
   it convenient to access and manage your files across multiple cloud providers.
 - **Auto Backup In Multiple Cloud**: Cloud Gallery will soon support backup in multiple cloud
   providers, ensuring that your media files are securely stored across multiple platforms.
-- **Enhance Security Features**: We're working on enhancing our security features to ensure that
-  your data remains safe and secure.
 - **Improve User Experience**: We're continuously working on improving the user experience, with
   plans to incorporate additional features and enhancements shortly.
-- **Bug Fixes & Performance Improvements**: We're actively working on addressing any bugs and
-  performance issues to ensure a seamless user experience.
-- **Feedback & Suggestions**: We value your feedback and suggestions. If you have any ideas or
-  suggestions, please let us know. We'd love to hear from you!
 
 <br/>
 
@@ -133,6 +130,15 @@ practices. Below is the current technologies stack used in the development proce
 - Error Handling
 - Code Generation
 - Responsive Design
+
+<br/>
+
+## Feedback & Suggestions 📢
+
+We value
+your [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions).
+If you have any ideas or
+suggestions, please let us know. We'd love to hear from you!
 
 <br/>
 
