@@ -13,7 +13,7 @@ and your device, all in a simple, user-friendly interface.
 
 ## Overview
 
-Cloud Gallery is a Flutter application designed to seamlessly manage user media across multiple
+Cloud Gallery is a Flutter application designed to manage user media seamlessly across multiple
 cloud providers like Google Drive, Dropbox, while also allowing users to access and organize their
 local media. With intuitive features and a user-friendly interface, Cloud Gallery simplifies media
 management, offering convenience and accessibility.
@@ -67,7 +67,7 @@ management, offering convenience and accessibility.
 
 ## Features 🌟
 
-- **Sync with Google Drive**:  Easily access and manage your photos and videos stored on your device
+- **Sync with Google Drive**: Easily access and manage your photos and videos stored on your device
   and Google Drive account directly in one place. Enjoy the convenience of having your memories at
   your fingertips, wherever you go.
 - **Auto Backup In Google Drive**: Worried about losing your cherished memories? Cloud Gallery's
@@ -76,7 +76,7 @@ management, offering convenience and accessibility.
 - **Effortless Uploads & Downloads**: Easily upload photos and
   videos from your device's local storage to your Google Drive account, and download files from
   Google Drive to your device with just a tap.
-- **Access media in Multiple Devices**: Access your media seamlessly across multiple devices with
+- **Access Media On Multiple Devices**: Access your media seamlessly across multiple devices with
   our backup feature, ensuring your content is always at your fingertips
 - **Stay Organized**: Arrange and categorize your photos and videos in your Google Drive account,
   making it easy to find and manage your media files.
@@ -95,7 +95,7 @@ management, offering convenience and accessibility.
 ## What's Coming Next? 🚀
 
 - **Dropbox Integration**: Cloud Gallery will soon support Dropbox integration, allowing users to
-  access and manage their media files dropbox.
+  access and manage their media files on Dropbox.
 - **Sharing Between Clouds**: Easily share your media files between Google Drive and Dropbox, making
   it convenient to access and manage your files across multiple cloud providers.
 - **Auto Backup In Multiple Cloud**: Cloud Gallery will soon support backup in multiple cloud
