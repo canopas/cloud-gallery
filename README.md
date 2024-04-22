@@ -1,6 +1,6 @@
 <p align="center"> <a href="https://canopas.com/contact"><img src="./cta/cta_banner.png"></a></p>
-# Cloud Gallery: All Your Memories in One Spot
 
+# Cloud Gallery: All Your Memories in One Spot
 
 ## Overview 
 Cloud Gallery is a Flutter application designed to seamlessly manage user media across multiple
