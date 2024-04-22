@@ -17,6 +17,7 @@ import '../../../../components/app_page.dart';
 import '../../../../domain/assets/assets_paths.dart';
 import '../../../../domain/formatter/date_formatter.dart';
 import '../media_preview_view_model.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PreviewTopBar extends StatelessWidget {
   final AutoDisposeStateNotifierProvider<MediaPreviewStateNotifier,
@@ -179,6 +180,28 @@ class PreviewTopBar extends StatelessWidget {
                                 (media.isLocalStored)
                                     ? context.l10n.common_delete
                                     : context.l10n.common_delete_from_device,
+                                style: AppTextStyles.body2.copyWith(
+                                  color: context.colorScheme.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if(media.isLocalStored)
+                        PopupMenuItem(
+                          onTap: () async {
+                             await Share.shareXFiles([XFile(media.path)]);
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Platform.isIOS? CupertinoIcons.share: Icons.share_rounded,
+                                color: context.colorScheme.textSecondary,
+                                size: 22,
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                context.l10n.common_share,
                                 style: AppTextStyles.body2.copyWith(
                                   color: context.colorScheme.textPrimary,
                                 ),

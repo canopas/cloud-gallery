@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_gallery/components/app_dialog.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:style/extensions/context_extensions.dart';
 import '../../../../components/action_sheet.dart';
 import '../../../../components/app_sheet.dart';
@@ -28,9 +30,10 @@ class MultiSelectionDoneButton extends ConsumerWidget {
         .any((element) => element.sources.contains(AppMediaSource.local));
     final bool showUploadToDriveButton = selectedMedias.any(
         (element) => !element.sources.contains(AppMediaSource.googleDrive));
-
     final bool showDownloadButton =
         selectedMedias.any((element) => element.isGoogleDriveStored);
+    final bool showShareButton =
+        selectedMedias.any((element) => element.isLocalStored);
 
     return FloatingActionButton(
       elevation: 3,
@@ -98,9 +101,20 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                 ),
               if (showDeleteFromDriveButton)
                 AppSheetAction(
-                  icon: const Icon(
-                    CupertinoIcons.delete,
-                    size: 24,
+                  icon: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 2, right: 2),
+                        child: Icon(CupertinoIcons.trash,
+                            color: context.colorScheme.textSecondary, size: 22),
+                      ),
+                      SvgPicture.asset(
+                        Assets.images.icons.googleDrive,
+                        width: 14,
+                        height: 14,
+                      ),
+                    ],
                   ),
                   title: context.l10n.common_delete_from_google_drive,
                   onPressed: () {
@@ -158,6 +172,22 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                         ),
                       ],
                     );
+                  },
+                ),
+              if (showShareButton)
+                AppSheetAction(
+                  icon: Icon(
+                    Platform.isIOS ? CupertinoIcons.share : Icons.share_rounded,
+                    color: context.colorScheme.textSecondary,
+                    size: 24,
+                  ),
+                  title: context.l10n.common_share,
+                  onPressed: () {
+                    Share.shareXFiles(selectedMedias
+                        .where((element) => element.isLocalStored)
+                        .map((e) => XFile(e.path))
+                        .toList());
+                    context.pop();
                   },
                 ),
             ],
