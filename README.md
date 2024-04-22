@@ -1,4 +1,4 @@
-<p align="center"> <a href="https://canopas.com/contact"><img src="./cta/cta_banner.png"></a></p>
+<p align="center"> <a href="https://canopas.com/contact"><img src="./cta/cta-banner.png"></a></p>
 
 <br/>
 
@@ -22,8 +22,8 @@ management, offering convenience and accessibility.
 
 ## Download App
 
-<a href= "https://play.google.com/store/apps/details?id=com.canopas.cloudGallery"><img src="./cta/google play.png" width="200" ></img>
-<a href="https://apps.apple.com/us/app/"><img src="./cta/app store.png" width="200"></img>
+<a href= "https://play.google.com/store/apps/"><img src="./cta/google-play.png" width="200" ></img>
+<a href="https://apps.apple.com/us/app/"><img src="./cta/app-store.png" width="200"></img>
 
 <br/>
 
@@ -145,7 +145,7 @@ You can follow them on Twitter at [@canopassoftware](https://twitter.com/canopas
 project updates and releases. If you are interested in building apps or designing products, please
 let us know. We'd love to hear from you!
 
-<a href="https://canopas.com/contact"><img src="./cta/cta_btn.png" width=300></a>
+<a href="https://canopas.com/contact"><img src="./cta/cta-button.png" width=300></a>
 
 <br/>
 
