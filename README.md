@@ -24,6 +24,15 @@ management, offering convenience and accessibility.
 - **User-Friendly Interface**: With an intuitive and user-friendly interface, Cloud Gallery makes it easy to manage your media files, ensuring a hassle-free experience.
 > **Note**: Cloud Gallery is currently in active development 🚧, with plans to incorporate additional features shortly. Stay tuned for updates!
 
+## What's Coming Next 🚀
+- **Dropbox Integration**: Cloud Gallery will soon support Dropbox integration, allowing users to access and manage their media files dropbox.
+- **Sharing Between Clouds**: Easily share your media files between Google Drive and Dropbox, making it convenient to access and manage your files across multiple cloud providers.
+- **Auto Backup In Multiple Cloud**: Cloud Gallery will soon support backup in multiple cloud providers, ensuring that your media files are securely stored across multiple platforms.
+- **Enhanced Security Features**: We're working on enhancing our security features to ensure that your data remains safe and secure.
+- **Improved User Experience**: We're continuously working on improving the user experience, with plans to incorporate additional features and enhancements shortly.
+- **Bug Fixes & Performance Improvements**: We're actively working on addressing any bugs and performance issues to ensure a seamless user experience.
+- **Feedback & Suggestions**: We value your feedback and suggestions. If you have any ideas or suggestions, please let us know. We'd love to hear from you!
+
 ## Technologies Stack 🖥️
 Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best practices. Below is the current technologies stack used in the development process:
 - [Dart](https://dart.dev/)
