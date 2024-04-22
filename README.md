@@ -1,6 +1,7 @@
 <p align="center"> <a href="https://canopas.com/contact"><img src="./cta/cta_banner.png"></a></p>
 
 # Cloud Gallery: All Your Memories in One Spot
+Enjoy all your media in one spot! Easily view and manage photos, videos from Google Drive, Dropbox, and your device, all in a simple, user-friendly interface.
 
 ## Overview
 Cloud Gallery is a Flutter application designed to seamlessly manage user media across multiple
