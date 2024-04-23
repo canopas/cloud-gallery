@@ -65,9 +65,9 @@ android {
         } else {
             release {
                 keyAlias 'cloud-gallery'
-                keyPassword 'canopas@cloud-gallery'
-                storeFile file('dev.jks')
-                storePassword 'canopas@cloud-gallery'
+                keyPassword 'cloud-gallery'
+                storeFile file('debug.jks')
+                storePassword 'cloud-gallery'
             }
         }
     }

@@ -14,11 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "64221198282-3eg7r09fsl1u3s9tge7ud1206q18pkf7.apps.googleusercontent.com",
+          "client_id": "64221198282-nn427spslebref4a16i05ii5c17uqp08.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.canopas.cloud_gallery",
-            "certificate_hash": "38887addbb77aaeba38c77a211469aafe02b2b41"
+            "certificate_hash": "a683a138a6189bf280b6e6712b10a4784d87b88e"
+          }
+        },
+        {
+          "client_id": "64221198282-u7gd39gph2eqmq6o9mn9trlilevnebgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.canopas.cloud_gallery",
+            "certificate_hash": "3447572fb0d2dcf72cdcaa2b48c0fccf5d3238d1"
           }
         },
         {
