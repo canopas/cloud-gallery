@@ -12,8 +12,9 @@ jobs:
 
 
       - uses: actions/setup-java@v4
-        name: Set up JDK 1.8
+        name: Set up JDK
         with:
+          distribution: 'oracle'
           java-version: 17.0.6
           cache: 'gradle'
 
