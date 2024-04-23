@@ -21,6 +21,22 @@ extension MediaListExtension on List<AppMedia> {
     }
   }
 
+  void removeLocalRefFromMedias({List<String>? removeFromIds}) {
+    for (int index = 0; index < length; index++) {
+      if (this[index].isLocalStored &&
+          (removeFromIds?.contains(this[index].id) ?? true)) {
+        removeAt(index);
+      } else if (this[index].isCommonStored &&
+          (removeFromIds?.contains(this[index].id) ?? true)) {
+        this[index] = this[index].copyWith(
+          id: this[index].driveMediaRefId ?? this[index].id,
+          sources: this[index].sources.toList()
+            ..remove(AppMediaSource.local),
+        );
+      }
+    }
+  }
+
   void addGoogleDriveRefInMedias(
       {required List<AppProcess> process, List<String>? processIds}) {
     processIds ??= process.map((e) => e.id).toList();

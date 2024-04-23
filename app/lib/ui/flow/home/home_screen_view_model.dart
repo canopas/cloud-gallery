@@ -271,13 +271,20 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
   Future<void> deleteMediasFromLocal() async {
     try {
-      final medias = state.selectedMedias
+      final ids = state.selectedMedias
           .where((element) => element.sources.contains(AppMediaSource.local))
           .map((e) => e.id)
           .toList();
-      await _localMediaService.deleteMedias(medias);
-      state = state.copyWith(selectedMedias: []);
-      await loadLocalMedia();
+
+      _uploadedMedia.removeWhere((element) => ids.contains(element.id));
+
+      await _localMediaService.deleteMedias(ids);
+      state = state.copyWith(
+          selectedMedias: [],
+          medias: removeLocalRefFromMediaMap(
+            medias: state.medias,
+            removeFromIds: ids,
+          ));
     } catch (e) {
       state = state.copyWith(error: e);
     }
