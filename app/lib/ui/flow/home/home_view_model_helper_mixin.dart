@@ -53,6 +53,15 @@ mixin HomeViewModelHelperMixin {
     );
   }
 
+  Map<DateTime, List<AppMedia>> removeLocalRefFromMediaMap(
+      {required Map<DateTime, List<AppMedia>> medias,
+      List<String>? removeFromIds}) {
+    return sortMedias(
+      medias: medias.values.expand((element) => element).toList()
+        ..removeLocalRefFromMedias(removeFromIds: removeFromIds),
+    );
+  }
+
   Map<DateTime, List<AppMedia>> addGoogleDriveRefInMediaMap({
     required Map<DateTime, List<AppMedia>> medias,
     required List<AppProcess> process,
