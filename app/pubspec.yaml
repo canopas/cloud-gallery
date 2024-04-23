@@ -50,6 +50,7 @@ dependencies:
   path_provider: ^2.1.2
   dio: ^5.4.3+1
   flutter_local_notifications: ^17.0.1
+  share_plus: ^8.0.3
 
   # storage
   shared_preferences: ^2.2.2
