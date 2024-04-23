@@ -3,6 +3,7 @@ import 'package:cloud_gallery/components/app_page.dart';
 import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
 import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
+import 'package:cloud_gallery/domain/handlers/notification_handler.dart';
 import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
 import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
 import 'package:collection/collection.dart';
@@ -31,10 +32,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewStateNotifier notifier;
+  late NotificationHandler _notificationHandler;
   final _scrollController = ScrollController();
 
   @override
   void initState() {
+    _notificationHandler = ref.read(notificationHandlerProvider);
+    _notificationHandler.init(context);
+    _notificationHandler.requestPermission();
     notifier = ref.read(homeViewStateNotifier.notifier);
     super.initState();
   }
@@ -46,10 +51,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _errorObserver() {
-    ref.listen(homeViewStateNotifier.select((value) => value.error),
-        (previous, next) {
-      if (next != null) {
-        showErrorSnackBar(context: context, error: next);
+    ref.listen(
+      homeViewStateNotifier.select((value) => value.error),
+      (previous, next) {
+        if (next != null) {
+          showErrorSnackBar(context: context, error: next);
+        }
+      },
+    );
+  }
+
+  void _notificationObserver() {
+    ref.listen(homeViewStateNotifier, (previous, next) {
+      if ((previous?.mediaProcesses.isEmpty ?? false) &&
+          next.mediaProcesses.isNotEmpty) {
+        _notificationHandler.showNotification(
+          id: next.mediaProcesses.length,
+          name: "Sync to Google Drive",
+          description: "Syncing media files to Google Drive.",
+        );
       }
     });
   }
@@ -57,34 +77,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     _errorObserver();
+    _notificationObserver();
     return AppPage(
       titleWidget: _titleWidget(context: context),
       actions: [
-        Consumer(
-          builder: (context, ref, child) {
-            final showTransferButton = ref.watch(homeViewStateNotifier.select(
-                (value) => value.showTransfer));
-            return Visibility(
-              visible: showTransferButton,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ActionButton(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  size: 36,
-                  backgroundColor: context.colorScheme.containerNormal,
-                  onPressed: () {
-                    AppRouter.mediaTransfer.push(context);
-                  },
-                  icon: Icon(
-                    CupertinoIcons.arrow_up_arrow_down,
-                    color: context.colorScheme.textSecondary,
-                    size: 18,
-                  ),
+        Consumer(builder: (context, ref, child) {
+          final showTransferButton = ref.watch(
+              homeViewStateNotifier.select((value) => value.showTransfer));
+          return Visibility(
+            visible: showTransferButton,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: ActionButton(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                size: 36,
+                backgroundColor: context.colorScheme.containerNormal,
+                onPressed: () {
+                  AppRouter.mediaTransfer.push(context);
+                },
+                icon: Icon(
+                  CupertinoIcons.arrow_up_arrow_down,
+                  color: context.colorScheme.textSecondary,
+                  size: 18,
                 ),
               ),
-            );
-          }
-        ),
+            ),
+          );
+        }),
         ActionButton(
           size: 36,
           backgroundColor: context.colorScheme.containerNormal,

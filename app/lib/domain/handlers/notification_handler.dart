@@ -9,9 +9,9 @@ const _androidChannel = AndroidNotificationChannel(
   'notification-channel-cloud-gallery', // id
   'Processes', // title
   description:
-  'This channel is used to notify you about the processes in the app.',
+      'This channel is used to notify you about the processes in the app.',
   // description
-  importance: Importance.max,
+  importance: Importance.defaultImportance,
 );
 
 final notificationHandlerProvider = Provider.autoDispose((ref) {
@@ -34,9 +34,11 @@ class NotificationHandler {
     }
   }
 
-  void requestPermission(){
-    _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+  void requestPermission() {
+    _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 
   Future<void> _initIOS(BuildContext context) async {
@@ -47,8 +49,10 @@ class NotificationHandler {
         requestBadgePermission: true,
         requestSoundPermission: true,
         onDidReceiveLocalNotification: (id, title, body, payload) {
-          context.go(AppRoutePath.home);
-          context.push(AppRoutePath.transfer);
+          if (context.mounted) {
+            context.go(AppRoutePath.home);
+            context.push(AppRoutePath.transfer);
+          }
         },
       )),
     );
@@ -60,14 +64,20 @@ class NotificationHandler {
         android: AndroidInitializationSettings('cloud_gallery_logo'),
       ),
       onDidReceiveNotificationResponse: (response) {
-        ///TODO: On Notification Tap
+        if (context.mounted) {
+          context.go(AppRoutePath.home);
+          context.push(AppRoutePath.transfer);
+        }
       },
     );
     final initial = await _flutterLocalNotificationsPlugin
         .getNotificationAppLaunchDetails();
 
     if (initial?.didNotificationLaunchApp == true) {
-      ///TODO: On Notification Tap
+      if (context.mounted) {
+        context.go(AppRoutePath.home);
+        context.push(AppRoutePath.transfer);
+      }
     }
   }
 
@@ -84,6 +94,7 @@ class NotificationHandler {
         description,
         NotificationDetails(
           android: AndroidNotificationDetails(
+            channelAction: AndroidNotificationChannelAction.update,
             _androidChannel.id,
             _androidChannel.name,
             icon: "cloud_gallery_logo",
