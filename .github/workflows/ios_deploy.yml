@@ -82,13 +82,13 @@ jobs:
         run: |
           cd app
           file='VERSION'
-          fileData=$(cat $file)
+          fileData=`cat $file`
           IFS='.'
           read -a versionValue <<< "$fileData"
-          buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + CI_PIPELINE_IID ))
+          buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + ${{ github.run_number }} ))
           IFS=''
-          buildName="${versionValue[0]}.${versionValue[1]}.$CI_PIPELINE_IID"
-          echo "Generating android build $buildName $buildNumber"   
+          buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}"
+          echo "Generating ios build $buildName $buildNumber"
           flutter build ipa --release --build-number=$buildNumber --build-name=$buildName --export-options-plist=$HOME/export_options.plist
 
       - name: Publish the app to App Store Connect
