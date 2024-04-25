@@ -109,7 +109,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
             key: ValueKey(upload[index].id),
             process: upload[index],
             onCancelTap: () {
-              notifier.onTerminateProcess(upload[index].id, true);
+              notifier.onTerminateUploadProcess(upload[index].id);
             }),
       );
     });
@@ -131,7 +131,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
       }
 
       return ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.all(16),
         itemCount: download.length,
         separatorBuilder: (context, index) => const SizedBox(
           height: 8,
@@ -140,7 +140,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
           key: ValueKey(download[index].id),
           process: download[index],
           onCancelTap: () {
-            notifier.onTerminateProcess(download[index].id, false);
+            notifier.onTerminateDownloadProcess(download[index].id);
           },
         ),
       );

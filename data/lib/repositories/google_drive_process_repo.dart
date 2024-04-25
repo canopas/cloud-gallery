@@ -104,7 +104,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
         ),
       );
     } catch (error) {
-      if(error is RequestCancelledByUser){
+      if (error is RequestCancelledByUser) {
         return;
       } else if (error is BackUpFolderNotFound) {
         _backUpFolderID = await _googleDriveService.getBackupFolderId();
@@ -235,7 +235,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
             response: localMedia.mergeGoogleDriveMedia(updatedMedia)),
       );
     } catch (error) {
-      if(error is RequestCancelledByUser){
+      if (error is RequestCancelledByUser) {
         return;
       }
       _downloadQueue.updateWhere(
@@ -271,7 +271,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void terminateDownloadProcess(String id) {
-    _uploadQueue.updateWhere(
+    _downloadQueue.updateWhere(
         where: (element) => element.id == id,
         update: (element) =>
             element.copyWith(status: AppProcessStatus.terminated));
