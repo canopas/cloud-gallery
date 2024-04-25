@@ -86,6 +86,9 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   Future<void> deleteMediaFromLocal(String id) async {
     try {
       await _localMediaService.deleteMedias([id]);
+      state = state.copyWith(
+        medias: state.medias.where((element) => element.id != id).toList(),
+      );
     } catch (error) {
       state = state.copyWith(error: error);
     }
