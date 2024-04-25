@@ -5,7 +5,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Cloud Gallery would like to save photos to your gallery</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-    <string>Cloud Gallery would like to access your gallery</string>
+     <string>Cloud Gallery would like to access your gallery</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
