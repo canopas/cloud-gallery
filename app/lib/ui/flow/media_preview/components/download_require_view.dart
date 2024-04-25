@@ -32,6 +32,9 @@ class DownloadRequireView extends StatelessWidget {
               width: double.infinity,
               media.thumbnailLink ?? '',
               fit: BoxFit.cover,
+              errorBuilder:   (context, error, stackTrace) {
+                return const SizedBox();
+              },
             ),
           ),
           Container(

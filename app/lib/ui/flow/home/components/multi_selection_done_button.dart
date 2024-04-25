@@ -118,6 +118,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                   ),
                   title: context.l10n.common_delete_from_google_drive,
                   onPressed: () {
+                    context.pop();
                     showAppAlertDialog(
                       context: context,
                       title: context.l10n.common_delete_from_google_drive,
@@ -150,7 +151,8 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                     color: context.colorScheme.textSecondary,
                   ),
                   title: context.l10n.download_from_google_drive_text,
-                  onPressed: () {
+                  onPressed: () async {
+                    context.pop();
                     showAppAlertDialog(
                       context: context,
                       title: context.l10n.download_from_google_drive_text,
@@ -167,11 +169,13 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                           isDestructiveAction: true,
                           title: context.l10n.common_download,
                           onPressed: () {
+                            notifier.downloadMediaFromGoogleDrive();
                             context.pop();
                           },
                         ),
                       ],
                     );
+
                   },
                 ),
               if (showShareButton)

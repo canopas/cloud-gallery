@@ -312,6 +312,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           state.selectedMedias.where((element) => element.isGoogleDriveStored);
       _googleDriveProcessRepo.downloadMediasFromGoogleDrive(
           medias: medias.toList());
+      state = state.copyWith(selectedMedias: []);
     } catch (e) {
       state = state.copyWith(error: e);
     }
