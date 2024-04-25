@@ -1,3 +1,4 @@
+import 'package:cloud_gallery/components/web_view_screen.dart';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,13 +50,13 @@ class SettingsActionList extends ConsumerWidget {
       ActionListButton(
         title: context.l10n.common_term_and_condition,
         onPressed: () {
-          ///TODO: Add term and condition screen
+          showWebView(context, "https://canopas.github.io/cloud-gallery/terms-and-conditions");
         },
       ),
       ActionListButton(
           title: context.l10n.common_privacy_policy,
           onPressed: () {
-            ///TODO: Add privacy policy screen
+            showWebView(context, "https://canopas.github.io/cloud-gallery/privacy-policy");
           }),
     ]);
   }
