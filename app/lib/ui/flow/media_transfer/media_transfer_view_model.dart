@@ -29,12 +29,12 @@ class MediaTransferStateNotifier extends StateNotifier<MediaTransferState> {
     state = state.copyWith(page: value);
   }
 
-  void onTerminateProcess(String id, bool isUploading) {
-    if (isUploading) {
-      _googleDriveProcessRepo.terminateUploadProcess(id);
-    } else {
-      _googleDriveProcessRepo.terminateDownloadProcess(id);
-    }
+  void onTerminateUploadProcess(String id) {
+    _googleDriveProcessRepo.terminateUploadProcess(id);
+  }
+
+  void onTerminateDownloadProcess(String id) {
+    _googleDriveProcessRepo.terminateDownloadProcess(id);
   }
 
   @override

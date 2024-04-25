@@ -119,6 +119,12 @@ class _AppMediaItemState extends State<AppMediaItem>
           ),
         if (widget.process?.status.isProcessing ?? false)
           _BackgroundContainer(
+            margin: EdgeInsets.symmetric(
+                vertical: 4,
+                horizontal:
+                    widget.media.sources.contains(AppMediaSource.googleDrive)
+                        ? 0
+                        : 4),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -157,13 +163,15 @@ class _AppMediaItemState extends State<AppMediaItem>
 
 class _BackgroundContainer extends StatelessWidget {
   final Widget child;
+  final EdgeInsets margin;
 
-  const _BackgroundContainer({required this.child});
+  const _BackgroundContainer(
+      {required this.child, this.margin = const EdgeInsets.all(4)});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(4),
+      margin: margin,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: context.colorScheme.surface.withOpacity(0.6),
