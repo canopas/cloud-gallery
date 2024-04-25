@@ -1,0 +1,23 @@
+<plist version="1.0">
+<dict>
+	<key>destination</key>
+	<string>export</string>
+	<key>method</key>
+	<string>app-store</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.canopas.cloudGallery</key>
+		<string>82eb2450-22f9-49ad-b13b-f5580a4269e0</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>1EDB213DC565912BC6BC866ADEBF192575C633DC</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>S985H2T7J8</string>
+	<key>uploadSymbols</key>
+	<true/>
+</dict>
+</plist>
