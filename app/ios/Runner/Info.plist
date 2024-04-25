@@ -5,7 +5,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Cloud Gallery would like to save photos to your gallery</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-     <string>Cloud Gallery would like to access your gallery</string>
+	<string>Cloud Gallery would like to access your gallery</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -17,18 +17,18 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>GIDClientID</key>
-    <string>64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq.apps.googleusercontent.com</string>
-    <key>CFBundleURLTypes</key>
-    <array>
-    	<dict>
-    		<key>CFBundleTypeRole</key>
-    		<string>Editor</string>
-    		<key>CFBundleURLSchemes</key>
-    		<array>
-    			<string>com.googleusercontent.apps.64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq</string>
-    		</array>
-    	</dict>
-    </array>
+	<string>64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleName</key>
 	<string>cloud_gallery</string>
 	<key>CFBundlePackageType</key>
