@@ -221,16 +221,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     }
                     return AppMediaItem(
                       key: ValueKey(media.id),
-                      onTap: () {
+                      onTap: () async {
                         if (selectedMedias.isNotEmpty) {
                           notifier.toggleMediaSelection(media);
                         } else {
-                          AppRouter.preview(
+                          await AppRouter.preview(
                                   medias: medias.values
                                       .expand((element) => element)
                                       .toList(),
                                   startFrom: media.id)
                               .push(context);
+                          notifier.loadLocalMedia();
                         }
                       },
                       onLongTap: () {
