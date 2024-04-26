@@ -1,12 +1,13 @@
-name: Build
+name: Publish to Google Play Store
 
 on: push
 
 jobs:
-  build:
+  android_deploy:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -54,33 +55,29 @@ jobs:
           
           cd ..
 
-      - name: Build android APK
+      - name: Deploy Android Build Internally
         env:
+          APP_PLAY_SERVICE_JSON: ${{ secrets.APP_PLAY_SERVICE_JSON_BASE64 }}
           APKSIGN_KEYSTORE_BASE64: ${{ secrets.APKSIGN_KEYSTORE_BASE64 }}
           APKSIGN_KEYSTORE_PASS: ${{ secrets.APKSIGN_KEYSTORE_PASS }}
           APKSIGN_KEY_ALIAS: ${{ secrets.APKSIGN_KEY_ALIAS }}
           APKSIGN_KEY_PASS: ${{ secrets.APKSIGN_KEY_PASS }}
+
         run: |
-          echo $APKSIGN_KEYSTORE_BASE64 | base64 -di > release.keystore
+          echo  $APKSIGN_KEYSTORE_BASE64 | base64 -di > release.keystore
           export APKSIGN_KEYSTORE=`pwd`/release.keystore
           cd app
           file='VERSION'
-          fileData=$(cat $file)
+          fileData=`cat $file`
           IFS='.'
           read -a versionValue <<< "$fileData"
-          buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + CI_PIPELINE_IID ))
+          buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + ${{ github.run_number }} ))
           IFS=''
-          buildName="${versionValue[0]}.${versionValue[1]}.$CI_PIPELINE_IID"
-
-          echo "Generating android build $buildName $buildNumber"
-          flutter build apk --release --build-number=$buildNumber --build-name=$buildName
-          mv build/app/outputs/apk/release/*.apk .
-          cd ..
-
-      - name: Archive Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: cloud-gallery.apk
-          path: app/*.apk
-          if-no-files-found: error
-
+          buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}"
+          echo "Generating android build $buildName $buildNumber"     
+          cd android
+          gem install bundler -v 2.4.22
+          bundle install
+          echo $APP_PLAY_SERVICE_JSON | base64 -di > google_play_api_key.json
+          bundle exec fastlane supply init --track internal
+          bundle exec fastlane upload_internal versionName:$buildName versionCode:$buildNumber

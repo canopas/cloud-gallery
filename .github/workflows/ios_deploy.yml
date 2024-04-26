@@ -1,13 +1,13 @@
 name: Publish to App Store Connect
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  build:
+  ios_deploy:
     runs-on: macos-13
 
     env:
