@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_gallery/domain/extensions/map_extensions.dart';
 import 'package:cloud_gallery/domain/extensions/media_list_extension.dart';
+import 'package:collection/collection.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
@@ -63,12 +64,22 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   void updateAutoBackUpStatus(bool status) {
     _autoBackUpStatus = status;
     _checkAutoBackUp();
+    if(!status){
+      _googleDriveProcessRepo.terminateAllAutoBackupProcess();
+    }
   }
 
   void _checkAutoBackUp() {
     if (_autoBackUpStatus) {
       _googleDriveProcessRepo.uploadMediasInGoogleDrive(
-        medias: state.medias.valuesWhere((element) => element.isLocalStored),
+        medias: state.medias.valuesWhere(
+          (element) =>
+              element.isLocalStored &&
+              state.mediaProcesses.firstWhereOrNull(
+                      (process) => process.id == element.id) ==
+                  null,
+        ),
+        isFromAutoBackup: true,
       );
     }
   }
@@ -211,6 +222,9 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
             ? mergedMedia.elementAt(mergedMedia.length - 10).id
             : state.lastLocalMediaId,
       );
+      if (append) {
+        _checkAutoBackUp();
+      }
     } catch (e) {
       state = state.copyWith(loading: false, error: e);
     } finally {
