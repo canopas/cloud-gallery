@@ -19,6 +19,7 @@ mixin _$AppProcess {
   String get id => throw _privateConstructorUsedError;
   AppMedia get media => throw _privateConstructorUsedError;
   AppProcessStatus get status => throw _privateConstructorUsedError;
+  bool get isFromAutoBackup => throw _privateConstructorUsedError;
   Object? get response => throw _privateConstructorUsedError;
   AppProcessProgress? get progress => throw _privateConstructorUsedError;
 
@@ -37,6 +38,7 @@ abstract class $AppProcessCopyWith<$Res> {
       {String id,
       AppMedia media,
       AppProcessStatus status,
+      bool isFromAutoBackup,
       Object? response,
       AppProcessProgress? progress});
 
@@ -60,6 +62,7 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
     Object? id = null,
     Object? media = null,
     Object? status = null,
+    Object? isFromAutoBackup = null,
     Object? response = freezed,
     Object? progress = freezed,
   }) {
@@ -76,6 +79,10 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as AppProcessStatus,
+      isFromAutoBackup: null == isFromAutoBackup
+          ? _value.isFromAutoBackup
+          : isFromAutoBackup // ignore: cast_nullable_to_non_nullable
+              as bool,
       response: freezed == response ? _value.response : response,
       progress: freezed == progress
           ? _value.progress
@@ -117,6 +124,7 @@ abstract class _$$AppProcessImplCopyWith<$Res>
       {String id,
       AppMedia media,
       AppProcessStatus status,
+      bool isFromAutoBackup,
       Object? response,
       AppProcessProgress? progress});
 
@@ -140,6 +148,7 @@ class __$$AppProcessImplCopyWithImpl<$Res>
     Object? id = null,
     Object? media = null,
     Object? status = null,
+    Object? isFromAutoBackup = null,
     Object? response = freezed,
     Object? progress = freezed,
   }) {
@@ -156,6 +165,10 @@ class __$$AppProcessImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as AppProcessStatus,
+      isFromAutoBackup: null == isFromAutoBackup
+          ? _value.isFromAutoBackup
+          : isFromAutoBackup // ignore: cast_nullable_to_non_nullable
+              as bool,
       response: freezed == response ? _value.response : response,
       progress: freezed == progress
           ? _value.progress
@@ -172,6 +185,7 @@ class _$AppProcessImpl implements _AppProcess {
       {required this.id,
       required this.media,
       required this.status,
+      this.isFromAutoBackup = false,
       this.response,
       this.progress = null});
 
@@ -182,6 +196,9 @@ class _$AppProcessImpl implements _AppProcess {
   @override
   final AppProcessStatus status;
   @override
+  @JsonKey()
+  final bool isFromAutoBackup;
+  @override
   final Object? response;
   @override
   @JsonKey()
@@ -189,7 +206,7 @@ class _$AppProcessImpl implements _AppProcess {
 
   @override
   String toString() {
-    return 'AppProcess(id: $id, media: $media, status: $status, response: $response, progress: $progress)';
+    return 'AppProcess(id: $id, media: $media, status: $status, isFromAutoBackup: $isFromAutoBackup, response: $response, progress: $progress)';
   }
 
   @override
@@ -200,14 +217,22 @@ class _$AppProcessImpl implements _AppProcess {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.media, media) || other.media == media) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.isFromAutoBackup, isFromAutoBackup) ||
+                other.isFromAutoBackup == isFromAutoBackup) &&
             const DeepCollectionEquality().equals(other.response, response) &&
             (identical(other.progress, progress) ||
                 other.progress == progress));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, media, status,
-      const DeepCollectionEquality().hash(response), progress);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      media,
+      status,
+      isFromAutoBackup,
+      const DeepCollectionEquality().hash(response),
+      progress);
 
   @JsonKey(ignore: true)
   @override
@@ -221,6 +246,7 @@ abstract class _AppProcess implements AppProcess {
       {required final String id,
       required final AppMedia media,
       required final AppProcessStatus status,
+      final bool isFromAutoBackup,
       final Object? response,
       final AppProcessProgress? progress}) = _$AppProcessImpl;
 
@@ -230,6 +256,8 @@ abstract class _AppProcess implements AppProcess {
   AppMedia get media;
   @override
   AppProcessStatus get status;
+  @override
+  bool get isFromAutoBackup;
   @override
   Object? get response;
   @override
