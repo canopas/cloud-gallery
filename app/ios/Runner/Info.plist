@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>App would like to save your photos and videos in your device.</string>
+	<string>App needs access to your photo library to save photos and videos from Google Drive</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>App would like to access your photos and videos, to display them within the app.</string>
+	<string>App requires permission to access your photos and videos to organize and manage your media</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
