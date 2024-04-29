@@ -18,7 +18,7 @@ jobs:
           cache: 'gradle'
 
       - name: Set up Flutter SDK
-        uses: subosito/flutter-action@v2.12.0
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
