@@ -33,6 +33,7 @@ class AppProcess with _$AppProcess {
     required String id,
     required AppMedia media,
     required AppProcessStatus status,
+    @Default(false) bool isFromAutoBackup,
     Object? response,
     @Default(null)
     AppProcessProgress? progress,
