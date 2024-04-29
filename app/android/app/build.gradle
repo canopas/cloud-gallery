@@ -65,18 +65,24 @@ android {
         } else {
             release {
                 keyAlias 'cloud-gallery'
-                keyPassword 'canopas@cloud-gallery'
-                storeFile file('dev.jks')
-                storePassword 'canopas@cloud-gallery'
+                keyPassword 'cloud-gallery'
+                storeFile file('debug.jks')
+                storePassword 'cloud-gallery'
             }
         }
     }
 
     buildTypes {
         debug {
+            minifyEnabled true
+            debuggable true
             signingConfig signingConfigs.release
         }
         release {
+            minifyEnabled true
+            debuggable false
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
