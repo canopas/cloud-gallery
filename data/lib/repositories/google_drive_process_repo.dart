@@ -46,9 +46,13 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
     _backUpFolderID = backUpFolderId;
   }
 
-  void uploadMediasInGoogleDrive({required List<AppMedia> medias}) {
+  void uploadMediasInGoogleDrive(
+      {required List<AppMedia> medias, bool isFromAutoBackup = false}) {
     _uploadQueue.addAll(medias.map((media) => AppProcess(
-        id: media.id, media: media, status: AppProcessStatus.waiting)));
+        isFromAutoBackup: isFromAutoBackup,
+        id: media.id,
+        media: media,
+        status: AppProcessStatus.waiting)));
     notifyListeners();
     if (!_uploadQueueRunning) _startUploadQueueLoop();
   }
@@ -258,10 +262,23 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void terminateUploadProcess(String id) {
-    _uploadQueue.updateWhere(
-        where: (element) => element.id == id,
-        update: (element) =>
-            element.copyWith(status: AppProcessStatus.terminated));
+    final previousStatus =
+        _uploadQueue.firstWhereOrNull((element) => element.id == id)?.status;
+    if (previousStatus?.isProcessing ?? false) {
+      _uploadQueue.updateWhere(
+          where: (element) => element.id == id,
+          update: (element) =>
+              element.copyWith(status: AppProcessStatus.terminated));
+    } else if (previousStatus?.isWaiting ?? false) {
+      _uploadQueue.removeWhere((element) => element.id == id);
+    }
+
+    notifyListeners();
+  }
+
+  void terminateAllAutoBackupProcess() {
+    _uploadQueue.removeWhere(
+        (element) => element.isFromAutoBackup && element.status.isWaiting);
     notifyListeners();
   }
 
