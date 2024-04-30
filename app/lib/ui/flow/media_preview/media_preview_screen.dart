@@ -242,14 +242,10 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             showActions: state.showActions,
             isPlaying: state.isPlaying,
             onBackward: () {
-              notifier.updateVideoPosition(
-                  state.position - const Duration(seconds: 10));
               _videoPlayerController
                   ?.seekTo(state.position - const Duration(seconds: 10));
             },
             onForward: () {
-              notifier.updateVideoPosition(
-                  state.position + const Duration(seconds: 10));
               _videoPlayerController
                   ?.seekTo(state.position + const Duration(seconds: 10));
             },
