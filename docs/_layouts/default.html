@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
     {% include head-custom.html %}
     <style>
-        h1 {
+        .container-lg {
             font-family: 'Inter', sans-serif;
             color: #CC313D;
         }
@@ -18,6 +18,7 @@
 <body>
 <div class="container-lg px-3 my-5 markdown-body">
     {% if site.title and site.title != page.title %}
+    <img src="../app/assets/images/app_logo.png" alt="Logo" width="100" height="100">
     <h1>{{ site.title }}</h1>
     {% endif %}
 
