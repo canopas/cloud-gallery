@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/theme/theme.dart';
 import 'package:style/theme/app_theme_builder.dart';
@@ -36,6 +37,12 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
       routes: AppRouter.routes,
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    PhotoManager.clearFileCache();
+    super.dispose();
   }
 
   @override

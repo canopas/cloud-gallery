@@ -1,7 +1,9 @@
-import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 
@@ -10,48 +12,50 @@ class AppMediaThumbnail extends StatelessWidget {
   final AppMedia media;
   final Size size;
   final double radius;
-  final Future<Uint8List?>? thumbnailByte;
+  final bool isOriginal;
 
   const AppMediaThumbnail({
     super.key,
     required this.size,
     this.heroTag,
     this.radius = 4,
-    required this.thumbnailByte,
     required this.media,
+    this.isOriginal = false,
   });
 
   @override
   Widget build(BuildContext context) {
     if (media.sources.contains(AppMediaSource.local)) {
-      return FutureBuilder(
-        future: thumbnailByte,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData) {
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(radius),
-              child: Hero(
-                tag: heroTag ?? '',
-                child: Image.memory(
-                  snapshot.data!,
-                  height: size.height,
-                  width: size.width,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return AppMediaErrorPlaceHolder(
-              size: size,
-            );
-          } else {
-            return AppMediaPlaceHolder(
-              showLoader: false,
-              size: size,
-            );
-          }
-        },
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Hero(
+          tag: heroTag ?? '',
+          child: AssetEntityImage(
+            media.assetEntity,
+            isOriginal: isOriginal,
+            thumbnailSize:
+                ThumbnailSize(size.width.toInt(), size.height.toInt()),
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress != null) {
+                return AppMediaPlaceHolder(
+                  size: size,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                );
+              }
+              return child;
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return AppMediaErrorPlaceHolder(size: size);
+            },
+            thumbnailFormat: ThumbnailFormat.png,
+            height: size.height,
+            width: size.width,
+            fit: BoxFit.cover,
+          ),
+        ),
       );
     } else {
       return Hero(
