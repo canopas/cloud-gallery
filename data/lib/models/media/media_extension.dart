@@ -53,6 +53,19 @@ extension AppMediaExtension on AppMedia {
     if (type.isImage) return 'jpg';
     return '';
   }
+
+  AssetEntity get assetEntity => AssetEntity(
+        id: id,
+        typeInt: type.index,
+        width: displayWidth?.toInt() ?? 0,
+        height: displayHeight?.toInt() ?? 0,
+        createDateSecond: createdTime?.millisecondsSinceEpoch,
+        title: name,
+        latitude: latitude,
+        longitude: longitude,
+        mimeType: mimeType,
+        modifiedDateSecond: modifiedTime?.millisecondsSinceEpoch,
+      );
 }
 
 class ThumbNailParameter {

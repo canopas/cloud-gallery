@@ -19,7 +19,7 @@ class ProcessItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _buildThumbnailView(context: context),
+        AppMediaThumbnail(size: const Size(80, 80), media: process.media),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -45,8 +45,7 @@ class ProcessItem extends StatelessWidget {
                     color: context.colorScheme.textSecondary,
                   ),
                 ),
-              if (process.progress != null &&
-                  process.status.isProcessing) ...[
+              if (process.progress != null && process.status.isProcessing) ...[
                 LinearProgressIndicator(
                   value: process.progress?.percentageInPoint,
                   backgroundColor: context.colorScheme.outline,
@@ -81,13 +80,6 @@ class ProcessItem extends StatelessWidget {
           icon: const Icon(CupertinoIcons.xmark),
         )
       ],
-    );
-  }
-
-  Widget _buildThumbnailView({required BuildContext context}) {
-    return AppMediaThumbnail(
-      size: const Size(80, 80),
-      media: process.media,
     );
   }
 }
