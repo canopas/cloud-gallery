@@ -13,7 +13,6 @@ class AppMediaImage extends StatelessWidget {
   final AppMedia media;
   final Size size;
   final double radius;
-  final bool isOriginal;
 
   const AppMediaImage({
     super.key,
@@ -21,7 +20,6 @@ class AppMediaImage extends StatelessWidget {
     this.heroTag,
     this.radius = 4,
     required this.media,
-    this.isOriginal = false,
   });
 
   @override
@@ -61,7 +59,6 @@ class AppMediaImage extends StatelessWidget {
     } else if (media.sources.contains(AppMediaSource.local) &&
         media.type.isVideo) {
       return AssetEntityImageProvider(media.assetEntity,
-          isOriginal: isOriginal,
           thumbnailSize: ThumbnailSize(size.width.toInt(), size.height.toInt()),
           thumbnailFormat: ThumbnailFormat.png);
     } else {

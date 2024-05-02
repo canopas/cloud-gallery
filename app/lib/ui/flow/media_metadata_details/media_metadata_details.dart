@@ -31,7 +31,6 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                   children: [
                     AppMediaImage(
                       size: Size(context.mediaQuerySize.width, 200),
-                      isOriginal: true,
                       media: media,
                       radius: 0,
                     ),
