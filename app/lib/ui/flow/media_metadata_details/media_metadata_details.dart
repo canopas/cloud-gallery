@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:cloud_gallery/components/app_page.dart';
 import 'package:cloud_gallery/components/thumbnail_builder.dart';
 import 'package:cloud_gallery/domain/assets/assets_paths.dart';
@@ -7,33 +6,15 @@ import 'package:cloud_gallery/domain/formatter/byte_formatter.dart';
 import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
 import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
 import 'package:data/models/media/media.dart';
-import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 
-class MediaMetadataDetailsScreen extends StatefulWidget {
+class MediaMetadataDetailsScreen extends StatelessWidget {
   final AppMedia media;
 
   const MediaMetadataDetailsScreen({super.key, required this.media});
-
-  @override
-  State<MediaMetadataDetailsScreen> createState() =>
-      _MediaMetadataDetailsScreenState();
-}
-
-class _MediaMetadataDetailsScreenState
-    extends State<MediaMetadataDetailsScreen> {
-  Future<Uint8List?>? thumbnailByte;
-
-  @override
-  void initState() {
-    if (widget.media.sources.contains(AppMediaSource.local)) {
-      thumbnailByte = widget.media.loadThumbnail();
-    }
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +29,12 @@ class _MediaMetadataDetailsScreenState
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    AppMediaThumbnail(
+                    AppMediaImage(
                       size: Size(context.mediaQuerySize.width, 200),
-                      thumbnailByte: thumbnailByte,
-                      media: widget.media,
+                      media: media,
                       radius: 0,
                     ),
-                    if (widget.media.type.isVideo)
+                    if (media.type.isVideo)
                       Icon(Icons.play_arrow_rounded,
                           size: 50, color: context.colorScheme.onPrimary),
                   ],
@@ -62,60 +42,60 @@ class _MediaMetadataDetailsScreenState
                 const SizedBox(height: 16),
                 DetailsTile(
                   title: context.l10n.name_text,
-                  subtitle: (widget.media.name?.trim().isNotEmpty ?? false)
-                      ? widget.media.name!
+                  subtitle: (media.name?.trim().isNotEmpty ?? false)
+                      ? media.name!
                       : context.l10n.common_not_available,
                 ),
                 DetailsTile(
                   title: context.l10n.path_text,
-                  subtitle: widget.media.path,
+                  subtitle: media.path,
                 ),
                 DetailsTile(
                   title: context.l10n.created_at_text,
-                  subtitle: widget.media.createdTime == null
+                  subtitle: media.createdTime == null
                       ? context.l10n.common_not_available
-                      : "${widget.media.createdTime?.format(context, DateFormatType.dayMonthYear)}, ${widget.media.createdTime?.format(context, DateFormatType.time)}",
+                      : "${media.createdTime?.format(context, DateFormatType.dayMonthYear)}, ${media.createdTime?.format(context, DateFormatType.time)}",
                 ),
                 DetailsTile(
                   title: context.l10n.modified_at_text,
-                  subtitle: widget.media.modifiedTime == null
+                  subtitle: media.modifiedTime == null
                       ? context.l10n.common_not_available
-                      : "${widget.media.modifiedTime?.format(context, DateFormatType.dayMonthYear)}, ${widget.media.modifiedTime?.format(context, DateFormatType.time)}",
+                      : "${media.modifiedTime?.format(context, DateFormatType.dayMonthYear)}, ${media.modifiedTime?.format(context, DateFormatType.time)}",
                 ),
                 DetailsTile(
                   title: context.l10n.mimetype_text,
-                  subtitle: widget.media.mimeType ??
+                  subtitle: media.mimeType ??
                       context.l10n.common_not_available,
                 ),
                 DetailsTile(
                   title: context.l10n.size_text,
                   subtitle:
-                      int.tryParse(widget.media.size ?? '')?.formatBytes ??
+                      int.tryParse(media.size ?? '')?.formatBytes ??
                           context.l10n.common_not_available,
                 ),
-                if (widget.media.type.isVideo)
+                if (media.type.isVideo)
                   DetailsTile(
                     title: context.l10n.duration_text,
-                    subtitle: widget.media.videoDuration?.format ??
+                    subtitle: media.videoDuration?.format ??
                         context.l10n.common_not_available,
                   ),
                 DetailsTile(
                   title: context.l10n.location_text,
-                  subtitle: widget.media.latitude == null ||
-                          widget.media.longitude == null
+                  subtitle: media.latitude == null ||
+                          media.longitude == null
                       ? context.l10n.common_not_available
-                      : '${widget.media.latitude}, ${widget.media.longitude}',
+                      : '${media.latitude}, ${media.longitude}',
                 ),
                 DetailsTile(
                   title: context.l10n.orientation_text,
-                  subtitle: widget.media.orientation?.name ?? 'N/A',
+                  subtitle: media.orientation?.name ?? 'N/A',
                 ),
                 DetailsTile(
                   title: context.l10n.resolution_text,
-                  subtitle: widget.media.displayHeight == null ||
-                          widget.media.displayWidth == null
+                  subtitle: media.displayHeight == null ||
+                          media.displayWidth == null
                       ? context.l10n.common_not_available
-                      : '${widget.media.displayWidth?.toInt()} x ${widget.media.displayHeight?.toInt()}',
+                      : '${media.displayWidth?.toInt()} x ${media.displayHeight?.toInt()}',
                 ),
                 ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -128,11 +108,11 @@ class _MediaMetadataDetailsScreenState
                     ),
                     subtitle: Row(
                       children: [
-                        if (widget.media.sources.contains(AppMediaSource.local))
+                        if (media.sources.contains(AppMediaSource.local))
                           Icon(Icons.phone_android_rounded,
                               color: context.colorScheme.textSecondary,
                               size: 20),
-                        if (widget.media.sources
+                        if (media.sources
                             .contains(AppMediaSource.googleDrive))
                           SvgPicture.asset(
                             Assets.images.icons.googleDrive,
