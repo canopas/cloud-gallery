@@ -1,9 +1,7 @@
-import 'dart:typed_data';
 import 'package:cloud_gallery/components/thumbnail_builder.dart';
 import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
-import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/extensions/context_extensions.dart';
@@ -34,16 +32,6 @@ class AppMediaItem extends StatefulWidget {
 
 class _AppMediaItemState extends State<AppMediaItem>
     with AutomaticKeepAliveClientMixin {
-  Future<Uint8List?>? thumbnailByte;
-
-  @override
-  void initState() {
-    if (widget.media.sources.contains(AppMediaSource.local)) {
-      thumbnailByte = widget.media.loadThumbnail();
-    }
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -57,7 +45,11 @@ class _AppMediaItemState extends State<AppMediaItem>
           child: Stack(
             alignment: Alignment.bottomLeft,
             children: [
-              _buildMediaView(context: context, constraints: constraints),
+              AppMediaImage(
+                size: constraints.biggest,
+                media: widget.media,
+                heroTag: widget.media,
+              ),
               if (widget.media.type.isVideo) _videoDuration(context),
               _sourceIndicators(context: context),
             ],
@@ -89,16 +81,6 @@ class _AppMediaItemState extends State<AppMediaItem>
           ),
         ),
       );
-
-  Widget _buildMediaView(
-      {required BuildContext context, required BoxConstraints constraints}) {
-    return AppMediaThumbnail(
-      size: constraints.biggest,
-      thumbnailByte: thumbnailByte,
-      media: widget.media,
-      heroTag: widget.media,
-    );
-  }
 
   Widget _sourceIndicators({required BuildContext context}) {
     return Row(

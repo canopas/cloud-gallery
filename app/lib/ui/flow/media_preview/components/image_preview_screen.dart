@@ -57,8 +57,8 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
   Widget _displayLocalImage({required BuildContext context}) {
     return Hero(
       tag: widget.media,
-      child: Image.file(File(widget.media.path), fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
+      child: Image.file(File(widget.media.path),
+          fit: BoxFit.contain, errorBuilder: (context, error, stackTrace) {
         return AppPage(
             body: ErrorView(
           title: context.l10n.unable_to_load_media_error,

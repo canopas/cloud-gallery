@@ -776,7 +776,15 @@
         <entry key="photo_manager">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager-3.1.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager-3.0.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="photo_manager_image_provider">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager_image_provider-2.1.1/lib" />
             </list>
           </value>
         </entry>
@@ -1374,6 +1382,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/permission_handler_windows-0.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/petitparser-6.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager-3.0.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager-3.1.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager_image_provider-2.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/platform-3.1.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/pool-1.5.1/lib" />

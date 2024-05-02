@@ -1,18 +1,14 @@
-import 'dart:typed_data';
 import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
 import 'package:cloud_gallery/domain/formatter/byte_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
-import 'package:data/models/media/media.dart';
-import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:style/buttons/action_button.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../../components/thumbnail_builder.dart';
 
-class ProcessItem extends StatefulWidget {
+class ProcessItem extends StatelessWidget {
   final AppProcess process;
   final void Function() onCancelTap;
 
@@ -20,26 +16,10 @@ class ProcessItem extends StatefulWidget {
       {super.key, required this.process, required this.onCancelTap});
 
   @override
-  State<ProcessItem> createState() => _ProcessItemState();
-}
-
-class _ProcessItemState extends State<ProcessItem> {
-  Future<Uint8List?>? thumbnailByte;
-
-  @override
-  void initState() {
-    if (widget.process.media.sources.contains(AppMediaSource.local)) {
-      thumbnailByte =
-          widget.process.media.loadThumbnail(size: const Size(80, 80));
-    }
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _buildThumbnailView(context: context),
+        AppMediaImage(size: const Size(80, 80), media: process.media),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -47,10 +27,10 @@ class _ProcessItemState extends State<ProcessItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.process.media.name != null &&
-                        widget.process.media.name!.trim().isNotEmpty
-                    ? widget.process.media.name!
-                    : widget.process.media.path,
+                process.media.name != null &&
+                        process.media.name!.trim().isNotEmpty
+                    ? process.media.name!
+                    : process.media.path,
                 style: AppTextStyles.body.copyWith(
                   color: context.colorScheme.textPrimary,
                 ),
@@ -58,17 +38,16 @@ class _ProcessItemState extends State<ProcessItem> {
                 maxLines: 1,
               ),
               const SizedBox(height: 8),
-              if (widget.process.status.isWaiting)
+              if (process.status.isWaiting)
                 Text(
                   context.l10n.waiting_in_queue_text,
                   style: AppTextStyles.body2.copyWith(
                     color: context.colorScheme.textSecondary,
                   ),
                 ),
-              if (widget.process.progress != null &&
-                  widget.process.status.isProcessing) ...[
+              if (process.progress != null && process.status.isProcessing) ...[
                 LinearProgressIndicator(
-                  value: widget.process.progress?.percentageInPoint,
+                  value: process.progress?.percentageInPoint,
                   backgroundColor: context.colorScheme.outline,
                   borderRadius: BorderRadius.circular(4),
                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -79,13 +58,13 @@ class _ProcessItemState extends State<ProcessItem> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${widget.process.progress?.chunk.formatBytes}  ${widget.process.progress?.percentage.toStringAsFixed(0)}%',
+                      '${process.progress?.chunk.formatBytes}  ${process.progress?.percentage.toStringAsFixed(0)}%',
                       style: AppTextStyles.body2.copyWith(
                         color: context.colorScheme.textSecondary,
                       ),
                     ),
                     Text(
-                      '${widget.process.progress?.total.formatBytes}',
+                      '${process.progress?.total.formatBytes}',
                       style: AppTextStyles.body2.copyWith(
                         color: context.colorScheme.textSecondary,
                       ),
@@ -96,19 +75,11 @@ class _ProcessItemState extends State<ProcessItem> {
             ],
           ),
         ),
-          ActionButton(
-            onPressed: widget.onCancelTap,
-            icon: const Icon(CupertinoIcons.xmark),
-          )
+        ActionButton(
+          onPressed: onCancelTap,
+          icon: const Icon(CupertinoIcons.xmark),
+        )
       ],
-    );
-  }
-
-  Widget _buildThumbnailView({required BuildContext context}) {
-    return AppMediaThumbnail(
-      size: const Size(80, 80),
-      thumbnailByte: thumbnailByte,
-      media: widget.process.media,
     );
   }
 }
