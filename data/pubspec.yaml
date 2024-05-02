@@ -17,6 +17,8 @@ dependencies:
   photo_manager: ^3.0.0-dev.5
   package_info_plus: ^7.0.0
   path_provider: ^2.1.2
+  oauth2: ^2.0.2
+  url_launcher: ^6.2.6
 
   # authentication
   google_sign_in: ^6.2.1
