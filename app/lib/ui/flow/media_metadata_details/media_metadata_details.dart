@@ -29,7 +29,7 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    AppMediaThumbnail(
+                    AppMediaImage(
                       size: Size(context.mediaQuerySize.width, 200),
                       isOriginal: true,
                       media: media,

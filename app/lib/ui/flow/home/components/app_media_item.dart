@@ -45,7 +45,11 @@ class _AppMediaItemState extends State<AppMediaItem>
           child: Stack(
             alignment: Alignment.bottomLeft,
             children: [
-              _buildMediaView(context: context, constraints: constraints),
+              AppMediaImage(
+                size: constraints.biggest,
+                media: widget.media,
+                heroTag: widget.media,
+              ),
               if (widget.media.type.isVideo) _videoDuration(context),
               _sourceIndicators(context: context),
             ],
@@ -77,15 +81,6 @@ class _AppMediaItemState extends State<AppMediaItem>
           ),
         ),
       );
-
-  Widget _buildMediaView(
-      {required BuildContext context, required BoxConstraints constraints}) {
-    return AppMediaThumbnail(
-      size: constraints.biggest,
-      media: widget.media,
-      heroTag: widget.media,
-    );
-  }
 
   Widget _sourceIndicators({required BuildContext context}) {
     return Row(

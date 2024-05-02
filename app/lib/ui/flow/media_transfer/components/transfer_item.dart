@@ -19,7 +19,7 @@ class ProcessItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        AppMediaThumbnail(size: const Size(80, 80), media: process.media),
+        AppMediaImage(size: const Size(80, 80), media: process.media),
         const SizedBox(width: 16),
         Expanded(
           child: Column(

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
@@ -7,14 +8,14 @@ import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 
-class AppMediaThumbnail extends StatelessWidget {
+class AppMediaImage extends StatelessWidget {
   final Object? heroTag;
   final AppMedia media;
   final Size size;
   final double radius;
   final bool isOriginal;
 
-  const AppMediaThumbnail({
+  const AppMediaImage({
     super.key,
     required this.size,
     this.heroTag,
@@ -25,58 +26,46 @@ class AppMediaThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (media.sources.contains(AppMediaSource.local)) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: Hero(
-          tag: heroTag ?? '',
-          child: AssetEntityImage(
-            media.assetEntity,
-            isOriginal: isOriginal,
-            thumbnailSize:
-                ThumbnailSize(size.width.toInt(), size.height.toInt()),
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress != null) {
-                return AppMediaPlaceHolder(
-                  size: size,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                );
-              }
-              return child;
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return AppMediaErrorPlaceHolder(size: size);
-            },
-            thumbnailFormat: ThumbnailFormat.png,
-            height: size.height,
-            width: size.width,
-            fit: BoxFit.cover,
-          ),
-        ),
-      );
-    } else {
-      return Hero(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: Hero(
         tag: heroTag ?? '',
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(radius),
-          child: CachedNetworkImage(
-              imageUrl: media.thumbnailLink ?? '',
-              width: size.width,
-              height: size.height,
-              fit: BoxFit.cover,
-              errorWidget: (context, url, error) => AppMediaErrorPlaceHolder(
-                    size: size,
-                  ),
-              progressIndicatorBuilder: (context, url, progress) =>
-                  AppMediaPlaceHolder(
-                    size: size,
-                    value: progress.progress,
-                  )),
+        child: Image(
+          image: _imageProvider(),
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress != null) {
+              return AppMediaPlaceHolder(
+                size: size,
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              );
+            }
+            return child;
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return AppMediaErrorPlaceHolder(size: size);
+          },
+          height: size.height,
+          width: size.width,
+          fit: BoxFit.cover,
         ),
-      );
+      ),
+    );
+  }
+
+  ImageProvider _imageProvider() {
+    if (media.sources.contains(AppMediaSource.local) && media.type.isImage) {
+      return FileImage(File(media.path));
+    } else if (media.sources.contains(AppMediaSource.local) &&
+        media.type.isVideo) {
+      return AssetEntityImageProvider(media.assetEntity,
+          isOriginal: isOriginal,
+          thumbnailSize: ThumbnailSize(size.width.toInt(), size.height.toInt()),
+          thumbnailFormat: ThumbnailFormat.png);
+    } else {
+      return CachedNetworkImageProvider(media.thumbnailLink ?? '');
     }
   }
 }
