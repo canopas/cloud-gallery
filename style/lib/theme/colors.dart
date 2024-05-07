@@ -39,4 +39,5 @@ class AppColors {
   static const awarenessWarningColor = Color(0xFFFFA500);
 
   static const googleDriveColor = Color(0xFF4285F4);
+  static const dropBoxColor = Color(0xFF0061FE);
 }

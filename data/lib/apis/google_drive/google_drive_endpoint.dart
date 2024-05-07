@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:data/apis/network/base_url.dart';
 import 'package:data/apis/network/endpoint.dart';
 import 'package:data/models/media_content/media_content.dart';
 import 'package:dio/dio.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http_parser/http_parser.dart';
+import '../network/urls.dart';
 
 class UploadGoogleDriveFile extends Endpoint {
   final drive.File request;
@@ -20,7 +20,7 @@ class UploadGoogleDriveFile extends Endpoint {
   });
 
   @override
-  String get baseUrl => BaseURL.googleDriveUpload;
+  String get baseUrl => BaseURL.googleDriveUploadV3;
 
   @override
   CancelToken? get cancelToken => cancellationToken;
@@ -77,7 +77,7 @@ class DownloadGoogleDriveFileContent extends DownloadEndpoint {
   });
 
   @override
-  String get baseUrl => BaseURL.googleDrive;
+  String get baseUrl => BaseURL.googleDriveV3;
 
   @override
   String get path => '/files/$id';
