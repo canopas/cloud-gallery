@@ -36,7 +36,7 @@ class AppError implements Exception {
 class NoConnectionError extends AppError {
   const NoConnectionError()
       : super(
-            l10nCode: AppErrorL10nCodes.noInternetConnection,
+            l10nCode: AppErrorL10nCodes.noInternetConnectionError,
             message:
                 "No internet connection. Please check your network and try again.");
 }
@@ -59,19 +59,35 @@ class RequestCancelledByUser extends AppError {
 class BackUpFolderNotFound extends AppError {
   const BackUpFolderNotFound()
       : super(
-            l10nCode: AppErrorL10nCodes.backUpFolderNotFound,
-            message: "Back up folder not found");
+          l10nCode: AppErrorL10nCodes.backUpFolderNotFoundError,
+          message: "Back up folder not found",
+          statusCode: 404,
+        );
 }
 
 class UnableToSaveFileInGallery extends AppError {
   const UnableToSaveFileInGallery()
-      : super(message: "Unable to save file in gallery");
+      : super(
+          l10nCode: AppErrorL10nCodes.unableToSaveFileInGalleryError,
+          message: "Unable to save file in gallery",
+        );
 }
 
 class SomethingWentWrongError extends AppError {
   const SomethingWentWrongError({String? message, int? statusCode})
       : super(
-            l10nCode: AppErrorL10nCodes.somethingWentWrongError,
-            message: message,
-            statusCode: statusCode);
+          l10nCode: AppErrorL10nCodes.somethingWentWrongError,
+          message: message,
+          statusCode: statusCode,
+        );
+}
+
+class AuthSessionExpiredError extends AppError {
+  const AuthSessionExpiredError()
+      : super(
+          l10nCode: AppErrorL10nCodes.authSessionExpiredError,
+          message:
+              "User authentication session expired. Unable to get access token.",
+          statusCode: 401,
+        );
 }
