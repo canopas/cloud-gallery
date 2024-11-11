@@ -22,7 +22,7 @@ management, offering convenience and accessibility.
 
 ## Download App
 
-<a href="https://play.google.com/store/apps/"><img src="./cta/google-play.png" width="200">  </a><a href="https://apps.apple.com/us/app/"><img src="./cta/app-store.png" width="200"></a>
+<a href="https://play.google.com/store/apps/details?id=com.canopas.cloud_gallery"><img src="./cta/google-play.png" width="200">  </a><a href="https://apps.apple.com/in/app/cloud-gallery/id6480052005?platform=iphone"><img src="./cta/app-store.png" width="200"></a>
 
 
 <br/>
