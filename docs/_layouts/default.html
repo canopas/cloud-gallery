@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
     {% include head-custom.html %}
 </head>
-<body>
+<body id="customBody">
 <div class="container-lg px-3 my-5 markdown-body">
     {% if site.title and site.title != page.title %}
     <h1>{{ site.title }}</h1>
@@ -18,6 +18,24 @@
     {{ content }}
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
-<script>anchors.add();</script>
+<script>
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            bgColor: params.get('bgColor') || '#ffffff',  // Default background color
+            textColor: params.get('textColor') || '#000000'  // Default text color
+        };
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const { bgColor, textColor } = getQueryParams();
+        const body = document.getElementById('customBody');
+
+        body.style.backgroundColor = bgColor;
+        body.style.color = textColor;
+    });
+
+    anchors.add();
+</script>
 </body>
 </html>
