@@ -70,6 +70,5 @@ class UnableToSaveFileInGallery extends AppError {
 
 class SomethingWentWrongError extends AppError {
   const SomethingWentWrongError({super.message, super.statusCode})
-      : super(
-            l10nCode: AppErrorL10nCodes.somethingWentWrongError);
+      : super(l10nCode: AppErrorL10nCodes.somethingWentWrongError);
 }
