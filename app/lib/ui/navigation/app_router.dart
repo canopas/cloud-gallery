@@ -26,9 +26,9 @@ class AppRouter {
       );
 
   static AppRoute get mediaTransfer => AppRoute(
-    AppRoutePath.transfer,
-    builder: (context) => const MediaTransferScreen(),
-  );
+        AppRoutePath.transfer,
+        builder: (context) => const MediaTransferScreen(),
+      );
 
   static AppRoute preview(
           {required List<AppMedia> medias, required String startFrom}) =>
@@ -40,9 +40,7 @@ class AppRouter {
         ),
       );
 
-  static AppRoute mediaMetaDataDetails(
-      {required AppMedia media}) =>
-      AppRoute(
+  static AppRoute mediaMetaDataDetails({required AppMedia media}) => AppRoute(
         AppRoutePath.metaDataDetails,
         builder: (context) => MediaMetadataDetailsScreen(
           media: media,

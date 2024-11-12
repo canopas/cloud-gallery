@@ -35,8 +35,7 @@ class AppProcess with _$AppProcess {
     required AppProcessStatus status,
     @Default(false) bool isFromAutoBackup,
     Object? response,
-    @Default(null)
-    AppProcessProgress? progress,
+    @Default(null) AppProcessProgress? progress,
   }) = _AppProcess;
 }
 
@@ -51,5 +50,5 @@ extension AppProcessProgressExtension on AppProcessProgress {
   double get percentageInPoint => total == 0 ? 0 : chunk / total;
 
   /// Get the percentage of the progress 0 - 100
-  double get percentage => percentageInPoint*100;
+  double get percentage => percentageInPoint * 100;
 }

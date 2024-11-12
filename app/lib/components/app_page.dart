@@ -147,15 +147,15 @@ class AdaptiveAppBar extends StatelessWidget {
                       ),
           )
         : Column(
-          children: [
-            AppBar(
+            children: [
+              AppBar(
                 backgroundColor: context.colorScheme.barColor,
                 leading: leading,
                 actions: actions,
                 automaticallyImplyLeading: automaticallyImplyLeading,
                 title: Text(text),
               ),
-          ],
-        );
+            ],
+          );
   }
 }

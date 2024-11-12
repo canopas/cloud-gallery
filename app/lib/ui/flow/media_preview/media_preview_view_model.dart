@@ -102,11 +102,11 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     }
   }
 
-  Future<void> downloadMediaFromGoogleDrive({required AppMedia media})async {
+  Future<void> downloadMediaFromGoogleDrive({required AppMedia media}) async {
     _googleDriveProcessRepo.downloadMediasFromGoogleDrive(medias: [media]);
   }
 
-  Future<void> uploadMediaInGoogleDrive({required AppMedia media})async {
+  Future<void> uploadMediaInGoogleDrive({required AppMedia media}) async {
     _googleDriveProcessRepo.uploadMediasInGoogleDrive(medias: [media]);
   }
 

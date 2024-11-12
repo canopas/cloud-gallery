@@ -30,8 +30,7 @@ extension MediaListExtension on List<AppMedia> {
           (removeFromIds?.contains(this[index].id) ?? true)) {
         this[index] = this[index].copyWith(
           id: this[index].driveMediaRefId ?? this[index].id,
-          sources: this[index].sources.toList()
-            ..remove(AppMediaSource.local),
+          sources: this[index].sources.toList()..remove(AppMediaSource.local),
         );
       }
     }

@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
-import 'package:photo_manager/photo_manager.dart'
-    show AssetEntity;
+import 'package:photo_manager/photo_manager.dart' show AssetEntity;
 
 part 'media.freezed.dart';
 
@@ -171,4 +170,3 @@ class AppMedia with _$AppMedia {
     );
   }
 }
-

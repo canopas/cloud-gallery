@@ -45,13 +45,13 @@ class ErrorView extends StatelessWidget {
             const SizedBox(height: 40),
             Text(title,
                 style: AppTextStyles.subtitle1.copyWith(
-                  color: foregroundColor?? context.colorScheme.textPrimary,
+                  color: foregroundColor ?? context.colorScheme.textPrimary,
                 )),
             const SizedBox(height: 20),
             Text(
               message,
               style: AppTextStyles.subtitle2.copyWith(
-                color: foregroundColor ??context.colorScheme.textSecondary,
+                color: foregroundColor ?? context.colorScheme.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -59,7 +59,10 @@ class ErrorView extends StatelessWidget {
               const SizedBox(height: 20),
               PrimaryButton(
                 onPressed: action!.onPressed,
-                child: Text(action!.title, style: AppTextStyles.button,),
+                child: Text(
+                  action!.title,
+                  style: AppTextStyles.button,
+                ),
               ),
             ],
           ],

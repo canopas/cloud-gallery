@@ -37,9 +37,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
-            if(request.url.startsWith("https://canopas.github.io/cloud-gallery/")
-            && request.url != "https://canopas.github.io/cloud-gallery/"){
-             return NavigationDecision.navigate;
+            if (request.url
+                    .startsWith("https://canopas.github.io/cloud-gallery/") &&
+                request.url != "https://canopas.github.io/cloud-gallery/") {
+              return NavigationDecision.navigate;
             }
             return NavigationDecision.prevent;
           },
@@ -65,19 +66,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
           color: context.colorScheme.textSecondary,
         ),
       ),
-      body: Builder(
-        builder: (context) {
-          return Padding(
-            padding: context.systemPadding,
-            child: Stack(
-              children: [
-                WebViewWidget(controller: _controller),
-                if (_loading) const Center(child: AppCircularProgressIndicator()),
-              ],
-            ),
-          );
-        }
-      ),
+      body: Builder(builder: (context) {
+        return Padding(
+          padding: context.systemPadding,
+          child: Stack(
+            children: [
+              WebViewWidget(controller: _controller),
+              if (_loading) const Center(child: AppCircularProgressIndicator()),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

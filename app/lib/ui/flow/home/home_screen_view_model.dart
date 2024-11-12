@@ -64,7 +64,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   void updateAutoBackUpStatus(bool status) {
     _autoBackUpStatus = status;
     _checkAutoBackUp();
-    if(!status){
+    if (!status) {
       _googleDriveProcessRepo.terminateAllAutoBackupProcess();
     }
   }

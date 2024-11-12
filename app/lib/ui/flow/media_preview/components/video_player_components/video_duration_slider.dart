@@ -14,11 +14,11 @@ class VideoDurationSlider extends StatelessWidget {
 
   const VideoDurationSlider(
       {super.key,
-        required this.showSlider,
-        required this.duration,
-        required this.position,
-        required this.onChangeEnd,
-        required this.onChanged});
+      required this.showSlider,
+      required this.duration,
+      required this.position,
+      required this.onChangeEnd,
+      required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class VideoDurationSlider extends StatelessWidget {
                           trackHeight: 4,
                           trackShape: const RoundedRectSliderTrackShape(),
                           rangeTrackShape:
-                          const RoundedRectRangeSliderTrackShape(),
+                              const RoundedRectRangeSliderTrackShape(),
                           thumbShape: SliderComponentShape.noThumb,
                         ),
                         child: Slider(
@@ -60,8 +60,10 @@ class VideoDurationSlider extends StatelessWidget {
                           min: 0,
                           activeColor: context.colorScheme.primary,
                           inactiveColor: context.colorScheme.outline,
-                          onChangeEnd: (value) => onChangeEnd.call(Duration(seconds: value.toInt())),
-                          onChanged: (double value) => onChanged.call(Duration(seconds: value.toInt())),
+                          onChangeEnd: (value) => onChangeEnd
+                              .call(Duration(seconds: value.toInt())),
+                          onChanged: (double value) =>
+                              onChanged.call(Duration(seconds: value.toInt())),
                         ),
                       ),
                     ),
