@@ -22,7 +22,7 @@
     function getQueryParams() {
         const params = new URLSearchParams(window.location.search);
         return {
-            bgColor: params.get('bgColor') || '#ffffff',  // Default background color
+            bgColor: params.get('bgColor') || '#24292E',  // Default background color
             textColor: params.get('textColor') || '#000000'  // Default text color
         };
     }
@@ -31,11 +31,8 @@
         const { bgColor, textColor } = getQueryParams();
         const body = document.getElementById('customBody');
 
-        console.log('bgColor:', bgColor);  // Debug log
-        console.log('textColor:', textColor);  // Debug log
-
-        body.style.setProperty('background-color', bgColor, 'important');
-        body.style.setProperty('color', textColor, 'important');
+        body.style.backgroundColor = bgColor;
+        body.style.color = textColor;
     });
 
     anchors.add();
