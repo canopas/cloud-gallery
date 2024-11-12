@@ -56,6 +56,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _controller.setBackgroundColor(context.colorScheme.surface);
     return AppPage(
       title: '',
       automaticallyImplyLeading: false,
