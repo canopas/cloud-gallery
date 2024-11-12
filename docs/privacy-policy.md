@@ -2,18 +2,18 @@
 
 **Effective Date: April 24, 2024**
 
-#### Introduction
+### Introduction
 
 Canopas Software LLP ("Canopas," "we," "us," or "our") respects your privacy. This Privacy Policy describes how we collect, use, and protect information related to your use of our mobile application, Cloud Gallery.
 
-#### Information We Collect
+### Information We Collect
 
 We collect two categories of information through the App:
 
 * **Account Information:** If you choose to link your account with a third-party storage provider (e.g., Google Drive), we access only the minimal necessary information, such as your name and email address, for authentication and verification purposes. We do not collect or store any other personal data from your linked account.
 * **Usage Data:** Automatically collected information about your usage of the App, including device type, operating system, IP address, and browsing activity within the App, as well as the date and time of use.
 
-#### Storage Provider Information
+### Storage Provider Information
 
 If you link your account with a third-party storage provider (e.g., Google Drive), Cloud Gallery acts as a medium to enable you to:
 
@@ -22,7 +22,7 @@ If you link your account with a third-party storage provider (e.g., Google Drive
 
 **Important Information:** Cloud Gallery does not store, process, or retain any of your media files. Your media remains under your control, stored exclusively on your chosen storage provider's account (e.g, Google Drive). We access your provider's data solely to facilitate the services you request within the App and do not retain any of this data on our servers.
 
-#### How We Use Your Information
+### How We Use Your Information
 
 We use the information we collect for the following purposes:
 
@@ -34,7 +34,7 @@ We use the information we collect for the following purposes:
 * Send notification reminders for auto-backups (if enabled by you).
 * Comply with legal and regulatory requirements.
 
-#### Sharing Your Information
+### Sharing Your Information
 
 * We do not share your local media or data from your chosen storage provider (e.g., Google Drive) with third parties.
 
@@ -42,17 +42,17 @@ We use the information we collect for the following purposes:
 
 * We may disclose information if required by law or to protect our rights and property.
 
-##### Data Retention
+### Data Retention
 
 * We do not store any of your media files on our servers.
 
 * We may retain usage data for a limited period to troubleshoot issues and improve the App.
 
-#### Your Responsibilities
+### Your Responsibilities
 
 You are solely responsible for managing, backing up, and protecting your media stored on your selected storage provider account (e.g., Google Drive). Canopas is not responsible for data loss, corruption, or any issues related to your media.
 
-#### Your Choices
+### Your Choices
 
 * Control your Google Drive link through the App settings.
 
@@ -62,19 +62,19 @@ You are solely responsible for managing, backing up, and protecting your media s
 
 * Opt out of automatic backups through the App settings.
 
-#### Security
+### Security
 
 We take reasonable measures to safeguard your information from unauthorized access and disclosure. However, no electronic storage method is completely secure.
 
-#### Children's Privacy
+### Children's Privacy
 
 Cloud Gallery is not directed at children under 13, and we do not knowingly collect information from children under this age.
 
-#### Changes to this Policy
+### Changes to this Policy
 
 We may update this Privacy Policy periodically. Any changes will be posted on this page, and we encourage you to review it regularly.
 
-#### Contact Us
+### Contact Us
 
 If you have any questions about this Privacy Policy, please contact us at:
 
