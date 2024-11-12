@@ -31,8 +31,11 @@
         const { bgColor, textColor } = getQueryParams();
         const body = document.getElementById('customBody');
 
-        body.style.backgroundColor = bgColor;
-        body.style.color = textColor;
+        console.log('bgColor:', bgColor);  // Debug log
+        console.log('textColor:', textColor);  // Debug log
+
+        body.style.setProperty('background-color', bgColor, 'important');
+        body.style.setProperty('color', textColor, 'important');
     });
 
     anchors.add();
