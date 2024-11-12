@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cloud_gallery/ui/navigation/app_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -7,11 +6,11 @@ import 'package:go_router/go_router.dart';
 
 const _androidChannel = AndroidNotificationChannel(
   'notification-channel-cloud-gallery', // id
-  'Processes', // title
+  'Cloud Gallery Notification', // title
   description:
       'This channel is used to notify you about the processes in the app.',
   // description
-  importance: Importance.defaultImportance,
+  importance: Importance.max,
 );
 
 final notificationHandlerProvider = Provider.autoDispose((ref) {
@@ -27,11 +26,7 @@ class NotificationHandler {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
 
-    if (Platform.isIOS) {
-      await _initIOS(context);
-    } else if (Platform.isAndroid) {
-      await _initAndroid(context);
-    }
+    if (context.mounted) _initLocalNotifications(context);
   }
 
   void requestPermission() {
@@ -41,22 +36,15 @@ class NotificationHandler {
         ?.requestNotificationsPermission();
   }
 
-  Future<void> _initIOS(BuildContext context) async {
+  Future<void> _initLocalNotifications(BuildContext context) async {
     _flutterLocalNotificationsPlugin.initialize(
-      InitializationSettings(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('cloud_gallery_logo'),
         iOS: DarwinInitializationSettings(
           requestAlertPermission: true,
           requestBadgePermission: true,
           requestSoundPermission: true,
         ),
-      ),
-    );
-  }
-
-  Future<void> _initAndroid(BuildContext context) async {
-    _flutterLocalNotificationsPlugin.initialize(
-      const InitializationSettings(
-        android: AndroidInitializationSettings('cloud_gallery_logo'),
       ),
       onDidReceiveNotificationResponse: (response) {
         if (context.mounted) {
@@ -65,6 +53,7 @@ class NotificationHandler {
         }
       },
     );
+
     final initial = await _flutterLocalNotificationsPlugin
         .getNotificationAppLaunchDetails();
 
@@ -84,23 +73,24 @@ class NotificationHandler {
       int? progress,
       int maxProgress = 100}) async {
     await _flutterLocalNotificationsPlugin.show(
-        id,
-        name,
-        description,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            channelAction: AndroidNotificationChannelAction.update,
-            _androidChannel.id,
-            _androidChannel.name,
-            icon: "cloud_gallery_logo",
-            priority: Priority.defaultPriority,
-            enableVibration: vibration,
-            importance: Importance.defaultImportance,
-            showProgress: progress != null,
-            maxProgress: maxProgress,
-            progress: progress ?? 0,
-            channelDescription: _androidChannel.description,
-          ),
-        ));
+      id,
+      name,
+      description,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channelAction: AndroidNotificationChannelAction.update,
+          _androidChannel.id,
+          _androidChannel.name,
+          icon: "cloud_gallery_logo",
+          priority: Priority.defaultPriority,
+          enableVibration: vibration,
+          importance: Importance.defaultImportance,
+          showProgress: progress != null,
+          maxProgress: maxProgress,
+          progress: progress ?? 0,
+          channelDescription: _androidChannel.description,
+        ),
+      ),
+    );
   }
 }
