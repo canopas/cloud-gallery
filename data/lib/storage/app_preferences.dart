@@ -16,20 +16,17 @@ class AppPreferences {
     defaultValue: true,
   );
 
-  static final canTakeAutoBackUpInGoogleDrive =
-      createPrefProvider<bool>(
+  static final canTakeAutoBackUpInGoogleDrive = createPrefProvider<bool>(
     prefKey: "google_drive_auto_backup",
     defaultValue: false,
   );
 
-  static final googleDriveSignInHintShown =
-      createPrefProvider<bool>(
+  static final googleDriveSignInHintShown = createPrefProvider<bool>(
     prefKey: "google_drive_sign_in_hint_shown",
     defaultValue: false,
   );
 
-  static final googleDriveAutoBackUpHintShown =
-      createPrefProvider<bool>(
+  static final googleDriveAutoBackUpHintShown = createPrefProvider<bool>(
     prefKey: "google_drive_sign_in_hint_shown",
     defaultValue: false,
   );
