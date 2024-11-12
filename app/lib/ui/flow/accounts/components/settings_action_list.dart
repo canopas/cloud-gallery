@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/segmented_button.dart';
 import 'package:style/buttons/switch.dart';
+import 'package:style/extensions/context_extensions.dart';
 
 class SettingsActionList extends ConsumerWidget {
   const SettingsActionList({super.key});
@@ -50,16 +51,28 @@ class SettingsActionList extends ConsumerWidget {
       ActionListButton(
         title: context.l10n.common_term_and_condition,
         onPressed: () {
+          final colors = _getWebPageColors(context, ref);
           showWebView(context,
-              "https://canopas.github.io/cloud-gallery/terms-and-conditions");
+              "https://canopas.github.io/cloud-gallery/terms-and-conditions?bgColor=${colors.background}&textColor=${colors.text}");
         },
       ),
       ActionListButton(
           title: context.l10n.common_privacy_policy,
           onPressed: () {
+            final colors = _getWebPageColors(context, ref);
             showWebView(context,
-                "https://canopas.github.io/cloud-gallery/privacy-policy");
+                "https://canopas.github.io/cloud-gallery/privacy-policy?bgColor=${colors.background}&textColor=${colors.text}");
           }),
     ]);
+  }
+
+  ({String background, String text}) _getWebPageColors(
+      BuildContext context, WidgetRef ref) {
+    final isDark =
+        (ref.watch(AppPreferences.isDarkMode) ?? context.systemThemeIsDark);
+    return (
+      background: isDark ? "%23000000" : "%23FFFFFF",
+      text: isDark ? "%23FFFFFF" : "%23000000"
+    );
   }
 }
