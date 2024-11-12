@@ -44,17 +44,12 @@ class NotificationHandler {
   Future<void> _initIOS(BuildContext context) async {
     _flutterLocalNotificationsPlugin.initialize(
       InitializationSettings(
-          iOS: DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        onDidReceiveLocalNotification: (id, title, body, payload) {
-          if (context.mounted) {
-            context.go(AppRoutePath.home);
-            context.push(AppRoutePath.transfer);
-          }
-        },
-      )),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        ),
+      ),
     );
   }
 

@@ -20,7 +20,9 @@ mixin _$AppMediaContent {
   int? get length => throw _privateConstructorUsedError;
   String get contentType => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppMediaContent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AppMediaContentCopyWith<AppMediaContent> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -44,6 +46,8 @@ class _$AppMediaContentCopyWithImpl<$Res, $Val extends AppMediaContent>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AppMediaContent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -87,6 +91,8 @@ class __$$AppMediaContentImplCopyWithImpl<$Res>
       _$AppMediaContentImpl _value, $Res Function(_$AppMediaContentImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AppMediaContent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -143,7 +149,9 @@ class _$AppMediaContentImpl implements _AppMediaContent {
   @override
   int get hashCode => Object.hash(runtimeType, stream, length, contentType);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppMediaContent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AppMediaContentImplCopyWith<_$AppMediaContentImpl> get copyWith =>
@@ -163,8 +171,11 @@ abstract class _AppMediaContent implements AppMediaContent {
   int? get length;
   @override
   String get contentType;
+
+  /// Create a copy of AppMediaContent
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AppMediaContentImplCopyWith<_$AppMediaContentImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -23,8 +23,7 @@ class AppThemeBuilder {
         brightness: colorScheme.brightness,
         error: colorScheme.alert,
         onError: colorScheme.onPrimary,
-        background: colorScheme.surface,
-        onBackground: colorScheme.textPrimary,
+        surfaceBright: colorScheme.surface,
       ),
       scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(

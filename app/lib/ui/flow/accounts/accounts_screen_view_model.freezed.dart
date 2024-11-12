@@ -20,7 +20,9 @@ mixin _$AccountsState {
   Object? get error => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AccountsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AccountsStateCopyWith<AccountsState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -45,6 +47,8 @@ class _$AccountsStateCopyWithImpl<$Res, $Val extends AccountsState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AccountsState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +90,8 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
       _$AccountsStateImpl _value, $Res Function(_$AccountsStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AccountsState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -139,7 +145,9 @@ class _$AccountsStateImpl implements _AccountsState {
   int get hashCode => Object.hash(runtimeType, version,
       const DeepCollectionEquality().hash(error), googleAccount);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AccountsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AccountsStateImplCopyWith<_$AccountsStateImpl> get copyWith =>
@@ -158,8 +166,11 @@ abstract class _AccountsState implements AccountsState {
   Object? get error;
   @override
   GoogleSignInAccount? get googleAccount;
+
+  /// Create a copy of AccountsState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AccountsStateImplCopyWith<_$AccountsStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
