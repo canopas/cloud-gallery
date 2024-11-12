@@ -34,7 +34,7 @@ We use the information we collect for the following purposes:
 * Send notification reminders for auto-backups (if enabled by you).
 * Comply with legal and regulatory requirements.
 
-## Sharing Your Information
+#### Sharing Your Information
 
 * We do not share your local media or data from your chosen storage provider (e.g., Google Drive) with third parties.
 
@@ -42,7 +42,7 @@ We use the information we collect for the following purposes:
 
 * We may disclose information if required by law or to protect our rights and property.
 
-# Data Retention
+##### Data Retention
 
 * We do not store any of your media files on our servers.
 
