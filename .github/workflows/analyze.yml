@@ -49,12 +49,15 @@ jobs:
       - name: Lint test
         run: |
           cd app
+          dart format . --set-exit-if-changed
           dart analyze --fatal-infos
           
           cd ../data
+          dart format . --set-exit-if-changed
           dart analyze --fatal-infos
           
           cd ../style
+          dart format . --set-exit-if-changed
           dart analyze --fatal-infos
           
           cd ..

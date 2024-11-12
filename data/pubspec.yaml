@@ -11,27 +11,27 @@ dependencies:
     sdk: flutter
 
   # services
-  googleapis: ^12.0.0
+  googleapis: ^13.2.0
   http_parser: ^4.0.2
-  dio: ^5.4.3+1
-  photo_manager: ^3.0.0-dev.5
-  package_info_plus: ^7.0.0
-  path_provider: ^2.1.2
+  dio: ^5.7.0
+  photo_manager: ^3.6.2
+  package_info_plus: ^8.1.1
+  path_provider: ^2.1.5
 
   # authentication
-  google_sign_in: ^6.2.1
+  google_sign_in: ^6.2.2
   extension_google_sign_in_as_googleapis_auth: ^2.0.12
 
   # state management
-  flutter_riverpod: ^2.4.9
+  flutter_riverpod: ^2.6.1
 
   # storage
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.3.3
 
   # code generation
-  freezed: ^2.4.6
-  freezed_annotation: ^2.4.1
-  json_serializable: ^6.7.1
+  freezed: ^2.5.7
+  freezed_annotation: ^2.4.4
+  json_serializable: ^6.8.0
 
   collection: ^1.18.0
 
@@ -40,11 +40,11 @@ dev_dependencies:
     sdk: flutter
 
   # lints
-  flutter_lints: ^2.0.0
-  riverpod_lint: ^2.1.1
+  flutter_lints: ^5.0.0
+  riverpod_lint: ^2.6.2
 
   # code generation
-  build_runner: ^2.3.3
+  build_runner: ^2.4.13
 
 
 flutter:

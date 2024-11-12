@@ -64,7 +64,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   void updateAutoBackUpStatus(bool status) {
     _autoBackUpStatus = status;
     _checkAutoBackUp();
-    if(!status){
+    if (!status) {
       _googleDriveProcessRepo.terminateAllAutoBackupProcess();
     }
   }
@@ -212,7 +212,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         medias: sortMedias(
           medias: append
               ? [
-                  ...state.medias.values.expand((element) => element).toList(),
+                  ...state.medias.values.expand((element) => element),
                   ...mergedMedia
                 ]
               : [...mergedMedia, ...googleDriveMedia],

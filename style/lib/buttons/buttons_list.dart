@@ -73,9 +73,8 @@ class ActionList extends StatelessWidget {
               Expanded(
                 child: Text(
                   button.title,
-                  style: AppTextStyles.body2.copyWith(
-                    color: context.colorScheme.textPrimary
-                  ),
+                  style: AppTextStyles.body2
+                      .copyWith(color: context.colorScheme.textPrimary),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

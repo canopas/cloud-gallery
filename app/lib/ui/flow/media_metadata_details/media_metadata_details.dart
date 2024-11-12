@@ -64,14 +64,12 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                 ),
                 DetailsTile(
                   title: context.l10n.mimetype_text,
-                  subtitle: media.mimeType ??
-                      context.l10n.common_not_available,
+                  subtitle: media.mimeType ?? context.l10n.common_not_available,
                 ),
                 DetailsTile(
                   title: context.l10n.size_text,
-                  subtitle:
-                      int.tryParse(media.size ?? '')?.formatBytes ??
-                          context.l10n.common_not_available,
+                  subtitle: int.tryParse(media.size ?? '')?.formatBytes ??
+                      context.l10n.common_not_available,
                 ),
                 if (media.type.isVideo)
                   DetailsTile(
@@ -81,8 +79,7 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                   ),
                 DetailsTile(
                   title: context.l10n.location_text,
-                  subtitle: media.latitude == null ||
-                          media.longitude == null
+                  subtitle: media.latitude == null || media.longitude == null
                       ? context.l10n.common_not_available
                       : '${media.latitude}, ${media.longitude}',
                 ),
@@ -112,8 +109,7 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                           Icon(Icons.phone_android_rounded,
                               color: context.colorScheme.textSecondary,
                               size: 20),
-                        if (media.sources
-                            .contains(AppMediaSource.googleDrive))
+                        if (media.sources.contains(AppMediaSource.googleDrive))
                           SvgPicture.asset(
                             Assets.images.icons.googleDrive,
                             width: 20,

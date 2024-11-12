@@ -156,7 +156,8 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             PreviewTopBar(
               provider: _provider,
               onAction: () {
-                if(_videoPlayerController != null && (_videoPlayerController?.value.isInitialized ?? false)){
+                if (_videoPlayerController != null &&
+                    (_videoPlayerController?.value.isInitialized ?? false)) {
                   _videoPlayerController?.pause();
                 }
               },

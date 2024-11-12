@@ -69,7 +69,7 @@ class LocalMediaService {
     try {
       if (type.isVideo) {
         asset = await PhotoManager.editor.saveVideo(
-         File(saveFromLocation),
+          File(saveFromLocation),
           title: saveFromLocation.split('/').last,
         );
       } else if (type.isImage) {
@@ -84,5 +84,3 @@ class LocalMediaService {
     }
   }
 }
-
-

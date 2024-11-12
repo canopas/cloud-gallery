@@ -13,11 +13,11 @@ class HintView extends StatelessWidget {
 
   const HintView(
       {super.key,
-        required this.hint,
-        required this.onClose,
-        this.actionTitle = '',
-        this.onActionTap,
-        required this.title});
+      required this.hint,
+      required this.onClose,
+      this.actionTitle = '',
+      this.onActionTap,
+      required this.title});
 
   @override
   Widget build(BuildContext context) {

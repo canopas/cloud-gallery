@@ -21,7 +21,9 @@ mixin _$NetworkImagePreviewState {
   String? get filePath => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NetworkImagePreviewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NetworkImagePreviewStateCopyWith<NetworkImagePreviewState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -46,6 +48,8 @@ class _$NetworkImagePreviewStateCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of NetworkImagePreviewState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -94,6 +98,8 @@ class __$$NetworkImagePreviewStateImplCopyWithImpl<$Res>
       $Res Function(_$NetworkImagePreviewStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of NetworkImagePreviewState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -158,7 +164,9 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
   int get hashCode => Object.hash(runtimeType, loading, progress, filePath,
       const DeepCollectionEquality().hash(error));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NetworkImagePreviewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NetworkImagePreviewStateImplCopyWith<_$NetworkImagePreviewStateImpl>
@@ -181,8 +189,11 @@ abstract class _NetworkImagePreviewState implements NetworkImagePreviewState {
   String? get filePath;
   @override
   Object? get error;
+
+  /// Create a copy of NetworkImagePreviewState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NetworkImagePreviewStateImplCopyWith<_$NetworkImagePreviewStateImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

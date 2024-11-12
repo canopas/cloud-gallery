@@ -28,7 +28,7 @@ _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
       size: json['size'] as String?,
       videoDuration: json['videoDuration'] == null
           ? null
-          : Duration(microseconds: json['videoDuration'] as int),
+          : Duration(microseconds: (json['videoDuration'] as num).toInt()),
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
       sources: (json['sources'] as List<dynamic>?)

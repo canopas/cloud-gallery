@@ -140,9 +140,11 @@ class PreviewTopBar extends StatelessWidget {
                                 alignment: Alignment.bottomRight,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 2, right: 2),
+                                    padding: const EdgeInsets.only(
+                                        bottom: 2, right: 2),
                                     child: Icon(CupertinoIcons.trash,
-                                        color: context.colorScheme.textSecondary,
+                                        color:
+                                            context.colorScheme.textSecondary,
                                         size: 22),
                                   ),
                                   SvgPicture.asset(
@@ -187,15 +189,17 @@ class PreviewTopBar extends StatelessWidget {
                             ],
                           ),
                         ),
-                      if(media.isLocalStored)
+                      if (media.isLocalStored)
                         PopupMenuItem(
                           onTap: () async {
-                             await Share.shareXFiles([XFile(media.path)]);
+                            await Share.shareXFiles([XFile(media.path)]);
                           },
                           child: Row(
                             children: [
                               Icon(
-                                Platform.isIOS? CupertinoIcons.share: Icons.share_rounded,
+                                Platform.isIOS
+                                    ? CupertinoIcons.share
+                                    : Icons.share_rounded,
                                 color: context.colorScheme.textSecondary,
                                 size: 22,
                               ),

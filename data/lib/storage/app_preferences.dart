@@ -1,36 +1,32 @@
 import 'package:data/storage/provider/preferences_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppPreferences {
-  static StateProvider<bool> isOnBoardComplete = createPrefProvider<bool>(
+  static final isOnBoardComplete = createPrefProvider<bool>(
     prefKey: "is_onboard_complete",
     defaultValue: false,
   );
 
-  static StateProvider<bool?> isDarkMode = createPrefProvider<bool?>(
+  static final isDarkMode = createPrefProvider<bool?>(
     prefKey: "is_dark_mode",
     defaultValue: null,
   );
 
-  static StateProvider<bool> notifications = createPrefProvider<bool>(
+  static final notifications = createPrefProvider<bool>(
     prefKey: "show_notifications",
     defaultValue: true,
   );
 
-  static StateProvider<bool> canTakeAutoBackUpInGoogleDrive =
-      createPrefProvider<bool>(
+  static final canTakeAutoBackUpInGoogleDrive = createPrefProvider<bool>(
     prefKey: "google_drive_auto_backup",
     defaultValue: false,
   );
 
-  static StateProvider<bool> googleDriveSignInHintShown =
-      createPrefProvider<bool>(
+  static final googleDriveSignInHintShown = createPrefProvider<bool>(
     prefKey: "google_drive_sign_in_hint_shown",
     defaultValue: false,
   );
 
-  static StateProvider<bool> googleDriveAutoBackUpHintShown =
-      createPrefProvider<bool>(
+  static final googleDriveAutoBackUpHintShown = createPrefProvider<bool>(
     prefKey: "google_drive_sign_in_hint_shown",
     defaultValue: false,
   );

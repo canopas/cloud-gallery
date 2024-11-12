@@ -1,21 +1,21 @@
 PODS:
-  - AppAuth (1.6.2):
-    - AppAuth/Core (= 1.6.2)
-    - AppAuth/ExternalUserAgent (= 1.6.2)
-  - AppAuth/Core (1.6.2)
-  - AppAuth/ExternalUserAgent (1.6.2):
+  - AppAuth (1.7.5):
+    - AppAuth/Core (= 1.7.5)
+    - AppAuth/ExternalUserAgent (= 1.7.5)
+  - AppAuth/Core (1.7.5)
+  - AppAuth/ExternalUserAgent (1.7.5):
     - AppAuth/Core
-  - Firebase/CoreOnly (10.20.0):
-    - FirebaseCore (= 10.20.0)
-  - firebase_core (2.25.5):
-    - Firebase/CoreOnly (= 10.20.0)
+  - Firebase/CoreOnly (11.4.0):
+    - FirebaseCore (= 11.4.0)
+  - firebase_core (3.7.0):
+    - Firebase/CoreOnly (= 11.4.0)
     - Flutter
-  - FirebaseCore (10.20.0):
-    - FirebaseCoreInternal (~> 10.0)
-    - GoogleUtilities/Environment (~> 7.12)
-    - GoogleUtilities/Logger (~> 7.12)
-  - FirebaseCoreInternal (10.22.0):
-    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+  - FirebaseCore (11.4.0):
+    - FirebaseCoreInternal (~> 11.0)
+    - GoogleUtilities/Environment (~> 8.0)
+    - GoogleUtilities/Logger (~> 8.0)
+  - FirebaseCoreInternal (11.4.2):
+    - "GoogleUtilities/NSData+zlib (~> 8.0)"
   - Flutter (1.0.0)
   - flutter_local_notifications (0.0.1):
     - Flutter
@@ -23,26 +23,31 @@ PODS:
     - Flutter
     - Toast
   - google_sign_in_ios (0.0.1):
+    - AppAuth (>= 1.7.4)
     - Flutter
     - FlutterMacOS
-    - GoogleSignIn (~> 7.0)
-  - GoogleSignIn (7.0.0):
-    - AppAuth (~> 1.5)
-    - GTMAppAuth (< 3.0, >= 1.3)
-    - GTMSessionFetcher/Core (< 4.0, >= 1.1)
-  - GoogleUtilities/Environment (7.13.0):
+    - GoogleSignIn (~> 7.1)
+    - GTMSessionFetcher (>= 3.4.0)
+  - GoogleSignIn (7.1.0):
+    - AppAuth (< 2.0, >= 1.7.3)
+    - GTMAppAuth (< 5.0, >= 4.1.1)
+    - GTMSessionFetcher/Core (~> 3.3)
+  - GoogleUtilities/Environment (8.0.2):
     - GoogleUtilities/Privacy
-    - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.13.0):
+  - GoogleUtilities/Logger (8.0.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Privacy
-  - "GoogleUtilities/NSData+zlib (7.13.0)":
+  - "GoogleUtilities/NSData+zlib (8.0.2)":
     - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (7.13.0)
-  - GTMAppAuth (2.0.0):
-    - AppAuth/Core (~> 1.6)
-    - GTMSessionFetcher/Core (< 4.0, >= 1.5)
-  - GTMSessionFetcher/Core (3.3.1)
+  - GoogleUtilities/Privacy (8.0.2)
+  - GTMAppAuth (4.1.1):
+    - AppAuth/Core (~> 1.7)
+    - GTMSessionFetcher/Core (< 4.0, >= 3.3)
+  - GTMSessionFetcher (3.5.0):
+    - GTMSessionFetcher/Full (= 3.5.0)
+  - GTMSessionFetcher/Core (3.5.0)
+  - GTMSessionFetcher/Full (3.5.0):
+    - GTMSessionFetcher/Core
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -53,21 +58,21 @@ PODS:
   - photo_manager (2.0.0):
     - Flutter
     - FlutterMacOS
-  - PromisesObjC (2.4.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - sqflite (0.0.3):
+  - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
-  - Toast (4.1.0)
+  - Toast (4.1.1)
   - video_player_avfoundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -81,9 +86,9 @@ DEPENDENCIES:
   - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
-  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -95,7 +100,6 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
-    - PromisesObjC
     - Toast
 
 EXTERNAL SOURCES:
@@ -121,39 +125,38 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/darwin"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
   webview_flutter_wkwebview:
-    :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
-  AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
-  Firebase: 10c8cb12fb7ad2ae0c09ffc86cd9c1ab392a0031
-  firebase_core: c8628c7ce80f79439149549052bff22f6784fbf5
-  FirebaseCore: 28045c1560a2600d284b9c45a904fe322dc890b6
-  FirebaseCoreInternal: bca337352024b18424a61e478460547d46c4c753
+  AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
+  Firebase: cf1b19f21410b029b6786a54e9764a0cacad3c99
+  firebase_core: f8c5b220a8f9c436fdbd075ae321cef3d96ef181
+  FirebaseCore: e0510f1523bc0eb21653cac00792e1e2bd6f1771
+  FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
-  fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
-  google_sign_in_ios: 989eea5abe94af62050782714daf920be883d4a2
-  GoogleSignIn: b232380cf495a429b8095d3178a8d5855b42e842
-  GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
-  GTMAppAuth: 99fb010047ba3973b7026e45393f51f27ab965ae
-  GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
-  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
-  path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
-  permission_handler_apple: 036b856153a2b1f61f21030ff725f3e6fece2b78
+  flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
+  google_sign_in_ios: 07375bfbf2620bc93a602c0e27160d6afc6ead38
+  GoogleSignIn: d4281ab6cf21542b1cfaff85c191f230b399d2db
+  GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
+  GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
+  GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
+  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   photo_manager: ff695c7a1dd5bc379974953a2b5c0a293f7c4c8a
-  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  share_plus: 8875f4f2500512ea181eef553c3e27dba5135aad
-  shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
-  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
-  Toast: ec33c32b8688982cecc6348adeae667c1b9938da
-  video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
-  webview_flutter_wkwebview: be0f0d33777f1bfd0c9fdcb594786704dbf65f36
+  share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
+  video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
+  webview_flutter_wkwebview: 0982481e3d9c78fd5c6f62a002fcd24fc791f1e4
 
-PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
+PODFILE CHECKSUM: 4c438addb11b6da45ed7ae408823d68256222460
 
 COCOAPODS: 1.15.2

@@ -175,7 +175,6 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                         ),
                       ],
                     );
-
                   },
                 ),
               if (showShareButton)

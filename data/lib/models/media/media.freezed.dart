@@ -38,8 +38,12 @@ mixin _$AppMedia {
   double? get longitude => throw _privateConstructorUsedError;
   List<AppMediaSource> get sources => throw _privateConstructorUsedError;
 
+  /// Serializes this AppMedia to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AppMedia
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AppMediaCopyWith<AppMedia> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -79,6 +83,8 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AppMedia
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -209,6 +215,8 @@ class __$$AppMediaImplCopyWithImpl<$Res>
       _$AppMediaImpl _value, $Res Function(_$AppMediaImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AppMedia
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -410,7 +418,7 @@ class _$AppMediaImpl implements _AppMedia {
             const DeepCollectionEquality().equals(other._sources, _sources));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -432,7 +440,9 @@ class _$AppMediaImpl implements _AppMedia {
       longitude,
       const DeepCollectionEquality().hash(_sources));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppMedia
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AppMediaImplCopyWith<_$AppMediaImpl> get copyWith =>
@@ -503,8 +513,11 @@ abstract class _AppMedia implements AppMedia {
   double? get longitude;
   @override
   List<AppMediaSource> get sources;
+
+  /// Create a copy of AppMedia
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AppMediaImplCopyWith<_$AppMediaImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

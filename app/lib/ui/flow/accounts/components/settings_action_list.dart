@@ -50,13 +50,15 @@ class SettingsActionList extends ConsumerWidget {
       ActionListButton(
         title: context.l10n.common_term_and_condition,
         onPressed: () {
-          showWebView(context, "https://canopas.github.io/cloud-gallery/terms-and-conditions");
+          showWebView(context,
+              "https://canopas.github.io/cloud-gallery/terms-and-conditions");
         },
       ),
       ActionListButton(
           title: context.l10n.common_privacy_policy,
           onPressed: () {
-            showWebView(context, "https://canopas.github.io/cloud-gallery/privacy-policy");
+            showWebView(context,
+                "https://canopas.github.io/cloud-gallery/privacy-policy");
           }),
     ]);
   }
