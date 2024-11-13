@@ -17,7 +17,7 @@ import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../components/snack_bar.dart';
 import '../../../domain/assets/assets_paths.dart';
-import '../../navigation/app_router.dart';
+import '../../navigation/app_route.dart';
 import 'components/app_media_item.dart';
 import 'components/hints.dart';
 import 'components/multi_selection_done_button.dart';

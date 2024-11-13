@@ -1,4 +1,4 @@
-import 'navigation/app_router.dart';
+import 'navigation/app_route.dart';
 import '../domain/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';

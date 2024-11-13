@@ -1,6 +1,6 @@
 import 'dart:io';
 import '../../../../domain/extensions/context_extensions.dart';
-import '../../../navigation/app_router.dart';
+import '../../../navigation/app_route.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
