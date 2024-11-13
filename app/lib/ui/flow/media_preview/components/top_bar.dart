@@ -36,7 +36,8 @@ class PreviewTopBar extends StatelessWidget {
       builder: (context, ref, child) {
         final notifier = ref.read(provider.notifier);
         final media = ref.watch(
-            provider.select((state) => state.medias[state.currentIndex]));
+          provider.select((state) => state.medias[state.currentIndex]),
+        );
         final showManu =
             ref.watch(provider.select((state) => state.showActions));
 
