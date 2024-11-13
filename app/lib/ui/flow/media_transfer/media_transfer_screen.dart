@@ -1,7 +1,7 @@
-import 'package:cloud_gallery/components/error_view.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/ui/flow/media_transfer/components/transfer_item.dart';
-import 'package:cloud_gallery/ui/flow/media_transfer/media_transfer_view_model.dart';
+import '../../../components/error_view.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import 'components/transfer_item.dart';
+import 'media_transfer_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/buttons/segmented_button.dart';
@@ -36,7 +36,8 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
   @override
   Widget build(BuildContext context) {
     final page = ref.watch(
-        mediaTransferStateNotifierProvider.select((value) => value.page));
+      mediaTransferStateNotifierProvider.select((value) => value.page),
+    );
     return AppPage(
       title: context.l10n.transfer_screen_title,
       body: SafeArea(
@@ -51,9 +52,13 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
                   tapTargetSize: MaterialTapTargetSize.padded,
                   segments: [
                     AppButtonSegment(
-                        value: 0, label: context.l10n.common_upload),
+                      value: 0,
+                      label: context.l10n.common_upload,
+                    ),
                     AppButtonSegment(
-                        value: 1, label: context.l10n.common_download),
+                      value: 1,
+                      label: context.l10n.common_download,
+                    ),
                   ],
                   selected: page,
                   onSelectionChanged: (value) {
@@ -69,16 +74,17 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
             ),
             Divider(color: context.colorScheme.outline, height: 0.8),
             Expanded(
-                child: PageView(
-              controller: pageController,
-              onPageChanged: (value) {
-                notifier.onPageChange(value);
-              },
-              children: [
-                _uploadList(),
-                _downloadList(),
-              ],
-            )),
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (value) {
+                  notifier.onPageChange(value);
+                },
+                children: [
+                  _uploadList(),
+                  _downloadList(),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -86,64 +92,76 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
   }
 
   Widget _uploadList() {
-    return Consumer(builder: (context, ref, child) {
-      final upload = ref.watch(
-          mediaTransferStateNotifierProvider.select((value) => value.upload));
-
-      if (upload.isEmpty) {
-        return ErrorView(
-          title: context.l10n.empty_upload_title,
-          message: context.l10n.empty_upload_message,
-          icon: Icon(Icons.cloud_upload_outlined,
-              size: 100, color: context.colorScheme.containerNormal),
+    return Consumer(
+      builder: (context, ref, child) {
+        final upload = ref.watch(
+          mediaTransferStateNotifierProvider.select((value) => value.upload),
         );
-      }
 
-      return ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: upload.length,
-        separatorBuilder: (context, index) => const SizedBox(
-          height: 8,
-        ),
-        itemBuilder: (context, index) => ProcessItem(
+        if (upload.isEmpty) {
+          return ErrorView(
+            title: context.l10n.empty_upload_title,
+            message: context.l10n.empty_upload_message,
+            icon: Icon(
+              Icons.cloud_upload_outlined,
+              size: 100,
+              color: context.colorScheme.containerNormal,
+            ),
+          );
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: upload.length,
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 8,
+          ),
+          itemBuilder: (context, index) => ProcessItem(
             key: ValueKey(upload[index].id),
             process: upload[index],
             onCancelTap: () {
               notifier.onTerminateUploadProcess(upload[index].id);
-            }),
-      );
-    });
+            },
+          ),
+        );
+      },
+    );
   }
 
   Widget _downloadList() {
-    return Consumer(builder: (context, ref, child) {
-      final download = ref.watch(
-        mediaTransferStateNotifierProvider.select((value) => value.download),
-      );
-
-      if (download.isEmpty) {
-        return ErrorView(
-          title: context.l10n.empty_download_title,
-          message: context.l10n.empty_download_message,
-          icon: Icon(Icons.cloud_download_outlined,
-              size: 100, color: context.colorScheme.containerNormal),
+    return Consumer(
+      builder: (context, ref, child) {
+        final download = ref.watch(
+          mediaTransferStateNotifierProvider.select((value) => value.download),
         );
-      }
 
-      return ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: download.length,
-        separatorBuilder: (context, index) => const SizedBox(
-          height: 8,
-        ),
-        itemBuilder: (context, index) => ProcessItem(
-          key: ValueKey(download[index].id),
-          process: download[index],
-          onCancelTap: () {
-            notifier.onTerminateDownloadProcess(download[index].id);
-          },
-        ),
-      );
-    });
+        if (download.isEmpty) {
+          return ErrorView(
+            title: context.l10n.empty_download_title,
+            message: context.l10n.empty_download_message,
+            icon: Icon(
+              Icons.cloud_download_outlined,
+              size: 100,
+              color: context.colorScheme.containerNormal,
+            ),
+          );
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: download.length,
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 8,
+          ),
+          itemBuilder: (context, index) => ProcessItem(
+            key: ValueKey(download[index].id),
+            process: download[index],
+            onCancelTap: () {
+              notifier.onTerminateDownloadProcess(download[index].id);
+            },
+          ),
+        );
+      },
+    );
   }
 }

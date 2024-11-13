@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cloud_gallery/domain/extensions/app_error_extensions.dart';
+import '../domain/extensions/app_error_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:style/extensions/context_extensions.dart';
@@ -8,12 +8,13 @@ import 'package:style/text/app_text_style.dart';
 void showErrorSnackBar({required BuildContext context, required Object error}) {
   final message = error.l10nMessage(context);
   showSnackBar(
-      context: context,
-      text: message,
-      icon: Icon(
-        Icons.warning_amber_rounded,
-        color: context.colorScheme.alert,
-      ));
+    context: context,
+    text: message,
+    icon: Icon(
+      Icons.warning_amber_rounded,
+      color: context.colorScheme.alert,
+    ),
+  );
 }
 
 final _toast = FToast();

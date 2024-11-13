@@ -1,4 +1,4 @@
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
+import 'context_extensions.dart';
 import 'package:data/errors/app_error.dart';
 import 'package:data/errors/l10n_error_codes.dart';
 import 'package:flutter/cupertino.dart';

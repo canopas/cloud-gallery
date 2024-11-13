@@ -11,7 +11,7 @@ extension BytesFormatter on int {
       'PB',
       'EB',
       'ZB',
-      'YB'
+      'YB',
     ];
     if (this == 0) return '0 ${suffixes[0]}';
     final i = (this == 0) ? 0 : (log(this) / log(1024)).floor();

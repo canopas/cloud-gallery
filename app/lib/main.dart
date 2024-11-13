@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:cloud_gallery/firebase_options.dart';
+import 'firebase_options.dart';
 import 'package:data/storage/provider/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

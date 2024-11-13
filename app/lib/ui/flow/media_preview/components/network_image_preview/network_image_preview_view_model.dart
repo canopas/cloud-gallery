@@ -24,8 +24,10 @@ class NetworkImagePreviewStateNotifier
   File? tempFile;
   CancelToken? cancelToken;
 
-  Future<void> loadImageFromGoogleDrive(
-      {required String id, required String extension}) async {
+  Future<void> loadImageFromGoogleDrive({
+    required String id,
+    required String extension,
+  }) async {
     try {
       state = state.copyWith(loading: true, error: null);
       cancelToken = CancelToken();

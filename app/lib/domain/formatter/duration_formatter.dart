@@ -5,9 +5,9 @@ extension DurationFormatter on Duration {
       return "0$n";
     }
 
-    String twoDigitHours = twoDigits(inHours.remainder(24));
-    String twoDigitMinutes = twoDigits(inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(inSeconds.remainder(60));
+    final String twoDigitHours = twoDigits(inHours.remainder(24));
+    final String twoDigitMinutes = twoDigits(inMinutes.remainder(60));
+    final String twoDigitSeconds = twoDigits(inSeconds.remainder(60));
 
     if (inHours > 0) {
       return "$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";

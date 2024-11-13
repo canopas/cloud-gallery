@@ -1,6 +1,6 @@
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/ui/navigation/app_router.dart';
+import '../../../components/app_page.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import '../../navigation/app_router.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,9 +45,9 @@ class OnBoardScreen extends ConsumerWidget {
                       ref
                           .read(AppPreferences.isOnBoardComplete.notifier)
                           .state = true;
-                      AppRouter.home.go(context);
+                      HomeRoute().go(context);
                     },
-                  )
+                  ),
                 ],
               ),
             ),
@@ -85,8 +85,10 @@ class OnBoardScreen extends ConsumerWidget {
         ),
       );
 
-  Widget _getStartedButton(
-      {required BuildContext context, required VoidCallback onGetStartedTap}) {
+  Widget _getStartedButton({
+    required BuildContext context,
+    required VoidCallback onGetStartedTap,
+  }) {
     return OnTapScale(
       onTap: onGetStartedTap,
       child: Container(

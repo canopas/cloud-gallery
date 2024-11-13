@@ -1,5 +1,5 @@
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/domain/formatter/byte_formatter.dart';
+import '../../../../domain/extensions/context_extensions.dart';
+import '../../../../domain/formatter/byte_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +12,11 @@ class ProcessItem extends StatelessWidget {
   final AppProcess process;
   final void Function() onCancelTap;
 
-  const ProcessItem(
-      {super.key, required this.process, required this.onCancelTap});
+  const ProcessItem({
+    super.key,
+    required this.process,
+    required this.onCancelTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +54,8 @@ class ProcessItem extends StatelessWidget {
                   backgroundColor: context.colorScheme.outline,
                   borderRadius: BorderRadius.circular(4),
                   valueColor: AlwaysStoppedAnimation<Color>(
-                      context.colorScheme.primary),
+                    context.colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -70,15 +74,15 @@ class ProcessItem extends StatelessWidget {
                       ),
                     ),
                   ],
-                )
-              ]
+                ),
+              ],
             ],
           ),
         ),
         ActionButton(
           onPressed: onCancelTap,
           icon: const Icon(CupertinoIcons.xmark),
-        )
+        ),
       ],
     );
   }

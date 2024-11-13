@@ -1,10 +1,10 @@
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/components/thumbnail_builder.dart';
-import 'package:cloud_gallery/domain/assets/assets_paths.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/domain/formatter/byte_formatter.dart';
-import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
-import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
+import '../../../components/app_page.dart';
+import '../../../components/thumbnail_builder.dart';
+import '../../../domain/assets/assets_paths.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import '../../../domain/formatter/byte_formatter.dart';
+import '../../../domain/formatter/date_formatter.dart';
+import '../../../domain/formatter/duration_formatter.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,8 +19,9 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppPage(
-        title: '',
-        body: Builder(builder: (context) {
+      title: '',
+      body: Builder(
+        builder: (context) {
           return Material(
             color: Colors.transparent,
             child: ListView(
@@ -35,8 +36,11 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                       radius: 0,
                     ),
                     if (media.type.isVideo)
-                      Icon(Icons.play_arrow_rounded,
-                          size: 50, color: context.colorScheme.onPrimary),
+                      Icon(
+                        Icons.play_arrow_rounded,
+                        size: 50,
+                        color: context.colorScheme.onPrimary,
+                      ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -95,31 +99,36 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                       : '${media.displayWidth?.toInt()} x ${media.displayHeight?.toInt()}',
                 ),
                 ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    dense: true,
-                    title: Text(
-                      context.l10n.source_text,
-                      style: AppTextStyles.body.copyWith(
-                        color: context.colorScheme.textPrimary,
-                      ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  dense: true,
+                  title: Text(
+                    context.l10n.source_text,
+                    style: AppTextStyles.body.copyWith(
+                      color: context.colorScheme.textPrimary,
                     ),
-                    subtitle: Row(
-                      children: [
-                        if (media.sources.contains(AppMediaSource.local))
-                          Icon(Icons.phone_android_rounded,
-                              color: context.colorScheme.textSecondary,
-                              size: 20),
-                        if (media.sources.contains(AppMediaSource.googleDrive))
-                          SvgPicture.asset(
-                            Assets.images.icons.googleDrive,
-                            width: 20,
-                          )
-                      ],
-                    ))
+                  ),
+                  subtitle: Row(
+                    children: [
+                      if (media.sources.contains(AppMediaSource.local))
+                        Icon(
+                          Icons.phone_android_rounded,
+                          color: context.colorScheme.textSecondary,
+                          size: 20,
+                        ),
+                      if (media.sources.contains(AppMediaSource.googleDrive))
+                        SvgPicture.asset(
+                          Assets.images.icons.googleDrive,
+                          width: 20,
+                        ),
+                    ],
+                  ),
+                ),
               ],
             ),
           );
-        }));
+        },
+      ),
+    );
   }
 }
 

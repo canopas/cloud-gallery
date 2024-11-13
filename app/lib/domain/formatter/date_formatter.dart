@@ -1,4 +1,4 @@
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
+import '../extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 

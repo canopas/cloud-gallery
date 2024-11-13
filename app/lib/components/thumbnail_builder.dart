@@ -58,9 +58,11 @@ class AppMediaImage extends StatelessWidget {
       return FileImage(File(media.path));
     } else if (media.sources.contains(AppMediaSource.local) &&
         media.type.isVideo) {
-      return AssetEntityImageProvider(media.assetEntity,
-          thumbnailSize: ThumbnailSize(size.width.toInt(), size.height.toInt()),
-          thumbnailFormat: ThumbnailFormat.png);
+      return AssetEntityImageProvider(
+        media.assetEntity,
+        thumbnailSize: ThumbnailSize(size.width.toInt(), size.height.toInt()),
+        thumbnailFormat: ThumbnailFormat.png,
+      );
     } else {
       return CachedNetworkImageProvider(media.thumbnailLink ?? '');
     }
@@ -72,8 +74,12 @@ class AppMediaPlaceHolder extends StatelessWidget {
   final Size? size;
   final bool showLoader;
 
-  const AppMediaPlaceHolder(
-      {super.key, this.value, this.showLoader = true, this.size});
+  const AppMediaPlaceHolder({
+    super.key,
+    this.value,
+    this.showLoader = true,
+    this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
