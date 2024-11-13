@@ -99,7 +99,9 @@ class AppMedia with _$AppMedia {
 
   factory AppMedia.fromGoogleDriveFile(drive.File file) {
     final type = AppMediaType.getType(
-        mimeType: file.mimeType, location: file.description ?? '');
+      mimeType: file.mimeType,
+      location: file.description ?? '',
+    );
 
     final height = type.isImage
         ? file.imageMediaMetadata?.height?.toDouble()
@@ -119,7 +121,8 @@ class AppMedia with _$AppMedia {
         type.isVideo && file.videoMediaMetadata?.durationMillis != null
             ? Duration(
                 milliseconds:
-                    int.parse(file.videoMediaMetadata?.durationMillis ?? '0'))
+                    int.parse(file.videoMediaMetadata?.durationMillis ?? '0'),
+              )
             : null;
     return AppMedia(
       id: file.id!,

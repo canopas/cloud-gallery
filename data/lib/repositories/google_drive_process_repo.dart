@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:collection/collection.dart';
-import 'package:data/extensions/iterable_extension.dart';
-import 'package:data/models/app_process/app_process.dart';
-import 'package:data/models/media/media_extension.dart';
-import 'package:data/services/google_drive_service.dart';
-import 'package:data/services/local_media_service.dart';
+import '../extensions/iterable_extension.dart';
+import '../models/app_process/app_process.dart';
+import '../models/media/media_extension.dart';
+import '../services/google_drive_service.dart';
+import '../services/local_media_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,13 +46,20 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
     _backUpFolderID = backUpFolderId;
   }
 
-  void uploadMediasInGoogleDrive(
-      {required List<AppMedia> medias, bool isFromAutoBackup = false}) {
-    _uploadQueue.addAll(medias.map((media) => AppProcess(
-        isFromAutoBackup: isFromAutoBackup,
-        id: media.id,
-        media: media,
-        status: AppProcessStatus.waiting)));
+  void uploadMediasInGoogleDrive({
+    required List<AppMedia> medias,
+    bool isFromAutoBackup = false,
+  }) {
+    _uploadQueue.addAll(
+      medias.map(
+        (media) => AppProcess(
+          isFromAutoBackup: isFromAutoBackup,
+          id: media.id,
+          media: media,
+          status: AppProcessStatus.waiting,
+        ),
+      ),
+    );
     notifyListeners();
     if (!_uploadQueueRunning) _startUploadQueueLoop();
   }
@@ -94,7 +101,8 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
           _uploadQueue.updateWhere(
             where: (element) => element.id == process.id,
             update: (element) => element.copyWith(
-                progress: AppProcessProgress(total: total, chunk: chunk)),
+              progress: AppProcessProgress(total: total, chunk: chunk),
+            ),
           );
           notifyListeners();
         },
@@ -125,8 +133,15 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void deleteMediasFromGoogleDrive({required List<AppMedia> medias}) {
-    _deleteQueue.addAll(medias.map((media) => AppProcess(
-        id: media.id, media: media, status: AppProcessStatus.waiting)));
+    _deleteQueue.addAll(
+      medias.map(
+        (media) => AppProcess(
+          id: media.id,
+          media: media,
+          status: AppProcessStatus.waiting,
+        ),
+      ),
+    );
     notifyListeners();
     if (!_deleteQueueRunning) _startDeleteQueueLoop();
   }
@@ -165,8 +180,15 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
   }
 
   void downloadMediasFromGoogleDrive({required List<AppMedia> medias}) {
-    _downloadQueue.addAll(medias.map((media) => AppProcess(
-        id: media.id, media: media, status: AppProcessStatus.waiting)));
+    _downloadQueue.addAll(
+      medias.map(
+        (media) => AppProcess(
+          id: media.id,
+          media: media,
+          status: AppProcessStatus.waiting,
+        ),
+      ),
+    );
     notifyListeners();
     if (!_downloadQueueRunning) _startDownloadQueueLoop();
   }
@@ -211,7 +233,8 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
           _downloadQueue.updateWhere(
             where: (element) => element.id == process.id,
             update: (element) => element.copyWith(
-                progress: AppProcessProgress(total: total, chunk: received)),
+              progress: AppProcessProgress(total: total, chunk: received),
+            ),
           );
           notifyListeners();
         },
@@ -235,8 +258,9 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
       _downloadQueue.updateWhere(
         where: (element) => element.id == process.id,
         update: (element) => element.copyWith(
-            status: AppProcessStatus.success,
-            response: localMedia.mergeGoogleDriveMedia(updatedMedia)),
+          status: AppProcessStatus.success,
+          response: localMedia.mergeGoogleDriveMedia(updatedMedia),
+        ),
       );
     } catch (error) {
       if (error is RequestCancelledByUser) {
@@ -266,9 +290,10 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
         _uploadQueue.firstWhereOrNull((element) => element.id == id)?.status;
     if (previousStatus?.isProcessing ?? false) {
       _uploadQueue.updateWhere(
-          where: (element) => element.id == id,
-          update: (element) =>
-              element.copyWith(status: AppProcessStatus.terminated));
+        where: (element) => element.id == id,
+        update: (element) =>
+            element.copyWith(status: AppProcessStatus.terminated),
+      );
     } else if (previousStatus?.isWaiting ?? false) {
       _uploadQueue.removeWhere((element) => element.id == id);
     }
@@ -278,7 +303,8 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
 
   void terminateAllAutoBackupProcess() {
     _uploadQueue.removeWhere(
-        (element) => element.isFromAutoBackup && element.status.isWaiting);
+      (element) => element.isFromAutoBackup && element.status.isWaiting,
+    );
     notifyListeners();
   }
 
@@ -289,9 +315,10 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
 
   void terminateDownloadProcess(String id) {
     _downloadQueue.updateWhere(
-        where: (element) => element.id == id,
-        update: (element) =>
-            element.copyWith(status: AppProcessStatus.terminated));
+      where: (element) => element.id == id,
+      update: (element) =>
+          element.copyWith(status: AppProcessStatus.terminated),
+    );
     notifyListeners();
   }
 }

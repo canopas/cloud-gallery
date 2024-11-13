@@ -1,4 +1,4 @@
-import 'package:data/storage/provider/preferences_provider.dart';
+import 'provider/preferences_provider.dart';
 
 class AppPreferences {
   static final isOnBoardComplete = createPrefProvider<bool>(

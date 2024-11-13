@@ -5,10 +5,11 @@ part 'media_content.freezed.dart';
 
 @freezed
 class AppMediaContent with _$AppMediaContent {
-  const factory AppMediaContent(
-      {required Stream<List<int>> stream,
-      required int? length,
-      required String contentType}) = _AppMediaContent;
+  const factory AppMediaContent({
+    required Stream<List<int>> stream,
+    required int? length,
+    required String contentType,
+  }) = _AppMediaContent;
 
   factory AppMediaContent.fromGoogleDrive(drive.Media media) => AppMediaContent(
         stream: media.stream,

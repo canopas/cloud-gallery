@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:data/errors/l10n_error_codes.dart';
+import 'l10n_error_codes.dart';
 import 'package:dio/dio.dart' show DioException, DioExceptionType;
 
 class AppError implements Exception {
@@ -36,17 +36,19 @@ class AppError implements Exception {
 class NoConnectionError extends AppError {
   const NoConnectionError()
       : super(
-            l10nCode: AppErrorL10nCodes.noInternetConnection,
-            message:
-                "No internet connection. Please check your network and try again.");
+          l10nCode: AppErrorL10nCodes.noInternetConnection,
+          message:
+              "No internet connection. Please check your network and try again.",
+        );
 }
 
 class UserGoogleSignInAccountNotFound extends AppError {
   const UserGoogleSignInAccountNotFound()
       : super(
-            l10nCode: AppErrorL10nCodes.googleSignInUserNotFoundError,
-            message:
-                "User google signed in account not found. Please sign in again");
+          l10nCode: AppErrorL10nCodes.googleSignInUserNotFoundError,
+          message:
+              "User google signed in account not found. Please sign in again",
+        );
 }
 
 class RequestCancelledByUser extends AppError {
@@ -59,8 +61,9 @@ class RequestCancelledByUser extends AppError {
 class BackUpFolderNotFound extends AppError {
   const BackUpFolderNotFound()
       : super(
-            l10nCode: AppErrorL10nCodes.backUpFolderNotFound,
-            message: "Back up folder not found");
+          l10nCode: AppErrorL10nCodes.backUpFolderNotFound,
+          message: "Back up folder not found",
+        );
 }
 
 class UnableToSaveFileInGallery extends AppError {
