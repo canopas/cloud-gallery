@@ -1,4 +1,4 @@
-import 'package:cloud_gallery/ui/navigation/app_router.dart';
+import '../../ui/navigation/app_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,13 +65,14 @@ class NotificationHandler {
     }
   }
 
-  Future<void> showNotification(
-      {required int id,
-      required String name,
-      required String description,
-      bool vibration = true,
-      int? progress,
-      int maxProgress = 100}) async {
+  Future<void> showNotification({
+    required int id,
+    required String name,
+    required String description,
+    bool vibration = true,
+    int? progress,
+    int maxProgress = 100,
+  }) async {
     await _flutterLocalNotificationsPlugin.show(
       id,
       name,

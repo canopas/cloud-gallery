@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:style/extensions/context_extensions.dart';
+import '../extensions/context_extensions.dart';
 
 class ItemSelector extends StatelessWidget {
   final void Function()? onTap;
@@ -7,12 +7,13 @@ class ItemSelector extends StatelessWidget {
   final bool isSelected;
   final Widget child;
 
-  const ItemSelector(
-      {super.key,
-      this.onTap,
-      this.onLongTap,
-      required this.isSelected,
-      required this.child});
+  const ItemSelector({
+    super.key,
+    this.onTap,
+    this.onLongTap,
+    required this.isSelected,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +27,11 @@ class ItemSelector extends StatelessWidget {
             scale: isSelected ? 0.9 : 1,
             duration: const Duration(milliseconds: 100),
             child: AnimatedOpacity(
-                curve: Curves.easeInOut,
-                duration: const Duration(milliseconds: 100),
-                opacity: isSelected ? 0.7 : 1,
-                child: child),
+              curve: Curves.easeInOut,
+              duration: const Duration(milliseconds: 100),
+              opacity: isSelected ? 0.7 : 1,
+              child: child,
+            ),
           ),
           if (isSelected)
             Align(

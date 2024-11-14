@@ -67,17 +67,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
           color: context.colorScheme.textSecondary,
         ),
       ),
-      body: Builder(builder: (context) {
-        return Padding(
-          padding: context.systemPadding,
-          child: Stack(
-            children: [
-              WebViewWidget(controller: _controller),
-              if (_loading) const Center(child: AppCircularProgressIndicator()),
-            ],
-          ),
-        );
-      }),
+      body: Builder(
+        builder: (context) {
+          return Padding(
+            padding: context.systemPadding,
+            child: Stack(
+              children: [
+                WebViewWidget(controller: _controller),
+                if (_loading)
+                  const Center(child: AppCircularProgressIndicator()),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

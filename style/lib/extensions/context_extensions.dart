@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:style/theme/theme.dart';
+import '../theme/theme.dart';
 
 extension BuildContextExtensions on BuildContext {
   EdgeInsets get systemPadding => MediaQuery.paddingOf(this);

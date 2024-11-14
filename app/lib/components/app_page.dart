@@ -119,13 +119,14 @@ class AdaptiveAppBar extends StatelessWidget {
   final bool iosTransitionBetweenRoutes;
   final bool automaticallyImplyLeading;
 
-  const AdaptiveAppBar(
-      {super.key,
-      required this.text,
-      this.leading,
-      this.actions,
-      this.iosTransitionBetweenRoutes = true,
-      this.automaticallyImplyLeading = true});
+  const AdaptiveAppBar({
+    super.key,
+    required this.text,
+    this.leading,
+    this.actions,
+    this.iosTransitionBetweenRoutes = true,
+    this.automaticallyImplyLeading = true,
+  });
 
   @override
   Widget build(BuildContext context) {

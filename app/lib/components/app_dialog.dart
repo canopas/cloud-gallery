@@ -27,9 +27,11 @@ Future<T?> showAppAlertDialog<T>({
     builder: (context) {
       if (Platform.isIOS || Platform.isMacOS) {
         return CupertinoAlertDialog(
-          title: Text(title,
-              style: AppTextStyles.body
-                  .copyWith(color: context.colorScheme.textPrimary)),
+          title: Text(
+            title,
+            style: AppTextStyles.body
+                .copyWith(color: context.colorScheme.textPrimary),
+          ),
           content: Text(
             message,
             style: AppTextStyles.caption
@@ -42,9 +44,10 @@ Future<T?> showAppAlertDialog<T>({
                 child: Text(
                   action.title,
                   style: AppTextStyles.button.copyWith(
-                      color: action.isDestructiveAction
-                          ? context.colorScheme.alert
-                          : context.colorScheme.textPrimary),
+                    color: action.isDestructiveAction
+                        ? context.colorScheme.alert
+                        : context.colorScheme.textPrimary,
+                  ),
                 ),
               ),
           ],
@@ -56,9 +59,11 @@ Future<T?> showAppAlertDialog<T>({
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(22),
         ),
-        title: Text(title,
-            style: AppTextStyles.body
-                .copyWith(color: context.colorScheme.textPrimary)),
+        title: Text(
+          title,
+          style: AppTextStyles.body
+              .copyWith(color: context.colorScheme.textPrimary),
+        ),
         content: Text(
           message,
           style: AppTextStyles.caption
@@ -71,9 +76,10 @@ Future<T?> showAppAlertDialog<T>({
               child: Text(
                 action.title,
                 style: AppTextStyles.button.copyWith(
-                    color: action.isDestructiveAction
-                        ? context.colorScheme.alert
-                        : context.colorScheme.textPrimary),
+                  color: action.isDestructiveAction
+                      ? context.colorScheme.alert
+                      : context.colorScheme.textPrimary,
+                ),
               ),
             ),
         ],

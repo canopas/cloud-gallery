@@ -1,8 +1,8 @@
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
-import 'package:cloud_gallery/ui/flow/accounts/accounts_screen_view_model.dart';
-import 'package:cloud_gallery/ui/flow/accounts/components/settings_action_list.dart';
+import '../../../components/app_page.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import '../../../domain/extensions/widget_extensions.dart';
+import 'accounts_screen_view_model.dart';
+import 'components/settings_action_list.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +46,8 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   Widget build(BuildContext context) {
     _errorObserver();
     final googleAccount = ref.watch(
-        accountsStateNotifierProvider.select((value) => value.googleAccount));
+      accountsStateNotifierProvider.select((value) => value.googleAccount),
+    );
     return AppPage(
       title: context.l10n.common_accounts,
       bodyBuilder: (context) {
@@ -58,30 +59,36 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                 name: googleAccount.displayName ?? googleAccount.email,
                 serviceDescription: context.l10n.common_google_drive,
                 profileImage: googleAccount.photoUrl,
-                actionList: ActionList(buttons: [
-                  ActionListButton(
-                    title: context.l10n.common_auto_back_up,
-                    trailing: Consumer(
-                      builder: (context, ref, child) {
-                        final googleDriveAutoBackUp = ref.watch(
-                            AppPreferences.canTakeAutoBackUpInGoogleDrive);
-                        return AppSwitch(
-                          value: googleDriveAutoBackUp,
-                          onChanged: (bool value) {
-                            ref
-                                .read(AppPreferences
-                                    .canTakeAutoBackUpInGoogleDrive.notifier)
-                                .state = value;
-                          },
-                        );
-                      },
+                actionList: ActionList(
+                  buttons: [
+                    ActionListButton(
+                      title: context.l10n.common_auto_back_up,
+                      trailing: Consumer(
+                        builder: (context, ref, child) {
+                          final googleDriveAutoBackUp = ref.watch(
+                            AppPreferences.canTakeAutoBackUpInGoogleDrive,
+                          );
+                          return AppSwitch(
+                            value: googleDriveAutoBackUp,
+                            onChanged: (bool value) {
+                              ref
+                                  .read(
+                                    AppPreferences
+                                        .canTakeAutoBackUpInGoogleDrive
+                                        .notifier,
+                                  )
+                                  .state = value;
+                            },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  ActionListButton(
-                    title: context.l10n.common_sign_out,
-                    onPressed: notifier.signOutWithGoogle,
-                  ),
-                ]),
+                    ActionListButton(
+                      title: context.l10n.common_sign_out,
+                      onPressed: notifier.signOutWithGoogle,
+                    ),
+                  ],
+                ),
                 backgroundColor: AppColors.googleDriveColor.withAlpha(50),
               ),
             if (googleAccount == null)
@@ -104,19 +111,21 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
     );
   }
 
-  Widget _buildVersion({required BuildContext context}) =>
-      Consumer(builder: (context, ref, child) {
-        final version = ref.watch(
-            accountsStateNotifierProvider.select((value) => value.version));
-        return Visibility(
-          visible: version != null,
-          child: Text(
-            "${context.l10n.version_text} $version",
-            style: AppTextStyles.body2.copyWith(
-              color: context.colorScheme.textSecondary,
+  Widget _buildVersion({required BuildContext context}) => Consumer(
+        builder: (context, ref, child) {
+          final version = ref.watch(
+            accountsStateNotifierProvider.select((value) => value.version),
+          );
+          return Visibility(
+            visible: version != null,
+            child: Text(
+              "${context.l10n.version_text} $version",
+              style: AppTextStyles.body2.copyWith(
+                color: context.colorScheme.textSecondary,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        );
-      });
+          );
+        },
+      );
 }

@@ -24,9 +24,11 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
   StreamSubscription? _googleAccountSubscription;
   PreferenceNotifier<bool> canTakeAutoBackUpInGoogleDrive;
 
-  AccountsStateNotifier(this._deviceService, this._authService,
-      this.canTakeAutoBackUpInGoogleDrive)
-      : super(AccountsState(googleAccount: _authService.googleAccount));
+  AccountsStateNotifier(
+    this._deviceService,
+    this._authService,
+    this.canTakeAutoBackUpInGoogleDrive,
+  ) : super(AccountsState(googleAccount: _authService.googleAccount));
 
   Future<void> init() async {
     _getAppVersion();

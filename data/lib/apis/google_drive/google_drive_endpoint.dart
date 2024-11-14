@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:data/apis/network/base_url.dart';
-import 'package:data/apis/network/endpoint.dart';
-import 'package:data/models/media_content/media_content.dart';
+import '../network/base_url.dart';
+import '../network/endpoint.dart';
+import '../../models/media_content/media_content.dart';
 import 'package:dio/dio.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http_parser/http_parser.dart';

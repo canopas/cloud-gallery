@@ -17,18 +17,15 @@ _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
       displayWidth: (json['displayWidth'] as num?)?.toDouble(),
       type: $enumDecode(_$AppMediaTypeEnumMap, json['type']),
       mimeType: json['mimeType'] as String?,
-      createdTime: json['createdTime'] == null
-          ? null
-          : DateTime.parse(json['createdTime'] as String),
-      modifiedTime: json['modifiedTime'] == null
-          ? null
-          : DateTime.parse(json['modifiedTime'] as String),
+      createdTime: _$JsonConverterFromJson<String, DateTime>(
+          json['createdTime'], const DateTimeJsonConverter().fromJson),
+      modifiedTime: _$JsonConverterFromJson<String, DateTime>(
+          json['modifiedTime'], const DateTimeJsonConverter().fromJson),
       orientation: $enumDecodeNullable(
           _$AppMediaOrientationEnumMap, json['orientation']),
       size: json['size'] as String?,
-      videoDuration: json['videoDuration'] == null
-          ? null
-          : Duration(microseconds: (json['videoDuration'] as num).toInt()),
+      videoDuration: _$JsonConverterFromJson<int, Duration>(
+          json['videoDuration'], const DurationJsonConverter().fromJson),
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
       sources: (json['sources'] as List<dynamic>?)
@@ -48,11 +45,14 @@ Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
       'displayWidth': instance.displayWidth,
       'type': _$AppMediaTypeEnumMap[instance.type]!,
       'mimeType': instance.mimeType,
-      'createdTime': instance.createdTime?.toIso8601String(),
-      'modifiedTime': instance.modifiedTime?.toIso8601String(),
+      'createdTime': _$JsonConverterToJson<String, DateTime>(
+          instance.createdTime, const DateTimeJsonConverter().toJson),
+      'modifiedTime': _$JsonConverterToJson<String, DateTime>(
+          instance.modifiedTime, const DateTimeJsonConverter().toJson),
       'orientation': _$AppMediaOrientationEnumMap[instance.orientation],
       'size': instance.size,
-      'videoDuration': instance.videoDuration?.inMicroseconds,
+      'videoDuration': _$JsonConverterToJson<int, Duration>(
+          instance.videoDuration, const DurationJsonConverter().toJson),
       'latitude': instance.latitude,
       'longitude': instance.longitude,
       'sources':
@@ -65,6 +65,12 @@ const _$AppMediaTypeEnumMap = {
   AppMediaType.video: 'video',
 };
 
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
 const _$AppMediaOrientationEnumMap = {
   AppMediaOrientation.landscape: 'landscape',
   AppMediaOrientation.portrait: 'portrait',
@@ -72,5 +78,11 @@ const _$AppMediaOrientationEnumMap = {
 
 const _$AppMediaSourceEnumMap = {
   AppMediaSource.local: 'local',
-  AppMediaSource.googleDrive: 'googleDrive',
+  AppMediaSource.googleDrive: 'google_drive',
 };
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);

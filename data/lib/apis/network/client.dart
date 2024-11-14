@@ -1,6 +1,6 @@
-import 'package:data/apis/network/interceptors/auth_interceptor.dart';
-import 'package:data/errors/app_error.dart';
-import 'package:data/services/auth_service.dart';
+import 'interceptors/auth_interceptor.dart';
+import '../../errors/app_error.dart';
+import '../../services/auth_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'endpoint.dart';

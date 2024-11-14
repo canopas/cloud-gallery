@@ -1,5 +1,5 @@
-import 'package:cloud_gallery/components/thumbnail_builder.dart';
-import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
+import '../../../../components/thumbnail_builder.dart';
+import '../../../../domain/formatter/duration_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
@@ -102,11 +102,12 @@ class _AppMediaItemState extends State<AppMediaItem>
         if (widget.process?.status.isProcessing ?? false)
           _BackgroundContainer(
             margin: EdgeInsets.symmetric(
-                vertical: 4,
-                horizontal:
-                    widget.media.sources.contains(AppMediaSource.googleDrive)
-                        ? 0
-                        : 4),
+              vertical: 4,
+              horizontal:
+                  widget.media.sources.contains(AppMediaSource.googleDrive)
+                      ? 0
+                      : 4,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -123,7 +124,7 @@ class _AppMediaItemState extends State<AppMediaItem>
                       color: context.colorScheme.surfaceInverse,
                     ),
                   ),
-                ]
+                ],
               ],
             ),
           ),
@@ -147,8 +148,10 @@ class _BackgroundContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsets margin;
 
-  const _BackgroundContainer(
-      {required this.child, this.margin = const EdgeInsets.all(4)});
+  const _BackgroundContainer({
+    required this.child,
+    this.margin = const EdgeInsets.all(4),
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -3,14 +3,22 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
 import 'package:photo_manager/photo_manager.dart' show AssetEntity;
 
+import '../../domain/json_converters/date_time_json_converter.dart';
+import '../../domain/json_converters/duration_json_converter.dart';
+
 part 'media.freezed.dart';
 
 part 'media.g.dart';
 
+@JsonEnum(valueField: 'value')
 enum AppMediaType {
-  other,
-  image,
-  video;
+  other('other'),
+  image('image'),
+  video('video');
+
+  final String value;
+
+  const AppMediaType(this.value);
 
   bool get isImage => this == AppMediaType.image;
 
@@ -58,22 +66,33 @@ enum AppMediaType {
   }
 }
 
+@JsonEnum(valueField: 'value')
 enum AppMediaOrientation {
-  landscape,
-  portrait;
+  landscape("landscape"),
+  portrait('portrait');
+
+  final String value;
+
+  const AppMediaOrientation(this.value);
 
   bool get isLandscape => this == AppMediaOrientation.landscape;
 
   bool get isPortrait => this == AppMediaOrientation.portrait;
 }
 
+@JsonEnum(valueField: 'value')
 enum AppMediaSource {
-  local,
-  googleDrive,
+  local('local'),
+  googleDrive('google_drive');
+
+  final String value;
+
+  const AppMediaSource(this.value);
 }
 
 @freezed
 class AppMedia with _$AppMedia {
+  const AppMedia._();
   const factory AppMedia({
     required String id,
     String? driveMediaRefId,
@@ -84,11 +103,11 @@ class AppMedia with _$AppMedia {
     double? displayWidth,
     required AppMediaType type,
     String? mimeType,
-    DateTime? createdTime,
-    DateTime? modifiedTime,
+    @DateTimeJsonConverter() DateTime? createdTime,
+    @DateTimeJsonConverter() DateTime? modifiedTime,
     AppMediaOrientation? orientation,
     String? size,
-    Duration? videoDuration,
+    @DurationJsonConverter() Duration? videoDuration,
     double? latitude,
     double? longitude,
     @Default([AppMediaSource.local]) List<AppMediaSource> sources,
@@ -99,7 +118,9 @@ class AppMedia with _$AppMedia {
 
   factory AppMedia.fromGoogleDriveFile(drive.File file) {
     final type = AppMediaType.getType(
-        mimeType: file.mimeType, location: file.description ?? '');
+      mimeType: file.mimeType,
+      location: file.description ?? '',
+    );
 
     final height = type.isImage
         ? file.imageMediaMetadata?.height?.toDouble()
@@ -119,7 +140,8 @@ class AppMedia with _$AppMedia {
         type.isVideo && file.videoMediaMetadata?.durationMillis != null
             ? Duration(
                 milliseconds:
-                    int.parse(file.videoMediaMetadata?.durationMillis ?? '0'))
+                    int.parse(file.videoMediaMetadata?.durationMillis ?? '0'),
+              )
             : null;
     return AppMedia(
       id: file.id!,

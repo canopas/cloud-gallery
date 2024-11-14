@@ -6,7 +6,7 @@ import 'media.dart';
 
 extension AppMediaExtension on AppMedia {
   Future<Uint8List?> loadThumbnail({Size size = const Size(300, 300)}) async {
-    var rootToken = RootIsolateToken.instance!;
+    final rootToken = RootIsolateToken.instance!;
     final ThumbNailParameter thumbNailParameter =
         ThumbNailParameter(rootToken, size, id, type);
     final bytes = await compute(_loadThumbnailInBackground, thumbNailParameter);
@@ -14,7 +14,8 @@ extension AppMediaExtension on AppMedia {
   }
 
   FutureOr<Uint8List?> _loadThumbnailInBackground(
-      ThumbNailParameter parameters) async {
+    ThumbNailParameter parameters,
+  ) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(parameters.token);
     return await AssetEntity(
       id: parameters.id,

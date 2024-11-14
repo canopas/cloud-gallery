@@ -29,10 +29,13 @@ mixin _$AppMedia {
   double? get displayWidth => throw _privateConstructorUsedError;
   AppMediaType get type => throw _privateConstructorUsedError;
   String? get mimeType => throw _privateConstructorUsedError;
+  @DateTimeJsonConverter()
   DateTime? get createdTime => throw _privateConstructorUsedError;
+  @DateTimeJsonConverter()
   DateTime? get modifiedTime => throw _privateConstructorUsedError;
   AppMediaOrientation? get orientation => throw _privateConstructorUsedError;
   String? get size => throw _privateConstructorUsedError;
+  @DurationJsonConverter()
   Duration? get videoDuration => throw _privateConstructorUsedError;
   double? get latitude => throw _privateConstructorUsedError;
   double? get longitude => throw _privateConstructorUsedError;
@@ -63,11 +66,11 @@ abstract class $AppMediaCopyWith<$Res> {
       double? displayWidth,
       AppMediaType type,
       String? mimeType,
-      DateTime? createdTime,
-      DateTime? modifiedTime,
+      @DateTimeJsonConverter() DateTime? createdTime,
+      @DateTimeJsonConverter() DateTime? modifiedTime,
       AppMediaOrientation? orientation,
       String? size,
-      Duration? videoDuration,
+      @DurationJsonConverter() Duration? videoDuration,
       double? latitude,
       double? longitude,
       List<AppMediaSource> sources});
@@ -197,11 +200,11 @@ abstract class _$$AppMediaImplCopyWith<$Res>
       double? displayWidth,
       AppMediaType type,
       String? mimeType,
-      DateTime? createdTime,
-      DateTime? modifiedTime,
+      @DateTimeJsonConverter() DateTime? createdTime,
+      @DateTimeJsonConverter() DateTime? modifiedTime,
       AppMediaOrientation? orientation,
       String? size,
-      Duration? videoDuration,
+      @DurationJsonConverter() Duration? videoDuration,
       double? latitude,
       double? longitude,
       List<AppMediaSource> sources});
@@ -313,7 +316,7 @@ class __$$AppMediaImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$AppMediaImpl implements _AppMedia {
+class _$AppMediaImpl extends _AppMedia {
   const _$AppMediaImpl(
       {required this.id,
       this.driveMediaRefId,
@@ -324,15 +327,16 @@ class _$AppMediaImpl implements _AppMedia {
       this.displayWidth,
       required this.type,
       this.mimeType,
-      this.createdTime,
-      this.modifiedTime,
+      @DateTimeJsonConverter() this.createdTime,
+      @DateTimeJsonConverter() this.modifiedTime,
       this.orientation,
       this.size,
-      this.videoDuration,
+      @DurationJsonConverter() this.videoDuration,
       this.latitude,
       this.longitude,
       final List<AppMediaSource> sources = const [AppMediaSource.local]})
-      : _sources = sources;
+      : _sources = sources,
+        super._();
 
   factory _$AppMediaImpl.fromJson(Map<String, dynamic> json) =>
       _$$AppMediaImplFromJson(json);
@@ -356,14 +360,17 @@ class _$AppMediaImpl implements _AppMedia {
   @override
   final String? mimeType;
   @override
+  @DateTimeJsonConverter()
   final DateTime? createdTime;
   @override
+  @DateTimeJsonConverter()
   final DateTime? modifiedTime;
   @override
   final AppMediaOrientation? orientation;
   @override
   final String? size;
   @override
+  @DurationJsonConverter()
   final Duration? videoDuration;
   @override
   final double? latitude;
@@ -456,7 +463,7 @@ class _$AppMediaImpl implements _AppMedia {
   }
 }
 
-abstract class _AppMedia implements AppMedia {
+abstract class _AppMedia extends AppMedia {
   const factory _AppMedia(
       {required final String id,
       final String? driveMediaRefId,
@@ -467,14 +474,15 @@ abstract class _AppMedia implements AppMedia {
       final double? displayWidth,
       required final AppMediaType type,
       final String? mimeType,
-      final DateTime? createdTime,
-      final DateTime? modifiedTime,
+      @DateTimeJsonConverter() final DateTime? createdTime,
+      @DateTimeJsonConverter() final DateTime? modifiedTime,
       final AppMediaOrientation? orientation,
       final String? size,
-      final Duration? videoDuration,
+      @DurationJsonConverter() final Duration? videoDuration,
       final double? latitude,
       final double? longitude,
       final List<AppMediaSource> sources}) = _$AppMediaImpl;
+  const _AppMedia._() : super._();
 
   factory _AppMedia.fromJson(Map<String, dynamic> json) =
       _$AppMediaImpl.fromJson;
@@ -498,14 +506,17 @@ abstract class _AppMedia implements AppMedia {
   @override
   String? get mimeType;
   @override
+  @DateTimeJsonConverter()
   DateTime? get createdTime;
   @override
+  @DateTimeJsonConverter()
   DateTime? get modifiedTime;
   @override
   AppMediaOrientation? get orientation;
   @override
   String? get size;
   @override
+  @DurationJsonConverter()
   Duration? get videoDuration;
   @override
   double? get latitude;

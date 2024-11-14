@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
-import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/domain/handlers/notification_handler.dart';
-import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
-import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
+import '../../../components/app_page.dart';
+import '../../../domain/extensions/widget_extensions.dart';
+import '../../../domain/formatter/date_formatter.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import '../../../domain/handlers/notification_handler.dart';
+import 'components/no_local_medias_access_screen.dart';
+import 'home_screen_view_model.dart';
 import 'package:collection/collection.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
@@ -17,7 +17,7 @@ import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../components/snack_bar.dart';
 import '../../../domain/assets/assets_paths.dart';
-import '../../navigation/app_router.dart';
+import '../../navigation/app_route.dart';
 import 'components/app_media_item.dart';
 import 'components/hints.dart';
 import 'components/multi_selection_done_button.dart';
@@ -81,35 +81,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       titleWidget: _titleWidget(context: context),
       actions: [
-        Consumer(builder: (context, ref, child) {
-          final showTransferButton = ref.watch(
-              homeViewStateNotifier.select((value) => value.showTransfer));
-          return Visibility(
-            visible: showTransferButton,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: ActionButton(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                size: 36,
-                backgroundColor: context.colorScheme.containerNormal,
-                onPressed: () {
-                  AppRouter.mediaTransfer.push(context);
-                },
-                icon: Icon(
-                  CupertinoIcons.arrow_up_arrow_down,
-                  color: context.colorScheme.textSecondary,
-                  size: 18,
+        Consumer(
+          builder: (context, ref, child) {
+            final showTransferButton = ref.watch(
+              homeViewStateNotifier.select((value) => value.showTransfer),
+            );
+            return Visibility(
+              visible: showTransferButton,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ActionButton(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  size: 36,
+                  backgroundColor: context.colorScheme.containerNormal,
+                  onPressed: () {
+                    TransferRoute().push(context);
+                  },
+                  icon: Icon(
+                    CupertinoIcons.arrow_up_arrow_down,
+                    color: context.colorScheme.textSecondary,
+                    size: 18,
+                  ),
                 ),
               ),
-            ),
-          );
-        }),
+            );
+          },
+        ),
         ActionButton(
           size: 36,
           backgroundColor: context.colorScheme.containerNormal,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           onPressed: () {
-            AppRouter.accounts.push(context);
+            AccountRoute().push(context);
           },
           icon: Icon(
             CupertinoIcons.person,
@@ -132,14 +135,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bool isLoading,
       bool hasLocalMediaAccess,
       String? lastLocalMediaId
-    }) state = ref.watch(homeViewStateNotifier.select((value) => (
+    }) state = ref.watch(
+      homeViewStateNotifier.select(
+        (value) => (
           medias: value.medias,
           mediaProcesses: value.mediaProcesses,
           selectedMedias: value.selectedMedias,
           isLoading: value.loading,
           hasLocalMediaAccess: value.hasLocalMediaAccess,
           lastLocalMediaId: value.lastLocalMediaId,
-        )));
+        ),
+      ),
+    );
 
     //View
     if (state.isLoading) {
@@ -166,12 +173,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildMediaList(
-      {required BuildContext context,
-      required Map<DateTime, List<AppMedia>> medias,
-      required List<AppProcess> mediaProcesses,
-      required String? lastLocalMediaId,
-      required List<AppMedia> selectedMedias}) {
+  Widget _buildMediaList({
+    required BuildContext context,
+    required Map<DateTime, List<AppMedia>> medias,
+    required List<AppProcess> mediaProcesses,
+    required String? lastLocalMediaId,
+    required List<AppMedia> selectedMedias,
+  }) {
     return Scrollbar(
       controller: _scrollController,
       interactive: true,
@@ -225,12 +233,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         if (selectedMedias.isNotEmpty) {
                           notifier.toggleMediaSelection(media);
                         } else {
-                          await AppRouter.preview(
-                                  medias: medias.values
-                                      .expand((element) => element)
-                                      .toList(),
-                                  startFrom: media.id)
-                              .push(context);
+                          await MediaPreviewRoute(
+                            $extra: MediaPreviewRouteData(
+                              medias: medias.values
+                                  .expand((element) => element)
+                                  .toList(),
+                              startFrom: media.id,
+                            ),
+                          ).push(context);
                           notifier.loadLocalMedia();
                         }
                       },
@@ -239,7 +249,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       },
                       isSelected: selectedMedias.contains(media),
                       process: mediaProcesses.firstWhereOrNull(
-                          (process) => process.id == media.id),
+                        (process) => process.id == media.id,
+                      ),
                       media: media,
                     );
                   },
@@ -261,7 +272,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           width: 28,
         ),
         const SizedBox(width: 10),
-        Text(context.l10n.app_name)
+        Text(context.l10n.app_name),
       ],
     );
   }

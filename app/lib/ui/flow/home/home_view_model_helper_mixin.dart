@@ -1,5 +1,5 @@
-import 'package:cloud_gallery/domain/extensions/media_list_extension.dart';
-import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
+import '../../../domain/extensions/media_list_extension.dart';
+import '../../../domain/formatter/date_formatter.dart';
 import 'package:collection/collection.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
@@ -35,8 +35,10 @@ mixin HomeViewModelHelperMixin {
   }
 
   Map<DateTime, List<AppMedia>> sortMedias({required List<AppMedia> medias}) {
-    medias.sort((a, b) => (b.createdTime ?? DateTime.now())
-        .compareTo(a.createdTime ?? DateTime.now()));
+    medias.sort(
+      (a, b) => (b.createdTime ?? DateTime.now())
+          .compareTo(a.createdTime ?? DateTime.now()),
+    );
     return groupBy<AppMedia, DateTime>(
       medias,
       (AppMedia media) =>
@@ -44,18 +46,20 @@ mixin HomeViewModelHelperMixin {
     );
   }
 
-  Map<DateTime, List<AppMedia>> removeGoogleDriveRefFromMediaMap(
-      {required Map<DateTime, List<AppMedia>> medias,
-      List<String>? removeFromIds}) {
+  Map<DateTime, List<AppMedia>> removeGoogleDriveRefFromMediaMap({
+    required Map<DateTime, List<AppMedia>> medias,
+    List<String>? removeFromIds,
+  }) {
     return sortMedias(
       medias: medias.values.expand((element) => element).toList()
         ..removeGoogleDriveRefFromMedias(removeFromIds: removeFromIds),
     );
   }
 
-  Map<DateTime, List<AppMedia>> removeLocalRefFromMediaMap(
-      {required Map<DateTime, List<AppMedia>> medias,
-      List<String>? removeFromIds}) {
+  Map<DateTime, List<AppMedia>> removeLocalRefFromMediaMap({
+    required Map<DateTime, List<AppMedia>> medias,
+    List<String>? removeFromIds,
+  }) {
     return sortMedias(
       medias: medias.values.expand((element) => element).toList()
         ..removeLocalRefFromMedias(removeFromIds: removeFromIds),
@@ -69,10 +73,13 @@ mixin HomeViewModelHelperMixin {
     final processIds = process.map((e) => e.id).toList();
     return medias.map((key, value) {
       return MapEntry(
-          key,
-          value
-            ..addGoogleDriveRefInMedias(
-                process: process, processIds: processIds));
+        key,
+        value
+          ..addGoogleDriveRefInMedias(
+            process: process,
+            processIds: processIds,
+          ),
+      );
     });
   }
 
@@ -83,10 +90,13 @@ mixin HomeViewModelHelperMixin {
     final processIds = process.map((e) => e.id).toList();
     return medias.map((key, value) {
       return MapEntry(
-          key,
-          value
-            ..replaceMediaRefInMedias(
-                process: process, processIds: processIds));
+        key,
+        value
+          ..replaceMediaRefInMedias(
+            process: process,
+            processIds: processIds,
+          ),
+      );
     });
   }
 }
