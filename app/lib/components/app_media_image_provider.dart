@@ -14,12 +14,16 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
   final AppMedia media;
   final Size thumbnailSize;
 
-  const AppMediaImageProvider(
-      {required this.media, this.thumbnailSize = const Size(500, 500)});
+  const AppMediaImageProvider({
+    required this.media,
+    this.thumbnailSize = const Size(500, 500),
+  });
 
   @override
   ImageStreamCompleter loadImage(
-      AppMediaImageProvider key, ImageDecoderCallback decode) {
+    AppMediaImageProvider key,
+    ImageDecoderCallback decode,
+  ) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode),
       scale: 1.0,
@@ -43,9 +47,9 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
   }
 
   Future<ui.Codec> _loadAsync(
-      AppMediaImageProvider key,
-      ImageDecoderCallback decode,
-      ) async {
+    AppMediaImageProvider key,
+    ImageDecoderCallback decode,
+  ) async {
     if (_providerLocks.containsKey(key)) {
       return _providerLocks[key]!.future;
     }
@@ -55,20 +59,23 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
       try {
         if (media.sources.contains(AppMediaSource.local)) {
           final Uint8List? bytes =
-          await media.loadThumbnail(size: thumbnailSize);
+              await media.loadThumbnail(size: thumbnailSize);
           final buffer = await ui.ImmutableBuffer.fromUint8List(bytes!);
           return decode(buffer);
         } else if (media.thumbnailLink != null &&
             media.thumbnailLink?.isNotEmpty == true) {
-          final bytes = await compute(_loadNetworkImageInBackground,
-              IsolateParameters<String>(data: media.thumbnailLink!));
+          final bytes = await compute(
+            _loadNetworkImageInBackground,
+            IsolateParameters<String>(data: media.thumbnailLink!),
+          );
           final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
           return decode(buffer);
         }
         throw Exception('No image source found.');
       } catch (e) {
         Future<void>.microtask(
-                () => PaintingBinding.instance.imageCache.evict(key));
+          () => PaintingBinding.instance.imageCache.evict(key),
+        );
         rethrow;
       }
     }).then((codec) {
@@ -82,15 +89,19 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
   }
 
   Future<Uint8List> _loadNetworkImageInBackground(
-      IsolateParameters<String> parameters) async {
+    IsolateParameters<String> parameters,
+  ) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(
-        parameters.rootIsolateToken!);
+      parameters.rootIsolateToken!,
+    );
     final Uri resolved = Uri.base.resolve(parameters.data);
     final HttpClientRequest request = await HttpClient().getUrl(resolved);
     final HttpClientResponse response = await request.close();
     if (response.statusCode != HttpStatus.ok) {
       throw NetworkImageLoadException(
-          statusCode: response.statusCode, uri: resolved,);
+        statusCode: response.statusCode,
+        uri: resolved,
+      );
     }
     final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
     return bytes;
