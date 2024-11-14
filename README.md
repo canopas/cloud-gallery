@@ -143,6 +143,12 @@ suggestions, please let us know. We'd love to hear from you!
 
 <br/>
 
+## Contributions 🤝
+
+ We are not currently accepting contributions. However, we appreciate community [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions) for future improvements.
+
+<br/>
+
 ## Created & Maintained By
 
 Cloud Gallery is owned and maintained by the [Canopas team](https://canopas.com/).
