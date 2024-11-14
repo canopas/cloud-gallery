@@ -60,23 +60,17 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
   Widget _displayLocalImage({required BuildContext context}) {
     return Hero(
       tag: widget.media,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: widget.media.displayWidth ?? context.mediaQuerySize.width,
-          minHeight: widget.media.displayHeight ?? context.mediaQuerySize.height,
-        ),
-        child: Image.file(
-          File(widget.media.path),
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return AppPage(
-              body: ErrorView(
-                title: context.l10n.unable_to_load_media_error,
-                message: context.l10n.unable_to_load_media_message,
-              ),
-            );
-          },
-        ),
+      child: Image.file(
+        File(widget.media.path),
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return AppPage(
+            body: ErrorView(
+              title: context.l10n.unable_to_load_media_error,
+              message: context.l10n.unable_to_load_media_message,
+            ),
+          );
+        },
       ),
     );
   }
