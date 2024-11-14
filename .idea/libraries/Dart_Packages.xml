@@ -458,6 +458,13 @@
             </list>
           </value>
         </entry>
+        <entry key="go_router_builder">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/go_router_builder-2.7.1/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="google_identity_services_web">
           <value>
             <list>
@@ -1356,6 +1363,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/frontend_server_client-4.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/glob-2.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/go_router-14.4.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/go_router_builder-2.7.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.1+5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in-6.2.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in_android-6.1.33/lib" />
