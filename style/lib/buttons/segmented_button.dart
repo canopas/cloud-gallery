@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:style/extensions/context_extensions.dart';
-import 'package:style/text/app_text_style.dart';
+import '../extensions/context_extensions.dart';
+import '../text/app_text_style.dart';
 
 class AppButtonSegment<T> {
   const AppButtonSegment({

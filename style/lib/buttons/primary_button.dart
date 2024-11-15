@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:style/extensions/context_extensions.dart';
-import 'package:style/text/app_text_style.dart';
+import '../extensions/context_extensions.dart';
+import '../text/app_text_style.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
   final Widget? child;
   final VoidCallback onPressed;
 
-  const PrimaryButton(
-      {super.key, this.text = '', this.child, required this.onPressed});
+  const PrimaryButton({
+    super.key,
+    this.text = '',
+    this.child,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {

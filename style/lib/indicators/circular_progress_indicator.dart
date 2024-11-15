@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:style/extensions/context_extensions.dart';
+import '../extensions/context_extensions.dart';
 
 class AppCircularProgressIndicator extends StatelessWidget {
   final Color? color;

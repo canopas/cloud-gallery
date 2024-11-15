@@ -22,7 +22,7 @@ management, offering convenience and accessibility.
 
 ## Download App
 
-<a href="https://play.google.com/store/apps/"><img src="./cta/google-play.png" width="200">  </a><a href="https://apps.apple.com/us/app/"><img src="./cta/app-store.png" width="200"></a>
+<a href="https://play.google.com/store/apps/details?id=com.canopas.cloud_gallery"><img src="./cta/google-play.png" width="200">  </a><a href="https://apps.apple.com/in/app/cloud-gallery/id6480052005?platform=iphone"><img src="./cta/app-store.png" width="200"></a>
 
 
 <br/>
@@ -140,6 +140,12 @@ We value
 your [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions).
 If you have any ideas or
 suggestions, please let us know. We'd love to hear from you!
+
+<br/>
+
+## Contributions 🤝
+
+ We are not currently accepting contributions. However, we appreciate community [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions) for future improvements.
 
 <br/>
 

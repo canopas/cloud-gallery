@@ -1,5 +1,5 @@
-import 'package:cloud_gallery/components/thumbnail_builder.dart';
-import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
+import '../../../../components/thumbnail_builder.dart';
+import '../../../../domain/formatter/duration_formatter.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +10,7 @@ import 'package:style/text/app_text_style.dart';
 import '../../../../domain/assets/assets_paths.dart';
 import 'package:style/animations/item_selector.dart';
 
-class AppMediaItem extends StatefulWidget {
+class AppMediaItem extends StatelessWidget {
   final AppMedia media;
   final void Function()? onTap;
   final void Function()? onLongTap;
@@ -27,19 +27,12 @@ class AppMediaItem extends StatefulWidget {
   });
 
   @override
-  State<AppMediaItem> createState() => _AppMediaItemState();
-}
-
-class _AppMediaItemState extends State<AppMediaItem>
-    with AutomaticKeepAliveClientMixin {
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
     return LayoutBuilder(
       builder: (context, constraints) => ItemSelector(
-        onTap: widget.onTap,
-        onLongTap: widget.onLongTap,
-        isSelected: widget.isSelected,
+        onTap: onTap,
+        onLongTap: onLongTap,
+        isSelected: isSelected,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(4),
           child: Stack(
@@ -47,10 +40,10 @@ class _AppMediaItemState extends State<AppMediaItem>
             children: [
               AppMediaImage(
                 size: constraints.biggest,
-                media: widget.media,
-                heroTag: widget.media,
+                media: media,
+                heroTag: media,
               ),
-              if (widget.media.type.isVideo) _videoDuration(context),
+              if (media.type.isVideo) _videoDuration(context),
               _sourceIndicators(context: context),
             ],
           ),
@@ -72,7 +65,7 @@ class _AppMediaItemState extends State<AppMediaItem>
               ),
               const SizedBox(width: 2),
               Text(
-                (widget.media.videoDuration ?? Duration.zero).format,
+                (media.videoDuration ?? Duration.zero).format,
                 style: AppTextStyles.caption.copyWith(
                   color: context.colorScheme.surfaceInverse,
                 ),
@@ -85,12 +78,12 @@ class _AppMediaItemState extends State<AppMediaItem>
   Widget _sourceIndicators({required BuildContext context}) {
     return Row(
       children: [
-        if (widget.media.sources.contains(AppMediaSource.googleDrive))
+        if (media.sources.contains(AppMediaSource.googleDrive))
           _BackgroundContainer(
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (widget.media.sources.contains(AppMediaSource.googleDrive))
+                if (media.sources.contains(AppMediaSource.googleDrive))
                   SvgPicture.asset(
                     Assets.images.icons.googleDrive,
                     height: 14,
@@ -99,35 +92,34 @@ class _AppMediaItemState extends State<AppMediaItem>
               ],
             ),
           ),
-        if (widget.process?.status.isProcessing ?? false)
+        if (process?.status.isProcessing ?? false)
           _BackgroundContainer(
             margin: EdgeInsets.symmetric(
-                vertical: 4,
-                horizontal:
-                    widget.media.sources.contains(AppMediaSource.googleDrive)
-                        ? 0
-                        : 4),
+              vertical: 4,
+              horizontal:
+                  media.sources.contains(AppMediaSource.googleDrive) ? 0 : 4,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 AppCircularProgressIndicator(
                   size: 16,
-                  value: widget.process?.progress?.percentageInPoint,
+                  value: process?.progress?.percentageInPoint,
                   color: context.colorScheme.surfaceInverse,
                 ),
-                if (widget.process?.progress != null) ...[
+                if (process?.progress != null) ...[
                   const SizedBox(width: 4),
                   Text(
-                    '${widget.process?.progress?.percentage.toStringAsFixed(0)}%',
+                    '${process?.progress?.percentage.toStringAsFixed(0)}%',
                     style: AppTextStyles.caption.copyWith(
                       color: context.colorScheme.surfaceInverse,
                     ),
                   ),
-                ]
+                ],
               ],
             ),
           ),
-        if (widget.process?.status.isWaiting ?? false)
+        if (process?.status.isWaiting ?? false)
           _BackgroundContainer(
             child: Icon(
               CupertinoIcons.time,
@@ -138,17 +130,16 @@ class _AppMediaItemState extends State<AppMediaItem>
       ],
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class _BackgroundContainer extends StatelessWidget {
   final Widget child;
   final EdgeInsets margin;
 
-  const _BackgroundContainer(
-      {required this.child, this.margin = const EdgeInsets.all(4)});
+  const _BackgroundContainer({
+    required this.child,
+    this.margin = const EdgeInsets.all(4),
+  });
 
   @override
   Widget build(BuildContext context) {

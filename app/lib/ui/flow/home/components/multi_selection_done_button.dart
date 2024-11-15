@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:cloud_gallery/components/app_dialog.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
+import '../../../../components/app_dialog.dart';
+import '../../../../domain/extensions/context_extensions.dart';
+import '../home_screen_view_model.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,7 +29,8 @@ class MultiSelectionDoneButton extends ConsumerWidget {
     final bool showDeleteFromDeviceButton = selectedMedias
         .any((element) => element.sources.contains(AppMediaSource.local));
     final bool showUploadToDriveButton = selectedMedias.any(
-        (element) => !element.sources.contains(AppMediaSource.googleDrive));
+      (element) => !element.sources.contains(AppMediaSource.googleDrive),
+    );
     final bool showDownloadButton =
         selectedMedias.any((element) => element.isGoogleDriveStored);
     final bool showShareButton =
@@ -51,8 +52,11 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 0, right: 8),
-                        child: Icon(CupertinoIcons.cloud_upload,
-                            color: context.colorScheme.textSecondary, size: 22),
+                        child: Icon(
+                          CupertinoIcons.cloud_upload,
+                          color: context.colorScheme.textSecondary,
+                          size: 22,
+                        ),
                       ),
                       SvgPicture.asset(
                         Assets.images.icons.googleDrive,
@@ -106,8 +110,11 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2, right: 2),
-                        child: Icon(CupertinoIcons.trash,
-                            color: context.colorScheme.textSecondary, size: 22),
+                        child: Icon(
+                          CupertinoIcons.trash,
+                          color: context.colorScheme.textSecondary,
+                          size: 22,
+                        ),
                       ),
                       SvgPicture.asset(
                         Assets.images.icons.googleDrive,
@@ -175,7 +182,6 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                         ),
                       ],
                     );
-
                   },
                 ),
               if (showShareButton)
@@ -187,10 +193,12 @@ class MultiSelectionDoneButton extends ConsumerWidget {
                   ),
                   title: context.l10n.common_share,
                   onPressed: () {
-                    Share.shareXFiles(selectedMedias
-                        .where((element) => element.isLocalStored)
-                        .map((e) => XFile(e.path))
-                        .toList());
+                    Share.shareXFiles(
+                      selectedMedias
+                          .where((element) => element.isLocalStored)
+                          .map((e) => XFile(e.path))
+                          .toList(),
+                    );
                     context.pop();
                   },
                 ),

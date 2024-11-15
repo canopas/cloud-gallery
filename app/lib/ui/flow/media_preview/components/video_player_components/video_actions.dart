@@ -12,13 +12,14 @@ class VideoActions extends StatelessWidget {
   final void Function()? onPlayPause;
   final bool isPlaying;
 
-  const VideoActions(
-      {super.key,
-      required this.showActions,
-      this.onBackward,
-      this.onForward,
-      this.onPlayPause,
-      this.isPlaying = false});
+  const VideoActions({
+    super.key,
+    required this.showActions,
+    this.onBackward,
+    this.onForward,
+    this.onPlayPause,
+    this.isPlaying = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,11 @@ class VideoActions extends StatelessWidget {
               onTap: onBackward,
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: 22, right: 18, top: 18, bottom: 18),
+                  left: 22,
+                  right: 18,
+                  top: 18,
+                  bottom: 18,
+                ),
                 child: Icon(
                   CupertinoIcons.gobackward_10,
                   color: context.colorScheme.onPrimary,
@@ -47,7 +52,10 @@ class VideoActions extends StatelessWidget {
             OnTapScale(
               onTap: onPlayPause,
               child: AnimatedIconAnimation(
-                  value: isPlaying, icon: AnimatedIcons.play_pause, size: 64),
+                value: isPlaying,
+                icon: AnimatedIcons.play_pause,
+                size: 64,
+              ),
             ),
             OnTapScale(
               onTap: onForward,

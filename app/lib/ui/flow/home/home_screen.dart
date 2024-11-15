@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
-import 'package:cloud_gallery/domain/formatter/date_formatter.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/domain/handlers/notification_handler.dart';
-import 'package:cloud_gallery/ui/flow/home/components/no_local_medias_access_screen.dart';
-import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
+import '../../../components/app_page.dart';
+import '../../../domain/extensions/widget_extensions.dart';
+import '../../../domain/formatter/date_formatter.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import '../../../domain/handlers/notification_handler.dart';
+import 'components/no_local_medias_access_screen.dart';
+import 'home_screen_view_model.dart';
 import 'package:collection/collection.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
@@ -17,11 +17,12 @@ import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../components/snack_bar.dart';
 import '../../../domain/assets/assets_paths.dart';
-import '../../navigation/app_router.dart';
+import '../../navigation/app_route.dart';
 import 'components/app_media_item.dart';
 import 'components/hints.dart';
 import 'components/multi_selection_done_button.dart';
 import 'package:style/buttons/action_button.dart';
+import 'package:style/animations/fade_in_switcher.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -31,7 +32,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  late HomeViewStateNotifier notifier;
+  late HomeViewStateNotifier _notifier;
   late NotificationHandler _notificationHandler;
   final _scrollController = ScrollController();
 
@@ -40,7 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _notificationHandler = ref.read(notificationHandlerProvider);
     _notificationHandler.init(context);
     _notificationHandler.requestPermission();
-    notifier = ref.read(homeViewStateNotifier.notifier);
+    _notifier = ref.read(homeViewStateNotifier.notifier);
     super.initState();
   }
 
@@ -81,50 +82,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       titleWidget: _titleWidget(context: context),
       actions: [
-        Consumer(builder: (context, ref, child) {
-          final showTransferButton = ref.watch(
-              homeViewStateNotifier.select((value) => value.showTransfer));
-          return Visibility(
-            visible: showTransferButton,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: ActionButton(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                size: 36,
-                backgroundColor: context.colorScheme.containerNormal,
-                onPressed: () {
-                  AppRouter.mediaTransfer.push(context);
-                },
-                icon: Icon(
-                  CupertinoIcons.arrow_up_arrow_down,
-                  color: context.colorScheme.textSecondary,
-                  size: 18,
-                ),
+        FadeInSwitcher(child: _transferButton(context)),
+        _accountButton(context),
+      ],
+      body: FadeInSwitcher(child: _body(context: context)),
+    );
+  }
+
+  Widget _titleWidget({required BuildContext context}) {
+    return Row(
+      children: [
+        if (Platform.isIOS) const SizedBox(width: 10),
+        Image.asset(
+          Assets.images.appIcon,
+          width: 28,
+        ),
+        const SizedBox(width: 10),
+        Text(context.l10n.app_name),
+      ],
+    );
+  }
+
+  Widget _transferButton(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final showTransferButton = ref.watch(
+          homeViewStateNotifier.select((value) => value.showTransfer),
+        );
+        return Visibility(
+          visible: showTransferButton,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: ActionButton(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              size: 36,
+              backgroundColor: context.colorScheme.containerNormal,
+              onPressed: () {
+                TransferRoute().push(context);
+              },
+              icon: Icon(
+                CupertinoIcons.arrow_up_arrow_down,
+                color: context.colorScheme.textSecondary,
+                size: 18,
               ),
             ),
-          );
-        }),
-        ActionButton(
-          size: 36,
-          backgroundColor: context.colorScheme.containerNormal,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          onPressed: () {
-            AppRouter.accounts.push(context);
-          },
-          icon: Icon(
-            CupertinoIcons.person,
-            color: context.colorScheme.textSecondary,
-            size: 18,
           ),
-        ),
-        if (!Platform.isIOS && !Platform.isMacOS) const SizedBox(width: 16),
-      ],
-      body: _body(context: context),
+        );
+      },
+    );
+  }
+
+  Widget _accountButton(BuildContext context) {
+    return ActionButton(
+      size: 36,
+      backgroundColor: context.colorScheme.containerNormal,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      onPressed: () {
+        AccountRoute().push(context);
+      },
+      icon: Icon(
+        CupertinoIcons.person,
+        color: context.colorScheme.textSecondary,
+        size: 18,
+      ),
     );
   }
 
   Widget _body({required BuildContext context}) {
-    //View State
     final ({
       Map<DateTime, List<AppMedia>> medias,
       List<AppProcess> mediaProcesses,
@@ -132,16 +156,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bool isLoading,
       bool hasLocalMediaAccess,
       String? lastLocalMediaId
-    }) state = ref.watch(homeViewStateNotifier.select((value) => (
+    }) state = ref.watch(
+      homeViewStateNotifier.select(
+        (value) => (
           medias: value.medias,
           mediaProcesses: value.mediaProcesses,
           selectedMedias: value.selectedMedias,
           isLoading: value.loading,
           hasLocalMediaAccess: value.hasLocalMediaAccess,
           lastLocalMediaId: value.lastLocalMediaId,
-        )));
+        ),
+      ),
+    );
 
-    //View
     if (state.isLoading) {
       return const Center(child: AppCircularProgressIndicator());
     } else if (state.medias.isEmpty && !state.hasLocalMediaAccess) {
@@ -166,12 +193,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildMediaList(
-      {required BuildContext context,
-      required Map<DateTime, List<AppMedia>> medias,
-      required List<AppProcess> mediaProcesses,
-      required String? lastLocalMediaId,
-      required List<AppMedia> selectedMedias}) {
+  Widget _buildMediaList({
+    required BuildContext context,
+    required Map<DateTime, List<AppMedia>> medias,
+    required List<AppProcess> mediaProcesses,
+    required String? lastLocalMediaId,
+    required List<AppMedia> selectedMedias,
+  }) {
     return Scrollbar(
       controller: _scrollController,
       interactive: true,
@@ -216,30 +244,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     final media = gridEntry.value[index];
                     if (media.id == lastLocalMediaId) {
                       runPostFrame(() {
-                        notifier.loadLocalMedia(append: true);
+                        _notifier.loadLocalMedia(append: true);
                       });
                     }
                     return AppMediaItem(
                       key: ValueKey(media.id),
                       onTap: () async {
                         if (selectedMedias.isNotEmpty) {
-                          notifier.toggleMediaSelection(media);
+                          _notifier.toggleMediaSelection(media);
                         } else {
-                          await AppRouter.preview(
-                                  medias: medias.values
-                                      .expand((element) => element)
-                                      .toList(),
-                                  startFrom: media.id)
-                              .push(context);
-                          notifier.loadLocalMedia();
+                          await MediaPreviewRoute(
+                            $extra: MediaPreviewRouteData(
+                              medias: medias.values
+                                  .expand((element) => element)
+                                  .toList(),
+                              startFrom: media.id,
+                            ),
+                          ).push(context);
+                          _notifier.loadLocalMedia();
                         }
                       },
                       onLongTap: () {
-                        notifier.toggleMediaSelection(media);
+                        _notifier.toggleMediaSelection(media);
                       },
                       isSelected: selectedMedias.contains(media),
                       process: mediaProcesses.firstWhereOrNull(
-                          (process) => process.id == media.id),
+                        (process) => process.id == media.id,
+                      ),
                       media: media,
                     );
                   },
@@ -249,20 +280,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }
         },
       ),
-    );
-  }
-
-  Widget _titleWidget({required BuildContext context}) {
-    return Row(
-      children: [
-        if (Platform.isIOS) const SizedBox(width: 10),
-        Image.asset(
-          Assets.images.appIcon,
-          width: 28,
-        ),
-        const SizedBox(width: 10),
-        Text(context.l10n.app_name)
-      ],
     );
   }
 }

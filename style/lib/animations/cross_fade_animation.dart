@@ -12,7 +12,8 @@ class CrossFadeAnimation extends StatelessWidget {
     required this.child,
     this.replacement = const SizedBox(
       width: double.infinity,
-    ),  this.alignment = Alignment.topCenter,
+    ),
+    this.alignment = Alignment.topCenter,
   });
 
   @override

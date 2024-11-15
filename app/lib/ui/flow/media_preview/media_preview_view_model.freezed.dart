@@ -29,7 +29,9 @@ mixin _$MediaPreviewState {
   List<AppProcess> get downloadProcess => throw _privateConstructorUsedError;
   List<AppProcess> get deleteProcess => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MediaPreviewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $MediaPreviewStateCopyWith<MediaPreviewState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -65,6 +67,8 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of MediaPreviewState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -162,6 +166,8 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
       $Res Function(_$MediaPreviewStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MediaPreviewState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -358,7 +364,9 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       const DeepCollectionEquality().hash(_downloadProcess),
       const DeepCollectionEquality().hash(_deleteProcess));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MediaPreviewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MediaPreviewStateImplCopyWith<_$MediaPreviewStateImpl> get copyWith =>
@@ -405,8 +413,11 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   List<AppProcess> get downloadProcess;
   @override
   List<AppProcess> get deleteProcess;
+
+  /// Create a copy of MediaPreviewState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MediaPreviewStateImplCopyWith<_$MediaPreviewStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

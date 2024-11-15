@@ -91,7 +91,7 @@ class AppPage extends StatelessWidget {
             : AppBar(
                 backgroundColor: barBackgroundColor,
                 title: titleWidget ?? _title(context),
-                actions: actions,
+                actions: [...?actions, const SizedBox(width: 16)],
                 leading: leading,
                 automaticallyImplyLeading: automaticallyImplyLeading,
               ),
@@ -119,13 +119,14 @@ class AdaptiveAppBar extends StatelessWidget {
   final bool iosTransitionBetweenRoutes;
   final bool automaticallyImplyLeading;
 
-  const AdaptiveAppBar(
-      {super.key,
-      required this.text,
-      this.leading,
-      this.actions,
-      this.iosTransitionBetweenRoutes = true,
-      this.automaticallyImplyLeading = true});
+  const AdaptiveAppBar({
+    super.key,
+    required this.text,
+    this.leading,
+    this.actions,
+    this.iosTransitionBetweenRoutes = true,
+    this.automaticallyImplyLeading = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -147,15 +148,15 @@ class AdaptiveAppBar extends StatelessWidget {
                       ),
           )
         : Column(
-          children: [
-            AppBar(
+            children: [
+              AppBar(
                 backgroundColor: context.colorScheme.barColor,
                 leading: leading,
                 actions: actions,
                 automaticallyImplyLeading: automaticallyImplyLeading,
                 title: Text(text),
               ),
-          ],
-        );
+            ],
+          );
   }
 }

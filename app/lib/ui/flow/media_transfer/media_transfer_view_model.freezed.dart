@@ -21,7 +21,9 @@ mixin _$MediaTransferState {
   List<AppProcess> get download => throw _privateConstructorUsedError;
   int get page => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MediaTransferState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $MediaTransferStateCopyWith<MediaTransferState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -49,6 +51,8 @@ class _$MediaTransferStateCopyWithImpl<$Res, $Val extends MediaTransferState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of MediaTransferState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -98,6 +102,8 @@ class __$$MediaTransferStateImplCopyWithImpl<$Res>
       $Res Function(_$MediaTransferStateImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MediaTransferState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -183,7 +189,9 @@ class _$MediaTransferStateImpl implements _MediaTransferState {
       const DeepCollectionEquality().hash(_download),
       page);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MediaTransferState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MediaTransferStateImplCopyWith<_$MediaTransferStateImpl> get copyWith =>
@@ -206,8 +214,11 @@ abstract class _MediaTransferState implements MediaTransferState {
   List<AppProcess> get download;
   @override
   int get page;
+
+  /// Create a copy of MediaTransferState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MediaTransferStateImplCopyWith<_$MediaTransferStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

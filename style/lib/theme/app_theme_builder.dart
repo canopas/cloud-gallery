@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart'
     show CupertinoTextThemeData, CupertinoThemeData;
 import 'package:flutter/material.dart' show AppBarTheme, ColorScheme, ThemeData;
-import 'package:style/theme/theme.dart' show AppColorScheme;
+import 'theme.dart' show AppColorScheme;
 
 class AppThemeBuilder {
-  static ThemeData materialThemeFromColorScheme(
-      {required AppColorScheme colorScheme}) {
+  static ThemeData materialThemeFromColorScheme({
+    required AppColorScheme colorScheme,
+  }) {
     return ThemeData(
       useMaterial3: true,
       brightness: colorScheme.brightness,
@@ -23,8 +24,7 @@ class AppThemeBuilder {
         brightness: colorScheme.brightness,
         error: colorScheme.alert,
         onError: colorScheme.onPrimary,
-        background: colorScheme.surface,
-        onBackground: colorScheme.textPrimary,
+        surfaceBright: colorScheme.surface,
       ),
       scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
@@ -36,8 +36,9 @@ class AppThemeBuilder {
     );
   }
 
-  static CupertinoThemeData cupertinoThemeFromColorScheme(
-      {required AppColorScheme colorScheme}) {
+  static CupertinoThemeData cupertinoThemeFromColorScheme({
+    required AppColorScheme colorScheme,
+  }) {
     return CupertinoThemeData(
       brightness: colorScheme.brightness,
       primaryColor: colorScheme.primary,

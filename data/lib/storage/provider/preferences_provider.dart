@@ -6,30 +6,49 @@ import 'package:shared_preferences/shared_preferences.dart';
 final sharedPreferencesProvider =
     Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
-StateProvider<T> createPrefProvider<T>({
+StateNotifierProvider<PreferenceNotifier<T>, T> createPrefProvider<T>({
   required String prefKey,
   required T defaultValue,
 }) {
-  return StateProvider((ref) {
-    final prefs = ref.watch(sharedPreferencesProvider);
-    final currentValue = prefs.get(prefKey) as T? ?? defaultValue;
-    ref.listenSelf((previous, current) {
-      if (current == null) {
-        prefs.remove(prefKey);
-      } else if (current is String) {
-        prefs.setString(prefKey, current);
-      } else if (current is bool) {
-        prefs.setBool(prefKey, current);
-      } else if (current is int) {
-        prefs.setInt(prefKey, current);
-      } else if (current is double) {
-        prefs.setDouble(prefKey, current);
-      } else if (current is List<String>) {
-        prefs.setStringList(prefKey, current);
-      }
-    });
-    return currentValue;
-  });
+  return StateNotifierProvider<PreferenceNotifier<T>, T>(
+    (ref) => PreferenceNotifier<T>(
+      ref.watch(sharedPreferencesProvider).get(prefKey) as T? ?? defaultValue,
+      (curr) {
+        final prefs = ref.watch(sharedPreferencesProvider);
+        if (curr == null) {
+          prefs.remove(prefKey);
+        } else if (curr is String) {
+          prefs.setString(prefKey, curr);
+        } else if (curr is bool) {
+          prefs.setBool(prefKey, curr);
+        } else if (curr is int) {
+          prefs.setInt(prefKey, curr);
+        } else if (curr is double) {
+          prefs.setDouble(prefKey, curr);
+        } else if (curr is List<String>) {
+          prefs.setStringList(prefKey, curr);
+        }
+      },
+    ),
+  );
+}
+
+class PreferenceNotifier<T> extends StateNotifier<T> {
+  Function(T curr)? onUpdate;
+
+  PreferenceNotifier(
+    super.value,
+    this.onUpdate,
+  );
+
+  @override
+  set state(T value) {
+    super.state = value;
+    onUpdate?.call(value);
+  }
+
+  @override
+  T get state => super.state;
 }
 
 StateProvider<T?> createEncodedPrefProvider<T>({

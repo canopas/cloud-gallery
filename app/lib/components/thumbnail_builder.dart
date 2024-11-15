@@ -1,12 +1,8 @@
-import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:data/models/media/media.dart';
-import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
+import 'app_media_image_provider.dart';
 
 class AppMediaImage extends StatelessWidget {
   final Object? heroTag;
@@ -29,7 +25,7 @@ class AppMediaImage extends StatelessWidget {
       child: Hero(
         tag: heroTag ?? '',
         child: Image(
-          image: _imageProvider(),
+          image: AppMediaImageProvider(media: media, thumbnailSize: size),
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress != null) {
               return AppMediaPlaceHolder(
@@ -52,19 +48,6 @@ class AppMediaImage extends StatelessWidget {
       ),
     );
   }
-
-  ImageProvider _imageProvider() {
-    if (media.sources.contains(AppMediaSource.local) && media.type.isImage) {
-      return FileImage(File(media.path));
-    } else if (media.sources.contains(AppMediaSource.local) &&
-        media.type.isVideo) {
-      return AssetEntityImageProvider(media.assetEntity,
-          thumbnailSize: ThumbnailSize(size.width.toInt(), size.height.toInt()),
-          thumbnailFormat: ThumbnailFormat.png);
-    } else {
-      return CachedNetworkImageProvider(media.thumbnailLink ?? '');
-    }
-  }
 }
 
 class AppMediaPlaceHolder extends StatelessWidget {
@@ -72,8 +55,12 @@ class AppMediaPlaceHolder extends StatelessWidget {
   final Size? size;
   final bool showLoader;
 
-  const AppMediaPlaceHolder(
-      {super.key, this.value, this.showLoader = true, this.size});
+  const AppMediaPlaceHolder({
+    super.key,
+    this.value,
+    this.showLoader = true,
+    this.size,
+  });
 
   @override
   Widget build(BuildContext context) {

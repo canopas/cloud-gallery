@@ -30,15 +30,16 @@ extension MediaListExtension on List<AppMedia> {
           (removeFromIds?.contains(this[index].id) ?? true)) {
         this[index] = this[index].copyWith(
           id: this[index].driveMediaRefId ?? this[index].id,
-          sources: this[index].sources.toList()
-            ..remove(AppMediaSource.local),
+          sources: this[index].sources.toList()..remove(AppMediaSource.local),
         );
       }
     }
   }
 
-  void addGoogleDriveRefInMedias(
-      {required List<AppProcess> process, List<String>? processIds}) {
+  void addGoogleDriveRefInMedias({
+    required List<AppProcess> process,
+    List<String>? processIds,
+  }) {
     processIds ??= process.map((e) => e.id).toList();
     updateWhere(
       where: (media) => processIds?.contains(media.id) ?? false,
@@ -53,8 +54,10 @@ extension MediaListExtension on List<AppMedia> {
     );
   }
 
-  void replaceMediaRefInMedias(
-      {required List<AppProcess> process, List<String>? processIds}) {
+  void replaceMediaRefInMedias({
+    required List<AppProcess> process,
+    List<String>? processIds,
+  }) {
     processIds ??= process.map((e) => e.id).toList();
     updateWhere(
       where: (media) => processIds?.contains(media.id) ?? false,

@@ -15,7 +15,7 @@ class RowBuilder {
         mainAxisAlignment: mainAxisAlignment,
         children: List.generate(
           ((itemCount * 2) - 1) < 0 ? 0 : (itemCount * 2) - 1,
-              (index) => index.isEven
+          (index) => index.isEven
               ? itemBuilder(index ~/ 2)
               : separatorBuilder(index ~/ 2),
         ),

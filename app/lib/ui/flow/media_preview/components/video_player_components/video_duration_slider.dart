@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:cloud_gallery/domain/formatter/duration_formatter.dart';
+import '../../../../../domain/formatter/duration_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:style/animations/cross_fade_animation.dart';
 import 'package:style/extensions/context_extensions.dart';
@@ -12,13 +12,14 @@ class VideoDurationSlider extends StatelessWidget {
   final void Function(Duration duration) onChangeEnd;
   final Duration position;
 
-  const VideoDurationSlider(
-      {super.key,
-        required this.showSlider,
-        required this.duration,
-        required this.position,
-        required this.onChangeEnd,
-        required this.onChanged});
+  const VideoDurationSlider({
+    super.key,
+    required this.showSlider,
+    required this.duration,
+    required this.position,
+    required this.onChangeEnd,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,19 +29,22 @@ class VideoDurationSlider extends StatelessWidget {
         showChild: showSlider,
         child: Container(
           padding: EdgeInsets.only(
-              bottom: context.systemPadding.bottom + 8,
-              top: 8,
-              left: 16,
-              right: 16),
+            bottom: context.systemPadding.bottom + 8,
+            top: 8,
+            left: 16,
+            right: 16,
+          ),
           color: context.colorScheme.barColor,
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(position.format,
-                    style: AppTextStyles.caption
-                        .copyWith(color: context.colorScheme.textPrimary)),
+                Text(
+                  position.format,
+                  style: AppTextStyles.caption
+                      .copyWith(color: context.colorScheme.textPrimary),
+                ),
                 Expanded(
                   child: SizedBox(
                     height: 30,
@@ -51,7 +55,7 @@ class VideoDurationSlider extends StatelessWidget {
                           trackHeight: 4,
                           trackShape: const RoundedRectSliderTrackShape(),
                           rangeTrackShape:
-                          const RoundedRectRangeSliderTrackShape(),
+                              const RoundedRectRangeSliderTrackShape(),
                           thumbShape: SliderComponentShape.noThumb,
                         ),
                         child: Slider(
@@ -60,16 +64,20 @@ class VideoDurationSlider extends StatelessWidget {
                           min: 0,
                           activeColor: context.colorScheme.primary,
                           inactiveColor: context.colorScheme.outline,
-                          onChangeEnd: (value) => onChangeEnd.call(Duration(seconds: value.toInt())),
-                          onChanged: (double value) => onChanged.call(Duration(seconds: value.toInt())),
+                          onChangeEnd: (value) => onChangeEnd
+                              .call(Duration(seconds: value.toInt())),
+                          onChanged: (double value) =>
+                              onChanged.call(Duration(seconds: value.toInt())),
                         ),
                       ),
                     ),
                   ),
                 ),
-                Text(duration.format,
-                    style: AppTextStyles.caption
-                        .copyWith(color: context.colorScheme.textPrimary)),
+                Text(
+                  duration.format,
+                  style: AppTextStyles.caption
+                      .copyWith(color: context.colorScheme.textPrimary),
+                ),
               ],
             ),
           ),

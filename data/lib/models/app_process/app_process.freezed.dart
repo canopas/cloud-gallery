@@ -23,7 +23,9 @@ mixin _$AppProcess {
   Object? get response => throw _privateConstructorUsedError;
   AppProcessProgress? get progress => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppProcess
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AppProcessCopyWith<AppProcess> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -56,6 +58,8 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AppProcess
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -91,6 +95,8 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
     ) as $Val);
   }
 
+  /// Create a copy of AppProcess
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $AppMediaCopyWith<$Res> get media {
@@ -99,6 +105,8 @@ class _$AppProcessCopyWithImpl<$Res, $Val extends AppProcess>
     });
   }
 
+  /// Create a copy of AppProcess
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $AppProcessProgressCopyWith<$Res>? get progress {
@@ -142,6 +150,8 @@ class __$$AppProcessImplCopyWithImpl<$Res>
       _$AppProcessImpl _value, $Res Function(_$AppProcessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AppProcess
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -234,7 +244,9 @@ class _$AppProcessImpl implements _AppProcess {
       const DeepCollectionEquality().hash(response),
       progress);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppProcess
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AppProcessImplCopyWith<_$AppProcessImpl> get copyWith =>
@@ -262,8 +274,11 @@ abstract class _AppProcess implements AppProcess {
   Object? get response;
   @override
   AppProcessProgress? get progress;
+
+  /// Create a copy of AppProcess
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AppProcessImplCopyWith<_$AppProcessImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -273,7 +288,9 @@ mixin _$AppProcessProgress {
   int get total => throw _privateConstructorUsedError;
   int get chunk => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppProcessProgress
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AppProcessProgressCopyWith<AppProcessProgress> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -297,6 +314,8 @@ class _$AppProcessProgressCopyWithImpl<$Res, $Val extends AppProcessProgress>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AppProcessProgress
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -335,6 +354,8 @@ class __$$AppProcessProgressImplCopyWithImpl<$Res>
       $Res Function(_$AppProcessProgressImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AppProcessProgress
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -381,7 +402,9 @@ class _$AppProcessProgressImpl implements _AppProcessProgress {
   @override
   int get hashCode => Object.hash(runtimeType, total, chunk);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AppProcessProgress
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AppProcessProgressImplCopyWith<_$AppProcessProgressImpl> get copyWith =>
@@ -398,8 +421,11 @@ abstract class _AppProcessProgress implements AppProcessProgress {
   int get total;
   @override
   int get chunk;
+
+  /// Create a copy of AppProcessProgress
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AppProcessProgressImplCopyWith<_$AppProcessProgressImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

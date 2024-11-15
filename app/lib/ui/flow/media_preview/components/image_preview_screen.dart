@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/components/error_view.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
+import '../../../../components/app_page.dart';
+import '../../../../components/error_view.dart';
+import '../../../../domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +31,9 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
       notifier = ref.read(networkImagePreviewStateNotifierProvider.notifier);
       runPostFrame(() async {
         await notifier.loadImageFromGoogleDrive(
-            id: widget.media.id, extension: widget.media.extension);
+          id: widget.media.id,
+          extension: widget.media.extension,
+        );
       });
     }
     super.initState();
@@ -57,14 +59,18 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
   Widget _displayLocalImage({required BuildContext context}) {
     return Hero(
       tag: widget.media,
-      child: Image.file(File(widget.media.path),
-          fit: BoxFit.contain, errorBuilder: (context, error, stackTrace) {
-        return AppPage(
+      child: Image.file(
+        File(widget.media.path),
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return AppPage(
             body: ErrorView(
-          title: context.l10n.unable_to_load_media_error,
-          message: context.l10n.unable_to_load_media_message,
-        ));
-      }),
+              title: context.l10n.unable_to_load_media_error,
+              message: context.l10n.unable_to_load_media_message,
+            ),
+          );
+        },
+      ),
     );
   }
 }

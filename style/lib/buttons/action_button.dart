@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:style/indicators/circular_progress_indicator.dart';
+import '../indicators/circular_progress_indicator.dart';
 
 class ActionButton extends StatelessWidget {
   final void Function() onPressed;
@@ -12,15 +12,16 @@ class ActionButton extends StatelessWidget {
   final double size;
   final EdgeInsets padding;
 
-  const ActionButton(
-      {super.key,
-      required this.onPressed,
-      required this.icon,
-      this.size = 40,
-      this.tapTargetSize = MaterialTapTargetSize.padded,
-      this.backgroundColor,
-      this.progress = false,
-      this.padding = const EdgeInsets.all(0)});
+  const ActionButton({
+    super.key,
+    required this.onPressed,
+    required this.icon,
+    this.size = 40,
+    this.tapTargetSize = MaterialTapTargetSize.padded,
+    this.backgroundColor,
+    this.progress = false,
+    this.padding = const EdgeInsets.all(0),
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/components/error_view.dart';
-import 'package:cloud_gallery/components/snack_bar.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
-import 'package:cloud_gallery/ui/flow/media_preview/components/download_require_view.dart';
-import 'package:cloud_gallery/ui/flow/media_preview/components/image_preview_screen.dart';
-import 'package:cloud_gallery/ui/flow/media_preview/components/top_bar.dart';
-import 'package:cloud_gallery/ui/flow/media_preview/components/video_player_components/video_actions.dart';
-import 'package:cloud_gallery/ui/flow/media_preview/media_preview_view_model.dart';
+import '../../../components/app_page.dart';
+import '../../../components/error_view.dart';
+import '../../../components/snack_bar.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import '../../../domain/extensions/widget_extensions.dart';
+import 'components/download_require_view.dart';
+import 'components/image_preview_screen.dart';
+import 'components/top_bar.dart';
+import 'components/video_player_components/video_actions.dart';
+import 'media_preview_view_model.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +24,11 @@ class MediaPreview extends ConsumerStatefulWidget {
   final List<AppMedia> medias;
   final String startFrom;
 
-  const MediaPreview(
-      {super.key, required this.medias, required this.startFrom});
+  const MediaPreview({
+    super.key,
+    required this.medias,
+    required this.startFrom,
+  });
 
   @override
   ConsumerState<MediaPreview> createState() => _MediaPreviewState();
@@ -46,39 +49,49 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
     //initialize view notifier with initial state
     _provider = mediaPreviewStateNotifierProvider(
-        MediaPreviewState(currentIndex: currentIndex, medias: widget.medias));
+      MediaPreviewState(currentIndex: currentIndex, medias: widget.medias),
+    );
     notifier = ref.read(_provider.notifier);
 
     _pageController = PageController(initialPage: currentIndex, keepPage: true);
 
     if (widget.medias[currentIndex].type.isVideo &&
         widget.medias[currentIndex].sources.contains(AppMediaSource.local)) {
-      runPostFrame(() => _initializeVideoControllerWithListener(
-          path: widget.medias[currentIndex].path));
+      runPostFrame(
+        () => _initializeVideoControllerWithListener(
+          path: widget.medias[currentIndex].path,
+        ),
+      );
     } else if (widget.medias[currentIndex].type.isVideo &&
         widget.medias[currentIndex].isGoogleDriveStored) {}
     super.initState();
   }
 
-  Future<void> _initializeVideoControllerWithListener(
-      {required String path}) async {
+  Future<void> _initializeVideoControllerWithListener({
+    required String path,
+  }) async {
     _videoPlayerController = VideoPlayerController.file(File(path));
     _videoPlayerController?.addListener(_observeVideoController);
     await _videoPlayerController?.initialize();
     notifier.updateVideoInitialized(
-        _videoPlayerController?.value.isInitialized ?? false);
+      _videoPlayerController?.value.isInitialized ?? false,
+    );
     await _videoPlayerController?.play();
   }
 
-  _observeVideoController() {
+  void _observeVideoController() {
     notifier.updateVideoInitialized(
-        _videoPlayerController?.value.isInitialized ?? false);
+      _videoPlayerController?.value.isInitialized ?? false,
+    );
     notifier.updateVideoBuffering(
-        _videoPlayerController?.value.isBuffering ?? false);
+      _videoPlayerController?.value.isBuffering ?? false,
+    );
     notifier.updateVideoPosition(
-        _videoPlayerController?.value.position ?? Duration.zero);
+      _videoPlayerController?.value.position ?? Duration.zero,
+    );
     notifier.updateVideoMaxDuration(
-        _videoPlayerController?.value.duration ?? Duration.zero);
+      _videoPlayerController?.value.duration ?? Duration.zero,
+    );
     notifier
         .updateVideoPlaying(_videoPlayerController?.value.isPlaying ?? false);
   }
@@ -122,11 +135,14 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _observeError();
     _updateVideoControllerOnMediaChange();
 
-    final ({List<AppMedia> medias, bool showActions}) state =
-        ref.watch(_provider.select((state) => (
-              medias: state.medias,
-              showActions: state.showActions,
-            )));
+    final ({List<AppMedia> medias, bool showActions}) state = ref.watch(
+      _provider.select(
+        (state) => (
+          medias: state.medias,
+          showActions: state.showActions,
+        ),
+      ),
+    );
     return DismissiblePage(
       backgroundColor: context.colorScheme.surface,
       onProgress: (progress) {
@@ -156,7 +172,8 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             PreviewTopBar(
               provider: _provider,
               onAction: () {
-                if(_videoPlayerController != null && (_videoPlayerController?.value.isInitialized ?? false)){
+                if (_videoPlayerController != null &&
+                    (_videoPlayerController?.value.isInitialized ?? false)) {
                   _videoPlayerController?.pause();
                 }
               },
@@ -172,27 +189,32 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
   Widget _preview({required BuildContext context, required AppMedia media}) {
     if (media.type.isVideo && media.sources.contains(AppMediaSource.local)) {
       return Center(
-        child: Consumer(builder: (context, ref, child) {
-          ({bool initialized, bool buffring}) state = ref.watch(
-              _provider.select((state) => (
-                    initialized: state.isVideoInitialized,
-                    buffring: state.isVideoBuffering
-                  )));
-
-          if (!state.initialized || state.buffring) {
-            return AppCircularProgressIndicator(
-              color: context.colorScheme.onPrimary,
-            );
-          } else {
-            return Hero(
-              tag: media,
-              child: AspectRatio(
-                aspectRatio: _videoPlayerController!.value.aspectRatio,
-                child: VideoPlayer(_videoPlayerController!),
+        child: Consumer(
+          builder: (context, ref, child) {
+            final state = ref.watch(
+              _provider.select(
+                (state) => (
+                  initialized: state.isVideoInitialized,
+                  buffring: state.isVideoBuffering
+                ),
               ),
             );
-          }
-        }),
+
+            if (!state.initialized || state.buffring) {
+              return AppCircularProgressIndicator(
+                color: context.colorScheme.onPrimary,
+              );
+            } else {
+              return Hero(
+                tag: media,
+                child: AspectRatio(
+                  aspectRatio: _videoPlayerController!.value.aspectRatio,
+                  child: VideoPlayer(_videoPlayerController!),
+                ),
+              );
+            }
+          },
+        ),
       );
     } else if (media.type.isVideo && media.isGoogleDriveStored) {
       return _googleDriveVideoView(context: context, media: media);
@@ -206,20 +228,26 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     }
   }
 
-  Widget _googleDriveVideoView(
-      {required BuildContext context, required AppMedia media}) {
+  Widget _googleDriveVideoView({
+    required BuildContext context,
+    required AppMedia media,
+  }) {
     return Consumer(
       builder: (context, ref, child) {
-        final process = ref.watch(_provider.select((value) => value
-            .downloadProcess
-            .where((element) => element.id == media.id)
-            .firstOrNull));
+        final process = ref.watch(
+          _provider.select(
+            (value) => value.downloadProcess
+                .where((element) => element.id == media.id)
+                .firstOrNull,
+          ),
+        );
         return DownloadRequireView(
-            media: media,
-            downloadProcess: process,
-            onDownload: () {
-              notifier.downloadMediaFromGoogleDrive(media: media);
-            });
+          media: media,
+          downloadProcess: process,
+          onDownload: () {
+            notifier.downloadMediaFromGoogleDrive(media: media);
+          },
+        );
       },
     );
   }
@@ -230,13 +258,17 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             bool showActions,
             bool isPlaying,
             Duration position,
-          }) state = ref.watch(_provider.select((state) => (
+          }) state = ref.watch(
+            _provider.select(
+              (state) => (
                 showActions: state.showActions &&
                     state.medias[state.currentIndex].type.isVideo &&
                     state.isVideoInitialized,
                 isPlaying: state.isVideoPlaying,
                 position: state.videoPosition,
-              )));
+              ),
+            ),
+          );
 
           return VideoActions(
             showActions: state.showActions,
@@ -260,29 +292,34 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         },
       );
 
-  Widget _videoDurationSlider(BuildContext context) =>
-      Consumer(builder: (context, ref, child) {
-        final ({
-          bool showDurationSlider,
-          Duration duration,
-          Duration position
-        }) state = ref.watch(_provider.select((state) => (
-              showDurationSlider: state.showActions &&
-                  state.medias[state.currentIndex].type.isVideo &&
-                  state.isVideoInitialized,
-              duration: state.videoMaxDuration,
-              position: state.videoPosition
-            )));
-        return VideoDurationSlider(
-          showSlider: state.showDurationSlider,
-          duration: state.duration,
-          position: state.position,
-          onChangeEnd: (duration) {
-            _videoPlayerController?.seekTo(duration);
-          },
-          onChanged: (duration) {
-            notifier.updateVideoPosition(duration);
-          },
-        );
-      });
+  Widget _videoDurationSlider(BuildContext context) => Consumer(
+        builder: (context, ref, child) {
+          final ({
+            bool showDurationSlider,
+            Duration duration,
+            Duration position
+          }) state = ref.watch(
+            _provider.select(
+              (state) => (
+                showDurationSlider: state.showActions &&
+                    state.medias[state.currentIndex].type.isVideo &&
+                    state.isVideoInitialized,
+                duration: state.videoMaxDuration,
+                position: state.videoPosition
+              ),
+            ),
+          );
+          return VideoDurationSlider(
+            showSlider: state.showDurationSlider,
+            duration: state.duration,
+            position: state.position,
+            onChangeEnd: (duration) {
+              _videoPlayerController?.seekTo(duration);
+            },
+            onChanged: (duration) {
+              notifier.updateVideoPosition(duration);
+            },
+          );
+        },
+      );
 }

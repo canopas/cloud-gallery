@@ -1,6 +1,6 @@
-import 'package:cloud_gallery/components/error_view.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/ui/flow/home/home_screen_view_model.dart';
+import '../../../../components/error_view.dart';
+import '../../../../domain/extensions/context_extensions.dart';
+import '../home_screen_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';

@@ -1,4 +1,4 @@
-import 'package:cloud_gallery/domain/extensions/media_list_extension.dart';
+import '../../../domain/extensions/media_list_extension.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/repositories/google_drive_process_repo.dart';
@@ -25,9 +25,12 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   final GoogleDriveService _googleDriveService;
   final GoogleDriveProcessRepo _googleDriveProcessRepo;
 
-  MediaPreviewStateNotifier(this._localMediaService, this._googleDriveService,
-      this._googleDriveProcessRepo, MediaPreviewState initialState)
-      : super(initialState) {
+  MediaPreviewStateNotifier(
+    this._localMediaService,
+    this._googleDriveService,
+    this._googleDriveProcessRepo,
+    MediaPreviewState initialState,
+  ) : super(initialState) {
     _googleDriveProcessRepo.addListener(_listenGoogleDriveProcessUpdates);
   }
 
@@ -102,11 +105,11 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     }
   }
 
-  Future<void> downloadMediaFromGoogleDrive({required AppMedia media})async {
+  Future<void> downloadMediaFromGoogleDrive({required AppMedia media}) async {
     _googleDriveProcessRepo.downloadMediasFromGoogleDrive(medias: [media]);
   }
 
-  Future<void> uploadMediaInGoogleDrive({required AppMedia media})async {
+  Future<void> uploadMediaInGoogleDrive({required AppMedia media}) async {
     _googleDriveProcessRepo.uploadMediasInGoogleDrive(medias: [media]);
   }
 

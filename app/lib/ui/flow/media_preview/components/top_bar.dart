@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/ui/navigation/app_router.dart';
+import '../../../../domain/extensions/context_extensions.dart';
+import '../../../navigation/app_route.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,27 +24,33 @@ class PreviewTopBar extends StatelessWidget {
       MediaPreviewState> provider;
   final void Function() onAction;
 
-  const PreviewTopBar(
-      {super.key, required this.provider, required this.onAction});
+  const PreviewTopBar({
+    super.key,
+    required this.provider,
+    required this.onAction,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, child) {
-      final notifier = ref.read(provider.notifier);
-      final media = ref
-          .watch(provider.select((state) => state.medias[state.currentIndex]));
-      final showManu = ref.watch(provider.select((state) => state.showActions));
+    return Consumer(
+      builder: (context, ref, child) {
+        final notifier = ref.read(provider.notifier);
+        final media = ref.watch(
+          provider.select((state) => state.medias[state.currentIndex]),
+        );
+        final showManu =
+            ref.watch(provider.select((state) => state.showActions));
 
-      return CrossFadeAnimation(
-        showChild: showManu,
-        child: AdaptiveAppBar(
-          iosTransitionBetweenRoutes: false,
-          text:
-              media.createdTime?.format(context, DateFormatType.relative) ?? '',
-          actions: [
-            ActionButton(
-              onPressed: () {
-                showMenu(
+        return CrossFadeAnimation(
+          showChild: showManu,
+          child: AdaptiveAppBar(
+            iosTransitionBetweenRoutes: false,
+            text: media.createdTime?.format(context, DateFormatType.relative) ??
+                '',
+            actions: [
+              ActionButton(
+                onPressed: () {
+                  showMenu(
                     context: context,
                     position: RelativeRect.fromSize(
                       Rect.fromLTRB(context.mediaQuerySize.width, 50, 0, 0),
@@ -61,7 +67,7 @@ class PreviewTopBar extends StatelessWidget {
                       PopupMenuItem(
                         onTap: () {
                           onAction();
-                          AppRouter.mediaMetaDataDetails(media: media)
+                          MediaMetadataDetailsRoute($extra: media)
                               .push(context);
                         },
                         child: Row(
@@ -72,10 +78,12 @@ class PreviewTopBar extends StatelessWidget {
                               size: 22,
                             ),
                             const SizedBox(width: 16),
-                            Text(context.l10n.common_info,
-                                style: AppTextStyles.body2.copyWith(
-                                  color: context.colorScheme.textPrimary,
-                                )),
+                            Text(
+                              context.l10n.common_info,
+                              style: AppTextStyles.body2.copyWith(
+                                color: context.colorScheme.textPrimary,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -127,12 +135,14 @@ class PreviewTopBar extends StatelessWidget {
                         PopupMenuItem(
                           onTap: () async {
                             _showDeleteFromDriveDialog(
-                                context: context,
-                                onDelete: () {
-                                  notifier.deleteMediaFromGoogleDrive(
-                                      media.driveMediaRefId);
-                                  context.pop();
-                                });
+                              context: context,
+                              onDelete: () {
+                                notifier.deleteMediaFromGoogleDrive(
+                                  media.driveMediaRefId,
+                                );
+                                context.pop();
+                              },
+                            );
                           },
                           child: Row(
                             children: [
@@ -140,10 +150,15 @@ class PreviewTopBar extends StatelessWidget {
                                 alignment: Alignment.bottomRight,
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 2, right: 2),
-                                    child: Icon(CupertinoIcons.trash,
-                                        color: context.colorScheme.textSecondary,
-                                        size: 22),
+                                    padding: const EdgeInsets.only(
+                                      bottom: 2,
+                                      right: 2,
+                                    ),
+                                    child: Icon(
+                                      CupertinoIcons.trash,
+                                      color: context.colorScheme.textSecondary,
+                                      size: 22,
+                                    ),
                                   ),
                                   SvgPicture.asset(
                                     Assets.images.icons.googleDrive,
@@ -153,10 +168,12 @@ class PreviewTopBar extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(width: 16),
-                              Text(context.l10n.common_delete_from_google_drive,
-                                  style: AppTextStyles.body2.copyWith(
-                                    color: context.colorScheme.textPrimary,
-                                  )),
+                              Text(
+                                context.l10n.common_delete_from_google_drive,
+                                style: AppTextStyles.body2.copyWith(
+                                  color: context.colorScheme.textPrimary,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -164,17 +181,20 @@ class PreviewTopBar extends StatelessWidget {
                         PopupMenuItem(
                           onTap: () async {
                             _showDeleteFromDeviceDialog(
-                                context: context,
-                                onDelete: () {
-                                  notifier.deleteMediaFromLocal(media.id);
-                                  context.pop();
-                                });
+                              context: context,
+                              onDelete: () {
+                                notifier.deleteMediaFromLocal(media.id);
+                                context.pop();
+                              },
+                            );
                           },
                           child: Row(
                             children: [
-                              Icon(CupertinoIcons.trash,
-                                  color: context.colorScheme.textSecondary,
-                                  size: 22),
+                              Icon(
+                                CupertinoIcons.trash,
+                                color: context.colorScheme.textSecondary,
+                                size: 22,
+                              ),
                               const SizedBox(width: 16),
                               Text(
                                 (media.isLocalStored)
@@ -187,15 +207,17 @@ class PreviewTopBar extends StatelessWidget {
                             ],
                           ),
                         ),
-                      if(media.isLocalStored)
+                      if (media.isLocalStored)
                         PopupMenuItem(
                           onTap: () async {
-                             await Share.shareXFiles([XFile(media.path)]);
+                            await Share.shareXFiles([XFile(media.path)]);
                           },
                           child: Row(
                             children: [
                               Icon(
-                                Platform.isIOS? CupertinoIcons.share: Icons.share_rounded,
+                                Platform.isIOS
+                                    ? CupertinoIcons.share
+                                    : Icons.share_rounded,
                                 color: context.colorScheme.textSecondary,
                                 size: 22,
                               ),
@@ -209,24 +231,28 @@ class PreviewTopBar extends StatelessWidget {
                             ],
                           ),
                         ),
-                    ]);
-              },
-              icon: Icon(
-                Icons.more_vert_rounded,
-                color: context.colorScheme.textSecondary,
-                size: 22,
+                    ],
+                  );
+                },
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  color: context.colorScheme.textSecondary,
+                  size: 22,
+                ),
               ),
-            ),
-            if (!Platform.isIOS && !Platform.isMacOS) const SizedBox(width: 8),
-          ],
-        ),
-      );
-    });
+              if (!Platform.isIOS && !Platform.isMacOS)
+                const SizedBox(width: 8),
+            ],
+          ),
+        );
+      },
+    );
   }
 
-  Future<void> _showDeleteFromDriveDialog(
-      {required BuildContext context,
-      required void Function() onDelete}) async {
+  Future<void> _showDeleteFromDriveDialog({
+    required BuildContext context,
+    required void Function() onDelete,
+  }) async {
     await showAppAlertDialog(
       context: context,
       title: context.l10n.common_delete_from_google_drive,
@@ -247,9 +273,10 @@ class PreviewTopBar extends StatelessWidget {
     );
   }
 
-  Future<void> _showDeleteFromDeviceDialog(
-      {required BuildContext context,
-      required void Function() onDelete}) async {
+  Future<void> _showDeleteFromDeviceDialog({
+    required BuildContext context,
+    required void Function() onDelete,
+  }) async {
     await showAppAlertDialog(
       context: context,
       title: context.l10n.common_delete_from_device,

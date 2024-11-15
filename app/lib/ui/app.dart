@@ -1,5 +1,5 @@
-import 'package:cloud_gallery/ui/navigation/app_router.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
+import 'navigation/app_route.dart';
+import '../domain/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
   void initState() {
     _router = GoRouter(
       initialLocation: _configureInitialRoute(),
-      routes: AppRouter.routes,
+      routes: $appRoutes,
     );
     super.initState();
   }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:style/extensions/context_extensions.dart';
 
-Future<T?> showAppSheet<T>(
-    {required BuildContext context, required Widget child}) {
+Future<T?> showAppSheet<T>({
+  required BuildContext context,
+  required Widget child,
+}) {
   return showModalBottomSheet(
     backgroundColor: context.colorScheme.containerNormalOnSurface,
     shape: RoundedRectangleBorder(

@@ -11,13 +11,14 @@ class HintView extends StatelessWidget {
   final VoidCallback? onActionTap;
   final VoidCallback onClose;
 
-  const HintView(
-      {super.key,
-        required this.hint,
-        required this.onClose,
-        this.actionTitle = '',
-        this.onActionTap,
-        required this.title});
+  const HintView({
+    super.key,
+    required this.hint,
+    required this.onClose,
+    this.actionTitle = '',
+    this.onActionTap,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +85,7 @@ class HintView extends StatelessWidget {
                 actionTitle,
                 style: AppTextStyles.button,
               ),
-            )
+            ),
         ],
       ),
     );

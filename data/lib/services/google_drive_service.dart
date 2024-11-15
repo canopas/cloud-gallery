@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:data/apis/google_drive/google_drive_endpoint.dart';
-import 'package:data/apis/network/client.dart';
-import 'package:data/models/media/media.dart';
-import 'package:data/models/media_content/media_content.dart';
+import '../apis/google_drive/google_drive_endpoint.dart';
+import '../apis/network/client.dart';
+import '../models/media/media.dart';
+import '../models/media_content/media_content.dart';
 import 'package:dio/dio.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,8 +59,9 @@ class GoogleDriveService {
     }
   }
 
-  Future<List<AppMedia>> getDriveMedias(
-      {required String backUpFolderId}) async {
+  Future<List<AppMedia>> getDriveMedias({
+    required String backUpFolderId,
+  }) async {
     try {
       final driveApi = await _getGoogleDriveAPI();
 
@@ -100,11 +101,12 @@ class GoogleDriveService {
     }
   }
 
-  Future<AppMedia> uploadInGoogleDrive(
-      {required String folderID,
-      required AppMedia media,
-      CancelToken? cancelToken,
-      void Function(int chunk, int total)? onProgress}) async {
+  Future<AppMedia> uploadInGoogleDrive({
+    required String folderID,
+    required AppMedia media,
+    CancelToken? cancelToken,
+    void Function(int chunk, int total)? onProgress,
+  }) async {
     final localFile = File(media.path);
     try {
       final file = drive.File(
@@ -136,11 +138,12 @@ class GoogleDriveService {
     }
   }
 
-  Future<void> downloadFromGoogleDrive(
-      {required String id,
-      required String saveLocation,
-      void Function(int chunk, int total)? onProgress,
-      CancelToken? cancelToken}) async {
+  Future<void> downloadFromGoogleDrive({
+    required String id,
+    required String saveLocation,
+    void Function(int chunk, int total)? onProgress,
+    CancelToken? cancelToken,
+  }) async {
     try {
       await _client.downloadReq(
         DownloadGoogleDriveFileContent(
