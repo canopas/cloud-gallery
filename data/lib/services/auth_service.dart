@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:data/apis/network/client.dart';
-import 'package:data/apis/network/oauth2.dart';
-import 'package:data/errors/app_error.dart';
-import 'package:data/models/dropbox_account/dropbox_account.dart';
-import 'package:data/storage/app_preferences.dart';
+import '../apis/network/client.dart';
+import '../apis/network/oauth2.dart';
+import '../errors/app_error.dart';
+import '../models/dropbox_account/dropbox_account.dart';
+import '../storage/app_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,6 +13,7 @@ import '../apis/dropbox/dropbox_auth_endpoints.dart';
 import '../apis/network/secrets.dart';
 import '../apis/network/urls.dart';
 import '../models/token/token.dart';
+import '../storage/provider/preferences_provider.dart';
 
 final googleUserAccountProvider = StateProvider<GoogleSignInAccount?>((ref) {
   final googleSignIn = ref.read(googleSignInProvider);
@@ -49,11 +50,11 @@ class AuthService {
   final GoogleSignIn _googleSignIn;
   final Oauth2 _oauth2;
   final Dio _dio;
-  final StateController<DropboxToken?> _dropboxTokenController;
-  final StateController<DropboxAccount?> _dropboxAccountController;
-  final StateController<String?> _dropboxCodeVerifierPrefProvider;
-  final StateController<bool> _googleDriveAutoBackUpController;
-  final StateController<bool> _dropboxAutoBackUpController;
+  final PreferenceNotifier<DropboxToken?> _dropboxTokenController;
+  final PreferenceNotifier<DropboxAccount?> _dropboxAccountController;
+  final PreferenceNotifier<String?> _dropboxCodeVerifierPrefProvider;
+  final PreferenceNotifier<bool> _googleDriveAutoBackUpController;
+  final PreferenceNotifier<bool> _dropboxAutoBackUpController;
 
   AuthService(
     this._googleSignIn,
@@ -120,7 +121,8 @@ class AuthService {
     try {
       if (_dropboxCodeVerifierPrefProvider.state == null) {
         throw const SomethingWentWrongError(
-            message: "Dropbox code verifier is missing");
+          message: "Dropbox code verifier is missing",
+        );
       }
       final res = await _dio.req(
         DropboxTokenEndpoint(
@@ -158,9 +160,10 @@ class AuthService {
         );
         final newToken = DropboxToken.fromJson(res.data);
         _dropboxTokenController.state = _dropboxTokenController.state!.copyWith(
-            access_token: newToken.access_token,
-            expires_in: newToken.expires_in,
-            token_type: newToken.token_type);
+          access_token: newToken.access_token,
+          expires_in: newToken.expires_in,
+          token_type: newToken.token_type,
+        );
       } else {
         throw const AuthSessionExpiredError();
       }

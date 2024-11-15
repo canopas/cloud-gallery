@@ -1,55 +1,52 @@
-import 'package:data/models/dropbox_account/dropbox_account.dart';
-import 'package:data/models/token/token.dart';
-import 'package:data/storage/provider/preferences_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/dropbox_account/dropbox_account.dart';
+import '../models/token/token.dart';
+import 'provider/preferences_provider.dart';
 
 class AppPreferences {
-  static StateProvider<bool> isOnBoardComplete = createPrefProvider<bool>(
+  static final isOnBoardComplete = createPrefProvider<bool>(
     prefKey: "is_onboard_complete",
     defaultValue: false,
   );
 
-  static StateProvider<bool?> isDarkMode = createPrefProvider<bool?>(
+  static final isDarkMode = createPrefProvider<bool?>(
     prefKey: "is_dark_mode",
     defaultValue: null,
   );
 
-  static StateProvider<bool> notifications = createPrefProvider<bool>(
+  static final notifications = createPrefProvider<bool>(
     prefKey: "show_notifications",
     defaultValue: true,
   );
 
-  static StateProvider<bool> googleDriveAutoBackUp = createPrefProvider<bool>(
+  static final googleDriveAutoBackUp = createPrefProvider<bool>(
     prefKey: "google_drive_auto_backup",
     defaultValue: false,
   );
 
-  static StateProvider<bool> dropboxAutoBackUp = createPrefProvider<bool>(
+  static final dropboxAutoBackUp = createPrefProvider<bool>(
     prefKey: "dropbox_auto_backup",
     defaultValue: false,
   );
 
-  static StateProvider<bool> signInHintShown = createPrefProvider<bool>(
+  static final signInHintShown = createPrefProvider<bool>(
     prefKey: "sign_in_hint_shown",
     defaultValue: false,
   );
 
-  static StateProvider<DropboxToken?> dropboxToken =
-      createEncodedPrefProvider<DropboxToken>(
+  static final dropboxToken = createEncodedPrefProvider<DropboxToken>(
     prefKey: "dropbox_token",
     toJson: (value) => value.toJson(),
     fromJson: (json) => DropboxToken.fromJson(json),
   );
 
-  static StateProvider<DropboxAccount?> dropboxCurrentUserAccount =
+  static final dropboxCurrentUserAccount =
       createEncodedPrefProvider<DropboxAccount>(
     prefKey: "dropbox_current_user_account",
     toJson: (value) => value.toJson(),
     fromJson: (json) => DropboxAccount.fromJson(json),
   );
 
-  static StateProvider<String?> dropboxPKCECodeVerifier =
-      createPrefProvider<String?>(
+  static final dropboxPKCECodeVerifier = createPrefProvider<String?>(
     prefKey: "dropbox_code_verifier",
     defaultValue: null,
   );

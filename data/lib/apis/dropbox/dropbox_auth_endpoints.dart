@@ -1,4 +1,4 @@
-import 'package:data/apis/network/urls.dart';
+import '../network/urls.dart';
 import '../network/endpoint.dart';
 
 class DropboxTokenEndpoint extends Endpoint {
@@ -29,7 +29,7 @@ class DropboxTokenEndpoint extends Endpoint {
   String? get contentType => 'application/x-www-form-urlencoded';
 
   @override
-  get data => {
+  Map<String, String> get data => {
         'code': code,
         'grant_type': 'authorization_code',
         'redirect_uri': redirectUrl,
@@ -63,7 +63,7 @@ class DropboxRefreshTokenEndpoint extends Endpoint {
   String? get contentType => 'application/x-www-form-urlencoded';
 
   @override
-  get data => {
+  Map<String, String> get data => {
         'refresh_token': refreshToken,
         'grant_type': 'refresh_token',
         'client_id': clientId,
@@ -83,5 +83,3 @@ class DropboxGetUserAccountEndpoint extends Endpoint {
   @override
   String get path => '/users/get_current_account';
 }
-
-

@@ -21,4 +21,3 @@ class GoogleDriveAuthInterceptor extends Interceptor {
     handler.next(options);
   }
 }
-

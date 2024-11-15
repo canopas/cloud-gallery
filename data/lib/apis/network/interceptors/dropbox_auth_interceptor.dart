@@ -1,12 +1,12 @@
 import 'dart:async';
-import 'package:data/services/auth_service.dart';
+import '../../../services/auth_service.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/token/token.dart';
+import '../../../storage/provider/preferences_provider.dart';
 
 class DropboxAuthInterceptor extends Interceptor {
   final AuthService authService;
-  final StateController<DropboxToken?> dropboxTokenController;
+  final PreferenceNotifier<DropboxToken?> dropboxTokenController;
 
   Completer<void>? _refreshTokenCompleter;
 

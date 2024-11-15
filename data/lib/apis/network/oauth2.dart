@@ -6,9 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final oauth2Provider = Provider<Oauth2>((ref) => Oauth2());
 
 class Oauth2 {
-  String _generateCodeVerifier(
-          {String charset =
-              'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'}) =>
+  String _generateCodeVerifier({
+    String charset =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~',
+  }) =>
       List.generate(
         128,
         (i) => charset[Random.secure().nextInt(charset.length)],
@@ -27,24 +28,27 @@ class Oauth2 {
     Map<String, String> additionalParameters = const {},
     String? state,
   }) {
-    var codeChallenge = base64Url
+    final codeChallenge = base64Url
         .encode(sha256.convert(ascii.encode(codeVerifier)).bytes)
         .replaceAll('=', '');
 
-    var parameters = {
+    final parameters = {
       'client_id': clientId,
       'redirect_uri': redirectUri,
       'response_type': responseType,
       'code_challenge': codeChallenge,
-      'code_challenge_method': 'S256'
+      'code_challenge_method': 'S256',
     };
 
-    if(additionalParameters.isNotEmpty) parameters.addAll(additionalParameters);
+    if (additionalParameters.isNotEmpty) {
+      parameters.addAll(additionalParameters);
+    }
     if (state != null) parameters['state'] = state;
     if (scopes.isNotEmpty) parameters['scope'] = scopes.join(delimiter);
 
     return authorizationEndpoint.replace(
-        queryParameters: Map.from(authorizationEndpoint.queryParameters)
-          ..addAll(parameters));
+      queryParameters: Map.from(authorizationEndpoint.queryParameters)
+        ..addAll(parameters),
+    );
   }
 }

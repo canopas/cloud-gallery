@@ -10,8 +10,8 @@ _$DropboxTokenImpl _$$DropboxTokenImplFromJson(Map<String, dynamic> json) =>
     _$DropboxTokenImpl(
       access_token: json['access_token'] as String,
       token_type: json['token_type'] as String,
-      expires_in:
-          const ExpiresInJsonConverter().fromJson(json['expires_in'] as int),
+      expires_in: const ExpiresInJsonConverter()
+          .fromJson((json['expires_in'] as num).toInt()),
       refresh_token: json['refresh_token'] as String,
       account_id: json['account_id'] as String,
       scope: json['scope'] as String,

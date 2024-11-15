@@ -1,10 +1,11 @@
-import 'package:data/apis/network/client.dart';
-import 'package:data/errors/app_error.dart';
-import 'package:data/models/dropbox_account/dropbox_account.dart';
-import 'package:data/storage/app_preferences.dart';
+import '../apis/network/client.dart';
+import '../errors/app_error.dart';
+import '../models/dropbox_account/dropbox_account.dart';
+import '../storage/app_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../apis/dropbox/dropbox_auth_endpoints.dart';
+import '../storage/provider/preferences_provider.dart';
 
 final dropboxServiceProvider = Provider<DropboxService>((ref) {
   return DropboxService(
@@ -15,10 +16,12 @@ final dropboxServiceProvider = Provider<DropboxService>((ref) {
 
 class DropboxService {
   final Dio _dropboxAuthenticatedDio;
-  final StateController<DropboxAccount?> _dropboxAccountController;
+  final PreferenceNotifier<DropboxAccount?> _dropboxAccountController;
 
   const DropboxService(
-      this._dropboxAuthenticatedDio, this._dropboxAccountController);
+    this._dropboxAuthenticatedDio,
+    this._dropboxAccountController,
+  );
 
   Future<void> setCurrentUserAccount() async {
     try {

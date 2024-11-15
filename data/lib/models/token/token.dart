@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:data/extensions/date_time_extension.dart';
+import '../../extensions/date_time_extension.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'token.freezed.dart';
@@ -11,8 +11,9 @@ class ExpiresInJsonConverter implements JsonConverter<DateTime, int> {
 
   @override
   DateTime fromJson(int json) {
-    final date =  DateTime.fromMillisecondsSinceEpoch(
-        DateTime.now().millisecondsSinceEpoch + (json * 1000));
+    final date = DateTime.fromMillisecondsSinceEpoch(
+      DateTime.now().millisecondsSinceEpoch + (json * 1000),
+    );
     return date;
   }
 

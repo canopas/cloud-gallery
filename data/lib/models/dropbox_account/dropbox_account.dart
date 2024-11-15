@@ -38,4 +38,3 @@ class DropboxAccountName with _$DropboxAccountName {
   factory DropboxAccountName.fromJson(Map<String, dynamic> json) =>
       _$DropboxAccountNameFromJson(json);
 }
-

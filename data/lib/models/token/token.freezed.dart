@@ -29,8 +29,12 @@ mixin _$DropboxToken {
   String get scope => throw _privateConstructorUsedError;
   String get uid => throw _privateConstructorUsedError;
 
+  /// Serializes this DropboxToken to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DropboxToken
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DropboxTokenCopyWith<DropboxToken> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -61,6 +65,8 @@ class _$DropboxTokenCopyWithImpl<$Res, $Val extends DropboxToken>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DropboxToken
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -131,6 +137,8 @@ class __$$DropboxTokenImplCopyWithImpl<$Res>
       _$DropboxTokenImpl _value, $Res Function(_$DropboxTokenImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DropboxToken
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -230,12 +238,14 @@ class _$DropboxTokenImpl implements _DropboxToken {
             (identical(other.uid, uid) || other.uid == uid));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, access_token, token_type,
       expires_in, refresh_token, account_id, scope, uid);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DropboxToken
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DropboxTokenImplCopyWith<_$DropboxTokenImpl> get copyWith =>
@@ -277,8 +287,11 @@ abstract class _DropboxToken implements DropboxToken {
   String get scope;
   @override
   String get uid;
+
+  /// Create a copy of DropboxToken
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DropboxTokenImplCopyWith<_$DropboxTokenImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -32,8 +32,12 @@ mixin _$DropboxAccount {
   String? get profile_photo_url => throw _privateConstructorUsedError;
   String? get team_member_id => throw _privateConstructorUsedError;
 
+  /// Serializes this DropboxAccount to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DropboxAccount
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DropboxAccountCopyWith<DropboxAccount> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -70,6 +74,8 @@ class _$DropboxAccountCopyWithImpl<$Res, $Val extends DropboxAccount>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DropboxAccount
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -133,6 +139,8 @@ class _$DropboxAccountCopyWithImpl<$Res, $Val extends DropboxAccount>
     ) as $Val);
   }
 
+  /// Create a copy of DropboxAccount
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DropboxAccountNameCopyWith<$Res> get name {
@@ -175,6 +183,8 @@ class __$$DropboxAccountImplCopyWithImpl<$Res>
       _$DropboxAccountImpl _value, $Res Function(_$DropboxAccountImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DropboxAccount
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -311,7 +321,7 @@ class _$DropboxAccountImpl implements _DropboxAccount {
                 other.team_member_id == team_member_id));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -327,7 +337,9 @@ class _$DropboxAccountImpl implements _DropboxAccount {
       profile_photo_url,
       team_member_id);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DropboxAccount
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DropboxAccountImplCopyWith<_$DropboxAccountImpl> get copyWith =>
@@ -381,8 +393,11 @@ abstract class _DropboxAccount implements DropboxAccount {
   String? get profile_photo_url;
   @override
   String? get team_member_id;
+
+  /// Create a copy of DropboxAccount
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DropboxAccountImplCopyWith<_$DropboxAccountImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -399,8 +414,12 @@ mixin _$DropboxAccountName {
   String get given_name => throw _privateConstructorUsedError;
   String get surname => throw _privateConstructorUsedError;
 
+  /// Serializes this DropboxAccountName to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DropboxAccountName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DropboxAccountNameCopyWith<DropboxAccountName> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -429,6 +448,8 @@ class _$DropboxAccountNameCopyWithImpl<$Res, $Val extends DropboxAccountName>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DropboxAccountName
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -487,6 +508,8 @@ class __$$DropboxAccountNameImplCopyWithImpl<$Res>
       $Res Function(_$DropboxAccountNameImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DropboxAccountName
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -566,12 +589,14 @@ class _$DropboxAccountNameImpl implements _DropboxAccountName {
             (identical(other.surname, surname) || other.surname == surname));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, abbreviated_name, display_name,
       familiar_name, given_name, surname);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DropboxAccountName
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DropboxAccountNameImplCopyWith<_$DropboxAccountNameImpl> get copyWith =>
@@ -607,8 +632,11 @@ abstract class _DropboxAccountName implements DropboxAccountName {
   String get given_name;
   @override
   String get surname;
+
+  /// Create a copy of DropboxAccountName
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DropboxAccountNameImplCopyWith<_$DropboxAccountNameImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

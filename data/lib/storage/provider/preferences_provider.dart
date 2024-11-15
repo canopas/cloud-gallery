@@ -33,6 +33,37 @@ StateNotifierProvider<PreferenceNotifier<T>, T> createPrefProvider<T>({
   );
 }
 
+StateNotifierProvider<PreferenceNotifier<T?>, T?> createEncodedPrefProvider<T>({
+  required String prefKey,
+  T? defaultValue,
+  required Map<String, dynamic> Function(T value) toJson,
+  required T Function(Map<String, dynamic> json) fromJson,
+}) {
+  T? jsonPodToObject(String? json, T? defaultValue) {
+    if (json == null) {
+      return defaultValue;
+    }
+    return fromJson(jsonDecode(json));
+  }
+
+  return StateNotifierProvider<PreferenceNotifier<T?>, T?>(
+    (ref) => PreferenceNotifier<T?>(
+      jsonPodToObject(
+        ref.watch(sharedPreferencesProvider).getString(prefKey),
+        defaultValue,
+      ),
+      (curr) {
+        final prefs = ref.watch(sharedPreferencesProvider);
+        if (curr == null) {
+          prefs.remove(prefKey);
+        } else {
+          prefs.setString(prefKey, jsonEncode(toJson(curr)));
+        }
+      },
+    ),
+  );
+}
+
 class PreferenceNotifier<T> extends StateNotifier<T> {
   Function(T curr)? onUpdate;
 
@@ -49,26 +80,4 @@ class PreferenceNotifier<T> extends StateNotifier<T> {
 
   @override
   T get state => super.state;
-}
-
-StateProvider<T?> createEncodedPrefProvider<T>({
-  required String prefKey,
-  T? defaultValue,
-  required Map<String, dynamic> Function(T value) toJson,
-  required T Function(Map<String, dynamic> json) fromJson,
-}) {
-  return StateProvider((ref) {
-    final prefs = ref.watch(sharedPreferencesProvider);
-    final currentValue = prefs.getString(prefKey);
-    ref.listenSelf((previous, current) {
-      if (current == null) {
-        prefs.remove(prefKey);
-      } else {
-        prefs.setString(prefKey, jsonEncode(toJson(current)));
-      }
-    });
-    return currentValue == null
-        ? defaultValue
-        : fromJson(jsonDecode(currentValue));
-  });
 }

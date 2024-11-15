@@ -1,6 +1,7 @@
 class BaseURL {
   // Google Drive API Base URL
-  static const googleDriveUploadV3 = 'https://www.googleapis.com/upload/drive/v3';
+  static const googleDriveUploadV3 =
+      'https://www.googleapis.com/upload/drive/v3';
   static const googleDriveV3 = 'https://www.googleapis.com/drive/v3';
 
   // Dropbox API Base URL
