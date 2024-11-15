@@ -91,7 +91,8 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                         onChanged: (bool value) {
                           ref
                               .read(
-                                  AppPreferences.googleDriveAutoBackUp.notifier)
+                                AppPreferences.googleDriveAutoBackUp.notifier,
+                              )
                               .state = value;
                         },
                       );
