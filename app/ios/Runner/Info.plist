@@ -26,6 +26,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.64221198282-h8h8gjo3991iijeg2agdkmfh6tr014nq</string>
+				<string>cloudgallery</string>
 			</array>
 		</dict>
 	</array>

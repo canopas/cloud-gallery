@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
@@ -21,6 +22,7 @@ class AccountsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
@@ -28,38 +30,43 @@ class AccountsTab extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding:
+                const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
             child: Row(
               children: [
                 _buildProfileAvtar(context: context),
                 const SizedBox(width: 16),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: AppTextStyles.subtitle2.copyWith(
-                        color: context.colorScheme.textPrimary,
-                      ),
-                    ),
-                    if (serviceDescription != null) ...[
-                      const SizedBox(height: 4),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        serviceDescription ?? '',
-                        style: AppTextStyles.body2.copyWith(
-                          color: context.colorScheme.textSecondary,
+                        name,
+                        style: AppTextStyles.subtitle2.copyWith(
+                          color: context.colorScheme.textPrimary,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      if (serviceDescription != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          serviceDescription ?? '',
+                          style: AppTextStyles.body2.copyWith(
+                            color: context.colorScheme.textSecondary,
+                            overflow: TextOverflow.visible,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
           if (actionList != null)
             Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+              padding: const EdgeInsets.only(left: 8, right: 8),
               child: actionList,
             ),
         ],
@@ -75,7 +82,7 @@ class AccountsTab extends StatelessWidget {
           border: Border.all(color: context.colorScheme.outline, width: 0.8),
           image: profileImage != null
               ? DecorationImage(
-                  image: NetworkImage(profileImage!),
+                  image: CachedNetworkImageProvider(profileImage!),
                 )
               : null,
           shape: BoxShape.circle,

@@ -1,3 +1,5 @@
+import '../models/dropbox_account/dropbox_account.dart';
+import '../models/token/token.dart';
 import 'provider/preferences_provider.dart';
 
 class AppPreferences {
@@ -16,18 +18,36 @@ class AppPreferences {
     defaultValue: true,
   );
 
-  static final canTakeAutoBackUpInGoogleDrive = createPrefProvider<bool>(
+  static final googleDriveAutoBackUp = createPrefProvider<bool>(
     prefKey: "google_drive_auto_backup",
     defaultValue: false,
   );
 
-  static final googleDriveSignInHintShown = createPrefProvider<bool>(
-    prefKey: "google_drive_sign_in_hint_shown",
+  static final dropboxAutoBackUp = createPrefProvider<bool>(
+    prefKey: "dropbox_auto_backup",
     defaultValue: false,
   );
 
-  static final googleDriveAutoBackUpHintShown = createPrefProvider<bool>(
-    prefKey: "google_drive_sign_in_hint_shown",
+  static final signInHintShown = createPrefProvider<bool>(
+    prefKey: "sign_in_hint_shown",
     defaultValue: false,
+  );
+
+  static final dropboxToken = createEncodedPrefProvider<DropboxToken>(
+    prefKey: "dropbox_token",
+    toJson: (value) => value.toJson(),
+    fromJson: (json) => DropboxToken.fromJson(json),
+  );
+
+  static final dropboxCurrentUserAccount =
+      createEncodedPrefProvider<DropboxAccount>(
+    prefKey: "dropbox_current_user_account",
+    toJson: (value) => value.toJson(),
+    fromJson: (json) => DropboxAccount.fromJson(json),
+  );
+
+  static final dropboxPKCECodeVerifier = createPrefProvider<String?>(
+    prefKey: "dropbox_code_verifier",
+    defaultValue: null,
   );
 }

@@ -8,6 +8,7 @@
   "common_accounts": "Accounts",
   "common_local": "Local",
   "common_google_drive": "Google Drive",
+  "common_dropbox": "Dropbox",
   "common_term_and_condition": "Terms and Conditions",
   "common_privacy_policy": "Privacy Policy",
   "common_today": "Today",
@@ -28,6 +29,7 @@
   "something_went_wrong_error": "Something went wrong! Please try again later.",
   "user_google_sign_in_account_not_found_error": "You haven't signed in with Google account yet. Please sign in with Google account and try again.",
   "back_up_folder_not_found_error": "Back up folder not found!",
+  "auth_session_expired_error": "Your session has expired. Please log in again to continue using the app.",
 
   "unable_to_load_media_error": "Unable to load media!",
 
@@ -53,9 +55,7 @@
   "greetings_hey_there_text": "Hey There!",
   "greetings_hey_text": "Hey",
 
-  "hint_google_sign_in_message": "Sign in with Google and effortlessly link your Google Drive to your Cloud Gallery. Enjoy quick access to all your awesome content in one spot",
-  "hint_google_auto_backup_message": "Enable Auto Back Up to Google Drive and never lose your precious memories. Your photos and videos will be automatically backed up to your Google Drive",
-  "hint_action_auto_backup": "Enable Auto Back Up",
+  "hint_sign_in_message": "Sign in with Google Drive or Dropbox and enjoy quick access to all your awesome content in one spot",
 
   "delete_media_from_device_confirmation_message": "Are you sure you want to delete this media? It will be permanently deleted from your device.",
   "delete_media_from_google_drive_confirmation_message": "Are you sure you want to delete this media? It will be permanently deleted from your Google Drive.",
@@ -78,6 +78,9 @@
 
   "download_from_google_drive_text": "Download from Google Drive",
   "download_from_google_drive_alert_message": " Are you sure you want to download this media? It will be saved to your gallery.",
+
+  "sign_in_with_google_drive_text": "Sign in with Google Drive",
+  "sign_in_with_dropbox_text": "Sign in with Dropbox",
 
   "name_text": "Name",
   "size_text": "Size",

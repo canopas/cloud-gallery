@@ -26,10 +26,10 @@ final homeViewStateNotifier =
     ref.read(googleDriveServiceProvider),
     ref.read(authServiceProvider),
     ref.read(googleDriveProcessRepoProvider),
-    ref.read(AppPreferences.canTakeAutoBackUpInGoogleDrive),
+    ref.read(AppPreferences.googleDriveAutoBackUp),
   );
 
-  ref.listen(AppPreferences.canTakeAutoBackUpInGoogleDrive, (previous, next) {
+  ref.listen(AppPreferences.googleDriveAutoBackUp, (previous, next) {
     homeView.updateAutoBackUpStatus(next);
   });
   return homeView;
