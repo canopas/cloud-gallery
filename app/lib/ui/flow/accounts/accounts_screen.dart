@@ -1,9 +1,9 @@
-import 'package:cloud_gallery/components/app_page.dart';
-import 'package:cloud_gallery/domain/assets/assets_paths.dart';
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/domain/extensions/widget_extensions.dart';
-import 'package:cloud_gallery/ui/flow/accounts/accounts_screen_view_model.dart';
-import 'package:cloud_gallery/ui/flow/accounts/components/settings_action_list.dart';
+import '../../../components/app_page.dart';
+import '../../../domain/assets/assets_paths.dart';
+import '../../../domain/extensions/context_extensions.dart';
+import '../../../domain/extensions/widget_extensions.dart';
+import 'accounts_screen_view_model.dart';
+import 'components/settings_action_list.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,122 +66,139 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   }
 
   Widget _googleAccount({required BuildContext context}) {
-    return Consumer(builder: (context, ref, child) {
-      final googleAccount = ref.watch(
-          accountsStateNotifierProvider.select((value) => value.googleAccount));
-
-      if (googleAccount != null) {
-        return AccountsTab(
-          name: googleAccount.displayName ?? googleAccount.email,
-          serviceDescription:
-              "${context.l10n.common_google_drive} - ${googleAccount.email}",
-          profileImage: googleAccount.photoUrl,
-          actionList: ActionList(buttons: [
-            ActionListButton(
-              title: context.l10n.common_auto_back_up,
-              trailing: Consumer(
-                builder: (context, ref, child) {
-                  final googleDriveAutoBackUp =
-                      ref.watch(AppPreferences.googleDriveAutoBackUp);
-                  return AppSwitch(
-                    value: googleDriveAutoBackUp,
-                    onChanged: (bool value) {
-                      ref
-                          .read(AppPreferences.googleDriveAutoBackUp.notifier)
-                          .state = value;
-                    },
-                  );
-                },
-              ),
-            ),
-            ActionListButton(
-              title: context.l10n.common_sign_out,
-              onPressed: notifier.signOutWithGoogle,
-            ),
-          ]),
-          backgroundColor: AppColors.googleDriveColor.withAlpha(50),
+    return Consumer(
+      builder: (context, ref, child) {
+        final googleAccount = ref.watch(
+          accountsStateNotifierProvider.select((value) => value.googleAccount),
         );
-      }
-      return ActionList(buttons: [
-        ActionListButton(
-          leading: SvgPicture.asset(
-            Assets.images.icons.googleDrive,
-            height: 24,
-            width: 24,
-          ),
-          title: context.l10n.sign_in_with_google_drive_text,
-          onPressed: () {
-            notifier.signInWithGoogle();
-          },
-        ),
-      ]);
-    });
+
+        if (googleAccount != null) {
+          return AccountsTab(
+            name: googleAccount.displayName ?? googleAccount.email,
+            serviceDescription:
+                "${context.l10n.common_google_drive} - ${googleAccount.email}",
+            profileImage: googleAccount.photoUrl,
+            actionList: ActionList(
+              buttons: [
+                ActionListButton(
+                  title: context.l10n.common_auto_back_up,
+                  trailing: Consumer(
+                    builder: (context, ref, child) {
+                      final googleDriveAutoBackUp =
+                          ref.watch(AppPreferences.googleDriveAutoBackUp);
+                      return AppSwitch(
+                        value: googleDriveAutoBackUp,
+                        onChanged: (bool value) {
+                          ref
+                              .read(
+                                  AppPreferences.googleDriveAutoBackUp.notifier)
+                              .state = value;
+                        },
+                      );
+                    },
+                  ),
+                ),
+                ActionListButton(
+                  title: context.l10n.common_sign_out,
+                  onPressed: notifier.signOutWithGoogle,
+                ),
+              ],
+            ),
+            backgroundColor: AppColors.googleDriveColor.withAlpha(50),
+          );
+        }
+        return ActionList(
+          buttons: [
+            ActionListButton(
+              leading: SvgPicture.asset(
+                Assets.images.icons.googleDrive,
+                height: 24,
+                width: 24,
+              ),
+              title: context.l10n.sign_in_with_google_drive_text,
+              onPressed: () {
+                notifier.signInWithGoogle();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _dropboxAccount({required BuildContext context}) {
-    return Consumer(builder: (context, ref, child) {
-      final dropboxAccount =
-          ref.watch(AppPreferences.dropboxCurrentUserAccount);
-      if (dropboxAccount != null) {
-        return AccountsTab(
-          name: dropboxAccount.name.display_name,
-          serviceDescription:
-              "${context.l10n.common_dropbox} - ${dropboxAccount.email}",
-          profileImage: dropboxAccount.profile_photo_url,
-          actionList: ActionList(buttons: [
-            ActionListButton(
-              title: context.l10n.common_auto_back_up,
-              trailing: Consumer(
-                builder: (context, ref, child) {
-                  final dropboxAutoBackUp =
-                      ref.watch(AppPreferences.dropboxAutoBackUp);
-                  return AppSwitch(
-                    value: dropboxAutoBackUp,
-                    onChanged: (bool value) {
-                      ref
-                          .read(AppPreferences.dropboxAutoBackUp.notifier)
-                          .state = value;
+    return Consumer(
+      builder: (context, ref, child) {
+        final dropboxAccount =
+            ref.watch(AppPreferences.dropboxCurrentUserAccount);
+        if (dropboxAccount != null) {
+          return AccountsTab(
+            name: dropboxAccount.name.display_name,
+            serviceDescription:
+                "${context.l10n.common_dropbox} - ${dropboxAccount.email}",
+            profileImage: dropboxAccount.profile_photo_url,
+            actionList: ActionList(
+              buttons: [
+                ActionListButton(
+                  title: context.l10n.common_auto_back_up,
+                  trailing: Consumer(
+                    builder: (context, ref, child) {
+                      final dropboxAutoBackUp =
+                          ref.watch(AppPreferences.dropboxAutoBackUp);
+                      return AppSwitch(
+                        value: dropboxAutoBackUp,
+                        onChanged: (bool value) {
+                          ref
+                              .read(AppPreferences.dropboxAutoBackUp.notifier)
+                              .state = value;
+                        },
+                      );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+                ActionListButton(
+                  title: context.l10n.common_sign_out,
+                  onPressed: notifier.signOutWithDropbox,
+                ),
+              ],
             ),
+            backgroundColor: AppColors.dropBoxColor.withAlpha(50),
+          );
+        }
+        return ActionList(
+          buttons: [
             ActionListButton(
-              title: context.l10n.common_sign_out,
-              onPressed: notifier.signOutWithDropbox,
+              leading: SvgPicture.asset(
+                Assets.images.icons.dropbox,
+                height: 24,
+                width: 24,
+              ),
+              title: context.l10n.sign_in_with_dropbox_text,
+              onPressed: () {
+                notifier.signInWithDropbox();
+              },
             ),
-          ]),
-          backgroundColor: AppColors.dropBoxColor.withAlpha(50),
+          ],
         );
-      }
-      return ActionList(buttons: [
-        ActionListButton(
-            leading: SvgPicture.asset(
-              Assets.images.icons.dropbox,
-              height: 24,
-              width: 24,
-            ),
-            title: context.l10n.sign_in_with_dropbox_text,
-            onPressed: () {
-              notifier.signInWithDropbox();
-            }),
-      ]);
-    });
+      },
+    );
   }
 
-  Widget _buildVersion({required BuildContext context}) =>
-      Consumer(builder: (context, ref, child) {
-        final version = ref.watch(
-            accountsStateNotifierProvider.select((value) => value.version));
-        return Visibility(
-          visible: version != null,
-          child: Text(
-            "${context.l10n.version_text} $version",
-            style: AppTextStyles.body2.copyWith(
-              color: context.colorScheme.textSecondary,
+  Widget _buildVersion({required BuildContext context}) => Consumer(
+        builder: (context, ref, child) {
+          final version = ref.watch(
+            accountsStateNotifierProvider.select((value) => value.version),
+          );
+          return Visibility(
+            visible: version != null,
+            child: Text(
+              "${context.l10n.version_text} $version",
+              style: AppTextStyles.body2.copyWith(
+                color: context.colorScheme.textSecondary,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        );
-      });
+          );
+        },
+      );
 }

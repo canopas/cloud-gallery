@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:style/animations/on_tap_scale.dart';
-import 'package:style/extensions/column_extension.dart';
-import 'package:style/extensions/context_extensions.dart';
-import 'package:style/text/app_text_style.dart';
+import '../animations/on_tap_scale.dart';
+import '../extensions/column_extension.dart';
+import '../extensions/context_extensions.dart';
+import '../text/app_text_style.dart';
 
 class ActionListButton {
   final String title;
@@ -24,12 +24,13 @@ class ActionList extends StatelessWidget {
   final BorderRadius borderRadius;
   final Color? background;
 
-  const ActionList(
-      {super.key,
-      required this.buttons,
-      this.margin = const EdgeInsets.symmetric(vertical: 8),
-      this.background,
-      this.borderRadius = const BorderRadius.all(Radius.circular(12))});
+  const ActionList({
+    super.key,
+    required this.buttons,
+    this.margin = const EdgeInsets.symmetric(vertical: 8),
+    this.background,
+    this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +56,10 @@ class ActionList extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(
-      {required BuildContext context, required ActionListButton button}) {
+  Widget _buildButton({
+    required BuildContext context,
+    required ActionListButton button,
+  }) {
     return OnTapScale(
       enabled: button.onPressed != null,
       onTap: button.onPressed,
@@ -73,9 +76,8 @@ class ActionList extends StatelessWidget {
               Expanded(
                 child: Text(
                   button.title,
-                  style: AppTextStyles.body2.copyWith(
-                    color: context.colorScheme.textPrimary
-                  ),
+                  style: AppTextStyles.body2
+                      .copyWith(color: context.colorScheme.textPrimary),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

@@ -10,13 +10,14 @@ class AccountsTab extends StatelessWidget {
   final String? serviceDescription;
   final Widget? actionList;
 
-  const AccountsTab(
-      {super.key,
-      required this.name,
-      this.serviceDescription,
-      this.actionList,
-      this.profileImage,
-      required this.backgroundColor});
+  const AccountsTab({
+    super.key,
+    required this.name,
+    this.serviceDescription,
+    this.actionList,
+    this.profileImage,
+    required this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,7 @@ class AccountsTab extends StatelessWidget {
                             overflow: TextOverflow.visible,
                           ),
                         ),
-                      ]
+                      ],
                     ],
                   ),
                 ),
@@ -67,7 +68,7 @@ class AccountsTab extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 8, right: 8),
               child: actionList,
-            )
+            ),
         ],
       ),
     );

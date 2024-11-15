@@ -1,5 +1,5 @@
-import 'package:cloud_gallery/domain/extensions/context_extensions.dart';
-import 'package:cloud_gallery/ui/navigation/app_router.dart';
+import '../../../../domain/extensions/context_extensions.dart';
+import '../../../navigation/app_route.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class HomeScreenHints extends ConsumerWidget {
         },
         actionTitle: context.l10n.add_account_title,
         onActionTap: () {
-          AppRouter.accounts.push(context);
+          AccountRoute().push(context);
           ref.read(AppPreferences.signInHintShown.notifier).state = true;
         },
       );

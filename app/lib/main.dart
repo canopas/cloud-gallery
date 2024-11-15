@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:cloud_gallery/domain/handlers/deep_links_handler.dart';
-import 'package:cloud_gallery/firebase_options.dart';
+import 'domain/handlers/deep_links_handler.dart';
+import 'firebase_options.dart';
 import 'package:data/storage/provider/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
