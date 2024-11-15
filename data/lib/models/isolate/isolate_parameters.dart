@@ -1,4 +1,3 @@
-
 import 'dart:ui' show RootIsolateToken;
 
 class IsolateParameters<T> {
