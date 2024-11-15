@@ -91,7 +91,7 @@ class AppPage extends StatelessWidget {
             : AppBar(
                 backgroundColor: barBackgroundColor,
                 title: titleWidget ?? _title(context),
-                actions: actions,
+                actions: [...?actions, const SizedBox(width: 16)],
                 leading: leading,
                 automaticallyImplyLeading: automaticallyImplyLeading,
               ),

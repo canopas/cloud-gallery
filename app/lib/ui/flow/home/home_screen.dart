@@ -22,6 +22,7 @@ import 'components/app_media_item.dart';
 import 'components/hints.dart';
 import 'components/multi_selection_done_button.dart';
 import 'package:style/buttons/action_button.dart';
+import 'package:style/animations/fade_in_switcher.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -31,7 +32,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  late HomeViewStateNotifier notifier;
+  late HomeViewStateNotifier _notifier;
   late NotificationHandler _notificationHandler;
   final _scrollController = ScrollController();
 
@@ -40,7 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _notificationHandler = ref.read(notificationHandlerProvider);
     _notificationHandler.init(context);
     _notificationHandler.requestPermission();
-    notifier = ref.read(homeViewStateNotifier.notifier);
+    _notifier = ref.read(homeViewStateNotifier.notifier);
     super.initState();
   }
 
@@ -81,53 +82,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       titleWidget: _titleWidget(context: context),
       actions: [
-        Consumer(
-          builder: (context, ref, child) {
-            final showTransferButton = ref.watch(
-              homeViewStateNotifier.select((value) => value.showTransfer),
-            );
-            return Visibility(
-              visible: showTransferButton,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ActionButton(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  size: 36,
-                  backgroundColor: context.colorScheme.containerNormal,
-                  onPressed: () {
-                    TransferRoute().push(context);
-                  },
-                  icon: Icon(
-                    CupertinoIcons.arrow_up_arrow_down,
-                    color: context.colorScheme.textSecondary,
-                    size: 18,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        ActionButton(
-          size: 36,
-          backgroundColor: context.colorScheme.containerNormal,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          onPressed: () {
-            AccountRoute().push(context);
-          },
-          icon: Icon(
-            CupertinoIcons.person,
-            color: context.colorScheme.textSecondary,
-            size: 18,
-          ),
-        ),
-        if (!Platform.isIOS && !Platform.isMacOS) const SizedBox(width: 16),
+        FadeInSwitcher(child: _transferButton(context)),
+        _accountButton(context),
       ],
-      body: _body(context: context),
+      body: FadeInSwitcher(child: _body(context: context)),
+    );
+  }
+
+  Widget _titleWidget({required BuildContext context}) {
+    return Row(
+      children: [
+        if (Platform.isIOS) const SizedBox(width: 10),
+        Image.asset(
+          Assets.images.appIcon,
+          width: 28,
+        ),
+        const SizedBox(width: 10),
+        Text(context.l10n.app_name),
+      ],
+    );
+  }
+
+  Widget _transferButton(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final showTransferButton = ref.watch(
+          homeViewStateNotifier.select((value) => value.showTransfer),
+        );
+        return Visibility(
+          visible: showTransferButton,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: ActionButton(
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              size: 36,
+              backgroundColor: context.colorScheme.containerNormal,
+              onPressed: () {
+                TransferRoute().push(context);
+              },
+              icon: Icon(
+                CupertinoIcons.arrow_up_arrow_down,
+                color: context.colorScheme.textSecondary,
+                size: 18,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _accountButton(BuildContext context) {
+    return ActionButton(
+      size: 36,
+      backgroundColor: context.colorScheme.containerNormal,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      onPressed: () {
+        AccountRoute().push(context);
+      },
+      icon: Icon(
+        CupertinoIcons.person,
+        color: context.colorScheme.textSecondary,
+        size: 18,
+      ),
     );
   }
 
   Widget _body({required BuildContext context}) {
-    //View State
     final ({
       Map<DateTime, List<AppMedia>> medias,
       List<AppProcess> mediaProcesses,
@@ -148,7 +169,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
 
-    //View
     if (state.isLoading) {
       return const Center(child: AppCircularProgressIndicator());
     } else if (state.medias.isEmpty && !state.hasLocalMediaAccess) {
@@ -224,14 +244,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     final media = gridEntry.value[index];
                     if (media.id == lastLocalMediaId) {
                       runPostFrame(() {
-                        notifier.loadLocalMedia(append: true);
+                        _notifier.loadLocalMedia(append: true);
                       });
                     }
                     return AppMediaItem(
                       key: ValueKey(media.id),
                       onTap: () async {
                         if (selectedMedias.isNotEmpty) {
-                          notifier.toggleMediaSelection(media);
+                          _notifier.toggleMediaSelection(media);
                         } else {
                           await MediaPreviewRoute(
                             $extra: MediaPreviewRouteData(
@@ -241,11 +261,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               startFrom: media.id,
                             ),
                           ).push(context);
-                          notifier.loadLocalMedia();
+                          _notifier.loadLocalMedia();
                         }
                       },
                       onLongTap: () {
-                        notifier.toggleMediaSelection(media);
+                        _notifier.toggleMediaSelection(media);
                       },
                       isSelected: selectedMedias.contains(media),
                       process: mediaProcesses.firstWhereOrNull(
@@ -260,20 +280,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }
         },
       ),
-    );
-  }
-
-  Widget _titleWidget({required BuildContext context}) {
-    return Row(
-      children: [
-        if (Platform.isIOS) const SizedBox(width: 10),
-        Image.asset(
-          Assets.images.appIcon,
-          width: 28,
-        ),
-        const SizedBox(width: 10),
-        Text(context.l10n.app_name),
-      ],
     );
   }
 }
