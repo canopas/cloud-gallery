@@ -52,6 +52,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   share_plus: ^10.1.2
   webview_flutter: ^4.10.0
+  app_links: ^6.3.2
 
   photo_manager: ^3.6.2
   photo_manager_image_provider: ^2.2.0

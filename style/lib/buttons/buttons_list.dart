@@ -20,14 +20,14 @@ class ActionListButton {
 
 class ActionList extends StatelessWidget {
   final List<ActionListButton> buttons;
-  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry margin;
   final BorderRadius borderRadius;
   final Color? background;
 
   const ActionList({
     super.key,
     required this.buttons,
-    this.margin,
+    this.margin = const EdgeInsets.symmetric(vertical: 8),
     this.background,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
   });

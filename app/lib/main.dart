@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'domain/handlers/deep_links_handler.dart';
 import 'firebase_options.dart';
 import 'package:data/storage/provider/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +23,8 @@ Future<void> main() async {
   }
 
   final container = await _configureContainerWithAsyncDependency();
+
+  DeepLinkHandler.observeDeepLinks(container: container);
 
   runApp(
     UncontrolledProviderScope(

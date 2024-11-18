@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +27,37 @@ StateNotifierProvider<PreferenceNotifier<T>, T> createPrefProvider<T>({
           prefs.setDouble(prefKey, curr);
         } else if (curr is List<String>) {
           prefs.setStringList(prefKey, curr);
+        }
+      },
+    ),
+  );
+}
+
+StateNotifierProvider<PreferenceNotifier<T?>, T?> createEncodedPrefProvider<T>({
+  required String prefKey,
+  T? defaultValue,
+  required Map<String, dynamic> Function(T value) toJson,
+  required T Function(Map<String, dynamic> json) fromJson,
+}) {
+  T? jsonPodToObject(String? json, T? defaultValue) {
+    if (json == null) {
+      return defaultValue;
+    }
+    return fromJson(jsonDecode(json));
+  }
+
+  return StateNotifierProvider<PreferenceNotifier<T?>, T?>(
+    (ref) => PreferenceNotifier<T?>(
+      jsonPodToObject(
+        ref.watch(sharedPreferencesProvider).getString(prefKey),
+        defaultValue,
+      ),
+      (curr) {
+        final prefs = ref.watch(sharedPreferencesProvider);
+        if (curr == null) {
+          prefs.remove(prefKey);
+        } else {
+          prefs.setString(prefKey, jsonEncode(toJson(curr)));
         }
       },
     ),

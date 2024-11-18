@@ -1,9 +1,11 @@
-import 'interceptors/auth_interceptor.dart';
 import '../../errors/app_error.dart';
 import '../../services/auth_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../storage/app_preferences.dart';
 import 'endpoint.dart';
+import 'interceptors/dropbox_auth_interceptor.dart';
+import 'interceptors/google_drive_auth_interceptor.dart';
 
 final googleAuthenticatedDioProvider = Provider((ref) {
   return Dio()
@@ -13,6 +15,19 @@ final googleAuthenticatedDioProvider = Provider((ref) {
     ..interceptors.add(
       GoogleDriveAuthInterceptor(
         googleSignIn: ref.read(googleSignInProvider),
+      ),
+    );
+});
+
+final dropboxAuthenticatedDioProvider = Provider((ref) {
+  return Dio()
+    ..options.connectTimeout = const Duration(seconds: 60)
+    ..options.sendTimeout = const Duration(seconds: 60)
+    ..options.receiveTimeout = const Duration(seconds: 60)
+    ..interceptors.add(
+      DropboxAuthInterceptor(
+        authService: ref.read(authServiceProvider),
+        dropboxTokenController: ref.read(AppPreferences.dropboxToken.notifier),
       ),
     );
 });
@@ -43,8 +58,8 @@ extension DioExtensions on Dio {
         onReceiveProgress: endpoint.onReceiveProgress,
         onSendProgress: endpoint.onSendProgress,
       );
-    } catch (error) {
-      throw AppError.fromError(error);
+    } catch (e) {
+      throw AppError.fromError(e);
     }
   }
 
