@@ -17,6 +17,7 @@ import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/switch.dart';
 import '../../../components/snack_bar.dart';
 import 'components/account_tab.dart';
+import 'package:data/domain/config.dart';
 
 class AccountsScreen extends ConsumerStatefulWidget {
   const AccountsScreen({super.key});
@@ -54,9 +55,9 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           padding: context.systemPadding +
               const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
-            const SettingsActionList(),
             _googleAccount(context: context),
-            _dropboxAccount(context: context),
+            if (FeatureFlags.dropboxEnabled) _dropboxAccount(context: context),
+            const SettingsActionList(),
             const SizedBox(height: 16),
             _buildVersion(context: context),
           ],
