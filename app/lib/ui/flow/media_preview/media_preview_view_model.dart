@@ -110,7 +110,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   }
 
   Future<void> uploadMediaInGoogleDrive({required AppMedia media}) async {
-    _googleDriveProcessRepo.uploadMediasInGoogleDrive(medias: [media]);
+    _googleDriveProcessRepo.uploadMedia([media]);
   }
 
   void updateVideoPosition(Duration position) {

@@ -34,6 +34,27 @@ class LocalMediaService {
     );
   }
 
+  Future<List<AppMedia>> getAllLocalMedia() async {
+    try {
+      final count = await PhotoManager.getAssetCount();
+      final assets = await PhotoManager.getAssetListRange(
+        start: 0,
+        end: count,
+        filterOption: FilterOptionGroup(
+          orders: [const OrderOption(type: OrderOptionType.createDate)],
+        ),
+      );
+      final files = await Future.wait(
+        assets.map(
+          (asset) => AppMedia.fromAssetEntity(asset),
+        ),
+      );
+      return files.whereNotNull().toList();
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
   Future<List<AppMedia>> getLocalMedia({
     required int start,
     required int end,

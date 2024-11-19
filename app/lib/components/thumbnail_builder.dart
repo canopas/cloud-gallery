@@ -25,7 +25,7 @@ class AppMediaImage extends StatelessWidget {
       child: Hero(
         tag: heroTag ?? '',
         child: Image(
-          image: AppMediaImageProvider(media: media, thumbnailSize: size),
+          image: AppMediaImageProvider(media: media, thumbnailSize: size * 2),
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress != null) {
               return AppMediaPlaceHolder(

@@ -46,14 +46,43 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
     _backUpFolderID = backUpFolderId;
   }
 
-  void uploadMediasInGoogleDrive({
-    required List<AppMedia> medias,
-    bool isFromAutoBackup = false,
-  }) {
+  Future<void> autoBackInGoogleDrive() async {
+    final localMedias = await _localMediaService.getAllLocalMedia();
+
+    final dgMedias = await _googleDriveService.getDriveMedias(
+      backUpFolderId: _backUpFolderID!,
+    );
+
+    for (AppMedia localMedia in localMedias.toList()) {
+      if (_uploadQueue
+              .where((element) => element.id == localMedia.id)
+              .isNotEmpty ||
+          dgMedias
+              .where((gdMedia) => gdMedia.path == localMedia.id)
+              .isNotEmpty) {
+        localMedias.removeWhere((media) => media.id == localMedia.id);
+      }
+    }
+
+    _uploadQueue.addAll(
+      localMedias.map(
+        (media) => AppProcess(
+          isFromAutoBackup: true,
+          id: media.id,
+          media: media,
+          status: AppProcessStatus.waiting,
+        ),
+      ),
+    );
+    notifyListeners();
+    if (!_uploadQueueRunning) _startUploadQueueLoop();
+  }
+
+  Future<void> uploadMedia(List<AppMedia> medias) async {
     _uploadQueue.addAll(
       medias.map(
         (media) => AppProcess(
-          isFromAutoBackup: isFromAutoBackup,
+          isFromAutoBackup: false,
           id: media.id,
           media: media,
           status: AppProcessStatus.waiting,
