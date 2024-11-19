@@ -117,8 +117,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               size: 36,
               backgroundColor: context.colorScheme.containerNormal,
-              onPressed: () {
-                TransferRoute().push(context);
+              onPressed: () async {
+                await TransferRoute().push(context);
+                _notifier.loadMedias();
               },
               icon: Icon(
                 CupertinoIcons.arrow_up_arrow_down,
@@ -137,8 +138,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       size: 36,
       backgroundColor: context.colorScheme.containerNormal,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      onPressed: () {
-        AccountRoute().push(context);
+      onPressed: () async {
+        await AccountRoute().push(context);
+        _notifier.loadMedias();
       },
       icon: Icon(
         CupertinoIcons.person,
@@ -261,7 +263,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               startFrom: media.id,
                             ),
                           ).push(context);
-                          _notifier.loadLocalMedia();
+                          _notifier.loadMedias();
                         }
                       },
                       onLongTap: () {

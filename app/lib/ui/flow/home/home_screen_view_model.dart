@@ -1,7 +1,6 @@
 import 'dart:async';
 import '../../../domain/extensions/map_extensions.dart';
 import '../../../domain/extensions/media_list_extension.dart';
-import 'package:collection/collection.dart';
 import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
@@ -61,7 +60,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     _listenUserGoogleAccount();
     _googleDriveProcessRepo.setBackUpFolderId(_backUpFolderId);
     _googleDriveProcessRepo.addListener(_listenGoogleDriveProcess);
-    _loadInitialMedia();
+    loadMedias();
     _checkAutoBackUp();
   }
 
@@ -75,17 +74,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
   void _checkAutoBackUp() {
     if (_autoBackUpStatus) {
-      _googleDriveProcessRepo.uploadMediasInGoogleDrive(
-        medias: state.medias.valuesWhere(
-          (element) =>
-              element.isLocalStored &&
-              state.mediaProcesses.firstWhereOrNull(
-                    (process) => process.id == element.id,
-                  ) ==
-                  null,
-        ),
-        isFromAutoBackup: true,
-      );
+      _googleDriveProcessRepo.autoBackInGoogleDrive();
     }
   }
 
@@ -157,8 +146,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     );
   }
 
-  Future<void> _loadInitialMedia() async {
-    state = state.copyWith(loading: true, error: null);
+  Future<void> loadMedias() async {
+    state = state.copyWith(loading: state.medias.isEmpty, error: null);
     final hasAccess = await _localMediaService.requestPermission();
     state = state.copyWith(hasLocalMediaAccess: hasAccess, loading: false);
     if (hasAccess) {
@@ -364,9 +353,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           )
           .toList();
 
-      _googleDriveProcessRepo.uploadMediasInGoogleDrive(
-        medias: medias,
-      );
+      _googleDriveProcessRepo.uploadMedia(medias);
       state = state.copyWith(selectedMedias: []);
     } catch (error) {
       state = state.copyWith(error: error);
