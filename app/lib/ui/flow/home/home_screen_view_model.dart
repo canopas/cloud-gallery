@@ -84,7 +84,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       state = state.copyWith(googleAccount: event);
       _googleDriveProcessRepo.clearAllQueue();
       if (event != null) {
-        _backUpFolderId = await _googleDriveService.getBackupFolderId();
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
         _googleDriveProcessRepo.setBackUpFolderId(_backUpFolderId);
         await loadGoogleDriveMedia();
       } else {
@@ -238,7 +238,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     if (state.googleAccount == null || _isGoogleDriveLoading) return;
     _isGoogleDriveLoading = true;
     try {
-      _backUpFolderId ??= await _googleDriveService.getBackupFolderId();
+      _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
 
       state = state.copyWith(loading: state.medias.isEmpty, error: null);
       final driveMedias = await _googleDriveService.getDriveMedias(

@@ -38,7 +38,7 @@ class DropboxService extends CloudProviderService {
   }
 
   @override
-  Future<String?> createBackupFolder() async {
+  Future<String?> getBackUpFolderId() async {
     final response = await _dropboxAuthenticatedDio.req(
       DropboxListFolderEndpoint(folderPath: ''),
     );

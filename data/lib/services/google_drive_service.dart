@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import '../errors/app_error.dart';
 import 'auth_service.dart';
+import 'cloud_provider_service.dart';
 
 final googleDriveServiceProvider = Provider<GoogleDriveService>(
   (ref) => GoogleDriveService(
@@ -20,7 +21,7 @@ final googleDriveServiceProvider = Provider<GoogleDriveService>(
   ),
 );
 
-class GoogleDriveService {
+class GoogleDriveService extends CloudProviderService {
   final Dio _client;
   final GoogleSignIn _googleSignIn;
 
@@ -34,29 +35,6 @@ class GoogleDriveService {
     final api = drive.DriveApi(client!);
     client.close();
     return api;
-  }
-
-  Future<String?> getBackupFolderId() async {
-    try {
-      final driveApi = await _getGoogleDriveAPI();
-
-      final response = await driveApi.files.list(
-        q: "name='${FolderPath.backupFolderName}' and trashed=false and mimeType='application/vnd.google-apps.folder'",
-      );
-
-      if (response.files?.isNotEmpty ?? false) {
-        return response.files?.first.id;
-      } else {
-        final folder = drive.File(
-          name: FolderPath.backupFolderName,
-          mimeType: 'application/vnd.google-apps.folder',
-        );
-        final googleDriveFolder = await driveApi.files.create(folder);
-        return googleDriveFolder.id;
-      }
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
   }
 
   Future<List<AppMedia>> getDriveMedias({
@@ -153,6 +131,46 @@ class GoogleDriveService {
           onProgress: onProgress,
         ),
       );
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<String?> getBackUpFolderId() async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+
+      final response = await driveApi.files.list(
+        q: "name='${FolderPath.backupFolderName}' and trashed=false and mimeType='application/vnd.google-apps.folder'",
+      );
+
+      if (response.files?.isNotEmpty ?? false) {
+        return response.files?.first.id;
+      } else {
+        final folder = drive.File(
+          name: FolderPath.backupFolderName,
+          mimeType: 'application/vnd.google-apps.folder',
+        );
+        final googleDriveFolder = await driveApi.files.create(folder);
+        return googleDriveFolder.id;
+      }
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<String?> createFolder(String folderName) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+
+      final folder = drive.File(
+        name: folderName,
+        mimeType: 'application/vnd.google-apps.folder',
+      );
+      final googleDriveFolder = await driveApi.files.create(folder);
+      return googleDriveFolder.id;
     } catch (e) {
       throw AppError.fromError(e);
     }

@@ -3,5 +3,5 @@ abstract class CloudProviderService {
 
   Future<String?> createFolder(String folderName);
 
-  Future<String?> createBackupFolder();
+  Future<String?> getBackUpFolderId();
 }

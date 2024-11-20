@@ -112,7 +112,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
       );
       notifyListeners();
 
-      _backUpFolderID ??= await _googleDriveService.getBackupFolderId();
+      _backUpFolderID ??= await _googleDriveService.getBackUpFolderId();
 
       final cancelToken = CancelToken();
 
@@ -148,7 +148,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
       if (error is RequestCancelledByUser) {
         return;
       } else if (error is BackUpFolderNotFound) {
-        _backUpFolderID = await _googleDriveService.getBackupFolderId();
+        _backUpFolderID = await _googleDriveService.getBackUpFolderId();
         _uploadInGoogleDrive(process);
         return;
       }
