@@ -13,7 +13,8 @@ _$ApiDropboxEntityImpl _$$ApiDropboxEntityImplFromJson(
       name: json['name'] as String,
       path_lower: json['path_lower'] as String,
       path_display: json['path_display'] as String,
-      type: $enumDecode(_$ApiDropboxEntityTypeEnumMap, json['.tag']),
+      type: $enumDecode(_$ApiDropboxEntityTypeEnumMap, json['.tag'],
+          unknownValue: ApiDropboxEntityType.unknown),
     );
 
 Map<String, dynamic> _$$ApiDropboxEntityImplToJson(
@@ -28,4 +29,5 @@ Map<String, dynamic> _$$ApiDropboxEntityImplToJson(
 
 const _$ApiDropboxEntityTypeEnumMap = {
   ApiDropboxEntityType.folder: 'folder',
+  ApiDropboxEntityType.unknown: 'unknown',
 };

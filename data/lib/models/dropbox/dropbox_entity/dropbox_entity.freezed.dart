@@ -14,14 +14,21 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+ApiDropboxEntity _$ApiDropboxEntityFromJson(Map<String, dynamic> json) {
+  return _ApiDropboxEntity.fromJson(json);
+}
+
 /// @nodoc
 mixin _$ApiDropboxEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get path_lower => throw _privateConstructorUsedError;
-  String get path_desplay => throw _privateConstructorUsedError;
-  @JsonKey(name: '.tag')
+  String get path_display => throw _privateConstructorUsedError;
+  @JsonKey(name: '.tag', unknownEnumValue: ApiDropboxEntityType.unknown)
   ApiDropboxEntityType get type => throw _privateConstructorUsedError;
+
+  /// Serializes this ApiDropboxEntity to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of ApiDropboxEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -40,8 +47,9 @@ abstract class $ApiDropboxEntityCopyWith<$Res> {
       {String id,
       String name,
       String path_lower,
-      String path_desplay,
-      @JsonKey(name: '.tag') ApiDropboxEntityType type});
+      String path_display,
+      @JsonKey(name: '.tag', unknownEnumValue: ApiDropboxEntityType.unknown)
+      ApiDropboxEntityType type});
 }
 
 /// @nodoc
@@ -62,7 +70,7 @@ class _$ApiDropboxEntityCopyWithImpl<$Res, $Val extends ApiDropboxEntity>
     Object? id = null,
     Object? name = null,
     Object? path_lower = null,
-    Object? path_desplay = null,
+    Object? path_display = null,
     Object? type = null,
   }) {
     return _then(_value.copyWith(
@@ -78,9 +86,9 @@ class _$ApiDropboxEntityCopyWithImpl<$Res, $Val extends ApiDropboxEntity>
           ? _value.path_lower
           : path_lower // ignore: cast_nullable_to_non_nullable
               as String,
-      path_desplay: null == path_desplay
-          ? _value.path_desplay
-          : path_desplay // ignore: cast_nullable_to_non_nullable
+      path_display: null == path_display
+          ? _value.path_display
+          : path_display // ignore: cast_nullable_to_non_nullable
               as String,
       type: null == type
           ? _value.type
@@ -102,8 +110,9 @@ abstract class _$$ApiDropboxEntityImplCopyWith<$Res>
       {String id,
       String name,
       String path_lower,
-      String path_desplay,
-      @JsonKey(name: '.tag') ApiDropboxEntityType type});
+      String path_display,
+      @JsonKey(name: '.tag', unknownEnumValue: ApiDropboxEntityType.unknown)
+      ApiDropboxEntityType type});
 }
 
 /// @nodoc
@@ -122,7 +131,7 @@ class __$$ApiDropboxEntityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? path_lower = null,
-    Object? path_desplay = null,
+    Object? path_display = null,
     Object? type = null,
   }) {
     return _then(_$ApiDropboxEntityImpl(
@@ -138,9 +147,9 @@ class __$$ApiDropboxEntityImplCopyWithImpl<$Res>
           ? _value.path_lower
           : path_lower // ignore: cast_nullable_to_non_nullable
               as String,
-      path_desplay: null == path_desplay
-          ? _value.path_desplay
-          : path_desplay // ignore: cast_nullable_to_non_nullable
+      path_display: null == path_display
+          ? _value.path_display
+          : path_display // ignore: cast_nullable_to_non_nullable
               as String,
       type: null == type
           ? _value.type
@@ -151,14 +160,18 @@ class __$$ApiDropboxEntityImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$ApiDropboxEntityImpl implements _ApiDropboxEntity {
   const _$ApiDropboxEntityImpl(
       {required this.id,
       required this.name,
       required this.path_lower,
-      required this.path_desplay,
-      @JsonKey(name: '.tag') required this.type});
+      required this.path_display,
+      @JsonKey(name: '.tag', unknownEnumValue: ApiDropboxEntityType.unknown)
+      required this.type});
+
+  factory _$ApiDropboxEntityImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApiDropboxEntityImplFromJson(json);
 
   @override
   final String id;
@@ -167,14 +180,14 @@ class _$ApiDropboxEntityImpl implements _ApiDropboxEntity {
   @override
   final String path_lower;
   @override
-  final String path_desplay;
+  final String path_display;
   @override
-  @JsonKey(name: '.tag')
+  @JsonKey(name: '.tag', unknownEnumValue: ApiDropboxEntityType.unknown)
   final ApiDropboxEntityType type;
 
   @override
   String toString() {
-    return 'ApiDropboxEntity(id: $id, name: $name, path_lower: $path_lower, path_desplay: $path_desplay, type: $type)';
+    return 'ApiDropboxEntity(id: $id, name: $name, path_lower: $path_lower, path_display: $path_display, type: $type)';
   }
 
   @override
@@ -186,14 +199,15 @@ class _$ApiDropboxEntityImpl implements _ApiDropboxEntity {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.path_lower, path_lower) ||
                 other.path_lower == path_lower) &&
-            (identical(other.path_desplay, path_desplay) ||
-                other.path_desplay == path_desplay) &&
+            (identical(other.path_display, path_display) ||
+                other.path_display == path_display) &&
             (identical(other.type, type) || other.type == type));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, name, path_lower, path_desplay, type);
+      Object.hash(runtimeType, id, name, path_lower, path_display, type);
 
   /// Create a copy of ApiDropboxEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -203,16 +217,26 @@ class _$ApiDropboxEntityImpl implements _ApiDropboxEntity {
   _$$ApiDropboxEntityImplCopyWith<_$ApiDropboxEntityImpl> get copyWith =>
       __$$ApiDropboxEntityImplCopyWithImpl<_$ApiDropboxEntityImpl>(
           this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApiDropboxEntityImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _ApiDropboxEntity implements ApiDropboxEntity {
   const factory _ApiDropboxEntity(
-          {required final String id,
-          required final String name,
-          required final String path_lower,
-          required final String path_desplay,
-          @JsonKey(name: '.tag') required final ApiDropboxEntityType type}) =
-      _$ApiDropboxEntityImpl;
+      {required final String id,
+      required final String name,
+      required final String path_lower,
+      required final String path_display,
+      @JsonKey(name: '.tag', unknownEnumValue: ApiDropboxEntityType.unknown)
+      required final ApiDropboxEntityType type}) = _$ApiDropboxEntityImpl;
+
+  factory _ApiDropboxEntity.fromJson(Map<String, dynamic> json) =
+      _$ApiDropboxEntityImpl.fromJson;
 
   @override
   String get id;
@@ -221,9 +245,9 @@ abstract class _ApiDropboxEntity implements ApiDropboxEntity {
   @override
   String get path_lower;
   @override
-  String get path_desplay;
+  String get path_display;
   @override
-  @JsonKey(name: '.tag')
+  @JsonKey(name: '.tag', unknownEnumValue: ApiDropboxEntityType.unknown)
   ApiDropboxEntityType get type;
 
   /// Create a copy of ApiDropboxEntity

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import '../apis/google_drive/google_drive_endpoint.dart';
 import '../apis/network/client.dart';
+import '../domain/config.dart';
 import '../models/media/media.dart';
 import '../models/media_content/media_content.dart';
 import 'package:dio/dio.dart';
@@ -20,7 +21,6 @@ final googleDriveServiceProvider = Provider<GoogleDriveService>(
 );
 
 class GoogleDriveService {
-  final String _backUpFolderName = "Cloud Gallery Backup";
   final Dio _client;
   final GoogleSignIn _googleSignIn;
 
@@ -41,14 +41,14 @@ class GoogleDriveService {
       final driveApi = await _getGoogleDriveAPI();
 
       final response = await driveApi.files.list(
-        q: "name='$_backUpFolderName' and trashed=false and mimeType='application/vnd.google-apps.folder'",
+        q: "name='${FolderPath.backupFolderName}' and trashed=false and mimeType='application/vnd.google-apps.folder'",
       );
 
       if (response.files?.isNotEmpty ?? false) {
         return response.files?.first.id;
       } else {
         final folder = drive.File(
-          name: _backUpFolderName,
+          name: FolderPath.backupFolderName,
           mimeType: 'application/vnd.google-apps.folder',
         );
         final googleDriveFolder = await driveApi.files.create(folder);

@@ -1,4 +1,5 @@
 import '../../errors/app_error.dart';
+import '../../log/logger.dart';
 import '../../services/auth_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,17 +7,17 @@ import '../../storage/app_preferences.dart';
 import 'endpoint.dart';
 import 'interceptors/dropbox_auth_interceptor.dart';
 import 'interceptors/google_drive_auth_interceptor.dart';
+import 'interceptors/logger_interceptor.dart';
 
 final googleAuthenticatedDioProvider = Provider((ref) {
   return Dio()
     ..options.connectTimeout = const Duration(seconds: 60)
     ..options.sendTimeout = const Duration(seconds: 60)
     ..options.receiveTimeout = const Duration(seconds: 60)
-    ..interceptors.add(
-      GoogleDriveAuthInterceptor(
-        googleSignIn: ref.read(googleSignInProvider),
-      ),
-    );
+    ..interceptors.addAll([
+      GoogleDriveAuthInterceptor(googleSignIn: ref.read(googleSignInProvider)),
+      LoggerInterceptor(logger: ref.read(loggerProvider)),
+    ]);
 });
 
 final dropboxAuthenticatedDioProvider = Provider((ref) {
@@ -24,19 +25,23 @@ final dropboxAuthenticatedDioProvider = Provider((ref) {
     ..options.connectTimeout = const Duration(seconds: 60)
     ..options.sendTimeout = const Duration(seconds: 60)
     ..options.receiveTimeout = const Duration(seconds: 60)
-    ..interceptors.add(
+    ..interceptors.addAll([
       DropboxAuthInterceptor(
         authService: ref.read(authServiceProvider),
         dropboxTokenController: ref.read(AppPreferences.dropboxToken.notifier),
       ),
-    );
+      LoggerInterceptor(logger: ref.read(loggerProvider)),
+    ]);
 });
 
 final rawDioProvider = Provider((ref) {
   return Dio()
     ..options.connectTimeout = const Duration(seconds: 60)
     ..options.sendTimeout = const Duration(seconds: 60)
-    ..options.receiveTimeout = const Duration(seconds: 60);
+    ..options.receiveTimeout = const Duration(seconds: 60)
+    ..interceptors.addAll([
+      LoggerInterceptor(logger: ref.read(loggerProvider)),
+    ]);
 });
 
 extension DioExtensions on Dio {

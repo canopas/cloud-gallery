@@ -37,6 +37,9 @@ dependencies:
 
   collection: ^1.18.0
 
+  # logging
+  logger: ^2.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
