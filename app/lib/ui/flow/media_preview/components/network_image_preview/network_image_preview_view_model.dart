@@ -33,7 +33,7 @@ class NetworkImagePreviewStateNotifier
       cancelToken = CancelToken();
       final dir = await getTemporaryDirectory();
       tempFile = File('${dir.path}/$id.$extension');
-      await _googleDriveServices.downloadFromGoogleDrive(
+      await _googleDriveServices.downloadMedia(
         id: id,
         saveLocation: tempFile!.path,
         cancelToken: cancelToken,

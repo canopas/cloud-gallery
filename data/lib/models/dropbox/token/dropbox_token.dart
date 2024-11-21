@@ -1,10 +1,11 @@
 // ignore_for_file: non_constant_identifier_names
 
-import '../../extensions/date_time_extension.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'token.freezed.dart';
-part 'token.g.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../extensions/date_time_extension.dart';
+
+part 'dropbox_token.freezed.dart';
+part 'dropbox_token.g.dart';
 
 class ExpiresInJsonConverter implements JsonConverter<DateTime, int> {
   const ExpiresInJsonConverter();
