@@ -116,9 +116,11 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
 
       final cancelToken = CancelToken();
 
-      final res = await _googleDriveService.uploadInGoogleDrive(
-        folderID: _backUpFolderID!,
-        media: process.media,
+      final res = await _googleDriveService.uploadMedia(
+        folderId: _backUpFolderID!,
+        path: process.media.path,
+        description: process.media.id,
+        mimeType: process.media.mimeType,
         onProgress: (chunk, total) {
           if (_uploadQueue
                   .firstWhereOrNull((element) => element.id == process.id)
@@ -248,7 +250,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
 
       final cancelToken = CancelToken();
 
-      await _googleDriveService.downloadFromGoogleDrive(
+      await _googleDriveService.downloadMedia(
         id: process.media.driveMediaRefId!,
         saveLocation: tempFileLocation,
         onProgress: (received, total) {

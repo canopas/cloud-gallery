@@ -1,7 +1,7 @@
 import 'dart:async';
+import '../../../models/dropbox/token/dropbox_token.dart';
 import '../../../services/auth_service.dart';
 import 'package:dio/dio.dart';
-import '../../../models/token/token.dart';
 import '../../../storage/provider/preferences_provider.dart';
 
 class DropboxAuthInterceptor extends Interceptor {

@@ -2,7 +2,8 @@ import 'dart:async';
 import '../apis/network/client.dart';
 import '../apis/network/oauth2.dart';
 import '../errors/app_error.dart';
-import '../models/dropbox_account/dropbox_account.dart';
+import '../models/dropbox/account/dropbox_account.dart';
+import '../models/dropbox/token/dropbox_token.dart';
 import '../storage/app_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../apis/dropbox/dropbox_auth_endpoints.dart';
 import '../apis/network/secrets.dart';
 import '../apis/network/urls.dart';
-import '../models/token/token.dart';
 import '../storage/provider/preferences_provider.dart';
 
 final googleUserAccountProvider = StateProvider<GoogleSignInAccount?>((ref) {

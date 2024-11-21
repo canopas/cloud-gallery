@@ -83,7 +83,8 @@ enum AppMediaOrientation {
 @JsonEnum(valueField: 'value')
 enum AppMediaSource {
   local('local'),
-  googleDrive('google_drive');
+  googleDrive('google_drive'),
+  dropbox('dropbox');
 
   final String value;
 
@@ -93,6 +94,7 @@ enum AppMediaSource {
 @freezed
 class AppMedia with _$AppMedia {
   const AppMedia._();
+
   const factory AppMedia({
     required String id,
     String? driveMediaRefId,
@@ -189,6 +191,17 @@ class AppMedia with _$AppMedia {
       modifiedTime: asset.modifiedDateTime,
       displayHeight: asset.size.height,
       displayWidth: asset.size.width,
+    );
+  }
+
+  static Future<AppMedia> fromDropboxJson(Map<String, dynamic> json) async {
+    return AppMedia(
+      id: json['id'],
+      path: json['path_display'],
+      name: json['name'],
+      size: json['size'],
+      type: AppMediaType.getType(location: json['path_display']),
+      sources: [AppMediaSource.dropbox],
     );
   }
 }

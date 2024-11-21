@@ -29,6 +29,7 @@ dependencies:
 
   # storage
   shared_preferences: ^2.3.3
+  sqflite: ^2.4.1
 
   # code generation
   freezed: ^2.5.7

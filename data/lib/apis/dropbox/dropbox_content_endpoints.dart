@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import '../network/endpoint.dart';
 import '../network/urls.dart';
 
@@ -58,3 +60,95 @@ class DropboxListFolderEndpoint extends Endpoint {
         "recursive": recursive,
       };
 }
+
+class DropboxUploadEndpoint extends Endpoint {
+  final String filePath;
+  final String mode;
+  final bool autoRename;
+  final bool mute;
+  final bool strictConflict;
+  final Stream<List<int>> contentStream;
+  final void Function(int chunk, int length)? onProgress;
+  final CancelToken? cancellationToken;
+
+  const DropboxUploadEndpoint({
+    required this.filePath,
+    this.mode = 'add',
+    this.autoRename = true,
+    this.mute = false,
+    this.strictConflict = false,
+    this.cancellationToken,
+    this.onProgress,
+    required this.contentStream,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxContentV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/upload';
+
+  @override
+  Map<String, dynamic> get headers => {
+        'Dropbox-API-Arg': jsonEncode({
+          'path': filePath,
+          'mode': mode,
+          'autorename': autoRename,
+          'mute': mute,
+          'strict_conflict': strictConflict,
+        }),
+        'Content-Type': 'application/octet-stream',
+      };
+
+  @override
+  Object? get data => contentStream;
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  void Function(int p1, int p2)? get onSendProgress => onProgress;
+}
+
+class DropboxDownloadEndpoint extends DownloadEndpoint {
+  final String filePath;
+  final String storagePath;
+  final void Function(int chunk, int length)? onProgress;
+  final CancelToken? cancellationToken;
+
+  const DropboxDownloadEndpoint({
+    required this.filePath,
+    required this.storagePath,
+    this.cancellationToken,
+    this.onProgress,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxContentV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/download';
+
+  @override
+  Map<String, dynamic> get headers => {
+    'Dropbox-API-Arg': jsonEncode({
+      'path': filePath,
+    }),
+  };
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+ @override
+  void Function(int p1, int p2)? get onReceiveProgress => onProgress;
+
+  @override
+  String? get storePath => storagePath;
+}
+

@@ -79,6 +79,7 @@ const _$AppMediaOrientationEnumMap = {
 const _$AppMediaSourceEnumMap = {
   AppMediaSource.local: 'local',
   AppMediaSource.googleDrive: 'google_drive',
+  AppMediaSource.dropbox: 'dropbox',
 };
 
 Json? _$JsonConverterToJson<Json, Value>(

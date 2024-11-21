@@ -1,5 +1,5 @@
-import '../models/dropbox_account/dropbox_account.dart';
-import '../models/token/token.dart';
+import '../models/dropbox/account/dropbox_account.dart';
+import '../models/dropbox/token/dropbox_token.dart';
 import 'provider/preferences_provider.dart';
 
 class AppPreferences {

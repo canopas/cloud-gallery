@@ -79,63 +79,6 @@ class GoogleDriveService extends CloudProviderService {
     }
   }
 
-  Future<AppMedia> uploadInGoogleDrive({
-    required String folderID,
-    required AppMedia media,
-    CancelToken? cancelToken,
-    void Function(int chunk, int total)? onProgress,
-  }) async {
-    final localFile = File(media.path);
-    try {
-      final file = drive.File(
-        name: media.name ?? localFile.path.split('/').last,
-        mimeType: media.mimeType,
-        description: media.id,
-        parents: [folderID],
-      );
-
-      final res = await _client.req(
-        UploadGoogleDriveFile(
-          request: file,
-          content: AppMediaContent(
-            stream: localFile.openRead(),
-            length: localFile.lengthSync(),
-            contentType: 'application/octet-stream',
-          ),
-          onProgress: onProgress,
-          cancellationToken: cancelToken,
-        ),
-      );
-
-      return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
-    } catch (error) {
-      if (error is AppError && error.statusCode == 404) {
-        throw const BackUpFolderNotFound();
-      }
-      throw AppError.fromError(error);
-    }
-  }
-
-  Future<void> downloadFromGoogleDrive({
-    required String id,
-    required String saveLocation,
-    void Function(int chunk, int total)? onProgress,
-    CancelToken? cancelToken,
-  }) async {
-    try {
-      await _client.downloadReq(
-        DownloadGoogleDriveFileContent(
-          id: id,
-          cancellationToken: cancelToken,
-          saveLocation: saveLocation,
-          onProgress: onProgress,
-        ),
-      );
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
-  }
-
   @override
   Future<String?> getBackUpFolderId() async {
     try {
@@ -171,6 +114,67 @@ class GoogleDriveService extends CloudProviderService {
       );
       final googleDriveFolder = await driveApi.files.create(folder);
       return googleDriveFolder.id;
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<AppMedia> uploadMedia({
+    required String folderId,
+    required String path,
+    String? description,
+    String? mimeType,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    final localFile = File(path);
+    try {
+      final file = drive.File(
+        name: localFile.path.split('/').last,
+        mimeType: mimeType,
+        description: description,
+        parents: [folderId],
+      );
+
+      final res = await _client.req(
+        UploadGoogleDriveFile(
+          request: file,
+          content: AppMediaContent(
+            stream: localFile.openRead(),
+            length: localFile.lengthSync(),
+            contentType: 'application/octet-stream',
+          ),
+          onProgress: onProgress,
+          cancellationToken: cancelToken,
+        ),
+      );
+
+      return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
+    } catch (error) {
+      if (error is AppError && error.statusCode == 404) {
+        throw const BackUpFolderNotFound();
+      }
+      throw AppError.fromError(error);
+    }
+  }
+
+  @override
+  Future<void> downloadMedia({
+    required String id,
+    required String saveLocation,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    try {
+      await _client.downloadReq(
+        DownloadGoogleDriveFileContent(
+          id: id,
+          cancellationToken: cancelToken,
+          saveLocation: saveLocation,
+          onProgress: onProgress,
+        ),
+      );
     } catch (e) {
       throw AppError.fromError(e);
     }

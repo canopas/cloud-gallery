@@ -14,66 +14,69 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+DownloadMediaProcess _$DownloadMediaProcessFromJson(Map<String, dynamic> json) {
+  return _MediaProcess.fromJson(json);
+}
+
 /// @nodoc
-mixin _$MediaProcess {
+mixin _$DownloadMediaProcess {
   String get id => throw _privateConstructorUsedError;
   String get folder_id => throw _privateConstructorUsedError;
-  AppMediaSource get source => throw _privateConstructorUsedError;
-  String get local_path => throw _privateConstructorUsedError;
+  MediaProvider get provider => throw _privateConstructorUsedError;
   MediaQueueProcessStatus get status => throw _privateConstructorUsedError;
-  bool get uploading_using_auto_backup => throw _privateConstructorUsedError;
-  Object? get response => throw _privateConstructorUsedError;
-  MediaProcessProgress? get progress => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
+  String get extension => throw _privateConstructorUsedError;
+  int get chunk => throw _privateConstructorUsedError;
 
-  /// Create a copy of MediaProcess
+  /// Serializes this DownloadMediaProcess to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DownloadMediaProcess
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $MediaProcessCopyWith<MediaProcess> get copyWith =>
+  $DownloadMediaProcessCopyWith<DownloadMediaProcess> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MediaProcessCopyWith<$Res> {
-  factory $MediaProcessCopyWith(
-          MediaProcess value, $Res Function(MediaProcess) then) =
-      _$MediaProcessCopyWithImpl<$Res, MediaProcess>;
+abstract class $DownloadMediaProcessCopyWith<$Res> {
+  factory $DownloadMediaProcessCopyWith(DownloadMediaProcess value,
+          $Res Function(DownloadMediaProcess) then) =
+      _$DownloadMediaProcessCopyWithImpl<$Res, DownloadMediaProcess>;
   @useResult
   $Res call(
       {String id,
       String folder_id,
-      AppMediaSource source,
-      String local_path,
+      MediaProvider provider,
       MediaQueueProcessStatus status,
-      bool uploading_using_auto_backup,
-      Object? response,
-      MediaProcessProgress? progress});
-
-  $MediaProcessProgressCopyWith<$Res>? get progress;
+      int total,
+      String extension,
+      int chunk});
 }
 
 /// @nodoc
-class _$MediaProcessCopyWithImpl<$Res, $Val extends MediaProcess>
-    implements $MediaProcessCopyWith<$Res> {
-  _$MediaProcessCopyWithImpl(this._value, this._then);
+class _$DownloadMediaProcessCopyWithImpl<$Res,
+        $Val extends DownloadMediaProcess>
+    implements $DownloadMediaProcessCopyWith<$Res> {
+  _$DownloadMediaProcessCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of MediaProcess
+  /// Create a copy of DownloadMediaProcess
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
     Object? folder_id = null,
-    Object? source = null,
-    Object? local_path = null,
+    Object? provider = null,
     Object? status = null,
-    Object? uploading_using_auto_backup = null,
-    Object? response = freezed,
-    Object? progress = freezed,
+    Object? total = null,
+    Object? extension = null,
+    Object? chunk = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -84,48 +87,33 @@ class _$MediaProcessCopyWithImpl<$Res, $Val extends MediaProcess>
           ? _value.folder_id
           : folder_id // ignore: cast_nullable_to_non_nullable
               as String,
-      source: null == source
-          ? _value.source
-          : source // ignore: cast_nullable_to_non_nullable
-              as AppMediaSource,
-      local_path: null == local_path
-          ? _value.local_path
-          : local_path // ignore: cast_nullable_to_non_nullable
-              as String,
+      provider: null == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as MediaProvider,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as MediaQueueProcessStatus,
-      uploading_using_auto_backup: null == uploading_using_auto_backup
-          ? _value.uploading_using_auto_backup
-          : uploading_using_auto_backup // ignore: cast_nullable_to_non_nullable
-              as bool,
-      response: freezed == response ? _value.response : response,
-      progress: freezed == progress
-          ? _value.progress
-          : progress // ignore: cast_nullable_to_non_nullable
-              as MediaProcessProgress?,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      extension: null == extension
+          ? _value.extension
+          : extension // ignore: cast_nullable_to_non_nullable
+              as String,
+      chunk: null == chunk
+          ? _value.chunk
+          : chunk // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
-  }
-
-  /// Create a copy of MediaProcess
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $MediaProcessProgressCopyWith<$Res>? get progress {
-    if (_value.progress == null) {
-      return null;
-    }
-
-    return $MediaProcessProgressCopyWith<$Res>(_value.progress!, (value) {
-      return _then(_value.copyWith(progress: value) as $Val);
-    });
   }
 }
 
 /// @nodoc
 abstract class _$$MediaProcessImplCopyWith<$Res>
-    implements $MediaProcessCopyWith<$Res> {
+    implements $DownloadMediaProcessCopyWith<$Res> {
   factory _$$MediaProcessImplCopyWith(
           _$MediaProcessImpl value, $Res Function(_$MediaProcessImpl) then) =
       __$$MediaProcessImplCopyWithImpl<$Res>;
@@ -134,38 +122,33 @@ abstract class _$$MediaProcessImplCopyWith<$Res>
   $Res call(
       {String id,
       String folder_id,
-      AppMediaSource source,
-      String local_path,
+      MediaProvider provider,
       MediaQueueProcessStatus status,
-      bool uploading_using_auto_backup,
-      Object? response,
-      MediaProcessProgress? progress});
-
-  @override
-  $MediaProcessProgressCopyWith<$Res>? get progress;
+      int total,
+      String extension,
+      int chunk});
 }
 
 /// @nodoc
 class __$$MediaProcessImplCopyWithImpl<$Res>
-    extends _$MediaProcessCopyWithImpl<$Res, _$MediaProcessImpl>
+    extends _$DownloadMediaProcessCopyWithImpl<$Res, _$MediaProcessImpl>
     implements _$$MediaProcessImplCopyWith<$Res> {
   __$$MediaProcessImplCopyWithImpl(
       _$MediaProcessImpl _value, $Res Function(_$MediaProcessImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of MediaProcess
+  /// Create a copy of DownloadMediaProcess
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
     Object? folder_id = null,
-    Object? source = null,
-    Object? local_path = null,
+    Object? provider = null,
     Object? status = null,
-    Object? uploading_using_auto_backup = null,
-    Object? response = freezed,
-    Object? progress = freezed,
+    Object? total = null,
+    Object? extension = null,
+    Object? chunk = null,
   }) {
     return _then(_$MediaProcessImpl(
       id: null == id
@@ -176,66 +159,66 @@ class __$$MediaProcessImplCopyWithImpl<$Res>
           ? _value.folder_id
           : folder_id // ignore: cast_nullable_to_non_nullable
               as String,
-      source: null == source
-          ? _value.source
-          : source // ignore: cast_nullable_to_non_nullable
-              as AppMediaSource,
-      local_path: null == local_path
-          ? _value.local_path
-          : local_path // ignore: cast_nullable_to_non_nullable
-              as String,
+      provider: null == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as MediaProvider,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as MediaQueueProcessStatus,
-      uploading_using_auto_backup: null == uploading_using_auto_backup
-          ? _value.uploading_using_auto_backup
-          : uploading_using_auto_backup // ignore: cast_nullable_to_non_nullable
-              as bool,
-      response: freezed == response ? _value.response : response,
-      progress: freezed == progress
-          ? _value.progress
-          : progress // ignore: cast_nullable_to_non_nullable
-              as MediaProcessProgress?,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      extension: null == extension
+          ? _value.extension
+          : extension // ignore: cast_nullable_to_non_nullable
+              as String,
+      chunk: null == chunk
+          ? _value.chunk
+          : chunk // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$MediaProcessImpl implements _MediaProcess {
   const _$MediaProcessImpl(
       {required this.id,
       required this.folder_id,
-      required this.source,
-      required this.local_path,
-      required this.status,
-      this.uploading_using_auto_backup = false,
-      this.response,
-      this.progress = null});
+      required this.provider,
+      this.status = MediaQueueProcessStatus.waiting,
+      this.total = 1,
+      required this.extension,
+      this.chunk = 0});
+
+  factory _$MediaProcessImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MediaProcessImplFromJson(json);
 
   @override
   final String id;
   @override
   final String folder_id;
   @override
-  final AppMediaSource source;
+  final MediaProvider provider;
   @override
-  final String local_path;
-  @override
+  @JsonKey()
   final MediaQueueProcessStatus status;
   @override
   @JsonKey()
-  final bool uploading_using_auto_backup;
+  final int total;
   @override
-  final Object? response;
+  final String extension;
   @override
   @JsonKey()
-  final MediaProcessProgress? progress;
+  final int chunk;
 
   @override
   String toString() {
-    return 'MediaProcess(id: $id, folder_id: $folder_id, source: $source, local_path: $local_path, status: $status, uploading_using_auto_backup: $uploading_using_auto_backup, response: $response, progress: $progress)';
+    return 'DownloadMediaProcess(id: $id, folder_id: $folder_id, provider: $provider, status: $status, total: $total, extension: $extension, chunk: $chunk)';
   }
 
   @override
@@ -246,73 +229,396 @@ class _$MediaProcessImpl implements _MediaProcess {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.folder_id, folder_id) ||
                 other.folder_id == folder_id) &&
-            (identical(other.source, source) || other.source == source) &&
-            (identical(other.local_path, local_path) ||
-                other.local_path == local_path) &&
+            (identical(other.provider, provider) ||
+                other.provider == provider) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.uploading_using_auto_backup,
-                    uploading_using_auto_backup) ||
-                other.uploading_using_auto_backup ==
-                    uploading_using_auto_backup) &&
-            const DeepCollectionEquality().equals(other.response, response) &&
-            (identical(other.progress, progress) ||
-                other.progress == progress));
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.extension, extension) ||
+                other.extension == extension) &&
+            (identical(other.chunk, chunk) || other.chunk == chunk));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      folder_id,
-      source,
-      local_path,
-      status,
-      uploading_using_auto_backup,
-      const DeepCollectionEquality().hash(response),
-      progress);
+      runtimeType, id, folder_id, provider, status, total, extension, chunk);
 
-  /// Create a copy of MediaProcess
+  /// Create a copy of DownloadMediaProcess
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MediaProcessImplCopyWith<_$MediaProcessImpl> get copyWith =>
       __$$MediaProcessImplCopyWithImpl<_$MediaProcessImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MediaProcessImplToJson(
+      this,
+    );
+  }
 }
 
-abstract class _MediaProcess implements MediaProcess {
+abstract class _MediaProcess implements DownloadMediaProcess {
   const factory _MediaProcess(
       {required final String id,
       required final String folder_id,
-      required final AppMediaSource source,
-      required final String local_path,
-      required final MediaQueueProcessStatus status,
-      final bool uploading_using_auto_backup,
-      final Object? response,
-      final MediaProcessProgress? progress}) = _$MediaProcessImpl;
+      required final MediaProvider provider,
+      final MediaQueueProcessStatus status,
+      final int total,
+      required final String extension,
+      final int chunk}) = _$MediaProcessImpl;
+
+  factory _MediaProcess.fromJson(Map<String, dynamic> json) =
+      _$MediaProcessImpl.fromJson;
 
   @override
   String get id;
   @override
   String get folder_id;
   @override
-  AppMediaSource get source;
-  @override
-  String get local_path;
+  MediaProvider get provider;
   @override
   MediaQueueProcessStatus get status;
   @override
-  bool get uploading_using_auto_backup;
+  int get total;
   @override
-  Object? get response;
+  String get extension;
   @override
-  MediaProcessProgress? get progress;
+  int get chunk;
 
-  /// Create a copy of MediaProcess
+  /// Create a copy of DownloadMediaProcess
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MediaProcessImplCopyWith<_$MediaProcessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+UploadMediaProcess _$UploadMediaProcessFromJson(Map<String, dynamic> json) {
+  return _UploadMediaProcess.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UploadMediaProcess {
+  String get id => throw _privateConstructorUsedError;
+  String get folder_id => throw _privateConstructorUsedError;
+  MediaProvider get provider => throw _privateConstructorUsedError;
+  String get path => throw _privateConstructorUsedError;
+  String? get mime_type => throw _privateConstructorUsedError;
+  MediaQueueProcessStatus get status => throw _privateConstructorUsedError;
+  @LocalDatabaseBoolConverter()
+  bool get upload_using_auto_backup => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
+  int get chunk => throw _privateConstructorUsedError;
+
+  /// Serializes this UploadMediaProcess to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of UploadMediaProcess
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UploadMediaProcessCopyWith<UploadMediaProcess> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UploadMediaProcessCopyWith<$Res> {
+  factory $UploadMediaProcessCopyWith(
+          UploadMediaProcess value, $Res Function(UploadMediaProcess) then) =
+      _$UploadMediaProcessCopyWithImpl<$Res, UploadMediaProcess>;
+  @useResult
+  $Res call(
+      {String id,
+      String folder_id,
+      MediaProvider provider,
+      String path,
+      String? mime_type,
+      MediaQueueProcessStatus status,
+      @LocalDatabaseBoolConverter() bool upload_using_auto_backup,
+      int total,
+      int chunk});
+}
+
+/// @nodoc
+class _$UploadMediaProcessCopyWithImpl<$Res, $Val extends UploadMediaProcess>
+    implements $UploadMediaProcessCopyWith<$Res> {
+  _$UploadMediaProcessCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of UploadMediaProcess
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? folder_id = null,
+    Object? provider = null,
+    Object? path = null,
+    Object? mime_type = freezed,
+    Object? status = null,
+    Object? upload_using_auto_backup = null,
+    Object? total = null,
+    Object? chunk = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      folder_id: null == folder_id
+          ? _value.folder_id
+          : folder_id // ignore: cast_nullable_to_non_nullable
+              as String,
+      provider: null == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as MediaProvider,
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      mime_type: freezed == mime_type
+          ? _value.mime_type
+          : mime_type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as MediaQueueProcessStatus,
+      upload_using_auto_backup: null == upload_using_auto_backup
+          ? _value.upload_using_auto_backup
+          : upload_using_auto_backup // ignore: cast_nullable_to_non_nullable
+              as bool,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      chunk: null == chunk
+          ? _value.chunk
+          : chunk // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UploadMediaProcessImplCopyWith<$Res>
+    implements $UploadMediaProcessCopyWith<$Res> {
+  factory _$$UploadMediaProcessImplCopyWith(_$UploadMediaProcessImpl value,
+          $Res Function(_$UploadMediaProcessImpl) then) =
+      __$$UploadMediaProcessImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String folder_id,
+      MediaProvider provider,
+      String path,
+      String? mime_type,
+      MediaQueueProcessStatus status,
+      @LocalDatabaseBoolConverter() bool upload_using_auto_backup,
+      int total,
+      int chunk});
+}
+
+/// @nodoc
+class __$$UploadMediaProcessImplCopyWithImpl<$Res>
+    extends _$UploadMediaProcessCopyWithImpl<$Res, _$UploadMediaProcessImpl>
+    implements _$$UploadMediaProcessImplCopyWith<$Res> {
+  __$$UploadMediaProcessImplCopyWithImpl(_$UploadMediaProcessImpl _value,
+      $Res Function(_$UploadMediaProcessImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UploadMediaProcess
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? folder_id = null,
+    Object? provider = null,
+    Object? path = null,
+    Object? mime_type = freezed,
+    Object? status = null,
+    Object? upload_using_auto_backup = null,
+    Object? total = null,
+    Object? chunk = null,
+  }) {
+    return _then(_$UploadMediaProcessImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      folder_id: null == folder_id
+          ? _value.folder_id
+          : folder_id // ignore: cast_nullable_to_non_nullable
+              as String,
+      provider: null == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as MediaProvider,
+      path: null == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String,
+      mime_type: freezed == mime_type
+          ? _value.mime_type
+          : mime_type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as MediaQueueProcessStatus,
+      upload_using_auto_backup: null == upload_using_auto_backup
+          ? _value.upload_using_auto_backup
+          : upload_using_auto_backup // ignore: cast_nullable_to_non_nullable
+              as bool,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      chunk: null == chunk
+          ? _value.chunk
+          : chunk // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UploadMediaProcessImpl implements _UploadMediaProcess {
+  const _$UploadMediaProcessImpl(
+      {required this.id,
+      required this.folder_id,
+      required this.provider,
+      required this.path,
+      this.mime_type,
+      this.status = MediaQueueProcessStatus.waiting,
+      @LocalDatabaseBoolConverter() this.upload_using_auto_backup = false,
+      this.total = 1,
+      this.chunk = 0});
+
+  factory _$UploadMediaProcessImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UploadMediaProcessImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String folder_id;
+  @override
+  final MediaProvider provider;
+  @override
+  final String path;
+  @override
+  final String? mime_type;
+  @override
+  @JsonKey()
+  final MediaQueueProcessStatus status;
+  @override
+  @JsonKey()
+  @LocalDatabaseBoolConverter()
+  final bool upload_using_auto_backup;
+  @override
+  @JsonKey()
+  final int total;
+  @override
+  @JsonKey()
+  final int chunk;
+
+  @override
+  String toString() {
+    return 'UploadMediaProcess(id: $id, folder_id: $folder_id, provider: $provider, path: $path, mime_type: $mime_type, status: $status, upload_using_auto_backup: $upload_using_auto_backup, total: $total, chunk: $chunk)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UploadMediaProcessImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.folder_id, folder_id) ||
+                other.folder_id == folder_id) &&
+            (identical(other.provider, provider) ||
+                other.provider == provider) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.mime_type, mime_type) ||
+                other.mime_type == mime_type) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(
+                    other.upload_using_auto_backup, upload_using_auto_backup) ||
+                other.upload_using_auto_backup == upload_using_auto_backup) &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.chunk, chunk) || other.chunk == chunk));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, folder_id, provider, path,
+      mime_type, status, upload_using_auto_backup, total, chunk);
+
+  /// Create a copy of UploadMediaProcess
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UploadMediaProcessImplCopyWith<_$UploadMediaProcessImpl> get copyWith =>
+      __$$UploadMediaProcessImplCopyWithImpl<_$UploadMediaProcessImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UploadMediaProcessImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UploadMediaProcess implements UploadMediaProcess {
+  const factory _UploadMediaProcess(
+      {required final String id,
+      required final String folder_id,
+      required final MediaProvider provider,
+      required final String path,
+      final String? mime_type,
+      final MediaQueueProcessStatus status,
+      @LocalDatabaseBoolConverter() final bool upload_using_auto_backup,
+      final int total,
+      final int chunk}) = _$UploadMediaProcessImpl;
+
+  factory _UploadMediaProcess.fromJson(Map<String, dynamic> json) =
+      _$UploadMediaProcessImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get folder_id;
+  @override
+  MediaProvider get provider;
+  @override
+  String get path;
+  @override
+  String? get mime_type;
+  @override
+  MediaQueueProcessStatus get status;
+  @override
+  @LocalDatabaseBoolConverter()
+  bool get upload_using_auto_backup;
+  @override
+  int get total;
+  @override
+  int get chunk;
+
+  /// Create a copy of UploadMediaProcess
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UploadMediaProcessImplCopyWith<_$UploadMediaProcessImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
