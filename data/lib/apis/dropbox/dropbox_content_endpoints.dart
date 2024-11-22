@@ -137,18 +137,46 @@ class DropboxDownloadEndpoint extends DownloadEndpoint {
 
   @override
   Map<String, dynamic> get headers => {
-    'Dropbox-API-Arg': jsonEncode({
-      'path': filePath,
-    }),
-  };
+        'Dropbox-API-Arg': jsonEncode({
+          'path': filePath,
+        }),
+      };
 
   @override
   CancelToken? get cancelToken => cancellationToken;
 
- @override
+  @override
   void Function(int p1, int p2)? get onReceiveProgress => onProgress;
 
   @override
   String? get storePath => storagePath;
 }
 
+class DropboxDeleteEndpoint extends Endpoint {
+  final String id;
+  final CancelToken? cancellationToken;
+
+  const DropboxDeleteEndpoint({
+    required this.id,
+    this.cancellationToken,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/delete_v2';
+
+  @override
+  Map<String, dynamic> get headers => {
+        'Dropbox-API-Arg': jsonEncode({
+          'path': "id:$id",
+        }),
+      };
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+}

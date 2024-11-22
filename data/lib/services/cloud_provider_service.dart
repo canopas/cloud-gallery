@@ -23,4 +23,9 @@ abstract class CloudProviderService {
     CancelToken? cancelToken,
     void Function(int sent, int total)? onProgress,
   });
+
+  Future<void> deleteMedia({
+    required String id,
+    CancelToken? cancelToken,
+  });
 }

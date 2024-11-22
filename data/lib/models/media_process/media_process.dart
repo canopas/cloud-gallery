@@ -81,7 +81,7 @@ class UploadMediaProcess with _$UploadMediaProcess {
     required String folder_id,
     required MediaProvider provider,
     required String path,
-     String? mime_type,
+    String? mime_type,
     @Default(MediaQueueProcessStatus.waiting) MediaQueueProcessStatus status,
     @LocalDatabaseBoolConverter() @Default(false) bool upload_using_auto_backup,
     @Default(1) int total,

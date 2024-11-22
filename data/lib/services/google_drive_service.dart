@@ -70,7 +70,11 @@ class GoogleDriveService extends CloudProviderService {
     }
   }
 
-  Future<void> deleteMedia(String id) async {
+  @override
+  Future<void> deleteMedia({
+    required String id,
+    CancelToken? cancelToken,
+  }) async {
     try {
       final driveApi = await _getGoogleDriveAPI();
       await driveApi.files.delete(id);

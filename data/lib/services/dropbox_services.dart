@@ -120,4 +120,24 @@ class DropboxService extends CloudProviderService {
       throw AppError.fromError(e);
     }
   }
+
+  @override
+  Future<void> deleteMedia({
+    required String id,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final res = await _dropboxAuthenticatedDio.req(
+        DropboxDeleteEndpoint(
+          id: id,
+          cancellationToken: cancelToken,
+        ),
+      );
+      if (res.statusCode == 200) return;
+
+      throw AppError.fromError(res.statusMessage ?? '');
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
 }

@@ -195,7 +195,7 @@ class GoogleDriveProcessRepo extends ChangeNotifier {
             element.copyWith(status: AppProcessStatus.deleting),
       );
       notifyListeners();
-      await _googleDriveService.deleteMedia(process.media.driveMediaRefId!);
+      await _googleDriveService.deleteMedia(id: process.media.driveMediaRefId!);
       _deleteQueue.updateWhere(
         where: (element) => element.id == process.id,
         update: (element) => element.copyWith(status: AppProcessStatus.success),

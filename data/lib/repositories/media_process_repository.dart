@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import '../errors/app_error.dart';
@@ -11,6 +12,14 @@ import '../models/media_process/media_process.dart';
 import '../services/dropbox_services.dart';
 import '../services/google_drive_service.dart';
 import '../services/local_media_service.dart';
+
+final mediaProcessRepoProvider = Provider<MediaProcessRepo>((ref) {
+  return MediaProcessRepo(
+    ref.read(googleDriveServiceProvider),
+    ref.read(dropboxServiceProvider),
+    ref.read(localMediaServiceProvider),
+  );
+});
 
 class LocalDatabaseConstants {
   static const String databaseName = 'cloud-gallery.db';
@@ -78,6 +87,78 @@ class MediaProcessRepo extends ChangeNotifier {
     );
   }
 
+  void autoBackupInGoogleDrive() async {
+    final backUpFolderId = await _googleDriveService.getBackUpFolderId();
+
+    if (backUpFolderId == null) {
+      throw BackUpFolderNotFound();
+    }
+
+    final res = await Future.wait([
+      _localMediaService.getAllLocalMedia(),
+      _googleDriveService.getDriveMedias(
+        backUpFolderId: backUpFolderId,
+      ),
+    ]);
+
+    final localMedias = res[0];
+    final dgMedias = res[1];
+
+    for (AppMedia localMedia in localMedias.toList()) {
+      if (_uploadQueue
+              .where((element) => element.id == localMedia.id)
+              .isNotEmpty ||
+          dgMedias
+              .where((gdMedia) => gdMedia.path == localMedia.id)
+              .isNotEmpty) {
+        localMedias.removeWhere((media) => media.id == localMedia.id);
+      }
+    }
+
+    uploadMedia(
+      medias: localMedias,
+      folderId: backUpFolderId,
+      provider: MediaProvider.googleDrive,
+      uploadUsingAutoBackup: true,
+    );
+  }
+
+  void autoBackupInDropbox() async {
+    final backUpFolderId = await _googleDriveService.getBackUpFolderId();
+
+    if (backUpFolderId == null) {
+      throw BackUpFolderNotFound();
+    }
+
+    final res = await Future.wait([
+      _localMediaService.getAllLocalMedia(),
+      _googleDriveService.getDriveMedias(
+        backUpFolderId: backUpFolderId,
+      ),
+    ]);
+
+    final localMedias = res[0];
+    final dgMedias = res[1];
+
+    for (AppMedia localMedia in localMedias.toList()) {
+      if (_uploadQueue
+          .where((element) => element.id == localMedia.id)
+          .isNotEmpty ||
+          dgMedias
+              .where((gdMedia) => gdMedia.path == localMedia.id)
+              .isNotEmpty) {
+        localMedias.removeWhere((media) => media.id == localMedia.id);
+      }
+    }
+
+    uploadMedia(
+      medias: localMedias,
+      folderId: backUpFolderId,
+      provider: MediaProvider.googleDrive,
+      uploadUsingAutoBackup: true,
+    );
+  }
+
   void uploadMedia({
     required List<AppMedia> medias,
     required String folderId,
@@ -123,13 +204,14 @@ class MediaProcessRepo extends ChangeNotifier {
   }
 
   Future<void> updateQueue(Database db) async {
-    db.query(LocalDatabaseConstants.uploadQueueTable).then((value) {
-      _uploadQueue = value.map((e) => UploadMediaProcess.fromJson(e)).toList();
-    });
-    db.query(LocalDatabaseConstants.downloadQueueTable).then((value) {
-      _downloadQueue =
-          value.map((e) => DownloadMediaProcess.fromJson(e)).toList();
-    });
+    final res = await Future.wait([
+      db.query(LocalDatabaseConstants.uploadQueueTable),
+      db.query(LocalDatabaseConstants.downloadQueueTable),
+    ]);
+
+    _uploadQueue = res[0].map((e) => UploadMediaProcess.fromJson(e)).toList();
+    _downloadQueue =
+        res[1].map((e) => DownloadMediaProcess.fromJson(e)).toList();
 
     notifyListeners();
   }
