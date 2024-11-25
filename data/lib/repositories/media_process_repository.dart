@@ -142,8 +142,8 @@ class MediaProcessRepo extends ChangeNotifier {
 
     for (AppMedia localMedia in localMedias.toList()) {
       if (_uploadQueue
-          .where((element) => element.id == localMedia.id)
-          .isNotEmpty ||
+              .where((element) => element.id == localMedia.id)
+              .isNotEmpty ||
           dgMedias
               .where((gdMedia) => gdMedia.path == localMedia.id)
               .isNotEmpty) {

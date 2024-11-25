@@ -99,7 +99,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
 
   Future<void> deleteMediaFromGoogleDrive(String? id) async {
     try {
-      await _googleDriveService.deleteMedia(id:id!);
+      await _googleDriveService.deleteMedia(id: id!);
     } catch (error) {
       state = state.copyWith(error: error);
     }
