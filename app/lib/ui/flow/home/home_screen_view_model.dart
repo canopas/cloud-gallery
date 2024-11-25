@@ -141,8 +141,6 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         ..._googleDriveProcessRepo.deleteQueue,
         ..._googleDriveProcessRepo.downloadQueue,
       ],
-      showTransfer: _googleDriveProcessRepo.uploadQueue.isNotEmpty ||
-          _googleDriveProcessRepo.downloadQueue.isNotEmpty,
     );
   }
 
@@ -375,7 +373,6 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool hasLocalMediaAccess,
     @Default(false) bool loading,
     GoogleSignInAccount? googleAccount,
-    @Default(false) bool showTransfer,
     String? lastLocalMediaId,
     @Default({}) Map<DateTime, List<AppMedia>> medias,
     @Default([]) List<AppMedia> selectedMedias,

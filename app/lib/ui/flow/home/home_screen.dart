@@ -106,26 +106,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _transferButton(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final showTransferButton = ref.watch(
-          homeViewStateNotifier.select((value) => value.showTransfer),
-        );
-        return Visibility(
-          visible: showTransferButton,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: ActionButton(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              size: 36,
-              backgroundColor: context.colorScheme.containerNormal,
-              onPressed: () async {
-                await TransferRoute().push(context);
-                _notifier.loadMedias();
-              },
-              icon: Icon(
-                CupertinoIcons.arrow_up_arrow_down,
-                color: context.colorScheme.textSecondary,
-                size: 18,
-              ),
+        return Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: ActionButton(
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            size: 36,
+            backgroundColor: context.colorScheme.containerNormal,
+            onPressed: () async {
+              await TransferRoute().push(context);
+              _notifier.loadMedias();
+            },
+            icon: Icon(
+              CupertinoIcons.arrow_up_arrow_down,
+              color: context.colorScheme.textSecondary,
+              size: 18,
             ),
           ),
         );
