@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
 import 'package:photo_manager/photo_manager.dart' show AssetEntity;
 
+import '../../domain/config.dart';
 import '../../domain/json_converters/date_time_json_converter.dart';
 import '../../domain/json_converters/duration_json_converter.dart';
 
@@ -98,6 +99,7 @@ class AppMedia with _$AppMedia {
   const factory AppMedia({
     required String id,
     String? driveMediaRefId,
+    String? dropboxMediaRefId,
     String? name,
     required String path,
     String? thumbnailLink,
@@ -145,8 +147,9 @@ class AppMedia with _$AppMedia {
                     int.parse(file.videoMediaMetadata?.durationMillis ?? '0'),
               )
             : null;
+
     return AppMedia(
-      id: file.id!,
+      id: file.appProperties?[ProviderConstants.localRefIdKey] ?? file.id!,
       path: file.description ?? '',
       thumbnailLink: file.thumbnailLink,
       name: file.name,
@@ -170,6 +173,8 @@ class AppMedia with _$AppMedia {
     final file = await asset.originFile;
 
     if (file == null) return null;
+
+
     final type =
         AppMediaType.getType(mimeType: asset.mimeType, location: file.path);
     final length = await file.length();
@@ -194,12 +199,14 @@ class AppMedia with _$AppMedia {
     );
   }
 
-  static Future<AppMedia> fromDropboxJson(Map<String, dynamic> json) async {
+  static AppMedia fromDropboxJson(Map<String, dynamic> json) {
     return AppMedia(
       id: json['id'],
       path: json['path_display'],
       name: json['name'],
-      size: json['size'],
+      size: json['size'].toString(),
+      dropboxMediaRefId: json['id'],
+      createdTime: DateTime.parse(json['client_modified']),
       type: AppMediaType.getType(location: json['path_display']),
       sources: [AppMediaSource.dropbox],
     );

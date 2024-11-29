@@ -32,7 +32,8 @@ class LoggerInterceptor extends Interceptor {
         message += '\n⚡️ Body: ${prettyJson(options.data)}';
       }
       if (options.queryParameters.isNotEmpty) {
-        message += '\n⚡️ Query Parameters: ${prettyJson(options.queryParameters)}';
+        message +=
+            '\n⚡️ Query Parameters: ${prettyJson(options.queryParameters)}';
       }
     }
     logger.d(message);
@@ -48,8 +49,7 @@ class LoggerInterceptor extends Interceptor {
       if (response.headers.map.isNotEmpty) {
         message += '\n⚡️ Headers: ${prettyJson(response.headers.map)}';
       }
-      message +=
-          '\n⚡️ Response body: ${prettyJson(response.data)}';
+      message += '\n⚡️ Response body: ${prettyJson(response.data)}';
     }
     logger.d(message);
     handler.next(response);
@@ -63,8 +63,7 @@ class LoggerInterceptor extends Interceptor {
       if (err.response!.headers.map.isNotEmpty) {
         message += '\n⚡️ Headers: ${prettyJson(err.response!.headers.map)}';
       }
-      message +=
-          '\n⚡️ Body: ${prettyJson(err.response?.data)}';
+      message += '\n⚡️ Body: ${prettyJson(err.response?.data)}';
     }
     logger.e(
       message,

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'dart:io';
 import '../apis/google_drive/google_drive_endpoint.dart';
 import '../apis/network/client.dart';
@@ -13,6 +14,40 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import '../errors/app_error.dart';
 import 'auth_service.dart';
 import 'cloud_provider_service.dart';
+
+final backUpFolderIdProvider =
+    StateNotifierProvider<BackUpFolderIdStateNotifier, String?>((ref) {
+  return BackUpFolderIdStateNotifier(
+    ref.read(authServiceProvider),
+    ref.read(googleDriveServiceProvider),
+  );
+});
+
+class BackUpFolderIdStateNotifier extends StateNotifier<String?> {
+  final AuthService _authService;
+  final GoogleDriveService _googleDriveService;
+  StreamSubscription? _googleAccountSubscription;
+
+  BackUpFolderIdStateNotifier(this._authService, this._googleDriveService)
+      : super(null) {
+    _googleAccountSubscription =
+        _authService.onGoogleAccountChange.listen((event) {
+      setBackUpFolderId(event);
+    });
+    setBackUpFolderId(_authService.googleAccount);
+  }
+
+  void setBackUpFolderId(GoogleSignInAccount? account) async {
+    state =
+        account == null ? null : await _googleDriveService.getBackUpFolderId();
+  }
+
+  @override
+  void dispose() {
+    _googleAccountSubscription?.cancel();
+    super.dispose();
+  }
+}
 
 final googleDriveServiceProvider = Provider<GoogleDriveService>(
   (ref) => GoogleDriveService(
@@ -37,23 +72,67 @@ class GoogleDriveService extends CloudProviderService {
     return api;
   }
 
-  Future<List<AppMedia>> getDriveMedias({
-    required String backUpFolderId,
+  @override
+  Future<List<AppMedia>> getAllMedias({
+    required String folder,
+  }) async {
+    try {
+      final driveApi = await _getGoogleDriveAPI();
+
+      bool hasMore = true;
+      String? pageToken;
+      final List<AppMedia> medias = [];
+
+      while (hasMore) {
+        final response = await driveApi.files.list(
+          q: "'$folder' in parents and trashed=false",
+          $fields:
+              "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
+          pageSize: 1000,
+          pageToken: pageToken,
+        );
+        hasMore = response.nextPageToken != null;
+        pageToken = response.nextPageToken;
+        medias.addAll(
+          (response.files ?? [])
+              .map(
+                (e) => AppMedia.fromGoogleDriveFile(e),
+              )
+              .toList(),
+        );
+      }
+
+      return medias;
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<GetPaginatedMediasResponse> getPaginatedMedias({
+    required String folder,
+    String? nextPageToken,
+    int pageSize = 30,
   }) async {
     try {
       final driveApi = await _getGoogleDriveAPI();
 
       final response = await driveApi.files.list(
-        q: "'$backUpFolderId' in parents and trashed=false",
+        q: "'$folder' in parents and trashed=false",
         $fields:
             "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
+        pageSize: pageSize,
+        pageToken: nextPageToken,
       );
 
-      return (response.files ?? [])
-          .map(
-            (e) => AppMedia.fromGoogleDriveFile(e),
-          )
-          .toList();
+      return GetPaginatedMediasResponse(
+        nextPageToken: response.nextPageToken,
+        medias: (response.files ?? [])
+            .map(
+              (e) => AppMedia.fromGoogleDriveFile(e),
+            )
+            .toList(),
+      );
     } catch (e) {
       throw AppError.fromError(e);
     }
@@ -83,20 +162,19 @@ class GoogleDriveService extends CloudProviderService {
     }
   }
 
-  @override
   Future<String?> getBackUpFolderId() async {
     try {
       final driveApi = await _getGoogleDriveAPI();
 
       final response = await driveApi.files.list(
-        q: "name='${FolderPath.backupFolderName}' and trashed=false and mimeType='application/vnd.google-apps.folder'",
+        q: "name='${ProviderConstants.backupFolderName}' and trashed=false and mimeType='application/vnd.google-apps.folder'",
       );
 
       if (response.files?.isNotEmpty ?? false) {
         return response.files?.first.id;
       } else {
         final folder = drive.File(
-          name: FolderPath.backupFolderName,
+          name: ProviderConstants.backupFolderName,
           mimeType: 'application/vnd.google-apps.folder',
         );
         final googleDriveFolder = await driveApi.files.create(folder);
@@ -127,7 +205,7 @@ class GoogleDriveService extends CloudProviderService {
   Future<AppMedia> uploadMedia({
     required String folderId,
     required String path,
-    String? description,
+    String? localRefId,
     String? mimeType,
     CancelToken? cancelToken,
     void Function(int sent, int total)? onProgress,
@@ -137,12 +215,14 @@ class GoogleDriveService extends CloudProviderService {
       final file = drive.File(
         name: localFile.path.split('/').last,
         mimeType: mimeType,
-        description: description,
+        appProperties: {
+          ProviderConstants.localRefIdKey: localRefId,
+        },
         parents: [folderId],
       );
 
       final res = await _client.req(
-        UploadGoogleDriveFile(
+        GoogleDriveUploadEndpoint(
           request: file,
           content: AppMediaContent(
             stream: localFile.openRead(),
@@ -172,7 +252,7 @@ class GoogleDriveService extends CloudProviderService {
   }) async {
     try {
       await _client.downloadReq(
-        DownloadGoogleDriveFileContent(
+        GoogleDriveDownloadEndpoint(
           id: id,
           cancellationToken: cancelToken,
           saveLocation: saveLocation,
@@ -183,4 +263,32 @@ class GoogleDriveService extends CloudProviderService {
       throw AppError.fromError(e);
     }
   }
+
+  Future<void> updateAppProperties({
+    required String id,
+    required String localRefId,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      await _client.req(
+        GoogleDriveUpdateAppPropertiesEndpoint(
+          id: id,
+          cancellationToken: cancelToken,
+          localFileId: localRefId,
+        ),
+      );
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+}
+
+class GoogleDriveListResponse {
+  final List<AppMedia> medias;
+  final String? pageToken;
+
+  const GoogleDriveListResponse({
+    required this.medias,
+    required this.pageToken,
+  });
 }

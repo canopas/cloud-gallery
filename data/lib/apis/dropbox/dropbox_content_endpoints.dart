@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import '../../domain/config.dart';
+import '../../models/media_content/media_content.dart';
 import '../network/endpoint.dart';
 import '../network/urls.dart';
 
@@ -23,8 +25,9 @@ class DropboxCreateFolderEndpoint extends Endpoint {
 
 class DropboxListFolderEndpoint extends Endpoint {
   final bool includeDeleted;
+  final String appPropertyTemplateId;
   final bool includeHasExplicitSharedMembers;
-  final bool includeMediaInfo;
+  final int limit;
   final bool includeMountedFolders;
   final bool includeNonDownloadableFiles;
   final String folderPath;
@@ -33,11 +36,12 @@ class DropboxListFolderEndpoint extends Endpoint {
   const DropboxListFolderEndpoint({
     this.includeDeleted = false,
     this.includeHasExplicitSharedMembers = false,
-    this.includeMediaInfo = false,
+    required this.limit,
     this.includeMountedFolders = false,
     this.includeNonDownloadableFiles = false,
     this.recursive = false,
     required this.folderPath,
+    required this.appPropertyTemplateId,
   });
 
   @override
@@ -53,7 +57,11 @@ class DropboxListFolderEndpoint extends Endpoint {
   Object? get data => {
         "include_deleted": includeDeleted,
         "include_has_explicit_shared_members": includeHasExplicitSharedMembers,
-        "include_media_info": includeMediaInfo,
+        "limit": limit,
+        'include_property_groups': {
+          ".tag": "filter_some",
+          "filter_some": [appPropertyTemplateId],
+        },
         "include_mounted_folders": includeMountedFolders,
         "include_non_downloadable_files": includeNonDownloadableFiles,
         "path": folderPath,
@@ -61,25 +69,51 @@ class DropboxListFolderEndpoint extends Endpoint {
       };
 }
 
+class DropboxListFolderContinueEndpoint extends Endpoint {
+  final String cursor;
+
+  const DropboxListFolderContinueEndpoint({
+    required this.cursor,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/list_folder/continue';
+
+  @override
+  Object? get data => {
+        "cursor": cursor,
+      };
+}
+
 class DropboxUploadEndpoint extends Endpoint {
+  final String appPropertyTemplateId;
   final String filePath;
+  final String? localRefId;
   final String mode;
   final bool autoRename;
   final bool mute;
+  final AppMediaContent content;
   final bool strictConflict;
-  final Stream<List<int>> contentStream;
   final void Function(int chunk, int length)? onProgress;
   final CancelToken? cancellationToken;
 
   const DropboxUploadEndpoint({
+    required this.appPropertyTemplateId,
     required this.filePath,
     this.mode = 'add',
     this.autoRename = true,
     this.mute = false,
+    this.localRefId,
     this.strictConflict = false,
     this.cancellationToken,
     this.onProgress,
-    required this.contentStream,
+    required this.content,
   });
 
   @override
@@ -99,12 +133,24 @@ class DropboxUploadEndpoint extends Endpoint {
           'autorename': autoRename,
           'mute': mute,
           'strict_conflict': strictConflict,
+          'property_groups': [
+            {
+              "fields": [
+                {
+                  "name": ProviderConstants.localRefIdKey,
+                  "value": localRefId ?? '',
+                },
+              ],
+              "template_id": appPropertyTemplateId,
+            }
+          ],
         }),
-        'Content-Type': 'application/octet-stream',
+        'Content-Type': content.contentType,
+        'Content-Length': content.length,
       };
 
   @override
-  Object? get data => contentStream;
+  Object? get data => content.stream;
 
   @override
   CancelToken? get cancelToken => cancellationToken;
@@ -171,10 +217,50 @@ class DropboxDeleteEndpoint extends Endpoint {
   String get path => '/files/delete_v2';
 
   @override
-  Map<String, dynamic> get headers => {
-        'Dropbox-API-Arg': jsonEncode({
-          'path': "id:$id",
-        }),
+  Map<String, dynamic> get data => {
+        'path': id,
+      };
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+}
+
+class DropboxUpdateAppPropertyEndpoint extends Endpoint {
+  final String id;
+  final String appPropertyTemplateId;
+  final String localRefId;
+  final CancelToken? cancellationToken;
+
+  const DropboxUpdateAppPropertyEndpoint({
+    required this.id,
+    required this.appPropertyTemplateId,
+    required this.localRefId,
+    this.cancellationToken,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/file_properties/properties/overwrite';
+
+  @override
+  Map<String, dynamic> get data => {
+        "path": id,
+        "property_groups": [
+          {
+            "fields": [
+              {
+                "name": ProviderConstants.localRefIdKey,
+                "value": localRefId,
+              }
+            ],
+            "template_id": appPropertyTemplateId,
+          }
+        ],
       };
 
   @override

@@ -1,3 +1,4 @@
+import '../../domain/config.dart';
 import '../network/urls.dart';
 import '../network/endpoint.dart';
 
@@ -82,4 +83,45 @@ class DropboxGetUserAccountEndpoint extends Endpoint {
 
   @override
   String get path => '/users/get_current_account';
+}
+
+
+class DropboxCreateAppPropertyTemplate extends Endpoint {
+  const DropboxCreateAppPropertyTemplate();
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/file_properties/templates/add_for_user';
+
+  @override
+  Map<String, dynamic> get data => {
+    "description": "This property is used to store file local information.",
+    "fields": [
+      {
+        "description": "The local reference id of the file.",
+        "name": ProviderConstants.localRefIdKey,
+        "type": "string",
+      }
+    ],
+    "name": "local_ref_info",
+  };
+}
+
+class DropboxGetAppPropertyTemplate extends Endpoint {
+  const DropboxGetAppPropertyTemplate();
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/file_properties/templates/list_for_user';
+
 }

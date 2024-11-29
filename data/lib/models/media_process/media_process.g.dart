@@ -9,11 +9,15 @@ part of 'media_process.dart';
 _$MediaProcessImpl _$$MediaProcessImplFromJson(Map<String, dynamic> json) =>
     _$MediaProcessImpl(
       id: json['id'] as String,
+      media_id: json['media_id'] as String,
       folder_id: json['folder_id'] as String,
+      notification_id: (json['notification_id'] as num).toInt(),
       provider: $enumDecode(_$MediaProviderEnumMap, json['provider']),
       status: $enumDecodeNullable(
               _$MediaQueueProcessStatusEnumMap, json['status']) ??
           MediaQueueProcessStatus.waiting,
+      response: const LocalDatabaseAppMediaConverter()
+          .fromJson(json['response'] as String?),
       total: (json['total'] as num?)?.toInt() ?? 1,
       extension: json['extension'] as String,
       chunk: (json['chunk'] as num?)?.toInt() ?? 0,
@@ -22,9 +26,13 @@ _$MediaProcessImpl _$$MediaProcessImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$MediaProcessImplToJson(_$MediaProcessImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'media_id': instance.media_id,
       'folder_id': instance.folder_id,
+      'notification_id': instance.notification_id,
       'provider': _$MediaProviderEnumMap[instance.provider]!,
       'status': _$MediaQueueProcessStatusEnumMap[instance.status]!,
+      'response':
+          const LocalDatabaseAppMediaConverter().toJson(instance.response),
       'total': instance.total,
       'extension': instance.extension,
       'chunk': instance.chunk,
@@ -49,6 +57,8 @@ _$UploadMediaProcessImpl _$$UploadMediaProcessImplFromJson(
         Map<String, dynamic> json) =>
     _$UploadMediaProcessImpl(
       id: json['id'] as String,
+      media_id: json['media_id'] as String,
+      notification_id: (json['notification_id'] as num).toInt(),
       folder_id: json['folder_id'] as String,
       provider: $enumDecode(_$MediaProviderEnumMap, json['provider']),
       path: json['path'] as String,
@@ -60,6 +70,8 @@ _$UploadMediaProcessImpl _$$UploadMediaProcessImplFromJson(
           ? false
           : const LocalDatabaseBoolConverter()
               .fromJson((json['upload_using_auto_backup'] as num).toInt()),
+      response: const LocalDatabaseAppMediaConverter()
+          .fromJson(json['response'] as String?),
       total: (json['total'] as num?)?.toInt() ?? 1,
       chunk: (json['chunk'] as num?)?.toInt() ?? 0,
     );
@@ -68,6 +80,8 @@ Map<String, dynamic> _$$UploadMediaProcessImplToJson(
         _$UploadMediaProcessImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'media_id': instance.media_id,
+      'notification_id': instance.notification_id,
       'folder_id': instance.folder_id,
       'provider': _$MediaProviderEnumMap[instance.provider]!,
       'path': instance.path,
@@ -75,20 +89,8 @@ Map<String, dynamic> _$$UploadMediaProcessImplToJson(
       'status': _$MediaQueueProcessStatusEnumMap[instance.status]!,
       'upload_using_auto_backup': const LocalDatabaseBoolConverter()
           .toJson(instance.upload_using_auto_backup),
-      'total': instance.total,
-      'chunk': instance.chunk,
-    };
-
-_$MediaProcessProgressImpl _$$MediaProcessProgressImplFromJson(
-        Map<String, dynamic> json) =>
-    _$MediaProcessProgressImpl(
-      total: (json['total'] as num).toInt(),
-      chunk: (json['chunk'] as num).toInt(),
-    );
-
-Map<String, dynamic> _$$MediaProcessProgressImplToJson(
-        _$MediaProcessProgressImpl instance) =>
-    <String, dynamic>{
+      'response':
+          const LocalDatabaseAppMediaConverter().toJson(instance.response),
       'total': instance.total,
       'chunk': instance.chunk,
     };

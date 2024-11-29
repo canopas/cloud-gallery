@@ -21,15 +21,20 @@ final googleAuthenticatedDioProvider = Provider((ref) {
 });
 
 final dropboxAuthenticatedDioProvider = Provider((ref) {
+  final dropboxInterceptor = DropboxAuthInterceptor(
+    authService: ref.read(authServiceProvider),
+    rawDio: ref.read(rawDioProvider),
+    dropboxToken: ref.read(AppPreferences.dropboxToken),
+  );
+  ref.listen(AppPreferences.dropboxToken, (previous, next) {
+    dropboxInterceptor.updateToken(next);
+  });
   return Dio()
     ..options.connectTimeout = const Duration(seconds: 60)
     ..options.sendTimeout = const Duration(seconds: 60)
     ..options.receiveTimeout = const Duration(seconds: 60)
     ..interceptors.addAll([
-      DropboxAuthInterceptor(
-        authService: ref.read(authServiceProvider),
-        dropboxTokenController: ref.read(AppPreferences.dropboxToken.notifier),
-      ),
+      dropboxInterceptor,
       LoggerInterceptor(logger: ref.read(loggerProvider)),
     ]);
 });

@@ -1,4 +1,5 @@
 class AppSecretes {
-  static const dropBoxAppKey = '873x7j2iwh8mrea';
-  static const dropBoxAppSecret = 'mq2azqdd6y1upzr';
+  static const dropBoxAppKey = '2nxu8ay8e97mimz';
+  static const dropBoxAppSecret = 'lvvs9xwm2x7q6lm';
+  static const dropBoxBasicAuth = 'Mm54dThheThlOTdtaW16Omx2dnM5eHdtMng3cTZsbQ==';
 }

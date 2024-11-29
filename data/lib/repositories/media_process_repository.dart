@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import '../domain/config.dart';
 import '../errors/app_error.dart';
 import '../models/media/media.dart';
 import '../models/media/media_extension.dart';
@@ -42,7 +45,6 @@ class MediaProcessRepo extends ChangeNotifier {
   List<DownloadMediaProcess> get downloadQueue => _downloadQueue;
 
   bool _uploadQueueIsRunning = false;
-  bool _downloadQueueIsRunning = false;
 
   MediaProcessRepo(
     this._googleDriveService,
@@ -60,11 +62,14 @@ class MediaProcessRepo extends ChangeNotifier {
         await db.execute(
           'CREATE TABLE ${LocalDatabaseConstants.uploadQueueTable} ('
           'id TEXT PRIMARY KEY, '
+          'media_id TEXT NOT NULL, '
           'folder_id TEXT NOT NULL, '
           'provider TEXT NOT NULL, '
           'path TEXT NOT NULL, '
           'status TEXT NOT NULL, '
           'upload_using_auto_backup INTEGER NOT NULL, '
+          'notification_id INTEGER NOT NULL, '
+          'response TEXT, '
           'mime_type TEXT, '
           'total INTEGER NOT NULL, '
           'chunk INTEGER NOT NULL'
@@ -73,17 +78,24 @@ class MediaProcessRepo extends ChangeNotifier {
         await db.execute(
           'CREATE TABLE ${LocalDatabaseConstants.downloadQueueTable} ('
           'id TEXT PRIMARY KEY, '
+          'media_id TEXT NOT NULL, '
           'folder_id TEXT NOT NULL, '
           'provider TEXT NOT NULL, '
           'local_path TEXT NOT NULL, '
           'status TEXT NOT NULL, '
           'extension TEXT NOT NULL, '
+          'notification_id INTEGER NOT NULL, '
+          'response TEXT, '
           'total INTEGER NOT NULL, '
           'chunk INTEGER NOT NULL'
           ')',
         );
       },
-      onOpen: updateQueue,
+      onOpen: (Database db) async {
+        await updateQueue(db);
+        runUploadAutoBackupQueue();
+        runDownloadQueue();
+      },
     );
   }
 
@@ -96,9 +108,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
     final res = await Future.wait([
       _localMediaService.getAllLocalMedia(),
-      _googleDriveService.getDriveMedias(
-        backUpFolderId: backUpFolderId,
-      ),
+      _googleDriveService.getAllMedias(folder: backUpFolderId),
     ]);
 
     final localMedias = res[0];
@@ -106,7 +116,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
     for (AppMedia localMedia in localMedias.toList()) {
       if (_uploadQueue
-              .where((element) => element.id == localMedia.id)
+              .where((element) => element.media_id == localMedia.id)
               .isNotEmpty ||
           dgMedias
               .where((gdMedia) => gdMedia.path == localMedia.id)
@@ -115,72 +125,102 @@ class MediaProcessRepo extends ChangeNotifier {
       }
     }
 
-    uploadMedia(
-      medias: localMedias,
-      folderId: backUpFolderId,
-      provider: MediaProvider.googleDrive,
-      uploadUsingAutoBackup: true,
-    );
+    for (AppMedia media in localMedias) {
+      await database.insert(
+        LocalDatabaseConstants.uploadQueueTable,
+        UploadMediaProcess(
+          id: UniqueKey().toString(),
+          media_id: media.id,
+          folder_id: backUpFolderId,
+          provider: MediaProvider.googleDrive,
+          notification_id: _generateUniqueUploadNotificationId(),
+          path: media.path,
+          upload_using_auto_backup: true,
+          mime_type: media.mimeType,
+        ).toJson(),
+      );
+    }
+    await updateQueue(database);
+    runUploadAutoBackupQueue();
   }
 
-  void autoBackupInDropbox() async {
-    final backUpFolderId = await _googleDriveService.getBackUpFolderId();
-
-    if (backUpFolderId == null) {
-      throw BackUpFolderNotFound();
-    }
-
+  Future<void> autoBackupInDropbox() async {
     final res = await Future.wait([
       _localMediaService.getAllLocalMedia(),
-      _googleDriveService.getDriveMedias(
-        backUpFolderId: backUpFolderId,
-      ),
+      _dropboxService.getAllMedias(folder: ProviderConstants.backupFolderPath),
     ]);
 
     final localMedias = res[0];
-    final dgMedias = res[1];
+    final dropboxMedias = res[1];
 
     for (AppMedia localMedia in localMedias.toList()) {
       if (_uploadQueue
-              .where((element) => element.id == localMedia.id)
+              .where((element) => element.media_id == localMedia.id)
               .isNotEmpty ||
-          dgMedias
+          dropboxMedias
               .where((gdMedia) => gdMedia.path == localMedia.id)
               .isNotEmpty) {
         localMedias.removeWhere((media) => media.id == localMedia.id);
       }
     }
 
-    uploadMedia(
-      medias: localMedias,
-      folderId: backUpFolderId,
-      provider: MediaProvider.googleDrive,
-      uploadUsingAutoBackup: true,
-    );
+    for (AppMedia media in localMedias) {
+      await database.insert(
+        LocalDatabaseConstants.uploadQueueTable,
+        UploadMediaProcess(
+          id: UniqueKey().toString(),
+          media_id: media.id,
+          folder_id: ProviderConstants.backupFolderPath,
+          provider: MediaProvider.dropbox,
+          notification_id: _generateUniqueUploadNotificationId(),
+          path: media.path,
+          upload_using_auto_backup: true,
+          mime_type: media.mimeType,
+        ).toJson(),
+      );
+    }
+    await updateQueue(database);
+    runUploadAutoBackupQueue();
+  }
+
+  int _generateUniqueUploadNotificationId() {
+    int baseId = Random().nextInt(9999999);
+    while (_uploadQueue.any((element) => element.notification_id == baseId)) {
+      baseId = Random().nextInt(9999999);
+    }
+    return baseId;
   }
 
   void uploadMedia({
     required List<AppMedia> medias,
     required String folderId,
     required MediaProvider provider,
-    bool uploadUsingAutoBackup = false,
   }) async {
     for (AppMedia media in medias) {
       await database.insert(
         LocalDatabaseConstants.uploadQueueTable,
         UploadMediaProcess(
-          id: media.id,
+          id: UniqueKey().toString(),
+          media_id: media.id,
           folder_id: folderId,
           provider: provider,
+          notification_id: _generateUniqueUploadNotificationId(),
           path: media.path,
-          upload_using_auto_backup: uploadUsingAutoBackup,
+          upload_using_auto_backup: false,
           mime_type: media.mimeType,
         ).toJson(),
       );
     }
-
-    updateQueue(database);
+    await updateQueue(database);
     runUploadQueue();
+  }
+
+  int _generateUniqueDownloadNotificationId() {
+    int baseId = Random().nextInt(9999999);
+    while (_downloadQueue.any((element) => element.notification_id == baseId)) {
+      baseId = Random().nextInt(9999999);
+    }
+    return baseId;
   }
 
   void downloadMedia({
@@ -192,14 +232,16 @@ class MediaProcessRepo extends ChangeNotifier {
       await database.insert(
         LocalDatabaseConstants.downloadQueueTable,
         DownloadMediaProcess(
-          id: media.id,
+          id: UniqueKey().toString(),
+          media_id: media.id,
           folder_id: folderId,
+          notification_id: _generateUniqueDownloadNotificationId(),
           provider: provider,
           extension: media.extension,
         ).toJson(),
       );
     }
-    updateQueue(database);
+    await updateQueue(database);
     runDownloadQueue();
   }
 
@@ -216,21 +258,46 @@ class MediaProcessRepo extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> runUploadQueue() async {
+  Future<void> runUploadAutoBackupQueue() async {
     if (_uploadQueueIsRunning) return;
     _uploadQueueIsRunning = true;
-    while (_uploadQueue.firstOrNull != null) {
-      if (_uploadQueue.first.provider == MediaProvider.googleDrive) {
-        _uploadInGoogleDrive(_uploadQueue.first);
-      } else if (_uploadQueue.first.provider == MediaProvider.dropbox) {
-        _uploadInDropbox(_uploadQueue.first);
+    while (_uploadQueue.firstWhereOrNull(
+          (element) =>
+              element.status.isWaiting && element.upload_using_auto_backup,
+        ) !=
+        null) {
+      final process = _uploadQueue.firstWhere(
+        (element) =>
+            element.status.isWaiting && element.upload_using_auto_backup,
+      );
+      if (process.provider == MediaProvider.googleDrive) {
+        await _uploadInGoogleDrive(process);
+      } else if (process.provider == MediaProvider.dropbox) {
+        await _uploadInDropbox(process);
       } else {
-        _updateUploadQueue(
-          _uploadQueue.first.copyWith(status: MediaQueueProcessStatus.failed),
+        await _updateUploadQueue(
+          process.copyWith(status: MediaQueueProcessStatus.failed),
         );
       }
     }
     _uploadQueueIsRunning = false;
+  }
+
+  Future<void> runUploadQueue() async {
+    for (UploadMediaProcess process in _uploadQueue.where(
+      (element) =>
+          element.status.isWaiting && !element.upload_using_auto_backup,
+    )) {
+      if (process.provider == MediaProvider.googleDrive) {
+        _uploadInGoogleDrive(process);
+      } else if (process.provider == MediaProvider.dropbox) {
+        _uploadInDropbox(process);
+      } else {
+        _updateUploadQueue(
+          process.copyWith(status: MediaQueueProcessStatus.failed),
+        );
+      }
+    }
   }
 
   Future<UploadMediaProcess> _updateUploadQueue(
@@ -246,7 +313,7 @@ class MediaProcessRepo extends ChangeNotifier {
     return _uploadQueue.firstWhere((element) => element.id == process.id);
   }
 
-  void _uploadInGoogleDrive(UploadMediaProcess uploadProcess) async {
+  Future<void> _uploadInGoogleDrive(UploadMediaProcess uploadProcess) async {
     UploadMediaProcess process = uploadProcess;
     try {
       process = process.copyWith(status: MediaQueueProcessStatus.uploading);
@@ -254,11 +321,11 @@ class MediaProcessRepo extends ChangeNotifier {
 
       final cancelToken = CancelToken();
 
-      await _googleDriveService.uploadMedia(
+      final res = await _googleDriveService.uploadMedia(
         folderId: process.folder_id,
         path: process.path,
         mimeType: process.mime_type,
-        description: process.id,
+        localRefId: process.media_id,
         onProgress: (chunk, total) async {
           if (process.status.isTerminated) {
             cancelToken.cancel();
@@ -268,7 +335,10 @@ class MediaProcessRepo extends ChangeNotifier {
         },
         cancelToken: cancelToken,
       );
-      process = process.copyWith(status: MediaQueueProcessStatus.completed);
+      process = process.copyWith(
+        status: MediaQueueProcessStatus.completed,
+        response: res,
+      );
       process = await _updateUploadQueue(process);
     } catch (e) {
       if (e is RequestCancelledByUser) return;
@@ -278,7 +348,7 @@ class MediaProcessRepo extends ChangeNotifier {
     }
   }
 
-  void _uploadInDropbox(UploadMediaProcess uploadProcess) async {
+  Future<void> _uploadInDropbox(UploadMediaProcess uploadProcess) async {
     UploadMediaProcess process = uploadProcess;
     try {
       process = process.copyWith(status: MediaQueueProcessStatus.uploading);
@@ -290,7 +360,7 @@ class MediaProcessRepo extends ChangeNotifier {
         folderId: process.folder_id,
         path: process.path,
         mimeType: process.mime_type,
-        description: process.id,
+        localRefId: process.media_id,
         onProgress: (chunk, total) async {
           if (process.status.isTerminated) {
             cancelToken.cancel();
@@ -310,21 +380,44 @@ class MediaProcessRepo extends ChangeNotifier {
     }
   }
 
+  void terminateUploadProcess(String id) async {
+    final process =
+        _uploadQueue.firstWhereOrNull((element) => element.id == id);
+    if (process == null ||
+        (!process.status.isRunning && !process.status.isWaiting)) {
+      return;
+    }
+    await _updateUploadQueue(
+      process.copyWith(status: MediaQueueProcessStatus.terminated),
+    );
+  }
+
+  void terminateDownloadProcess(String id) async {
+    final process =
+        _downloadQueue.firstWhereOrNull((element) => element.id == id);
+    if (process == null ||
+        process.status.isRunning ||
+        process.status.isWaiting) {
+      return;
+    }
+    await _updateDownloadQueue(
+      process.copyWith(status: MediaQueueProcessStatus.terminated),
+    );
+  }
+
   Future<void> runDownloadQueue() async {
-    if (_downloadQueueIsRunning) return;
-    _downloadQueueIsRunning = true;
-    while (_downloadQueue.firstOrNull != null) {
-      if (_downloadQueue.first.provider == MediaProvider.googleDrive) {
-        _downloadFromGoogleDrive(_downloadQueue.first);
-      } else if (_downloadQueue.first.provider == MediaProvider.dropbox) {
-        _downloadFromDropbox(_downloadQueue.first);
+    for (final process
+        in _downloadQueue.where((element) => element.status.isWaiting)) {
+      if (process.provider == MediaProvider.googleDrive) {
+        _downloadFromGoogleDrive(process);
+      } else if (process.provider == MediaProvider.dropbox) {
+        _downloadFromDropbox(process);
       } else {
-        await _updateDownloadQueue(
-          _downloadQueue.first.copyWith(status: MediaQueueProcessStatus.failed),
+        _updateDownloadQueue(
+          process.copyWith(status: MediaQueueProcessStatus.failed),
         );
       }
     }
-    _downloadQueueIsRunning = false;
   }
 
   Future<DownloadMediaProcess> _updateDownloadQueue(
@@ -350,12 +443,13 @@ class MediaProcessRepo extends ChangeNotifier {
       process = await _updateDownloadQueue(process);
 
       final tempDir = await getTemporaryDirectory();
-      tempFileLocation = "${tempDir.path}/${process.id}.${process.extension}";
+      tempFileLocation =
+          "${tempDir.path}/${process.media_id}.${process.extension}";
 
       final cancelToken = CancelToken();
 
       await _googleDriveService.downloadMedia(
-        id: process.id,
+        id: process.media_id,
         saveLocation: tempFileLocation,
         onProgress: (received, total) async {
           if (process.status.isTerminated) {
@@ -375,11 +469,18 @@ class MediaProcessRepo extends ChangeNotifier {
       if (localMedia == null) {
         process = process.copyWith(status: MediaQueueProcessStatus.failed);
         process = await _updateDownloadQueue(process);
+        return;
       }
 
-      //TODO: update local ref in media
+      await _googleDriveService.updateAppProperties(
+        id: process.media_id,
+        localRefId: localMedia.id,
+      );
 
-      process = process.copyWith(status: MediaQueueProcessStatus.completed);
+      process = process.copyWith(
+        status: MediaQueueProcessStatus.completed,
+        response: localMedia,
+      );
       process = await _updateDownloadQueue(process);
     } catch (error) {
       if (error is RequestCancelledByUser) {
@@ -404,12 +505,13 @@ class MediaProcessRepo extends ChangeNotifier {
       process = await _updateDownloadQueue(process);
 
       final tempDir = await getTemporaryDirectory();
-      tempFileLocation = "${tempDir.path}/${process.id}.${process.extension}";
+      tempFileLocation =
+          "${tempDir.path}/${process.media_id}.${process.extension}";
 
       final cancelToken = CancelToken();
 
       await _dropboxService.downloadMedia(
-        id: process.id,
+        id: process.media_id,
         saveLocation: tempFileLocation,
         onProgress: (received, total) async {
           if (process.status.isTerminated) {
@@ -431,7 +533,10 @@ class MediaProcessRepo extends ChangeNotifier {
         process = await _updateDownloadQueue(process);
       }
 
-      //TODO: update local ref in media
+      await _dropboxService.updateAppProperties(
+        id: process.media_id,
+        localRefId: localMedia!.id,
+      );
 
       process = process.copyWith(status: MediaQueueProcessStatus.completed);
       process = await _updateDownloadQueue(process);

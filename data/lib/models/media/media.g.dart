@@ -10,6 +10,7 @@ _$AppMediaImpl _$$AppMediaImplFromJson(Map<String, dynamic> json) =>
     _$AppMediaImpl(
       id: json['id'] as String,
       driveMediaRefId: json['driveMediaRefId'] as String?,
+      dropboxMediaRefId: json['dropboxMediaRefId'] as String?,
       name: json['name'] as String?,
       path: json['path'] as String,
       thumbnailLink: json['thumbnailLink'] as String?,
@@ -38,6 +39,7 @@ Map<String, dynamic> _$$AppMediaImplToJson(_$AppMediaImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'driveMediaRefId': instance.driveMediaRefId,
+      'dropboxMediaRefId': instance.dropboxMediaRefId,
       'name': instance.name,
       'path': instance.path,
       'thumbnailLink': instance.thumbnailLink,

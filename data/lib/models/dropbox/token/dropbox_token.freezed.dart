@@ -22,7 +22,6 @@ DropboxToken _$DropboxTokenFromJson(Map<String, dynamic> json) {
 mixin _$DropboxToken {
   String get access_token => throw _privateConstructorUsedError;
   String get token_type => throw _privateConstructorUsedError;
-  @ExpiresInJsonConverter()
   DateTime get expires_in => throw _privateConstructorUsedError;
   String get refresh_token => throw _privateConstructorUsedError;
   String get account_id => throw _privateConstructorUsedError;
@@ -48,7 +47,7 @@ abstract class $DropboxTokenCopyWith<$Res> {
   $Res call(
       {String access_token,
       String token_type,
-      @ExpiresInJsonConverter() DateTime expires_in,
+      DateTime expires_in,
       String refresh_token,
       String account_id,
       String scope,
@@ -122,7 +121,7 @@ abstract class _$$DropboxTokenImplCopyWith<$Res>
   $Res call(
       {String access_token,
       String token_type,
-      @ExpiresInJsonConverter() DateTime expires_in,
+      DateTime expires_in,
       String refresh_token,
       String account_id,
       String scope,
@@ -189,7 +188,7 @@ class _$DropboxTokenImpl implements _DropboxToken {
   const _$DropboxTokenImpl(
       {required this.access_token,
       required this.token_type,
-      @ExpiresInJsonConverter() required this.expires_in,
+      required this.expires_in,
       required this.refresh_token,
       required this.account_id,
       required this.scope,
@@ -203,7 +202,6 @@ class _$DropboxTokenImpl implements _DropboxToken {
   @override
   final String token_type;
   @override
-  @ExpiresInJsonConverter()
   final DateTime expires_in;
   @override
   final String refresh_token;
@@ -263,7 +261,7 @@ abstract class _DropboxToken implements DropboxToken {
   const factory _DropboxToken(
       {required final String access_token,
       required final String token_type,
-      @ExpiresInJsonConverter() required final DateTime expires_in,
+      required final DateTime expires_in,
       required final String refresh_token,
       required final String account_id,
       required final String scope,
@@ -277,7 +275,6 @@ abstract class _DropboxToken implements DropboxToken {
   @override
   String get token_type;
   @override
-  @ExpiresInJsonConverter()
   DateTime get expires_in;
   @override
   String get refresh_token;

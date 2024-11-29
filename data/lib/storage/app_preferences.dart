@@ -46,6 +46,11 @@ class AppPreferences {
     fromJson: (json) => DropboxAccount.fromJson(json),
   );
 
+  static final dropboxFileIdAppPropertyTemplateId = createPrefProvider<String?>(
+    prefKey: "dropbox_file_id_app_property_template_id",
+    defaultValue: null,
+  );
+
   static final dropboxPKCECodeVerifier = createPrefProvider<String?>(
     prefKey: "dropbox_code_verifier",
     defaultValue: null,

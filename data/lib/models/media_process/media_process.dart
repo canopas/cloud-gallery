@@ -1,6 +1,10 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+import '../media/media.dart';
 
 part 'media_process.freezed.dart';
 
@@ -58,48 +62,44 @@ class LocalDatabaseBoolConverter extends JsonConverter<bool, int> {
   }
 }
 
+class LocalDatabaseAppMediaConverter extends JsonConverter<AppMedia?, String?> {
+  const LocalDatabaseAppMediaConverter();
+
+  @override
+  AppMedia? fromJson(String? json) {
+    try {
+      return json == null ? null : AppMedia.fromJson(jsonDecode(json));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  String? toJson(AppMedia? object) {
+    try {
+      return object == null ? null : jsonEncode(object.toJson());
+    } catch (e) {
+      return null;
+    }
+  }
+}
+
 @freezed
 class DownloadMediaProcess with _$DownloadMediaProcess {
+  const DownloadMediaProcess._();
+
   const factory DownloadMediaProcess({
     required String id,
+    required String media_id,
     required String folder_id,
+    required int notification_id,
     required MediaProvider provider,
     @Default(MediaQueueProcessStatus.waiting) MediaQueueProcessStatus status,
+    @LocalDatabaseAppMediaConverter() AppMedia? response,
     @Default(1) int total,
     required String extension,
     @Default(0) int chunk,
   }) = _MediaProcess;
-
-  factory DownloadMediaProcess.fromJson(Map<String, dynamic> json) =>
-      _$DownloadMediaProcessFromJson(json);
-}
-
-@freezed
-class UploadMediaProcess with _$UploadMediaProcess {
-  const factory UploadMediaProcess({
-    required String id,
-    required String folder_id,
-    required MediaProvider provider,
-    required String path,
-    String? mime_type,
-    @Default(MediaQueueProcessStatus.waiting) MediaQueueProcessStatus status,
-    @LocalDatabaseBoolConverter() @Default(false) bool upload_using_auto_backup,
-    @Default(1) int total,
-    @Default(0) int chunk,
-  }) = _UploadMediaProcess;
-
-  factory UploadMediaProcess.fromJson(Map<String, dynamic> json) =>
-      _$UploadMediaProcessFromJson(json);
-}
-
-@freezed
-class MediaProcessProgress with _$MediaProcessProgress {
-  const MediaProcessProgress._();
-
-  const factory MediaProcessProgress({
-    required int total,
-    required int chunk,
-  }) = _MediaProcessProgress;
 
   /// progress 0.0 - 1.0
   double get progress => total == 0 ? 0 : chunk / total;
@@ -107,6 +107,36 @@ class MediaProcessProgress with _$MediaProcessProgress {
   /// percentage of the progress 0 - 100
   double get progressPercentage => progress * 100;
 
-  factory MediaProcessProgress.fromJson(Map<String, dynamic> json) =>
-      _$MediaProcessProgressFromJson(json);
+  factory DownloadMediaProcess.fromJson(Map<String, dynamic> json) =>
+      _$DownloadMediaProcessFromJson(json);
+}
+
+@freezed
+class UploadMediaProcess with _$UploadMediaProcess {
+  const UploadMediaProcess._();
+
+  const factory UploadMediaProcess({
+
+    required String id,
+    required String media_id,
+    required int notification_id,
+    required String folder_id,
+    required MediaProvider provider,
+    required String path,
+    String? mime_type,
+    @Default(MediaQueueProcessStatus.waiting) MediaQueueProcessStatus status,
+    @LocalDatabaseBoolConverter() @Default(false) bool upload_using_auto_backup,
+    @LocalDatabaseAppMediaConverter() AppMedia? response,
+    @Default(1) int total,
+    @Default(0) int chunk,
+  }) = _UploadMediaProcess;
+
+  /// progress 0.0 - 1.0
+  double get progress => total == 0 ? 0 : chunk / total;
+
+  /// percentage of the progress 0 - 100
+  double get progressPercentage => progress * 100;
+
+  factory UploadMediaProcess.fromJson(Map<String, dynamic> json) =>
+      _$UploadMediaProcessFromJson(json);
 }

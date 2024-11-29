@@ -6,7 +6,7 @@ final loggerProvider = Provider<Logger>(
     filter: ProductionFilter(),
     printer: PrettyPrinter(
       methodCount: 0,
-      errorMethodCount: 0,
+      errorMethodCount: 10,
       printEmojis: false,
       colors: false,
     ),

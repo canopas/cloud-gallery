@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../../domain/config.dart';
 import '../network/endpoint.dart';
 import '../../models/media_content/media_content.dart';
 import 'package:dio/dio.dart';
@@ -6,13 +7,13 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http_parser/http_parser.dart';
 import '../network/urls.dart';
 
-class UploadGoogleDriveFile extends Endpoint {
+class GoogleDriveUploadEndpoint extends Endpoint {
   final drive.File request;
   final AppMediaContent content;
   final CancelToken? cancellationToken;
   final void Function(int chunk, int length)? onProgress;
 
-  const UploadGoogleDriveFile({
+  const GoogleDriveUploadEndpoint({
     required this.request,
     required this.content,
     this.cancellationToken,
@@ -30,7 +31,7 @@ class UploadGoogleDriveFile extends Endpoint {
 
   @override
   Map<String, dynamic> get headers => {
-        'Content-Type': 'multipart/related',
+        'Content-Type': content.contentType,
         'Content-Length': content.length.toString(),
       };
 
@@ -60,7 +61,7 @@ class UploadGoogleDriveFile extends Endpoint {
   void Function(int p1, int p2)? get onSendProgress => onProgress;
 }
 
-class DownloadGoogleDriveFileContent extends DownloadEndpoint {
+class GoogleDriveDownloadEndpoint extends DownloadEndpoint {
   final String id;
 
   final void Function(int received, int total)? onProgress;
@@ -69,7 +70,7 @@ class DownloadGoogleDriveFileContent extends DownloadEndpoint {
 
   final CancelToken? cancellationToken;
 
-  const DownloadGoogleDriveFileContent({
+  const GoogleDriveDownloadEndpoint({
     required this.id,
     this.cancellationToken,
     this.onProgress,
@@ -95,4 +96,32 @@ class DownloadGoogleDriveFileContent extends DownloadEndpoint {
 
   @override
   String? get storePath => saveLocation;
+}
+
+class GoogleDriveUpdateAppPropertiesEndpoint extends Endpoint {
+  final String id;
+  final String localFileId;
+  final CancelToken? cancellationToken;
+
+  const GoogleDriveUpdateAppPropertiesEndpoint({
+    required this.id,
+    required this.localFileId,
+    this.cancellationToken,
+  });
+
+  @override
+  String get baseUrl => BaseURL.googleDriveV3;
+
+  @override
+  String get path => '/files/$id';
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  Object? get data => {
+        "properties": {
+          ProviderConstants.localRefIdKey: localFileId,
+        },
+      };
 }
