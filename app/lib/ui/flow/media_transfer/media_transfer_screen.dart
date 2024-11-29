@@ -94,11 +94,12 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
   Widget _uploadList() {
     return Consumer(
       builder: (context, ref, child) {
-        final upload = ref.watch(
-          mediaTransferStateNotifierProvider.select((value) => value.upload),
+        final uploadProcesses = ref.watch(
+          mediaTransferStateNotifierProvider
+              .select((value) => value.uploadProcesses),
         );
 
-        if (upload.isEmpty) {
+        if (uploadProcesses.isEmpty) {
           return ErrorView(
             title: context.l10n.empty_upload_title,
             message: context.l10n.empty_upload_message,
@@ -112,15 +113,15 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
 
         return ListView.separated(
           padding: const EdgeInsets.all(16),
-          itemCount: upload.length,
+          itemCount: uploadProcesses.length,
           separatorBuilder: (context, index) => const SizedBox(
-            height: 8,
+            height: 16,
           ),
-          itemBuilder: (context, index) => ProcessItem(
-            key: ValueKey(upload[index].id),
-            process: upload[index],
+          itemBuilder: (context, index) => UploadProcessItem(
+            key: ValueKey(uploadProcesses[index].id),
+            process: uploadProcesses[index],
             onCancelTap: () {
-              notifier.onTerminateUploadProcess(upload[index].id);
+              notifier.onTerminateUploadProcess(uploadProcesses[index].id);
             },
           ),
         );
@@ -131,11 +132,12 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
   Widget _downloadList() {
     return Consumer(
       builder: (context, ref, child) {
-        final download = ref.watch(
-          mediaTransferStateNotifierProvider.select((value) => value.download),
+        final downloadProcesses = ref.watch(
+          mediaTransferStateNotifierProvider
+              .select((value) => value.downloadProcesses),
         );
 
-        if (download.isEmpty) {
+        if (downloadProcesses.isEmpty) {
           return ErrorView(
             title: context.l10n.empty_download_title,
             message: context.l10n.empty_download_message,
@@ -149,15 +151,15 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
 
         return ListView.separated(
           padding: const EdgeInsets.all(16),
-          itemCount: download.length,
+          itemCount: downloadProcesses.length,
           separatorBuilder: (context, index) => const SizedBox(
-            height: 8,
+            height: 16,
           ),
-          itemBuilder: (context, index) => ProcessItem(
-            key: ValueKey(download[index].id),
-            process: download[index],
+          itemBuilder: (context, index) => DownloadProcessItem(
+            key: ValueKey(downloadProcesses[index].id),
+            process: downloadProcesses[index],
             onCancelTap: () {
-              notifier.onTerminateDownloadProcess(download[index].id);
+              notifier.onTerminateDownloadProcess(downloadProcesses[index].id);
             },
           ),
         );

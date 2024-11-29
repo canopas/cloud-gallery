@@ -17,14 +17,20 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$HomeViewState {
   Object? get error => throw _privateConstructorUsedError;
+  Object? get actionError => throw _privateConstructorUsedError;
   bool get hasLocalMediaAccess => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
-  String? get lastLocalMediaId => throw _privateConstructorUsedError;
-  Map<DateTime, List<AppMedia>> get medias =>
+  DropboxAccount? get dropboxAccount => throw _privateConstructorUsedError;
+  Map<DateTime, Map<String, AppMedia>> get medias =>
       throw _privateConstructorUsedError;
-  List<AppMedia> get selectedMedias => throw _privateConstructorUsedError;
-  List<AppProcess> get mediaProcesses => throw _privateConstructorUsedError;
+  Map<String, AppMedia> get selectedMedias =>
+      throw _privateConstructorUsedError;
+  Map<String, UploadMediaProcess> get uploadMediaProcesses =>
+      throw _privateConstructorUsedError;
+  Map<String, DownloadMediaProcess> get downloadMediaProcesses =>
+      throw _privateConstructorUsedError;
+  String? get lastLocalMediaId => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeViewState
   /// with the given fields replaced by the non-null parameter values.
@@ -41,13 +47,18 @@ abstract class $HomeViewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {Object? error,
+      Object? actionError,
       bool hasLocalMediaAccess,
       bool loading,
       GoogleSignInAccount? googleAccount,
-      String? lastLocalMediaId,
-      Map<DateTime, List<AppMedia>> medias,
-      List<AppMedia> selectedMedias,
-      List<AppProcess> mediaProcesses});
+      DropboxAccount? dropboxAccount,
+      Map<DateTime, Map<String, AppMedia>> medias,
+      Map<String, AppMedia> selectedMedias,
+      Map<String, UploadMediaProcess> uploadMediaProcesses,
+      Map<String, DownloadMediaProcess> downloadMediaProcesses,
+      String? lastLocalMediaId});
+
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount;
 }
 
 /// @nodoc
@@ -66,16 +77,20 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
   @override
   $Res call({
     Object? error = freezed,
+    Object? actionError = freezed,
     Object? hasLocalMediaAccess = null,
     Object? loading = null,
     Object? googleAccount = freezed,
-    Object? lastLocalMediaId = freezed,
+    Object? dropboxAccount = freezed,
     Object? medias = null,
     Object? selectedMedias = null,
-    Object? mediaProcesses = null,
+    Object? uploadMediaProcesses = null,
+    Object? downloadMediaProcesses = null,
+    Object? lastLocalMediaId = freezed,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
+      actionError: freezed == actionError ? _value.actionError : actionError,
       hasLocalMediaAccess: null == hasLocalMediaAccess
           ? _value.hasLocalMediaAccess
           : hasLocalMediaAccess // ignore: cast_nullable_to_non_nullable
@@ -88,23 +103,45 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
+      dropboxAccount: freezed == dropboxAccount
+          ? _value.dropboxAccount
+          : dropboxAccount // ignore: cast_nullable_to_non_nullable
+              as DropboxAccount?,
+      medias: null == medias
+          ? _value.medias
+          : medias // ignore: cast_nullable_to_non_nullable
+              as Map<DateTime, Map<String, AppMedia>>,
+      selectedMedias: null == selectedMedias
+          ? _value.selectedMedias
+          : selectedMedias // ignore: cast_nullable_to_non_nullable
+              as Map<String, AppMedia>,
+      uploadMediaProcesses: null == uploadMediaProcesses
+          ? _value.uploadMediaProcesses
+          : uploadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, UploadMediaProcess>,
+      downloadMediaProcesses: null == downloadMediaProcesses
+          ? _value.downloadMediaProcesses
+          : downloadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, DownloadMediaProcess>,
       lastLocalMediaId: freezed == lastLocalMediaId
           ? _value.lastLocalMediaId
           : lastLocalMediaId // ignore: cast_nullable_to_non_nullable
               as String?,
-      medias: null == medias
-          ? _value.medias
-          : medias // ignore: cast_nullable_to_non_nullable
-              as Map<DateTime, List<AppMedia>>,
-      selectedMedias: null == selectedMedias
-          ? _value.selectedMedias
-          : selectedMedias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      mediaProcesses: null == mediaProcesses
-          ? _value.mediaProcesses
-          : mediaProcesses // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
     ) as $Val);
+  }
+
+  /// Create a copy of HomeViewState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount {
+    if (_value.dropboxAccount == null) {
+      return null;
+    }
+
+    return $DropboxAccountCopyWith<$Res>(_value.dropboxAccount!, (value) {
+      return _then(_value.copyWith(dropboxAccount: value) as $Val);
+    });
   }
 }
 
@@ -118,13 +155,19 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {Object? error,
+      Object? actionError,
       bool hasLocalMediaAccess,
       bool loading,
       GoogleSignInAccount? googleAccount,
-      String? lastLocalMediaId,
-      Map<DateTime, List<AppMedia>> medias,
-      List<AppMedia> selectedMedias,
-      List<AppProcess> mediaProcesses});
+      DropboxAccount? dropboxAccount,
+      Map<DateTime, Map<String, AppMedia>> medias,
+      Map<String, AppMedia> selectedMedias,
+      Map<String, UploadMediaProcess> uploadMediaProcesses,
+      Map<String, DownloadMediaProcess> downloadMediaProcesses,
+      String? lastLocalMediaId});
+
+  @override
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount;
 }
 
 /// @nodoc
@@ -141,16 +184,20 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? error = freezed,
+    Object? actionError = freezed,
     Object? hasLocalMediaAccess = null,
     Object? loading = null,
     Object? googleAccount = freezed,
-    Object? lastLocalMediaId = freezed,
+    Object? dropboxAccount = freezed,
     Object? medias = null,
     Object? selectedMedias = null,
-    Object? mediaProcesses = null,
+    Object? uploadMediaProcesses = null,
+    Object? downloadMediaProcesses = null,
+    Object? lastLocalMediaId = freezed,
   }) {
     return _then(_$HomeViewStateImpl(
       error: freezed == error ? _value.error : error,
+      actionError: freezed == actionError ? _value.actionError : actionError,
       hasLocalMediaAccess: null == hasLocalMediaAccess
           ? _value.hasLocalMediaAccess
           : hasLocalMediaAccess // ignore: cast_nullable_to_non_nullable
@@ -163,22 +210,30 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
+      dropboxAccount: freezed == dropboxAccount
+          ? _value.dropboxAccount
+          : dropboxAccount // ignore: cast_nullable_to_non_nullable
+              as DropboxAccount?,
+      medias: null == medias
+          ? _value._medias
+          : medias // ignore: cast_nullable_to_non_nullable
+              as Map<DateTime, Map<String, AppMedia>>,
+      selectedMedias: null == selectedMedias
+          ? _value._selectedMedias
+          : selectedMedias // ignore: cast_nullable_to_non_nullable
+              as Map<String, AppMedia>,
+      uploadMediaProcesses: null == uploadMediaProcesses
+          ? _value._uploadMediaProcesses
+          : uploadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, UploadMediaProcess>,
+      downloadMediaProcesses: null == downloadMediaProcesses
+          ? _value._downloadMediaProcesses
+          : downloadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, DownloadMediaProcess>,
       lastLocalMediaId: freezed == lastLocalMediaId
           ? _value.lastLocalMediaId
           : lastLocalMediaId // ignore: cast_nullable_to_non_nullable
               as String?,
-      medias: null == medias
-          ? _value._medias
-          : medias // ignore: cast_nullable_to_non_nullable
-              as Map<DateTime, List<AppMedia>>,
-      selectedMedias: null == selectedMedias
-          ? _value._selectedMedias
-          : selectedMedias // ignore: cast_nullable_to_non_nullable
-              as List<AppMedia>,
-      mediaProcesses: null == mediaProcesses
-          ? _value._mediaProcesses
-          : mediaProcesses // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
     ));
   }
 }
@@ -188,19 +243,25 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
 class _$HomeViewStateImpl implements _HomeViewState {
   const _$HomeViewStateImpl(
       {this.error,
+      this.actionError,
       this.hasLocalMediaAccess = false,
       this.loading = false,
       this.googleAccount,
-      this.lastLocalMediaId,
-      final Map<DateTime, List<AppMedia>> medias = const {},
-      final List<AppMedia> selectedMedias = const [],
-      final List<AppProcess> mediaProcesses = const []})
+      this.dropboxAccount,
+      final Map<DateTime, Map<String, AppMedia>> medias = const {},
+      final Map<String, AppMedia> selectedMedias = const {},
+      final Map<String, UploadMediaProcess> uploadMediaProcesses = const {},
+      final Map<String, DownloadMediaProcess> downloadMediaProcesses = const {},
+      this.lastLocalMediaId})
       : _medias = medias,
         _selectedMedias = selectedMedias,
-        _mediaProcesses = mediaProcesses;
+        _uploadMediaProcesses = uploadMediaProcesses,
+        _downloadMediaProcesses = downloadMediaProcesses;
 
   @override
   final Object? error;
+  @override
+  final Object? actionError;
   @override
   @JsonKey()
   final bool hasLocalMediaAccess;
@@ -210,37 +271,51 @@ class _$HomeViewStateImpl implements _HomeViewState {
   @override
   final GoogleSignInAccount? googleAccount;
   @override
-  final String? lastLocalMediaId;
-  final Map<DateTime, List<AppMedia>> _medias;
+  final DropboxAccount? dropboxAccount;
+  final Map<DateTime, Map<String, AppMedia>> _medias;
   @override
   @JsonKey()
-  Map<DateTime, List<AppMedia>> get medias {
+  Map<DateTime, Map<String, AppMedia>> get medias {
     if (_medias is EqualUnmodifiableMapView) return _medias;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_medias);
   }
 
-  final List<AppMedia> _selectedMedias;
+  final Map<String, AppMedia> _selectedMedias;
   @override
   @JsonKey()
-  List<AppMedia> get selectedMedias {
-    if (_selectedMedias is EqualUnmodifiableListView) return _selectedMedias;
+  Map<String, AppMedia> get selectedMedias {
+    if (_selectedMedias is EqualUnmodifiableMapView) return _selectedMedias;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_selectedMedias);
+    return EqualUnmodifiableMapView(_selectedMedias);
   }
 
-  final List<AppProcess> _mediaProcesses;
+  final Map<String, UploadMediaProcess> _uploadMediaProcesses;
   @override
   @JsonKey()
-  List<AppProcess> get mediaProcesses {
-    if (_mediaProcesses is EqualUnmodifiableListView) return _mediaProcesses;
+  Map<String, UploadMediaProcess> get uploadMediaProcesses {
+    if (_uploadMediaProcesses is EqualUnmodifiableMapView)
+      return _uploadMediaProcesses;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_mediaProcesses);
+    return EqualUnmodifiableMapView(_uploadMediaProcesses);
   }
+
+  final Map<String, DownloadMediaProcess> _downloadMediaProcesses;
+  @override
+  @JsonKey()
+  Map<String, DownloadMediaProcess> get downloadMediaProcesses {
+    if (_downloadMediaProcesses is EqualUnmodifiableMapView)
+      return _downloadMediaProcesses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_downloadMediaProcesses);
+  }
+
+  @override
+  final String? lastLocalMediaId;
 
   @override
   String toString() {
-    return 'HomeViewState(error: $error, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, googleAccount: $googleAccount, lastLocalMediaId: $lastLocalMediaId, medias: $medias, selectedMedias: $selectedMedias, mediaProcesses: $mediaProcesses)';
+    return 'HomeViewState(error: $error, actionError: $actionError, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, medias: $medias, selectedMedias: $selectedMedias, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses, lastLocalMediaId: $lastLocalMediaId)';
   }
 
   @override
@@ -249,31 +324,40 @@ class _$HomeViewStateImpl implements _HomeViewState {
         (other.runtimeType == runtimeType &&
             other is _$HomeViewStateImpl &&
             const DeepCollectionEquality().equals(other.error, error) &&
+            const DeepCollectionEquality()
+                .equals(other.actionError, actionError) &&
             (identical(other.hasLocalMediaAccess, hasLocalMediaAccess) ||
                 other.hasLocalMediaAccess == hasLocalMediaAccess) &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.googleAccount, googleAccount) ||
                 other.googleAccount == googleAccount) &&
-            (identical(other.lastLocalMediaId, lastLocalMediaId) ||
-                other.lastLocalMediaId == lastLocalMediaId) &&
+            (identical(other.dropboxAccount, dropboxAccount) ||
+                other.dropboxAccount == dropboxAccount) &&
             const DeepCollectionEquality().equals(other._medias, _medias) &&
             const DeepCollectionEquality()
                 .equals(other._selectedMedias, _selectedMedias) &&
             const DeepCollectionEquality()
-                .equals(other._mediaProcesses, _mediaProcesses));
+                .equals(other._uploadMediaProcesses, _uploadMediaProcesses) &&
+            const DeepCollectionEquality().equals(
+                other._downloadMediaProcesses, _downloadMediaProcesses) &&
+            (identical(other.lastLocalMediaId, lastLocalMediaId) ||
+                other.lastLocalMediaId == lastLocalMediaId));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(error),
+      const DeepCollectionEquality().hash(actionError),
       hasLocalMediaAccess,
       loading,
       googleAccount,
-      lastLocalMediaId,
+      dropboxAccount,
       const DeepCollectionEquality().hash(_medias),
       const DeepCollectionEquality().hash(_selectedMedias),
-      const DeepCollectionEquality().hash(_mediaProcesses));
+      const DeepCollectionEquality().hash(_uploadMediaProcesses),
+      const DeepCollectionEquality().hash(_downloadMediaProcesses),
+      lastLocalMediaId);
 
   /// Create a copy of HomeViewState
   /// with the given fields replaced by the non-null parameter values.
@@ -287,16 +371,21 @@ class _$HomeViewStateImpl implements _HomeViewState {
 abstract class _HomeViewState implements HomeViewState {
   const factory _HomeViewState(
       {final Object? error,
+      final Object? actionError,
       final bool hasLocalMediaAccess,
       final bool loading,
       final GoogleSignInAccount? googleAccount,
-      final String? lastLocalMediaId,
-      final Map<DateTime, List<AppMedia>> medias,
-      final List<AppMedia> selectedMedias,
-      final List<AppProcess> mediaProcesses}) = _$HomeViewStateImpl;
+      final DropboxAccount? dropboxAccount,
+      final Map<DateTime, Map<String, AppMedia>> medias,
+      final Map<String, AppMedia> selectedMedias,
+      final Map<String, UploadMediaProcess> uploadMediaProcesses,
+      final Map<String, DownloadMediaProcess> downloadMediaProcesses,
+      final String? lastLocalMediaId}) = _$HomeViewStateImpl;
 
   @override
   Object? get error;
+  @override
+  Object? get actionError;
   @override
   bool get hasLocalMediaAccess;
   @override
@@ -304,13 +393,17 @@ abstract class _HomeViewState implements HomeViewState {
   @override
   GoogleSignInAccount? get googleAccount;
   @override
+  DropboxAccount? get dropboxAccount;
+  @override
+  Map<DateTime, Map<String, AppMedia>> get medias;
+  @override
+  Map<String, AppMedia> get selectedMedias;
+  @override
+  Map<String, UploadMediaProcess> get uploadMediaProcesses;
+  @override
+  Map<String, DownloadMediaProcess> get downloadMediaProcesses;
+  @override
   String? get lastLocalMediaId;
-  @override
-  Map<DateTime, List<AppMedia>> get medias;
-  @override
-  List<AppMedia> get selectedMedias;
-  @override
-  List<AppProcess> get mediaProcesses;
 
   /// Create a copy of HomeViewState
   /// with the given fields replaced by the non-null parameter values.

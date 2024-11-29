@@ -1,11 +1,14 @@
+import 'package:data/models/media/media_extension.dart';
+import 'package:data/models/media_process/media_process.dart';
+import 'package:flutter/material.dart';
+import 'package:style/indicators/circular_progress_indicator.dart';
+import 'package:style/theme/colors.dart';
 import '../../../../components/thumbnail_builder.dart';
 import '../../../../domain/formatter/duration_formatter.dart';
-import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/extensions/context_extensions.dart';
-import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../../domain/assets/assets_paths.dart';
 import 'package:style/animations/item_selector.dart';
@@ -15,7 +18,8 @@ class AppMediaItem extends StatelessWidget {
   final void Function()? onTap;
   final void Function()? onLongTap;
   final bool isSelected;
-  final AppProcess? process;
+  final UploadMediaProcess? uploadMediaProcess;
+  final DownloadMediaProcess? downloadMediaProcess;
 
   const AppMediaItem({
     super.key,
@@ -23,7 +27,8 @@ class AppMediaItem extends StatelessWidget {
     this.onTap,
     this.onLongTap,
     this.isSelected = false,
-    this.process,
+    this.uploadMediaProcess,
+    this.downloadMediaProcess,
   });
 
   @override
@@ -78,7 +83,7 @@ class AppMediaItem extends StatelessWidget {
   Widget _sourceIndicators({required BuildContext context}) {
     return Row(
       children: [
-        if (media.sources.contains(AppMediaSource.googleDrive))
+        if (!media.isLocalStored)
           _BackgroundContainer(
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -89,62 +94,90 @@ class AppMediaItem extends StatelessWidget {
                     height: 14,
                     width: 14,
                   ),
-              ],
-            ),
-          ),
-        if (process?.status.isProcessing ?? false)
-          _BackgroundContainer(
-            margin: EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal:
-                  media.sources.contains(AppMediaSource.googleDrive) ? 0 : 4,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppCircularProgressIndicator(
-                  size: 16,
-                  value: process?.progress?.percentageInPoint,
-                  color: context.colorScheme.surfaceInverse,
-                ),
-                if (process?.progress != null) ...[
+                if (media.sources.contains(AppMediaSource.dropbox) &&
+                    media.sources.contains(AppMediaSource.googleDrive))
                   const SizedBox(width: 4),
-                  Text(
-                    '${process?.progress?.percentage.toStringAsFixed(0)}%',
-                    style: AppTextStyles.caption.copyWith(
-                      color: context.colorScheme.surfaceInverse,
-                    ),
+                if (media.sources.contains(AppMediaSource.dropbox))
+                  SvgPicture.asset(
+                    Assets.images.icons.dropbox,
+                    height: 14,
+                    width: 14,
                   ),
-                ],
               ],
             ),
           ),
-        if (process?.status.isWaiting ?? false)
-          _BackgroundContainer(
-            child: Icon(
-              CupertinoIcons.time,
-              size: 16,
-              color: context.colorScheme.surfaceInverse,
-            ),
+        if (uploadMediaProcess?.status.isWaiting == true ||
+            downloadMediaProcess?.status.isWaiting == true)
+          _waitingIndicator(context),
+        if (uploadMediaProcess != null && uploadMediaProcess!.status.isRunning)
+          _progressIndicator(
+            context: context,
+            progressPercentage: uploadMediaProcess!.progressPercentage,
+            progress: uploadMediaProcess!.progress,
+          ),
+        if (downloadMediaProcess != null &&
+            downloadMediaProcess!.status.isRunning)
+          _progressIndicator(
+            context: context,
+            progressPercentage: downloadMediaProcess!.progressPercentage,
+            progress: downloadMediaProcess!.progress,
           ),
       ],
+    );
+  }
+
+  Widget _waitingIndicator(BuildContext context) {
+    return _BackgroundContainer(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.watch_later_outlined,
+            size: 14,
+            color: context.colorScheme.textSecondary,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _progressIndicator({
+    required BuildContext context,
+    required double progressPercentage,
+    required double progress,
+  }) {
+    return _BackgroundContainer(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppCircularProgressIndicator(
+            value: progress,
+            color: context.colorScheme.textSecondary,
+            size: 14,
+          ),
+          Text(
+            "${uploadMediaProcess?.progressPercentage.toInt()}%",
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.textPrimaryDarkColor,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _BackgroundContainer extends StatelessWidget {
   final Widget child;
-  final EdgeInsets margin;
 
   const _BackgroundContainer({
     required this.child,
-    this.margin = const EdgeInsets.all(4),
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: margin,
+      margin: const EdgeInsets.all(4),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: context.colorScheme.surface.withOpacity(0.6),

@@ -90,7 +90,7 @@ class PreviewTopBar extends StatelessWidget {
                       if (media.isGoogleDriveStored)
                         PopupMenuItem(
                           onTap: () {
-                            notifier.downloadMediaFromGoogleDrive(media: media);
+                            notifier.downloadFromGoogleDrive(media: media);
                           },
                           child: Row(
                             children: [
@@ -131,14 +131,15 @@ class PreviewTopBar extends StatelessWidget {
                             ],
                           ),
                         ),
-                      if (media.sources.contains(AppMediaSource.googleDrive))
+                      if (media.sources.contains(AppMediaSource.googleDrive) &&
+                          media.driveMediaRefId != null)
                         PopupMenuItem(
                           onTap: () async {
                             _showDeleteFromDriveDialog(
                               context: context,
                               onDelete: () {
                                 notifier.deleteMediaFromGoogleDrive(
-                                  media.driveMediaRefId,
+                                  media.driveMediaRefId!,
                                 );
                                 context.pop();
                               },

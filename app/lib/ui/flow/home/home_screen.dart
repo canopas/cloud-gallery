@@ -1,14 +1,12 @@
 import 'dart:io';
 import '../../../components/app_page.dart';
 import '../../../domain/extensions/widget_extensions.dart';
+import '../../../domain/formatter/byte_formatter.dart';
 import '../../../domain/formatter/date_formatter.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../domain/handlers/notification_handler.dart';
 import 'components/no_local_medias_access_screen.dart';
 import 'home_screen_view_model.dart';
-import 'package:collection/collection.dart';
-import 'package:data/models/app_process/app_process.dart';
-import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,8 +37,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     _notificationHandler = ref.read(notificationHandlerProvider);
-    _notificationHandler.init(context);
-    _notificationHandler.requestPermission();
     _notifier = ref.read(homeViewStateNotifier.notifier);
     super.initState();
   }
@@ -62,15 +58,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  final String uploadProcessGroupIdentifier =
+      "cloud-gallery-uploading-processes";
+
   void _notificationObserver() {
-    ref.listen(homeViewStateNotifier, (previous, next) {
-      if ((previous?.mediaProcesses.isEmpty ?? false) &&
-          next.mediaProcesses.isNotEmpty) {
-        _notificationHandler.showNotification(
-          id: next.mediaProcesses.length,
-          name: "Sync to Google Drive",
-          description: "Syncing media files to Google Drive.",
+    ref.listen(
+        homeViewStateNotifier.select(
+          (value) => (
+            upload: value.uploadMediaProcesses.values.where(
+              (element) => element.status.isRunning,
+            ),
+            download: value.downloadMediaProcesses.values.where(
+              (element) => element.status.isRunning,
+            ),
+          ),
+        ), (previous, next) async {
+      if (next.upload.isNotEmpty) {
+        await _notificationHandler.showNotification(
+          id: 0,
+          name: 'Uploading',
+          description: '${next.upload.length} files uploading...',
+          groupKey: uploadProcessGroupIdentifier,
+          setAsGroupSummary: true,
         );
+        for (final upload in next.upload) {
+          await _notificationHandler.showNotification(
+            silent: true,
+            id: upload.notification_id,
+            name: upload.path,
+            description:
+                '${upload.chunk.formatBytes} - ${upload.total.formatBytes}  ${upload.progressPercentage.toStringAsFixed(0)}%',
+            groupKey: uploadProcessGroupIdentifier,
+            progress: upload.chunk,
+            maxProgress: upload.total,
+          );
+        }
+      }
+      if (next.download.isNotEmpty) {
+        await _notificationHandler.showNotification(
+          id: 1,
+          name: 'Downloading',
+          description: '${next.download.length} files downloading...',
+          groupKey: uploadProcessGroupIdentifier,
+          setAsGroupSummary: true,
+        );
+        for (final download in next.download) {
+          await _notificationHandler.showNotification(
+            id: download.notification_id,
+            name: download.media_id,
+            description: 'Downloading...',
+            groupKey: uploadProcessGroupIdentifier,
+            progress: download.chunk,
+            maxProgress: download.total,
+          );
+        }
       }
     });
   }
@@ -78,7 +119,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     _errorObserver();
-    _notificationObserver();
     return AppPage(
       titleWidget: _titleWidget(context: context),
       actions: [
@@ -114,7 +154,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             backgroundColor: context.colorScheme.containerNormal,
             onPressed: () async {
               await TransferRoute().push(context);
-              _notifier.loadMedias();
+              _notifier.loadMedias(reload: true);
             },
             icon: Icon(
               CupertinoIcons.arrow_up_arrow_down,
@@ -134,7 +174,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       onPressed: () async {
         await AccountRoute().push(context);
-        _notifier.loadMedias();
+        _notifier.loadMedias(reload: true);
       },
       icon: Icon(
         CupertinoIcons.person,
@@ -145,42 +185,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _body({required BuildContext context}) {
-    final ({
-      Map<DateTime, List<AppMedia>> medias,
-      List<AppProcess> mediaProcesses,
-      List<AppMedia> selectedMedias,
-      bool isLoading,
-      bool hasLocalMediaAccess,
-      String? lastLocalMediaId
-    }) state = ref.watch(
+    final state = ref.watch(
       homeViewStateNotifier.select(
         (value) => (
-          medias: value.medias,
-          mediaProcesses: value.mediaProcesses,
-          selectedMedias: value.selectedMedias,
+          hasMedia: value.medias.isNotEmpty,
+          hasSelectedMedia: value.selectedMedias.isNotEmpty,
           isLoading: value.loading,
           hasLocalMediaAccess: value.hasLocalMediaAccess,
-          lastLocalMediaId: value.lastLocalMediaId,
         ),
       ),
     );
 
-    if (state.isLoading) {
+    if (state.isLoading && !state.hasMedia) {
       return const Center(child: AppCircularProgressIndicator());
-    } else if (state.medias.isEmpty && !state.hasLocalMediaAccess) {
+    } else if (state.hasMedia && !state.hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
     }
+
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
-        _buildMediaList(
-          context: context,
-          medias: state.medias,
-          mediaProcesses: state.mediaProcesses,
-          selectedMedias: state.selectedMedias,
-          lastLocalMediaId: state.lastLocalMediaId,
-        ),
-        if (state.selectedMedias.isNotEmpty)
+        _buildMediaList(context: context),
+        if (state.hasSelectedMedia)
           Padding(
             padding: context.systemPadding + const EdgeInsets.all(16),
             child: const MultiSelectionDoneButton(),
@@ -189,24 +215,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildMediaList({
-    required BuildContext context,
-    required Map<DateTime, List<AppMedia>> medias,
-    required List<AppProcess> mediaProcesses,
-    required String? lastLocalMediaId,
-    required List<AppMedia> selectedMedias,
-  }) {
+  Widget _buildMediaList({required BuildContext context}) {
+    final state = ref.watch(
+      homeViewStateNotifier.select(
+        (value) => (
+          medias: value.medias,
+          uploadMediaProcesses: value.uploadMediaProcesses,
+          downloadMediaProcesses: value.downloadMediaProcesses,
+          selectedMedias: value.selectedMedias,
+          isLoading: value.loading,
+          hasLocalMediaAccess: value.hasLocalMediaAccess,
+          lastLocalMediaId: value.lastLocalMediaId,
+        ),
+      ),
+    );
     return Scrollbar(
       controller: _scrollController,
       interactive: true,
       child: ListView.builder(
         controller: _scrollController,
-        itemCount: medias.length + 1,
+        itemCount: state.medias.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
             return const HomeScreenHints();
+          } else if (index == state.medias.length + 1) {
+            return FadeInSwitcher(
+              child: !state.isLoading
+                  ? const SizedBox()
+                  : const Center(
+                      child: AppCircularProgressIndicator(),
+                    ),
+            );
           } else {
-            final gridEntry = medias.entries.elementAt(index - 1);
+            final gridEntry = state.medias.entries.elementAt(index - 1);
             return Column(
               children: [
                 Container(
@@ -235,38 +276,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     crossAxisSpacing: 4,
                     mainAxisSpacing: 4,
                   ),
-                  itemCount: gridEntry.value.length,
+                  itemCount: gridEntry.value.entries.length,
                   itemBuilder: (context, index) {
-                    final media = gridEntry.value[index];
-                    if (media.id == lastLocalMediaId) {
+                    final media =
+                        gridEntry.value.entries.elementAt(index).value;
+                    if (media.id == state.lastLocalMediaId) {
                       runPostFrame(() {
-                        _notifier.loadLocalMedia(append: true);
+                        _notifier.loadMedias();
                       });
                     }
                     return AppMediaItem(
                       key: ValueKey(media.id),
                       onTap: () async {
-                        if (selectedMedias.isNotEmpty) {
+                        if (state.selectedMedias.isNotEmpty) {
                           _notifier.toggleMediaSelection(media);
                         } else {
                           await MediaPreviewRoute(
                             $extra: MediaPreviewRouteData(
-                              medias: medias.values
-                                  .expand((element) => element)
+                              medias: state.medias.values
+                                  .expand((element) => element.values)
                                   .toList(),
                               startFrom: media.id,
                             ),
                           ).push(context);
-                          _notifier.loadMedias();
+                          _notifier.loadMedias(reload: true);
                         }
                       },
                       onLongTap: () {
                         _notifier.toggleMediaSelection(media);
                       },
-                      isSelected: selectedMedias.contains(media),
-                      process: mediaProcesses.firstWhereOrNull(
-                        (process) => process.id == media.id,
-                      ),
+                      isSelected: state.selectedMedias.containsKey(media.id),
+                      uploadMediaProcess: state.uploadMediaProcesses[media.id],
+                      downloadMediaProcess:
+                          state.downloadMediaProcesses[media.id],
                       media: media,
                     );
                   },

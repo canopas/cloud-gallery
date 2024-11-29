@@ -1,3 +1,4 @@
+import '../domain/handlers/notification_handler.dart';
 import 'navigation/app_route.dart';
 import '../domain/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,6 +22,7 @@ class CloudGalleryApp extends ConsumerStatefulWidget {
 
 class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
   late GoRouter _router;
+  late NotificationHandler _notificationHandler;
 
   String _configureInitialRoute() {
     if (!ref.read(AppPreferences.isOnBoardComplete)) {
@@ -32,6 +34,9 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
 
   @override
   void initState() {
+    _notificationHandler = ref.read(notificationHandlerProvider);
+    _notificationHandler.init();
+    _notificationHandler.requestPermission();
     _router = GoRouter(
       initialLocation: _configureInitialRoute(),
       routes: $appRoutes,

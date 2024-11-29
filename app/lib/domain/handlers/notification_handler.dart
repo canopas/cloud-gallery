@@ -1,8 +1,5 @@
-import '../../ui/navigation/app_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 const _androidChannel = AndroidNotificationChannel(
   'notification-channel-cloud-gallery', // id
@@ -20,13 +17,23 @@ final notificationHandlerProvider = Provider.autoDispose((ref) {
 class NotificationHandler {
   final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  Future<void> init(BuildContext context) async {
+  Future<NotificationAppLaunchDetails?> init({
+    void Function(NotificationResponse)?
+        onDidReceiveBackgroundNotificationResponse,
+    void Function(NotificationResponse)? onDidReceiveNotificationResponse,
+  }) async {
     _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
 
-    if (context.mounted) _initLocalNotifications(context);
+    await _initLocalNotifications(
+      onDidReceiveBackgroundNotificationResponse,
+      onDidReceiveNotificationResponse,
+    );
+
+    return await _flutterLocalNotificationsPlugin
+        .getNotificationAppLaunchDetails();
   }
 
   void requestPermission() {
@@ -36,7 +43,11 @@ class NotificationHandler {
         ?.requestNotificationsPermission();
   }
 
-  Future<void> _initLocalNotifications(BuildContext context) async {
+  Future<void> _initLocalNotifications(
+    void Function(NotificationResponse)?
+        onDidReceiveBackgroundNotificationResponse,
+    void Function(NotificationResponse)? onDidReceiveNotificationResponse,
+  ) async {
     _flutterLocalNotificationsPlugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('cloud_gallery_logo'),
@@ -46,30 +57,23 @@ class NotificationHandler {
           requestSoundPermission: true,
         ),
       ),
-      onDidReceiveNotificationResponse: (response) {
-        if (context.mounted) {
-          context.go(AppRoutePath.home);
-          context.push(AppRoutePath.transfer);
-        }
-      },
+      onDidReceiveBackgroundNotificationResponse:
+          onDidReceiveBackgroundNotificationResponse,
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
     );
-
-    final initial = await _flutterLocalNotificationsPlugin
-        .getNotificationAppLaunchDetails();
-
-    if (initial?.didNotificationLaunchApp == true) {
-      if (context.mounted) {
-        context.go(AppRoutePath.home);
-        context.push(AppRoutePath.transfer);
-      }
-    }
   }
 
   Future<void> showNotification({
     required int id,
     required String name,
     required String description,
+    AndroidNotificationCategory? category,
+    bool fullScreenIntent = false,
+    StyleInformation? styleInformation,
+    bool setAsGroupSummary = false,
+    String? groupKey,
     bool vibration = true,
+    bool silent = false,
     int? progress,
     int maxProgress = 100,
   }) async {
@@ -89,7 +93,15 @@ class NotificationHandler {
           showProgress: progress != null,
           maxProgress: maxProgress,
           progress: progress ?? 0,
+          groupKey: groupKey,
+          category: category,
+          silent: silent,
+          fullScreenIntent: fullScreenIntent,
+          groupAlertBehavior: GroupAlertBehavior.all,
+          ongoing: progress != null,
+          styleInformation: styleInformation,
           channelDescription: _androidChannel.description,
+          setAsGroupSummary: setAsGroupSummary,
         ),
       ),
     );

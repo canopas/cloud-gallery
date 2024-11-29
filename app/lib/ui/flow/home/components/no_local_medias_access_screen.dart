@@ -23,7 +23,7 @@ class NoLocalMediasAccessScreen extends ConsumerWidget {
       action: ErrorViewAction(
         onPressed: () async {
           await openAppSettings();
-          await notifier.loadLocalMedia();
+          notifier.loadMedias(reload: true);
         },
         title: context.l10n.load_local_media_button_text,
       ),

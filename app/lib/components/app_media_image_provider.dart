@@ -1,15 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:data/models/dropbox/token/dropbox_token.dart';
 import 'package:data/models/isolate/isolate_parameters.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final _providerLocks = <AppMediaImageProvider, Completer<ui.Codec>>{};
 
+/// An [ImageProvider] that loads an [AppMedia] thumbnails.
 class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
   final AppMedia media;
   final Size thumbnailSize;
@@ -29,8 +33,8 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
       scale: 1.0,
       debugLabel: '${key.media.runtimeType}-'
           '${key.media.id}-'
-          '${key.media.thumbnailLink ?? ''}'
-          '${key.media.sources.contains(AppMediaSource.local) ? 'local' : 'network'}'
+          '${key.media.thumbnailLink ?? ''}-'
+          '${key.media.sources.map((e) => e.value).join()}-'
           '${key.thumbnailSize}',
       informationCollector: () {
         return <DiagnosticsNode>[
@@ -70,8 +74,21 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
           );
           final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
           return decode(buffer);
+        } else if (media.sources.contains(AppMediaSource.dropbox) &&
+            media.dropboxMediaRefId != null) {
+          final bytes = await compute(
+            _loadDropboxThumbnail,
+            IsolateParameters<List<String>>(
+              data: [media.dropboxMediaRefId!, _getDropboxThumbnailSize()],
+            ),
+          );
+          final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+          return decode(buffer);
         }
-        throw Exception('No image source found.');
+        throw throw NetworkImageLoadException(
+          statusCode: 400,
+          uri: Uri.parse(''),
+        );
       } catch (e) {
         Future<void>.microtask(
           () => PaintingBinding.instance.imageCache.evict(key),
@@ -88,23 +105,95 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
     return lock.future;
   }
 
+  /// Loads the network image in the background.
   Future<Uint8List> _loadNetworkImageInBackground(
     IsolateParameters<String> parameters,
   ) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(
       parameters.rootIsolateToken!,
     );
+
     final Uri resolved = Uri.base.resolve(parameters.data);
     final HttpClientRequest request = await HttpClient().getUrl(resolved);
     final HttpClientResponse response = await request.close();
-    if (response.statusCode != HttpStatus.ok) {
-      throw NetworkImageLoadException(
-        statusCode: response.statusCode,
-        uri: resolved,
-      );
+    if (response.statusCode == HttpStatus.ok) {
+      final Uint8List bytes =
+          await consolidateHttpClientResponseBytes(response);
+      return bytes;
     }
-    final Uint8List bytes = await consolidateHttpClientResponseBytes(response);
-    return bytes;
+    throw NetworkImageLoadException(
+      statusCode: response.statusCode,
+      uri: resolved,
+    );
+  }
+
+  /// Returns the Dropbox thumbnail size based on the [thumbnailSize].
+  String _getDropboxThumbnailSize() {
+    switch (thumbnailSize.width) {
+      case < 128:
+        return 'w128h128';
+      case < 256:
+        return 'w256h256';
+      case < 480:
+        return 'w480h320';
+      case < 640:
+        return 'w640h480';
+      case < 960:
+        return 'w960h640';
+      case < 1024:
+        return 'w1024h768';
+      case < 2048:
+        return 'w2048h1536';
+      default:
+        return 'w256h256';
+    }
+  }
+
+  /// Loads the Dropbox thumbnail in the background.
+  Future<Uint8List> _loadDropboxThumbnail(
+    IsolateParameters<List<String>> parameters,
+  ) async {
+    BackgroundIsolateBinaryMessenger.ensureInitialized(
+      parameters.rootIsolateToken!,
+    );
+
+    final Uri resolved = Uri.base
+        .resolve("https://content.dropboxapi.com/2/files/get_thumbnail_v2");
+
+    final HttpClientRequest request = await HttpClient().postUrl(resolved);
+    final preferences = await SharedPreferences.getInstance();
+    final dropboxTokenJson = preferences.getString('dropbox_token');
+    final dropboxToken = DropboxToken.fromJson(jsonDecode(dropboxTokenJson!));
+
+    request.headers.add(
+      'Authorization',
+      'Bearer ${dropboxToken.access_token}',
+    );
+    request.headers.add(
+      'Dropbox-API-Arg',
+      jsonEncode({
+        "format": "png",
+        "mode": "bestfit",
+        "quality": "quality_80",
+        "resource": {
+          ".tag": "path",
+          "path": parameters.data.first,
+        },
+        "size": parameters.data.last,
+      }),
+    );
+
+    final HttpClientResponse response = await request.close();
+
+    if (response.statusCode == HttpStatus.ok) {
+      final Uint8List bytes =
+          await consolidateHttpClientResponseBytes(response);
+      return bytes;
+    }
+    throw NetworkImageLoadException(
+      statusCode: response.statusCode,
+      uri: resolved,
+    );
   }
 
   @override
@@ -116,5 +205,5 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
   }
 
   @override
-  int get hashCode => media.hashCode ^ thumbnailSize.hashCode;
+  int get hashCode => media.path.hashCode ^ thumbnailSize.hashCode;
 }

@@ -1,16 +1,16 @@
+import 'package:data/models/media_process/media_process.dart';
 import '../../../../domain/extensions/context_extensions.dart';
-import '../../../../domain/formatter/byte_formatter.dart';
-import 'package:data/models/app_process/app_process.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import '../../../../components/error_view.dart';
+import '../../../../domain/formatter/byte_formatter.dart';
 
 class DownloadRequireView extends StatelessWidget {
   final AppMedia media;
-  final AppProcess? downloadProcess;
+  final DownloadMediaProcess? downloadProcess;
   final void Function() onDownload;
 
   const DownloadRequireView({
@@ -44,7 +44,7 @@ class DownloadRequireView extends StatelessWidget {
             color: Colors.black38,
           ),
           if (downloadProcess?.progress != null &&
-              downloadProcess!.status.isProcessing) ...[
+              downloadProcess!.status.isRunning) ...[
             ErrorView(
               foregroundColor: context.colorScheme.onPrimary,
               icon: Stack(
@@ -55,7 +55,7 @@ class DownloadRequireView extends StatelessWidget {
                     color: context.colorScheme.onPrimary,
                     strokeWidth: 6,
                     size: context.mediaQuerySize.width * 0.15,
-                    value: downloadProcess?.progress?.percentageInPoint,
+                    value: downloadProcess?.progress,
                   ),
                   Icon(
                     CupertinoIcons.cloud_download,
@@ -65,7 +65,7 @@ class DownloadRequireView extends StatelessWidget {
                 ],
               ),
               title:
-                  "${downloadProcess?.progress?.chunk.formatBytes ?? "0.0 B"} - ${downloadProcess?.progress?.total.formatBytes ?? "0.0 B"} ${downloadProcess?.progress?.percentage.toStringAsFixed(0) ?? "0.0"}%",
+                  "${downloadProcess?.chunk.formatBytes ?? "0.0 B"} - ${downloadProcess?.total.formatBytes ?? "0.0 B"} ${downloadProcess?.progressPercentage.toStringAsFixed(0) ?? "0.0"}%",
               message: context.l10n.download_in_progress_text,
             ),
           ],
