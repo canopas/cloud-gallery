@@ -1,6 +1,8 @@
 {
+
   "app_name": "Cloud Gallery",
 
+  "@_COMMON":{},
   "common_get_started": "Get Started",
   "common_done": "Done",
   "common_sign_out": "Sign Out",
@@ -14,17 +16,19 @@
   "common_today": "Today",
   "common_yesterday": "Yesterday",
   "common_tomorrow": "Tomorrow",
-
   "common_info":"Info",
   "common_share":"Share",
   "common_upload":"Upload",
   "common_download":"Download",
   "common_delete": "Delete",
-  "common_delete_from_google_drive": "Delete from Google Drive",
-  "common_delete_from_device": "Delete from Device",
   "common_cancel": "Cancel",
   "common_not_available": "N/A",
+  "common_delete_from_google_drive": "Delete from Google Drive",
+  "common_delete_from_device": "Delete from Device",
 
+
+
+  "@_ERROR":{},
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Something went wrong! Please try again later.",
   "user_google_sign_in_account_not_found_error": "You haven't signed in with Google account yet. Please sign in with Google account and try again.",
@@ -60,9 +64,21 @@
   "delete_media_from_device_confirmation_message": "Are you sure you want to delete this media? It will be permanently deleted from your device.",
   "delete_media_from_google_drive_confirmation_message": "Are you sure you want to delete this media? It will be permanently deleted from your Google Drive.",
 
-  "waiting_in_queue_text": "Waiting in Queue...",
+  "@_UPLOAD_ITEM":{},
+  "upload_status_waiting": "Upload is in the queue",
+  "upload_status_success": "Upload completed successfully",
+  "upload_status_failed": "Upload failed. Please try again.",
+  "upload_status_cancelled": "Upload was cancelled",
+
+  "@_DOWNLOAD_ITEM":{},
+  "download_status_waiting": "Download is in the queue",
+  "download_status_success": "Download completed successfully",
+  "download_status_failed": "Download failed. Please try again.",
+  "download_status_cancelled": "Download was cancelled",
+
   "waiting_in_download_queue_message": "Your video download is in queue. We appreciate your patience!",
 
+  "@_TRANSFER":{},
   "transfer_screen_title": "Transfer",
 
   "empty_upload_title":"No Files Being Uploads",
@@ -72,6 +88,7 @@
   "empty_download_message":  "No downloads are happening right now. If you have files to download, go ahead and start downloading.",
 
   "download_in_progress_text": "Download in progress",
+
 
   "download_require_text": "Download required",
   "download_require_message": "To watch the video, simply download it first. Tap the download button to begin downloading the video.",

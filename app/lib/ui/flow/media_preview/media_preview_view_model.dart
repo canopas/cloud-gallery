@@ -14,16 +14,22 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 part 'media_preview_view_model.freezed.dart';
 
-final mediaPreviewStateNotifierProvider = StateNotifierProvider.family
-    .autoDispose<MediaPreviewStateNotifier, MediaPreviewState,
-        MediaPreviewState>(
-  (ref, initial) => MediaPreviewStateNotifier(
+final mediaPreviewStateNotifierProvider =
+    StateNotifierProvider.family.autoDispose<
+        MediaPreviewStateNotifier,
+        MediaPreviewState,
+        ({
+          int startIndex,
+          List<AppMedia> medias,
+        })>(
+  (ref, state) => MediaPreviewStateNotifier(
     ref.read(localMediaServiceProvider),
     ref.read(googleDriveServiceProvider),
     ref.read(dropboxServiceProvider),
     ref.read(mediaProcessRepoProvider),
     ref.read(authServiceProvider),
-    initial,
+    state.medias,
+    state.startIndex,
   ),
 );
 
@@ -43,13 +49,34 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     this._dropboxService,
     this._mediaProcessRepo,
     this._authService,
-    MediaPreviewState initialState,
-  ) : super(initialState) {
+    List<AppMedia> medias,
+    int startIndex,
+  ) : super(
+          MediaPreviewState(
+            googleAccount: _authService.googleAccount,
+            currentIndex: startIndex,
+            medias: medias,
+          ),
+        ) {
     _mediaProcessRepo.addListener(_mediaProcessObserve);
-    setBackUpFolderId();
+    _setBackUpFolderId();
+    _listenGoogleAccount();
   }
 
-  Future<void> setBackUpFolderId() async {
+  void _listenGoogleAccount() {
+    _googleAccountSubscription = _authService.onGoogleAccountChange.listen(
+      (account) {
+        state = state.copyWith(googleAccount: account);
+        if (account == null) {
+          _backUpFolderId = null;
+        } else {
+          _setBackUpFolderId();
+        }
+      },
+    );
+  }
+
+  Future<void> _setBackUpFolderId() async {
     _backUpFolderId = await _googleDriveService.getBackUpFolderId();
   }
 
@@ -186,7 +213,9 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   }
 
   Future<void> downloadFromGoogleDrive({required AppMedia media}) async {
+    print('Downloading from Google Drive');
     if (state.googleAccount == null) return;
+    print('Downloading from Google Drive');
     _mediaProcessRepo.downloadMedia(
       folderId: _backUpFolderId!,
       medias: [media],

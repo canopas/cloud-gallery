@@ -1,10 +1,8 @@
 import 'dart:io';
 import '../../../components/app_page.dart';
 import '../../../domain/extensions/widget_extensions.dart';
-import '../../../domain/formatter/byte_formatter.dart';
 import '../../../domain/formatter/date_formatter.dart';
 import '../../../domain/extensions/context_extensions.dart';
-import '../../../domain/handlers/notification_handler.dart';
 import 'components/no_local_medias_access_screen.dart';
 import 'home_screen_view_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,12 +29,10 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewStateNotifier _notifier;
-  late NotificationHandler _notificationHandler;
   final _scrollController = ScrollController();
 
   @override
   void initState() {
-    _notificationHandler = ref.read(notificationHandlerProvider);
     _notifier = ref.read(homeViewStateNotifier.notifier);
     super.initState();
   }
@@ -56,64 +52,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       },
     );
-  }
-
-  final String uploadProcessGroupIdentifier =
-      "cloud-gallery-uploading-processes";
-
-  void _notificationObserver() {
-    ref.listen(
-        homeViewStateNotifier.select(
-          (value) => (
-            upload: value.uploadMediaProcesses.values.where(
-              (element) => element.status.isRunning,
-            ),
-            download: value.downloadMediaProcesses.values.where(
-              (element) => element.status.isRunning,
-            ),
-          ),
-        ), (previous, next) async {
-      if (next.upload.isNotEmpty) {
-        await _notificationHandler.showNotification(
-          id: 0,
-          name: 'Uploading',
-          description: '${next.upload.length} files uploading...',
-          groupKey: uploadProcessGroupIdentifier,
-          setAsGroupSummary: true,
-        );
-        for (final upload in next.upload) {
-          await _notificationHandler.showNotification(
-            silent: true,
-            id: upload.notification_id,
-            name: upload.path,
-            description:
-                '${upload.chunk.formatBytes} - ${upload.total.formatBytes}  ${upload.progressPercentage.toStringAsFixed(0)}%',
-            groupKey: uploadProcessGroupIdentifier,
-            progress: upload.chunk,
-            maxProgress: upload.total,
-          );
-        }
-      }
-      if (next.download.isNotEmpty) {
-        await _notificationHandler.showNotification(
-          id: 1,
-          name: 'Downloading',
-          description: '${next.download.length} files downloading...',
-          groupKey: uploadProcessGroupIdentifier,
-          setAsGroupSummary: true,
-        );
-        for (final download in next.download) {
-          await _notificationHandler.showNotification(
-            id: download.notification_id,
-            name: download.media_id,
-            description: 'Downloading...',
-            groupKey: uploadProcessGroupIdentifier,
-            progress: download.chunk,
-            maxProgress: download.total,
-          );
-        }
-      }
-    });
   }
 
   @override
@@ -154,7 +92,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             backgroundColor: context.colorScheme.containerNormal,
             onPressed: () async {
               await TransferRoute().push(context);
-              _notifier.loadMedias(reload: true);
             },
             icon: Icon(
               CupertinoIcons.arrow_up_arrow_down,

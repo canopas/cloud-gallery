@@ -34,6 +34,14 @@ class MediaTransferStateNotifier extends StateNotifier<MediaTransferState> {
     _mediaProcessRepo.terminateUploadProcess(id);
   }
 
+  void onRemoveUploadProcess(String id) {
+    _mediaProcessRepo.removeItemFromUploadQueue(id);
+  }
+
+  void onRemoveDownloadProcess(String id) {
+    _mediaProcessRepo.removeItemFromDownloadQueue(id);
+  }
+
   void onTerminateDownloadProcess(String id) {
     _mediaProcessRepo.terminateDownloadProcess(id);
   }

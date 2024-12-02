@@ -52,7 +52,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
     //initialize view notifier with initial state
     _provider = mediaPreviewStateNotifierProvider(
-      MediaPreviewState(currentIndex: currentIndex, medias: widget.medias),
+      (startIndex: currentIndex, medias: widget.medias),
     );
     notifier = ref.read(_provider.notifier);
 
@@ -69,7 +69,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         widget.medias[currentIndex].isGoogleDriveStored) {}
     super.initState();
   }
-
 
   Future<void> _initializeVideoControllerWithListener({
     required String path,
@@ -252,7 +251,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           onDownload: () {
             if (media.isGoogleDriveStored) {
               notifier.downloadFromGoogleDrive(media: media);
-            } else {
+            } else if (media.isDropboxStored) {
               notifier.downloadFromDropbox(media: media);
             }
           },

@@ -1,3 +1,4 @@
+import 'package:data/domain/formatters/byte_formatter.dart';
 import 'package:data/models/media_process/media_process.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import '../../../../components/error_view.dart';
-import '../../../../domain/formatter/byte_formatter.dart';
 
 class DownloadRequireView extends StatelessWidget {
   final AppMedia media;
@@ -67,18 +67,6 @@ class DownloadRequireView extends StatelessWidget {
               title:
                   "${downloadProcess?.chunk.formatBytes ?? "0.0 B"} - ${downloadProcess?.total.formatBytes ?? "0.0 B"} ${downloadProcess?.progressPercentage.toStringAsFixed(0) ?? "0.0"}%",
               message: context.l10n.download_in_progress_text,
-            ),
-          ],
-          if (downloadProcess?.status.isWaiting ?? false) ...[
-            ErrorView(
-              foregroundColor: context.colorScheme.onPrimary,
-              icon: Icon(
-                CupertinoIcons.time,
-                size: context.mediaQuerySize.width * 0.15,
-                color: context.colorScheme.onPrimary,
-              ),
-              title: context.l10n.waiting_in_queue_text,
-              message: context.l10n.waiting_in_download_queue_message,
             ),
           ],
           if (downloadProcess?.progress == null)

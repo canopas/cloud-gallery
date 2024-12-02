@@ -112,7 +112,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
         }
 
         return ListView.separated(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           itemCount: uploadProcesses.length,
           separatorBuilder: (context, index) => const SizedBox(
             height: 16,
@@ -120,6 +120,9 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
           itemBuilder: (context, index) => UploadProcessItem(
             key: ValueKey(uploadProcesses[index].id),
             process: uploadProcesses[index],
+            onRemoveTap: () {
+              notifier.onRemoveUploadProcess(uploadProcesses[index].id);
+            },
             onCancelTap: () {
               notifier.onTerminateUploadProcess(uploadProcesses[index].id);
             },
@@ -150,7 +153,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
         }
 
         return ListView.separated(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           itemCount: downloadProcesses.length,
           separatorBuilder: (context, index) => const SizedBox(
             height: 16,
@@ -160,6 +163,9 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
             process: downloadProcesses[index],
             onCancelTap: () {
               notifier.onTerminateDownloadProcess(downloadProcesses[index].id);
+            },
+            onRemoveTap: () {
+              notifier.onRemoveDownloadProcess(downloadProcesses[index].id);
             },
           ),
         );
