@@ -194,6 +194,33 @@ class MediaProcessRepo extends ChangeNotifier {
     runUploadAutoBackupQueue();
   }
 
+  Future<void> stopAutoBackup(MediaProvider provider) async {
+    // Filter the upload queue to find processes with auto backup enabled,
+    // using provided provider, and have a waiting status.
+    final processes = _uploadQueue
+        .where(
+          (element) =>
+              element.upload_using_auto_backup &&
+              element.provider == provider &&
+              element.status.isWaiting,
+        )
+        .map((e) => e.id)
+        .toList();
+
+    if (processes.isNotEmpty) {
+      // Get the IDs of the filtered processes.
+      // Delete the corresponding entries from the database.
+      await database.delete(
+        LocalDatabaseConstants.uploadQueueTable,
+        where: 'id IN (${List.filled(processes.length, '?').join(',')})',
+        whereArgs: processes, // Pass processIds directly (not inside a list)
+      );
+    }
+
+    // Notify listeners after the operation is completed.
+    notifyListeners();
+  }
+
   int _generateUniqueUploadNotificationId() {
     int baseId = math.Random().nextInt(9999999);
     while (_uploadQueue.any((element) => element.notification_id == baseId)) {

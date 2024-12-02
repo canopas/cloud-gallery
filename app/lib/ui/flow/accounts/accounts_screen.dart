@@ -89,13 +89,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                           ref.watch(AppPreferences.googleDriveAutoBackUp);
                       return AppSwitch(
                         value: googleDriveAutoBackUp,
-                        onChanged: (bool value) {
-                          ref
-                              .read(
-                                AppPreferences.googleDriveAutoBackUp.notifier,
-                              )
-                              .state = value;
-                        },
+                        onChanged: notifier.toggleAutoBackupInGoogleDrive,
                       );
                     },
                   ),
@@ -149,11 +143,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                           ref.watch(AppPreferences.dropboxAutoBackUp);
                       return AppSwitch(
                         value: dropboxAutoBackUp,
-                        onChanged: (bool value) {
-                          ref
-                              .read(AppPreferences.dropboxAutoBackUp.notifier)
-                              .state = value;
-                        },
+                        onChanged: notifier.toggleAutoBackupInDropbox,
                       );
                     },
                   ),
