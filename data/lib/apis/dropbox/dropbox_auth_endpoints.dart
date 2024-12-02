@@ -85,7 +85,6 @@ class DropboxGetUserAccountEndpoint extends Endpoint {
   String get path => '/users/get_current_account';
 }
 
-
 class DropboxCreateAppPropertyTemplate extends Endpoint {
   const DropboxCreateAppPropertyTemplate();
 
@@ -100,16 +99,16 @@ class DropboxCreateAppPropertyTemplate extends Endpoint {
 
   @override
   Map<String, dynamic> get data => {
-    "description": "This property is used to store file local information.",
-    "fields": [
-      {
-        "description": "The local reference id of the file.",
-        "name": ProviderConstants.localRefIdKey,
-        "type": "string",
-      }
-    ],
-    "name": "local_ref_info",
-  };
+        "description": "This property is used to store file local information.",
+        "fields": [
+          {
+            "description": "The local reference id of the file.",
+            "name": ProviderConstants.localRefIdKey,
+            "type": "string",
+          }
+        ],
+        "name": ProviderConstants.dropboxAppTemplateName,
+      };
 }
 
 class DropboxGetAppPropertyTemplate extends Endpoint {
@@ -123,5 +122,44 @@ class DropboxGetAppPropertyTemplate extends Endpoint {
 
   @override
   String get path => '/file_properties/templates/list_for_user';
+}
 
+class DropboxRemoveAppPropertyTemplate extends Endpoint {
+  final String id;
+
+  const DropboxRemoveAppPropertyTemplate(this.id);
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/file_properties/templates/remove_for_user';
+
+  @override
+  Object? get data => {
+        "template_id": id,
+      };
+}
+
+class DropboxGetAppPropertiesTemplateDetails extends Endpoint {
+  final String id;
+
+  const DropboxGetAppPropertiesTemplateDetails(this.id);
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/file_properties/templates/get_for_user';
+
+  @override
+  Object? get data => {
+    "template_id": id,
+  };
 }

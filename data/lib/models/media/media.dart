@@ -174,7 +174,6 @@ class AppMedia with _$AppMedia {
 
     if (file == null) return null;
 
-
     final type =
         AppMediaType.getType(mimeType: asset.mimeType, location: file.path);
     final length = await file.length();
@@ -200,8 +199,13 @@ class AppMedia with _$AppMedia {
   }
 
   static AppMedia fromDropboxJson(Map<String, dynamic> json) {
+    final id =
+        json['property_groups'] != null && json['property_groups'].isNotEmpty
+            ? json['property_groups'][0]['fields'][0]['value']
+            : null;
+
     return AppMedia(
-      id: json['id'],
+      id: id ?? json['id'],
       path: json['path_display'],
       name: json['name'],
       size: json['size'].toString(),

@@ -63,6 +63,10 @@ class NotificationHandler {
     );
   }
 
+  Future<void> cancelNotification(int id) async {
+    await _flutterLocalNotificationsPlugin.cancel(id);
+  }
+
   Future<void> showNotification({
     required int id,
     required String name,

@@ -45,17 +45,41 @@ class DropboxService extends CloudProviderService {
 
   Future<void> setFileIdAppPropertyTemplate() async {
     try {
+      // Get all the app property templates
       final res = await _dropboxAuthenticatedDio
           .req(const DropboxGetAppPropertyTemplate());
-      if (res.data['template_id'] != null &&
-          res.data['template_id'] is List<String>) {
-        _dropboxFileIdAppPropertyTemplateIdController.state =
-            (res.data['template_id'] as List<String>).first;
-      } else {
-        final res = await _dropboxAuthenticatedDio
-            .req(const DropboxCreateAppPropertyTemplate());
-        _dropboxFileIdAppPropertyTemplateIdController.state =
-            res.data['template_id'];
+
+      if (res.statusCode == 200) {
+        final templateIds = res.data['template_ids'] as List;
+
+        // Find the template id for the app
+        String? appTemplateId;
+        for (final templateId in templateIds) {
+          final res = await _dropboxAuthenticatedDio.req(
+            DropboxGetAppPropertiesTemplateDetails(templateId),
+          );
+
+          if (res.statusCode == 200) {
+            if (res.data is Map<String, dynamic> &&
+                res.data['name'] == ProviderConstants.dropboxAppTemplateName) {
+              appTemplateId = templateId;
+              break;
+            }
+          }
+        }
+
+        // If the template id is found, set it else create a new one
+        if (appTemplateId != null) {
+          _dropboxFileIdAppPropertyTemplateIdController.state = appTemplateId;
+        } else {
+          final res = await _dropboxAuthenticatedDio.req(
+            DropboxCreateAppPropertyTemplate(),
+          );
+          if (res.statusCode == 200) {
+            _dropboxFileIdAppPropertyTemplateIdController.state =
+                res.data['template_id'];
+          }
+        }
       }
     } catch (e) {
       AppError.fromError(e);
@@ -139,6 +163,7 @@ class DropboxService extends CloudProviderService {
       }
       throw AppError.fromError(response.statusMessage ?? '');
     } catch (e) {
+      print(e);
       throw AppError.fromError(e);
     }
   }

@@ -87,9 +87,10 @@ class GoogleDriveService extends CloudProviderService {
         final response = await driveApi.files.list(
           q: "'$folder' in parents and trashed=false",
           $fields:
-              "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
+              "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties)",
           pageSize: 1000,
           pageToken: pageToken,
+          orderBy: "createdTime desc",
         );
         hasMore = response.nextPageToken != null;
         pageToken = response.nextPageToken;
@@ -119,8 +120,9 @@ class GoogleDriveService extends CloudProviderService {
 
       final response = await driveApi.files.list(
         q: "'$folder' in parents and trashed=false",
+        orderBy: "createdTime desc",
         $fields:
-            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata)",
+            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties)",
         pageSize: pageSize,
         pageToken: nextPageToken,
       );
@@ -133,17 +135,7 @@ class GoogleDriveService extends CloudProviderService {
             )
             .toList(),
       );
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
-  }
 
-  Future<AppMedia> updateMediaDescription(String id, String description) async {
-    try {
-      final driveApi = await _getGoogleDriveAPI();
-      final file = drive.File(description: description);
-      final updatedFile = await driveApi.files.update(file, id);
-      return AppMedia.fromGoogleDriveFile(updatedFile);
     } catch (e) {
       throw AppError.fromError(e);
     }
