@@ -213,9 +213,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   }
 
   Future<void> downloadFromGoogleDrive({required AppMedia media}) async {
-    print('Downloading from Google Drive');
     if (state.googleAccount == null) return;
-    print('Downloading from Google Drive');
     _mediaProcessRepo.downloadMedia(
       folderId: _backUpFolderId!,
       medias: [media],

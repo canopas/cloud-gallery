@@ -56,8 +56,6 @@ class MediaProcessRepo extends ChangeNotifier {
 
   List<DownloadMediaProcess> get downloadQueue => _downloadQueue;
 
-  bool _autoBackupQueueIsRunning = false;
-
   MediaProcessRepo(
     this._googleDriveService,
     this._dropboxService,
@@ -66,6 +64,8 @@ class MediaProcessRepo extends ChangeNotifier {
   ) {
     initializeLocalDatabase();
   }
+
+  // DATABASE COMMON OPERATIONS ------------------------------------------------
 
   Future<void> initializeLocalDatabase() async {
     database = await openDatabase(
@@ -105,10 +105,25 @@ class MediaProcessRepo extends ChangeNotifier {
       },
       onOpen: (Database db) async {
         await updateQueue(db);
-        runUploadAutoBackupQueue();
+        runAutoBackupQueue();
       },
     );
   }
+
+  Future<void> updateQueue(Database db) async {
+    final res = await Future.wait([
+      db.query(LocalDatabaseConstants.uploadQueueTable),
+      db.query(LocalDatabaseConstants.downloadQueueTable),
+    ]);
+
+    _uploadQueue = res[0].map((e) => UploadMediaProcess.fromJson(e)).toList();
+    _downloadQueue =
+        res[1].map((e) => DownloadMediaProcess.fromJson(e)).toList();
+
+    notifyListeners();
+  }
+
+  // AUTO BACKUP OPERATIONS ----------------------------------------------------
 
   void autoBackupInGoogleDrive() async {
     final backUpFolderId = await _googleDriveService.getBackUpFolderId();
@@ -152,7 +167,7 @@ class MediaProcessRepo extends ChangeNotifier {
       );
     }
     await updateQueue(database);
-    runUploadAutoBackupQueue();
+    runAutoBackupQueue();
   }
 
   Future<void> autoBackupInDropbox() async {
@@ -191,12 +206,10 @@ class MediaProcessRepo extends ChangeNotifier {
       );
     }
     await updateQueue(database);
-    runUploadAutoBackupQueue();
+    runAutoBackupQueue();
   }
 
   Future<void> stopAutoBackup(MediaProvider provider) async {
-    // Filter the upload queue to find processes with auto backup enabled,
-    // using provided provider, and have a waiting status.
     final processes = _uploadQueue
         .where(
           (element) =>
@@ -208,18 +221,45 @@ class MediaProcessRepo extends ChangeNotifier {
         .toList();
 
     if (processes.isNotEmpty) {
-      // Get the IDs of the filtered processes.
-      // Delete the corresponding entries from the database.
       await database.delete(
         LocalDatabaseConstants.uploadQueueTable,
         where: 'id IN (${List.filled(processes.length, '?').join(',')})',
-        whereArgs: processes, // Pass processIds directly (not inside a list)
+        whereArgs: processes,
       );
     }
 
-    // Notify listeners after the operation is completed.
-    notifyListeners();
+    await updateQueue(database);
   }
+
+  bool _autoBackupQueueIsRunning = false;
+
+  Future<void> runAutoBackupQueue() async {
+    if (_autoBackupQueueIsRunning) return;
+    _autoBackupQueueIsRunning = true;
+    while (_uploadQueue.firstWhereOrNull(
+          (element) =>
+              element.status.isWaiting && element.upload_using_auto_backup,
+        ) !=
+        null) {
+      final process = _uploadQueue.firstWhere(
+        (element) =>
+            element.status.isWaiting && element.upload_using_auto_backup,
+      );
+      if (process.provider == MediaProvider.googleDrive) {
+        await _uploadInGoogleDrive(process);
+      } else if (process.provider == MediaProvider.dropbox) {
+        await _uploadInDropbox(process);
+      } else {
+        await updateUploadProcessStatus(
+          status: MediaQueueProcessStatus.failed,
+          id: process.id,
+        );
+      }
+    }
+    _autoBackupQueueIsRunning = false;
+  }
+
+  // UPLOAD QUEUE DATABASE OPERATIONS ------------------------------------------
 
   int _generateUniqueUploadNotificationId() {
     int baseId = math.Random().nextInt(9999999);
@@ -253,6 +293,232 @@ class MediaProcessRepo extends ChangeNotifier {
     runUploadQueue();
   }
 
+  Future<void> updateUploadProcessStatus({
+    required MediaQueueProcessStatus status,
+    required String id,
+    AppMedia? response,
+  }) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET status = ?, response = ? WHERE id = ?",
+      [status.value, LocalDatabaseAppMediaConverter().toJson(response), id],
+    );
+    await updateQueue(database);
+  }
+
+  Future<void> updateUploadProcessProgress({
+    required String id,
+    required int chunk,
+    required int total,
+  }) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET chunk = ?, total = ? WHERE id = ?",
+      [chunk, total, id],
+    );
+    await updateQueue(database);
+  }
+
+  Future<void> terminateUploadProcess(String id) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET status = ? WHERE id = ? AND (status = ? OR status = ?)",
+      [
+        MediaQueueProcessStatus.terminated.value,
+        id,
+        MediaQueueProcessStatus.uploading.value,
+        MediaQueueProcessStatus.waiting.value,
+      ],
+    );
+    await updateQueue(database);
+  }
+
+  Future<void> removeItemFromUploadQueue(String id) async {
+    await database.rawDelete(
+      "DELETE FROM ${LocalDatabaseConstants.uploadQueueTable} WHERE id = ?",
+      [id],
+    );
+    await updateQueue(database);
+  }
+
+  // UPLOAD QUEUE OPERATIONS ---------------------------------------------------
+
+  Future<void> runUploadQueue() async {
+    for (UploadMediaProcess process in _uploadQueue.where(
+      (element) =>
+          element.status.isWaiting && !element.upload_using_auto_backup,
+    )) {
+      if (process.provider == MediaProvider.googleDrive) {
+        _uploadInGoogleDrive(process);
+      } else if (process.provider == MediaProvider.dropbox) {
+        _uploadInDropbox(process);
+      } else {
+        updateUploadProcessStatus(
+          status: MediaQueueProcessStatus.failed,
+          id: process.id,
+        );
+      }
+    }
+  }
+
+  Future<void> _uploadInGoogleDrive(UploadMediaProcess uploadProcess) async {
+    UploadMediaProcess process = uploadProcess;
+
+    Future<void> showNotification(
+      String message, {
+      int? chunk,
+      int total = 100,
+    }) async {
+      _notificationHandler.showNotification(
+        silent: true,
+        id: process.notification_id,
+        name: process.path.split('/').last,
+        description: message,
+        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
+        progress: chunk,
+        maxProgress: total,
+        category: chunk != null ? AndroidNotificationCategory.progress : null,
+      );
+    }
+
+    try {
+      showNotification('Uploading to Google Drive');
+
+      await updateUploadProcessStatus(
+        status: MediaQueueProcessStatus.uploading,
+        id: process.id,
+      );
+
+      final cancelToken = CancelToken();
+
+      final res = await _googleDriveService.uploadMedia(
+        folderId: process.folder_id,
+        path: process.path,
+        mimeType: process.mime_type,
+        localRefId: process.media_id,
+        onProgress: (chunk, total) async {
+          process =
+              _uploadQueue.firstWhere((element) => element.id == process.id);
+          if (process.status.isTerminated) {
+            cancelToken.cancel();
+          }
+
+          showNotification(
+            '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+            chunk: chunk,
+            total: total,
+          );
+
+          await updateUploadProcessProgress(
+            id: process.id,
+            chunk: chunk,
+            total: total,
+          );
+        },
+        cancelToken: cancelToken,
+      );
+
+      showNotification('Uploaded to Google Drive successfully');
+
+      await updateUploadProcessStatus(
+        status: MediaQueueProcessStatus.completed,
+        response: res,
+        id: process.id,
+      );
+    } catch (e) {
+      if (e is RequestCancelledByUser) {
+        showNotification('Upload to Google Drive cancelled');
+        return;
+      }
+
+      showNotification('Failed to upload to Google Drive');
+
+      await updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.failed,
+        id: process.id,
+      );
+    }
+  }
+
+  Future<void> _uploadInDropbox(UploadMediaProcess uploadProcess) async {
+    UploadMediaProcess process = uploadProcess;
+
+    Future showNotification(
+      String message, {
+      int? chunk,
+      int total = 100,
+    }) async {
+      _notificationHandler.showNotification(
+        silent: true,
+        id: process.notification_id,
+        name: process.path.split('/').last,
+        description: message,
+        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
+        progress: chunk,
+        maxProgress: total,
+        category: chunk != null ? AndroidNotificationCategory.progress : null,
+      );
+    }
+
+    try {
+      showNotification('Uploading to Dropbox');
+
+      await updateUploadProcessStatus(
+        status: MediaQueueProcessStatus.uploading,
+        id: process.id,
+      );
+
+      final cancelToken = CancelToken();
+
+      final res = await _dropboxService.uploadMedia(
+        folderId: process.folder_id,
+        path: process.path,
+        mimeType: process.mime_type,
+        localRefId: process.media_id,
+        onProgress: (chunk, total) async {
+          process =
+              _uploadQueue.firstWhere((element) => element.id == process.id);
+          if (process.status.isTerminated) {
+            cancelToken.cancel();
+          } else {
+            showNotification(
+              '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+              chunk: chunk,
+              total: total,
+            );
+          }
+
+          await updateUploadProcessProgress(
+            id: process.id,
+            chunk: chunk,
+            total: total,
+          );
+        },
+        cancelToken: cancelToken,
+      );
+
+      showNotification('Uploaded to Dropbox successfully');
+
+      await updateUploadProcessStatus(
+        status: MediaQueueProcessStatus.completed,
+        response: res,
+        id: process.id,
+      );
+    } catch (e) {
+      if (e is RequestCancelledByUser) {
+        showNotification('Upload to Dropbox cancelled');
+        return;
+      }
+
+      showNotification('Failed to upload to Dropbox');
+
+      await updateUploadProcessStatus(
+        status: MediaQueueProcessStatus.failed,
+        id: process.id,
+      );
+      return;
+    }
+  }
+
+  // DOWNLOAD QUEUE DATABASE OPERATIONS ----------------------------------------
+
   int _generateUniqueDownloadNotificationId() {
     int baseId = math.Random().nextInt(9999999);
     while (_downloadQueue.any((element) => element.notification_id == baseId)) {
@@ -267,11 +533,14 @@ class MediaProcessRepo extends ChangeNotifier {
     required MediaProvider provider,
   }) async {
     for (AppMedia media in medias) {
+      final id = provider == MediaProvider.googleDrive
+          ? media.driveMediaRefId
+          : media.dropboxMediaRefId;
       await database.insert(
         LocalDatabaseConstants.downloadQueueTable,
         DownloadMediaProcess(
           id: UniqueKey().toString(),
-          media_id: media.id,
+          media_id: id ?? media.id,
           folder_id: folderId,
           notification_id: _generateUniqueDownloadNotificationId(),
           provider: provider,
@@ -283,306 +552,52 @@ class MediaProcessRepo extends ChangeNotifier {
     runDownloadQueue();
   }
 
-  Future<void> updateQueue(Database db) async {
-    final res = await Future.wait([
-      db.query(LocalDatabaseConstants.uploadQueueTable),
-      db.query(LocalDatabaseConstants.downloadQueueTable),
-    ]);
-
-    _uploadQueue = res[0].map((e) => UploadMediaProcess.fromJson(e)).toList();
-    _downloadQueue =
-        res[1].map((e) => DownloadMediaProcess.fromJson(e)).toList();
-
-    notifyListeners();
-  }
-
-  Future<void> runUploadAutoBackupQueue() async {
-    if (_autoBackupQueueIsRunning) return;
-    _autoBackupQueueIsRunning = true;
-    while (_uploadQueue.firstWhereOrNull(
-          (element) =>
-              element.status.isWaiting && element.upload_using_auto_backup,
-        ) !=
-        null) {
-      final process = _uploadQueue.firstWhere(
-        (element) =>
-            element.status.isWaiting && element.upload_using_auto_backup,
-      );
-      if (process.provider == MediaProvider.googleDrive) {
-        await _uploadInGoogleDrive(process);
-      } else if (process.provider == MediaProvider.dropbox) {
-        await _uploadInDropbox(process);
-      } else {
-        await _updateUploadQueue(
-          process.copyWith(status: MediaQueueProcessStatus.failed),
-        );
-      }
-    }
-    _autoBackupQueueIsRunning = false;
-  }
-
-  Future<void> runUploadQueue() async {
-    for (UploadMediaProcess process in _uploadQueue.where(
-      (element) =>
-          element.status.isWaiting && !element.upload_using_auto_backup,
-    )) {
-      if (process.provider == MediaProvider.googleDrive) {
-        _uploadInGoogleDrive(process);
-      } else if (process.provider == MediaProvider.dropbox) {
-        _uploadInDropbox(process);
-      } else {
-        _updateUploadQueue(
-          process.copyWith(status: MediaQueueProcessStatus.failed),
-        );
-      }
-    }
-  }
-
-  Future<void> _updateUploadQueue(
-    UploadMediaProcess process,
-  ) async {
-    await database.update(
-      LocalDatabaseConstants.uploadQueueTable,
-      process.toJson(),
-      where: 'id = ?',
-      whereArgs: [process.id],
+  Future<void> updateDownloadProcessStatus({
+    required MediaQueueProcessStatus status,
+    required String id,
+    AppMedia? response,
+  }) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.downloadQueueTable} SET status = ?, response = ? WHERE id = ?",
+      [status.value, LocalDatabaseAppMediaConverter().toJson(response), id],
     );
     await updateQueue(database);
   }
 
-  Future<void> _uploadInGoogleDrive(UploadMediaProcess uploadProcess) async {
-    UploadMediaProcess process = uploadProcess;
-    try {
-      // Show upload started notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.path.split('/').last,
-        description: 'Uploading to Google Drive',
-        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-      );
-
-      // Update the process status to uploading
-      process = process.copyWith(status: MediaQueueProcessStatus.uploading);
-      await _updateUploadQueue(process);
-
-      final cancelToken = CancelToken();
-
-      // Upload the media to Google Drive
-      final res = await _googleDriveService.uploadMedia(
-        folderId: process.folder_id,
-        path: process.path,
-        mimeType: process.mime_type,
-        localRefId: process.media_id,
-        onProgress: (chunk, total) async {
-          // If the process is terminated, cancel the upload using the cancel token
-          await updateQueue(database);
-          process =
-              _uploadQueue.firstWhere((element) => element.id == process.id);
-
-          if (process.status.isTerminated) {
-            cancelToken.cancel();
-          }
-
-          // Update the upload progress notification
-          _notificationHandler.showNotification(
-            silent: true,
-            id: process.notification_id,
-            name: process.path.split('/').last,
-            description:
-                '${chunk.formatBytes}/${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
-            groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-            progress: chunk,
-            maxProgress: total,
-            category: AndroidNotificationCategory.progress,
-          );
-
-          // Update the process with the current progress
-          process = process.copyWith(total: total, chunk: chunk);
-          await _updateUploadQueue(process);
-        },
-        cancelToken: cancelToken,
-      );
-
-      // Show upload completed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.path.split('/').last,
-        description: 'Uploaded to Google Drive',
-        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-      );
-
-      // Update the process status to completed
-      process = process.copyWith(
-        status: MediaQueueProcessStatus.completed,
-        response: res,
-      );
-      await _updateUploadQueue(process);
-    } catch (e) {
-      if (e is RequestCancelledByUser) {
-        // Show process cancelled notification
-        _notificationHandler.showNotification(
-          silent: true,
-          id: process.notification_id,
-          name: process.path.split('/').last,
-          description: 'Upload to Dropbox cancelled',
-          groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-        );
-
-        return;
-      }
-
-      // Show upload failed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.path.split('/').last,
-        description: 'Failed to upload to Google Drive',
-        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-      );
-
-      // Update the process status to failed
-      process = process.copyWith(status: MediaQueueProcessStatus.failed);
-      await _updateUploadQueue(process);
-      return;
-    }
+  Future<void> updateDownloadProcessProgress({
+    required String id,
+    required int received,
+    required int total,
+  }) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.downloadQueueTable} SET chunk = ?, total = ? WHERE id = ?",
+      [received, total, id],
+    );
+    await updateQueue(database);
   }
 
-  Future<void> _uploadInDropbox(UploadMediaProcess uploadProcess) async {
-    UploadMediaProcess process = uploadProcess;
-    try {
-      //Show upload started notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.path.split('/').last,
-        description: 'Uploading to Dropbox',
-        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-      );
-
-      //Update the process status to uploading
-      process = process.copyWith(status: MediaQueueProcessStatus.uploading);
-      await _updateUploadQueue(process);
-
-      final cancelToken = CancelToken();
-
-      //Upload the media to Dropbox
-      await _dropboxService.uploadMedia(
-        folderId: process.folder_id,
-        path: process.path,
-        mimeType: process.mime_type,
-        localRefId: process.media_id,
-        onProgress: (chunk, total) async {
-          await updateQueue(database);
-          process =
-              _uploadQueue.firstWhere((element) => element.id == process.id);
-          if (process.status.isTerminated) {
-            cancelToken.cancel();
-          }
-
-          // Update the upload progress notification
-          _notificationHandler.showNotification(
-            silent: true,
-            id: process.notification_id,
-            name: process.path.split('/').last,
-            description:
-                '${chunk.formatBytes}/${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
-            groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-            progress: chunk,
-            maxProgress: total,
-            category: AndroidNotificationCategory.progress,
-          );
-
-          // Update the process with the current progress
-          process = process.copyWith(total: total, chunk: chunk);
-          await _updateUploadQueue(process);
-        },
-        cancelToken: cancelToken,
-      );
-
-      // Show upload completed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.path.split('/').last,
-        description: 'Uploaded to Dropbox successfully',
-        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-      );
-
-      // Update the process status to completed
-      process = process.copyWith(status: MediaQueueProcessStatus.completed);
-      await _updateUploadQueue(process);
-    } catch (e) {
-      if (e is RequestCancelledByUser) {
-        //show process cancelled notification
-        _notificationHandler.showNotification(
-          silent: true,
-          id: process.notification_id,
-          name: process.path.split('/').last,
-          description: 'Upload to Dropbox cancelled',
-          groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-        );
-
-        return;
-      }
-
-      // Show upload failed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.path.split('/').last,
-        description: 'Failed to upload to Dropbox',
-        groupKey: ProcessNotificationConstants.uploadProcessGroupIdentifier,
-      );
-
-      // Show upload failed notification
-      process = process.copyWith(status: MediaQueueProcessStatus.failed);
-      await _updateUploadQueue(process);
-      return;
-    }
-  }
-
-  void terminateUploadProcess(String id) async {
-    final process =
-        _uploadQueue.firstWhereOrNull((element) => element.id == id);
-
-    if (process != null &&
-        (process.status.isRunning || process.status.isWaiting)) {
-      await _updateUploadQueue(
-        process.copyWith(status: MediaQueueProcessStatus.terminated),
-      );
-    }
-  }
-
-  void terminateDownloadProcess(String id) async {
-    final process =
-        _downloadQueue.firstWhereOrNull((element) => element.id == id);
-    if (process != null &&
-        (process.status.isRunning || process.status.isWaiting)) {
-      await _updateDownloadQueue(
-        process.copyWith(status: MediaQueueProcessStatus.terminated),
-      );
-    }
-  }
-
-  Future<void> removeItemFromUploadQueue(String id) async {
-    await database.delete(
-      LocalDatabaseConstants.uploadQueueTable,
-      where: 'id = ?',
-      whereArgs: [id],
+  Future<void> terminateDownloadProcess(String id) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.downloadQueueTable} SET status = ? WHERE id = ? AND (status = ? OR status = ?)",
+      [
+        MediaQueueProcessStatus.terminated.value,
+        id,
+        MediaQueueProcessStatus.downloading.value,
+        MediaQueueProcessStatus.waiting.value,
+      ],
     );
     await updateQueue(database);
   }
 
   Future<void> removeItemFromDownloadQueue(String id) async {
-    await database.delete(
-      LocalDatabaseConstants.downloadQueueTable,
-      where: 'id = ?',
-      whereArgs: [id],
+    await database.rawDelete(
+      "DELETE FROM ${LocalDatabaseConstants.downloadQueueTable} WHERE id = ?",
+      [id],
     );
     await updateQueue(database);
   }
+
+  // DOWNLOAD QUEUE OPERATIONS -------------------------------------------------
 
   Future<void> runDownloadQueue() async {
     for (final process
@@ -592,23 +607,12 @@ class MediaProcessRepo extends ChangeNotifier {
       } else if (process.provider == MediaProvider.dropbox) {
         _downloadFromDropbox(process);
       } else {
-        _updateDownloadQueue(
-          process.copyWith(status: MediaQueueProcessStatus.failed),
+        updateDownloadProcessStatus(
+          status: MediaQueueProcessStatus.failed,
+          id: process.id,
         );
       }
     }
-  }
-
-  Future<void> _updateDownloadQueue(
-    DownloadMediaProcess process,
-  ) async {
-    await database.update(
-      LocalDatabaseConstants.downloadQueueTable,
-      process.toJson(),
-      where: 'id = ?',
-      whereArgs: [process.id],
-    );
-    await updateQueue(database);
   }
 
   Future<void> _downloadFromGoogleDrive(
@@ -616,132 +620,103 @@ class MediaProcessRepo extends ChangeNotifier {
   ) async {
     DownloadMediaProcess process = downloadProcess;
     String? tempFileLocation;
-    try {
-      // Show download started notification
+
+    Future<void> showNotification(
+      String message, {
+      int? chunk,
+      int total = 100,
+    }) async {
       _notificationHandler.showNotification(
         silent: true,
         id: process.notification_id,
         name: process.media_id,
-        description: 'Downloading from Google Drive',
+        description: message,
         groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
+        progress: chunk,
+        maxProgress: total,
+        category: chunk != null ? AndroidNotificationCategory.progress : null,
+      );
+    }
+
+    try {
+      showNotification('Downloading from Google Drive');
+
+      await updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.downloading,
+        id: process.id,
       );
 
-      // Update the process status to downloading
-      process = process.copyWith(status: MediaQueueProcessStatus.downloading);
-      await _updateDownloadQueue(process);
-
-      // Get the temporary file location
       final tempDir = await getTemporaryDirectory();
       tempFileLocation =
           "${tempDir.path}/${process.media_id}.${process.extension}";
 
       final cancelToken = CancelToken();
 
-      // Download the media from Google Drive
       await _googleDriveService.downloadMedia(
         id: process.media_id,
         saveLocation: tempFileLocation,
         onProgress: (received, total) async {
-          // If the process is terminated, cancel the download using the cancel token
-          await updateQueue(database);
           process =
               _downloadQueue.firstWhere((element) => element.id == process.id);
           if (process.status.isTerminated) {
             cancelToken.cancel();
+          } else {
+            showNotification(
+              '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
+              chunk: received,
+              total: total,
+            );
           }
-
-          // Update the download progress notification
-          _notificationHandler.showNotification(
-            silent: true,
-            id: process.notification_id,
-            name: process.media_id,
-            description:
-                '${received.formatBytes}/${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
-            groupKey:
-                ProcessNotificationConstants.downloadProcessGroupIdentifier,
-            progress: received,
-            maxProgress: total,
-            category: AndroidNotificationCategory.progress,
+          await updateDownloadProcessProgress(
+            id: process.id,
+            received: received,
+            total: total,
           );
-
-          // Update the process with the current progress
-          process = process.copyWith(total: total, chunk: received);
-          await _updateDownloadQueue(process);
         },
         cancelToken: cancelToken,
       );
 
-      // Save the media in the gallery from the temporary file location
       final localMedia = await _localMediaService.saveInGallery(
         saveFromLocation: tempFileLocation,
         type: AppMediaType.fromLocation(location: tempFileLocation),
       );
 
       if (localMedia == null) {
-        // Show failed to save media in gallery notification
-        _notificationHandler.showNotification(
-          silent: true,
-          id: process.notification_id,
-          name: process.media_id,
-          description: 'Failed to save media in gallery',
-          groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-        );
+        showNotification('Failed to save media in gallery');
 
-        // Update the process status to failed
-        process = process.copyWith(status: MediaQueueProcessStatus.failed);
-        await _updateDownloadQueue(process);
+        await updateDownloadProcessStatus(
+          status: MediaQueueProcessStatus.failed,
+          id: process.id,
+        );
         return;
       }
 
-      // Update the local media ref id properties in Google Drive
       await _googleDriveService.updateAppProperties(
         id: process.media_id,
         localRefId: localMedia.id,
       );
 
-      // Show download completed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.media_id,
-        description: 'Downloaded from Google Drive successfully',
-        groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-      );
+      showNotification('Downloaded from Google Drive successfully');
 
-      // Update the process status to completed
-      process = process.copyWith(
+      await updateDownloadProcessStatus(
         status: MediaQueueProcessStatus.completed,
         response: localMedia,
+        id: process.id,
       );
-      await _updateDownloadQueue(process);
     } catch (error) {
       if (error is RequestCancelledByUser) {
-        _notificationHandler.showNotification(
-          silent: true,
-          id: process.notification_id,
-          name: process.media_id,
-          description: 'Download from Google Drive cancelled',
-          groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-        );
-
+        showNotification('Download from Google Drive cancelled');
         return;
       }
 
-      // Show download failed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.media_id,
-        description: 'Failed to download from Google Drive',
-        groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-      );
+      showNotification('Failed to download from Google Drive');
 
-      // Update the process status to failed
-      process = process.copyWith(status: MediaQueueProcessStatus.failed);
-      await _updateDownloadQueue(process);
+      await updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.failed,
+        id: process.id,
+      );
     } finally {
-      // Delete the temporary file location
-      if (tempFileLocation != null) {
+      if (tempFileLocation != null && await File(tempFileLocation).exists()) {
         await File(tempFileLocation).delete();
       }
     }
@@ -752,128 +727,103 @@ class MediaProcessRepo extends ChangeNotifier {
   ) async {
     DownloadMediaProcess process = downloadProcess;
     String? tempFileLocation;
-    try {
-      // Show download started notification
+
+    Future<void> showNotification(
+      String message, {
+      int? chunk,
+      int total = 100,
+    }) async {
       _notificationHandler.showNotification(
         silent: true,
         id: process.notification_id,
         name: process.media_id,
-        description: 'Downloading from Dropbox',
+        description: message,
         groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
+        progress: chunk,
+        maxProgress: total,
+        category: chunk != null ? AndroidNotificationCategory.progress : null,
+      );
+    }
+
+    try {
+      showNotification('Downloading from Dropbox');
+
+      await updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.downloading,
+        id: process.id,
       );
 
-      // Update the process status to downloading
-      process = process.copyWith(status: MediaQueueProcessStatus.downloading);
-      await _updateDownloadQueue(process);
-
-      // Get the temporary file location
       final tempDir = await getTemporaryDirectory();
       tempFileLocation =
           "${tempDir.path}/${process.media_id}.${process.extension}";
 
       final cancelToken = CancelToken();
 
-      // Download the media from Dropbox
       await _dropboxService.downloadMedia(
         id: process.media_id,
         saveLocation: tempFileLocation,
         onProgress: (received, total) async {
-          // If the process is terminated, cancel the download using the cancel token
-          await updateQueue(database);
           process =
               _downloadQueue.firstWhere((element) => element.id == process.id);
           if (process.status.isTerminated) {
             cancelToken.cancel();
+          } else {
+            showNotification(
+              '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
+              chunk: received,
+              total: total,
+            );
           }
 
-          // Update the download progress notification
-          _notificationHandler.showNotification(
-            silent: true,
-            id: process.notification_id,
-            name: process.media_id,
-            description:
-                '${received.formatBytes}/${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
-            groupKey:
-                ProcessNotificationConstants.downloadProcessGroupIdentifier,
-            progress: received,
-            maxProgress: total,
-            category: AndroidNotificationCategory.progress,
+          await updateDownloadProcessProgress(
+            id: process.id,
+            received: received,
+            total: total,
           );
-
-          // Update the download progress notification
-          process = process.copyWith(total: total, chunk: received);
-          await _updateDownloadQueue(process);
         },
         cancelToken: cancelToken,
       );
 
-      // Save the media in the gallery from the temporary file location
       final localMedia = await _localMediaService.saveInGallery(
         saveFromLocation: tempFileLocation,
         type: AppMediaType.fromLocation(location: tempFileLocation),
       );
 
       if (localMedia == null) {
-        // Show failed to save media in gallery notification
-        _notificationHandler.showNotification(
-          silent: true,
-          id: process.notification_id,
-          name: process.media_id,
-          description: 'Failed to save media in gallery',
-          groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-        );
+        showNotification('Failed to save media in gallery');
 
-        // Update the process status to failed
-        process = process.copyWith(status: MediaQueueProcessStatus.failed);
-        await _updateDownloadQueue(process);
+        await updateDownloadProcessStatus(
+          status: MediaQueueProcessStatus.failed,
+          id: process.id,
+        );
       }
 
-      // Update the local media ref id properties in Dropbox
       await _dropboxService.updateAppProperties(
         id: process.media_id,
         localRefId: localMedia!.id,
       );
 
-      // Show download completed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.media_id,
-        description: 'Downloaded from Dropbox successfully',
-        groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-      );
+      showNotification('Downloaded from Dropbox successfully');
 
-      // Update the process status to completed
-      process = process.copyWith(status: MediaQueueProcessStatus.completed);
-      await _updateDownloadQueue(process);
+      await updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.completed,
+        response: localMedia,
+        id: process.id,
+      );
     } catch (error) {
       if (error is RequestCancelledByUser) {
-        // Show process cancelled notification
-        _notificationHandler.showNotification(
-          silent: true,
-          id: process.notification_id,
-          name: process.media_id,
-          description: 'Download from Dropbox cancelled',
-          groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-        );
+        showNotification('Download from Dropbox cancelled');
         return;
       }
 
-      // Show download failed notification
-      _notificationHandler.showNotification(
-        silent: true,
-        id: process.notification_id,
-        name: process.media_id,
-        description: 'Failed to download from Dropbox',
-        groupKey: ProcessNotificationConstants.downloadProcessGroupIdentifier,
-      );
+      showNotification('Failed to download from Dropbox');
 
-      // Update the process status to failed
-      process = process.copyWith(status: MediaQueueProcessStatus.failed);
-      await _updateDownloadQueue(process);
+      await updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.failed,
+        id: process.id,
+      );
     } finally {
-      // Delete the temporary file location
-      if (tempFileLocation != null) {
+      if (tempFileLocation != null && await File(tempFileLocation).exists()) {
         await File(tempFileLocation).delete();
       }
     }

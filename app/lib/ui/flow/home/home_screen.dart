@@ -111,7 +111,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       onPressed: () async {
         await AccountRoute().push(context);
-        _notifier.loadMedias(reload: true);
       },
       icon: Icon(
         CupertinoIcons.person,
@@ -236,7 +235,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               startFrom: media.id,
                             ),
                           ).push(context);
-                          _notifier.loadMedias(reload: true);
                         }
                       },
                       onLongTap: () {
