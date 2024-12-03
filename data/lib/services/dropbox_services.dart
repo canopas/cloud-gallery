@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:collection/collection.dart';
 import '../apis/dropbox/dropbox_content_endpoints.dart';
 import '../apis/network/client.dart';
 import '../domain/config.dart';
@@ -115,7 +116,7 @@ class DropboxService extends CloudProviderService {
           medias.addAll(
             (response.data['entries'] as List)
                 .where((element) => element['.tag'] == 'file')
-                .map((e) => AppMedia.fromDropboxJson(e))
+                .map((e) => AppMedia.fromDropboxJson(json: e))
                 .toList(),
           );
         } else {
@@ -154,8 +155,27 @@ class DropboxService extends CloudProviderService {
           (element) => element['.tag'] == 'file',
         );
 
+        final metadataResponses = await Future.wait(
+          files.map(
+            (e) => _dropboxAuthenticatedDio.req(
+              DropboxGetFileMetadata(id: e['id']),
+            ),
+          ),
+        );
+
         return GetPaginatedMediasResponse(
-          medias: files.map((e) => AppMedia.fromDropboxJson(e)).toList(),
+          medias: files
+              .map(
+                (e) => AppMedia.fromDropboxJson(
+                  json: e,
+                  metadataJson: metadataResponses
+                      .firstWhereOrNull(
+                        (m) => m.statusCode == 200 && m.data['id'] == e['id'],
+                      )
+                      ?.data,
+                ),
+              )
+              .toList(),
           nextPageToken: response.data['has_more'] == true
               ? response.data['cursor']
               : null,
@@ -210,8 +230,15 @@ class DropboxService extends CloudProviderService {
           cancellationToken: cancelToken,
         ),
       );
+      final metadata = await _dropboxAuthenticatedDio.req(
+        DropboxGetFileMetadata(id: res.data['id']),
+      );
+
       if (res.statusCode == 200) {
-        return AppMedia.fromDropboxJson(res.data);
+        return AppMedia.fromDropboxJson(
+          json: res.data,
+          metadataJson: metadata.data,
+        );
       }
       throw AppError.fromError(res.statusMessage ?? '');
     } catch (error) {

@@ -90,6 +90,7 @@ class DownloadMediaProcess with _$DownloadMediaProcess {
 
   const factory DownloadMediaProcess({
     required String id,
+    required String name,
     required String media_id,
     required String folder_id,
     required int notification_id,
@@ -99,7 +100,7 @@ class DownloadMediaProcess with _$DownloadMediaProcess {
     @Default(1) int total,
     required String extension,
     @Default(0) int chunk,
-  }) = _MediaProcess;
+  }) = _DownloadMediaProcess;
 
   /// progress 0.0 - 1.0
   double get progress => total == 0 ? 0 : chunk / total;

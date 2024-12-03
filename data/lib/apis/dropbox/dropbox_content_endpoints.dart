@@ -266,3 +266,24 @@ class DropboxUpdateAppPropertyEndpoint extends Endpoint {
   @override
   CancelToken? get cancelToken => cancellationToken;
 }
+
+class DropboxGetFileMetadata extends Endpoint {
+  final String id;
+
+  const DropboxGetFileMetadata({required this.id});
+
+  @override
+  String get baseUrl => BaseURL.dropboxV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/get_metadata';
+
+  @override
+  Map<String, dynamic> get data => {
+        "include_media_info": true,
+        'path': id,
+      };
+}

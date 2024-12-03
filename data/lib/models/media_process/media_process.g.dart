@@ -6,9 +6,11 @@ part of 'media_process.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MediaProcessImpl _$$MediaProcessImplFromJson(Map<String, dynamic> json) =>
-    _$MediaProcessImpl(
+_$DownloadMediaProcessImpl _$$DownloadMediaProcessImplFromJson(
+        Map<String, dynamic> json) =>
+    _$DownloadMediaProcessImpl(
       id: json['id'] as String,
+      name: json['name'] as String,
       media_id: json['media_id'] as String,
       folder_id: json['folder_id'] as String,
       notification_id: (json['notification_id'] as num).toInt(),
@@ -23,9 +25,11 @@ _$MediaProcessImpl _$$MediaProcessImplFromJson(Map<String, dynamic> json) =>
       chunk: (json['chunk'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$$MediaProcessImplToJson(_$MediaProcessImpl instance) =>
+Map<String, dynamic> _$$DownloadMediaProcessImplToJson(
+        _$DownloadMediaProcessImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'name': instance.name,
       'media_id': instance.media_id,
       'folder_id': instance.folder_id,
       'notification_id': instance.notification_id,

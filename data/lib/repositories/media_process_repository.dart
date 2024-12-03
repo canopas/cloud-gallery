@@ -94,6 +94,8 @@ class MediaProcessRepo extends ChangeNotifier {
           'media_id TEXT NOT NULL, '
           'folder_id TEXT NOT NULL, '
           'notification_id INTEGER NOT NULL, '
+          'name TEXT NOT NULL, '
+          'thumbnail TEXT, '
           'provider TEXT NOT NULL, '
           'status TEXT NOT NULL, '
           'extension TEXT NOT NULL, '
@@ -539,6 +541,9 @@ class MediaProcessRepo extends ChangeNotifier {
       await database.insert(
         LocalDatabaseConstants.downloadQueueTable,
         DownloadMediaProcess(
+          name: media.path.split('/').last.trim().isEmpty
+              ? media.id
+              : media.path.split('/').last,
           id: UniqueKey().toString(),
           media_id: id ?? media.id,
           folder_id: folderId,

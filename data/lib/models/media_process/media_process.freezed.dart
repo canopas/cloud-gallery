@@ -15,12 +15,13 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 DownloadMediaProcess _$DownloadMediaProcessFromJson(Map<String, dynamic> json) {
-  return _MediaProcess.fromJson(json);
+  return _DownloadMediaProcess.fromJson(json);
 }
 
 /// @nodoc
 mixin _$DownloadMediaProcess {
   String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
   String get media_id => throw _privateConstructorUsedError;
   String get folder_id => throw _privateConstructorUsedError;
   int get notification_id => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $DownloadMediaProcessCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      String name,
       String media_id,
       String folder_id,
       int notification_id,
@@ -80,6 +82,7 @@ class _$DownloadMediaProcessCopyWithImpl<$Res,
   @override
   $Res call({
     Object? id = null,
+    Object? name = null,
     Object? media_id = null,
     Object? folder_id = null,
     Object? notification_id = null,
@@ -94,6 +97,10 @@ class _$DownloadMediaProcessCopyWithImpl<$Res,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String,
       media_id: null == media_id
           ? _value.media_id
@@ -150,15 +157,16 @@ class _$DownloadMediaProcessCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$MediaProcessImplCopyWith<$Res>
+abstract class _$$DownloadMediaProcessImplCopyWith<$Res>
     implements $DownloadMediaProcessCopyWith<$Res> {
-  factory _$$MediaProcessImplCopyWith(
-          _$MediaProcessImpl value, $Res Function(_$MediaProcessImpl) then) =
-      __$$MediaProcessImplCopyWithImpl<$Res>;
+  factory _$$DownloadMediaProcessImplCopyWith(_$DownloadMediaProcessImpl value,
+          $Res Function(_$DownloadMediaProcessImpl) then) =
+      __$$DownloadMediaProcessImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {String id,
+      String name,
       String media_id,
       String folder_id,
       int notification_id,
@@ -174,11 +182,11 @@ abstract class _$$MediaProcessImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$MediaProcessImplCopyWithImpl<$Res>
-    extends _$DownloadMediaProcessCopyWithImpl<$Res, _$MediaProcessImpl>
-    implements _$$MediaProcessImplCopyWith<$Res> {
-  __$$MediaProcessImplCopyWithImpl(
-      _$MediaProcessImpl _value, $Res Function(_$MediaProcessImpl) _then)
+class __$$DownloadMediaProcessImplCopyWithImpl<$Res>
+    extends _$DownloadMediaProcessCopyWithImpl<$Res, _$DownloadMediaProcessImpl>
+    implements _$$DownloadMediaProcessImplCopyWith<$Res> {
+  __$$DownloadMediaProcessImplCopyWithImpl(_$DownloadMediaProcessImpl _value,
+      $Res Function(_$DownloadMediaProcessImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of DownloadMediaProcess
@@ -187,6 +195,7 @@ class __$$MediaProcessImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? name = null,
     Object? media_id = null,
     Object? folder_id = null,
     Object? notification_id = null,
@@ -197,10 +206,14 @@ class __$$MediaProcessImplCopyWithImpl<$Res>
     Object? extension = null,
     Object? chunk = null,
   }) {
-    return _then(_$MediaProcessImpl(
+    return _then(_$DownloadMediaProcessImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String,
       media_id: null == media_id
           ? _value.media_id
@@ -244,9 +257,10 @@ class __$$MediaProcessImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$MediaProcessImpl extends _MediaProcess {
-  const _$MediaProcessImpl(
+class _$DownloadMediaProcessImpl extends _DownloadMediaProcess {
+  const _$DownloadMediaProcessImpl(
       {required this.id,
+      required this.name,
       required this.media_id,
       required this.folder_id,
       required this.notification_id,
@@ -258,11 +272,13 @@ class _$MediaProcessImpl extends _MediaProcess {
       this.chunk = 0})
       : super._();
 
-  factory _$MediaProcessImpl.fromJson(Map<String, dynamic> json) =>
-      _$$MediaProcessImplFromJson(json);
+  factory _$DownloadMediaProcessImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DownloadMediaProcessImplFromJson(json);
 
   @override
   final String id;
+  @override
+  final String name;
   @override
   final String media_id;
   @override
@@ -288,15 +304,16 @@ class _$MediaProcessImpl extends _MediaProcess {
 
   @override
   String toString() {
-    return 'DownloadMediaProcess(id: $id, media_id: $media_id, folder_id: $folder_id, notification_id: $notification_id, provider: $provider, status: $status, response: $response, total: $total, extension: $extension, chunk: $chunk)';
+    return 'DownloadMediaProcess(id: $id, name: $name, media_id: $media_id, folder_id: $folder_id, notification_id: $notification_id, provider: $provider, status: $status, response: $response, total: $total, extension: $extension, chunk: $chunk)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MediaProcessImpl &&
+            other is _$DownloadMediaProcessImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.media_id, media_id) ||
                 other.media_id == media_id) &&
             (identical(other.folder_id, folder_id) ||
@@ -316,7 +333,7 @@ class _$MediaProcessImpl extends _MediaProcess {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, media_id, folder_id,
+  int get hashCode => Object.hash(runtimeType, id, name, media_id, folder_id,
       notification_id, provider, status, response, total, extension, chunk);
 
   /// Create a copy of DownloadMediaProcess
@@ -324,20 +341,23 @@ class _$MediaProcessImpl extends _MediaProcess {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$MediaProcessImplCopyWith<_$MediaProcessImpl> get copyWith =>
-      __$$MediaProcessImplCopyWithImpl<_$MediaProcessImpl>(this, _$identity);
+  _$$DownloadMediaProcessImplCopyWith<_$DownloadMediaProcessImpl>
+      get copyWith =>
+          __$$DownloadMediaProcessImplCopyWithImpl<_$DownloadMediaProcessImpl>(
+              this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$MediaProcessImplToJson(
+    return _$$DownloadMediaProcessImplToJson(
       this,
     );
   }
 }
 
-abstract class _MediaProcess extends DownloadMediaProcess {
-  const factory _MediaProcess(
+abstract class _DownloadMediaProcess extends DownloadMediaProcess {
+  const factory _DownloadMediaProcess(
       {required final String id,
+      required final String name,
       required final String media_id,
       required final String folder_id,
       required final int notification_id,
@@ -346,14 +366,16 @@ abstract class _MediaProcess extends DownloadMediaProcess {
       @LocalDatabaseAppMediaConverter() final AppMedia? response,
       final int total,
       required final String extension,
-      final int chunk}) = _$MediaProcessImpl;
-  const _MediaProcess._() : super._();
+      final int chunk}) = _$DownloadMediaProcessImpl;
+  const _DownloadMediaProcess._() : super._();
 
-  factory _MediaProcess.fromJson(Map<String, dynamic> json) =
-      _$MediaProcessImpl.fromJson;
+  factory _DownloadMediaProcess.fromJson(Map<String, dynamic> json) =
+      _$DownloadMediaProcessImpl.fromJson;
 
   @override
   String get id;
+  @override
+  String get name;
   @override
   String get media_id;
   @override
@@ -378,8 +400,8 @@ abstract class _MediaProcess extends DownloadMediaProcess {
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MediaProcessImplCopyWith<_$MediaProcessImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$DownloadMediaProcessImplCopyWith<_$DownloadMediaProcessImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 UploadMediaProcess _$UploadMediaProcessFromJson(Map<String, dynamic> json) {

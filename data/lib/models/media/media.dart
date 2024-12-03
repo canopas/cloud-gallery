@@ -150,7 +150,7 @@ class AppMedia with _$AppMedia {
 
     return AppMedia(
       id: file.appProperties?[ProviderConstants.localRefIdKey] ?? file.id!,
-      path: file.description ?? '',
+      path: file.name ?? '',
       thumbnailLink: file.thumbnailLink,
       name: file.name,
       driveMediaRefId: file.id,
@@ -198,16 +198,29 @@ class AppMedia with _$AppMedia {
     );
   }
 
-  static AppMedia fromDropboxJson(Map<String, dynamic> json) {
-    final id =
-        json['property_groups'] != null && json['property_groups'].isNotEmpty
-            ? json['property_groups'][0]['fields'][0]['value']
-            : null;
-
+  static AppMedia fromDropboxJson({
+    required Map<String, dynamic> json,
+    Map<String, dynamic>? metadataJson,
+  }) {
     return AppMedia(
-      id: id ?? json['id'],
+      id: json['property_groups'] != null && json['property_groups'].isNotEmpty
+          ? json['property_groups'][0]['fields'][0]['value']
+          : json['id'],
       path: json['path_display'],
       name: json['name'],
+      videoDuration:
+          metadataJson?['media_info']?['metadata']?['duration'] != null
+              ? Duration(
+                  milliseconds:
+                      metadataJson!['media_info']!['metadata']!['duration'],
+                )
+              : null,
+      displayHeight: metadataJson?['media_info']?['metadata']?['dimensions']
+              ?['height']
+          ?.toDouble(),
+      displayWidth: metadataJson?['media_info']?['metadata']?['dimensions']
+              ?['width']
+          ?.toDouble(),
       size: json['size'].toString(),
       dropboxMediaRefId: json['id'],
       createdTime: DateTime.parse(json['client_modified']),
