@@ -620,6 +620,7 @@ class MediaProcessRepo extends ChangeNotifier {
   ) async {
     DownloadMediaProcess process = downloadProcess;
     String? tempFileLocation;
+    Timer? updateDatabaseDebounce;
 
     Future<void> showNotification(
       String message, {
@@ -660,18 +661,26 @@ class MediaProcessRepo extends ChangeNotifier {
               _downloadQueue.firstWhere((element) => element.id == process.id);
           if (process.status.isTerminated) {
             cancelToken.cancel();
-          } else {
-            showNotification(
-              '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
-              chunk: received,
+          }
+
+          if (updateDatabaseDebounce == null ||
+              !updateDatabaseDebounce!.isActive) {
+            if (!process.status.isTerminated) {
+              showNotification(
+                '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
+                chunk: received,
+                total: total,
+              );
+            }
+
+            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
+
+            await updateDownloadProcessProgress(
+              id: process.id,
+              received: received,
               total: total,
             );
           }
-          await updateDownloadProcessProgress(
-            id: process.id,
-            received: received,
-            total: total,
-          );
         },
         cancelToken: cancelToken,
       );
@@ -727,6 +736,7 @@ class MediaProcessRepo extends ChangeNotifier {
   ) async {
     DownloadMediaProcess process = downloadProcess;
     String? tempFileLocation;
+    Timer? updateDatabaseDebounce;
 
     Future<void> showNotification(
       String message, {
@@ -767,19 +777,25 @@ class MediaProcessRepo extends ChangeNotifier {
               _downloadQueue.firstWhere((element) => element.id == process.id);
           if (process.status.isTerminated) {
             cancelToken.cancel();
-          } else {
-            showNotification(
-              '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
-              chunk: received,
+          }
+
+          if (updateDatabaseDebounce == null ||
+              !updateDatabaseDebounce!.isActive) {
+            if (!process.status.isTerminated) {
+              showNotification(
+                '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
+                chunk: received,
+                total: total,
+              );
+            }
+
+            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
+            await updateDownloadProcessProgress(
+              id: process.id,
+              received: received,
               total: total,
             );
           }
-
-          await updateDownloadProcessProgress(
-            id: process.id,
-            received: received,
-            total: total,
-          );
         },
         cancelToken: cancelToken,
       );
