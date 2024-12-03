@@ -140,7 +140,7 @@ class DownloadProcessItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  process.media_id,
+                  process.name,
                   style: AppTextStyles.body.copyWith(
                     color: context.colorScheme.textPrimary,
                   ),

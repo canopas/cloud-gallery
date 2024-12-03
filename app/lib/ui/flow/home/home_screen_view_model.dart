@@ -77,7 +77,21 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   }
 
   void updateDropboxAccount(DropboxAccount? dropboxAccount) {
-    state = state.copyWith(dropboxAccount: dropboxAccount);
+    if (dropboxAccount == null) {
+      state = state.copyWith(
+        dropboxAccount: null,
+        medias: mediaMapUpdate(
+          update: (media) => media.dropboxMediaRefId != null ||
+                  media.sources.contains(AppMediaSource.dropbox)
+              ? media.removeDropboxRef()
+              : media,
+          medias: state.medias,
+        ),
+      );
+    } else {
+      loadMedias(reload: true);
+      state = state.copyWith(dropboxAccount: dropboxAccount);
+    }
   }
 
   void _mediaProcessObserve() {

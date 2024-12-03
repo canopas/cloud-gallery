@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
-
 import '../../../components/app_page.dart';
 import '../../../components/error_view.dart';
 import '../../../components/snack_bar.dart';
@@ -46,7 +44,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     final currentIndex =
         widget.medias.indexWhere((element) => element.id == widget.startFrom);
 
@@ -127,7 +124,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     _videoPlayerController?.removeListener(_observeVideoController);
     _videoPlayerController?.dispose();
     _pageController.dispose();

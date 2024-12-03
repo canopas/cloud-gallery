@@ -85,7 +85,7 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
           final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
           return decode(buffer);
         }
-        throw throw NetworkImageLoadException(
+        throw NetworkImageLoadException(
           statusCode: 400,
           uri: Uri.parse(''),
         );
@@ -200,10 +200,14 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is AppMediaImageProvider &&
+            other.media.dropboxMediaRefId == media.dropboxMediaRefId &&
+            other.media.thumbnailLink == media.thumbnailLink &&
+            other.media.sources == media.sources &&
             other.media.path == media.path &&
             other.thumbnailSize == thumbnailSize);
   }
 
   @override
-  int get hashCode => media.path.hashCode ^ thumbnailSize.hashCode;
+  int get hashCode => media.path.hashCode ^ thumbnailSize.hashCode
+      ^ media.thumbnailLink.hashCode ^ media.sources.hashCode;
 }
