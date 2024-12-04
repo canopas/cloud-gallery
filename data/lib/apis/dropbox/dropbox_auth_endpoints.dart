@@ -160,6 +160,6 @@ class DropboxGetAppPropertiesTemplateDetails extends Endpoint {
 
   @override
   Object? get data => {
-    "template_id": id,
-  };
+        "template_id": id,
+      };
 }

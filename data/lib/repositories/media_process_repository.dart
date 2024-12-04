@@ -409,13 +409,13 @@ class MediaProcessRepo extends ChangeNotifier {
               _uploadQueue.firstWhere((element) => element.id == process.id);
           if (process.status.isTerminated) {
             cancelToken.cancel();
+          } else {
+            showNotification(
+              '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+              chunk: chunk,
+              total: total,
+            );
           }
-
-          showNotification(
-            '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
-            chunk: chunk,
-            total: total,
-          );
 
           await updateUploadProcessProgress(
             id: process.id,

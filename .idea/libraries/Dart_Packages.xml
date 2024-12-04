@@ -212,6 +212,13 @@
             </list>
           </value>
         </entry>
+        <entry key="color">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/color-3.0.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="convert">
           <value>
             <list>
@@ -279,6 +286,13 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dart_style-2.3.7/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="dartx">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/dartx-1.2.0/lib" />
             </list>
           </value>
         </entry>
@@ -377,6 +391,20 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_displaymode-0.6.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="flutter_gen_core">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_gen_core-5.8.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="flutter_gen_runner">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_gen_runner-5.8.0/lib" />
             </list>
           </value>
         </entry>
@@ -564,6 +592,13 @@
             </list>
           </value>
         </entry>
+        <entry key="hashcodes">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/hashcodes-2.0.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="hotreloader">
           <value>
             <list>
@@ -596,6 +631,13 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.0.2/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="image_size_getter">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/image_size_getter-2.2.0/lib" />
             </list>
           </value>
         </entry>
@@ -1128,6 +1170,13 @@
             </list>
           </value>
         </entry>
+        <entry key="time">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/time-2.1.5/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="timezone">
           <value>
             <list>
@@ -1405,6 +1454,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/clock-1.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/code_builder-4.10.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/collection-1.18.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/color-3.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/convert-3.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/cross_file-0.3.4+2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/crypto-3.0.6/lib" />
@@ -1415,6 +1465,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/custom_lint_core-0.7.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/custom_lint_visitor-1.0.0+6.7.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dart_style-2.3.7/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dartx-1.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dbus-0.7.10/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio-5.7.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dio_web_adapter-2.0.0/lib" />
@@ -1428,6 +1479,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/fixnum-1.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_cache_manager-3.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_displaymode-0.6.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_gen_core-5.8.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_gen_runner-5.8.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_lints-2.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_local_notifications-18.0.1/lib" />
@@ -1453,11 +1506,13 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/googleapis_auth-1.6.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/graphs-2.3.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/gtk-2.1.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/hashcodes-2.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/hotreloader-4.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/html-0.15.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http-1.2.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_multi_server-3.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/http_parser-4.0.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/image_size_getter-2.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/intl-0.19.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/io-1.0.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/js-0.7.1/lib" />
@@ -1536,6 +1591,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/synchronized-3.3.0+3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/term_glyph-1.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/time-2.1.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/timezone-0.10.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/timing-1.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/typed_data-1.4.0/lib" />

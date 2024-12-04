@@ -117,7 +117,6 @@ class UploadMediaProcess with _$UploadMediaProcess {
   const UploadMediaProcess._();
 
   const factory UploadMediaProcess({
-
     required String id,
     required String media_id,
     required int notification_id,

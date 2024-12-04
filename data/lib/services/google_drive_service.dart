@@ -135,7 +135,6 @@ class GoogleDriveService extends CloudProviderService {
             )
             .toList(),
       );
-
     } catch (e) {
       throw AppError.fromError(e);
     }
