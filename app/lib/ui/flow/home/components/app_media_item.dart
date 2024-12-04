@@ -96,7 +96,7 @@ class AppMediaItem extends StatelessWidget {
                   ),
                 if (media.sources.contains(AppMediaSource.dropbox) &&
                     media.sources.contains(AppMediaSource.googleDrive))
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 8),
                 if (media.sources.contains(AppMediaSource.dropbox))
                   SvgPicture.asset(
                     Assets.images.icons.dropbox,

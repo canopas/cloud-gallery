@@ -202,12 +202,11 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
         (other is AppMediaImageProvider &&
             other.media.dropboxMediaRefId == media.dropboxMediaRefId &&
             other.media.thumbnailLink == media.thumbnailLink &&
-            other.media.sources == media.sources &&
             other.media.path == media.path &&
             other.thumbnailSize == thumbnailSize);
   }
 
   @override
   int get hashCode => media.path.hashCode ^ thumbnailSize.hashCode
-      ^ media.thumbnailLink.hashCode ^ media.sources.hashCode;
+      ^ media.thumbnailLink.hashCode ^ media.dropboxMediaRefId.hashCode;
 }

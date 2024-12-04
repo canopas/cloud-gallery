@@ -134,7 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (state.isLoading && !state.hasMedia) {
       return const Center(child: AppCircularProgressIndicator());
-    } else if (state.hasMedia && !state.hasLocalMediaAccess) {
+    } else if (!state.hasMedia && !state.hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
     }
 
