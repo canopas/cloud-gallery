@@ -20,12 +20,15 @@ import '../services/google_drive_service.dart';
 import '../services/local_media_service.dart';
 
 final mediaProcessRepoProvider = Provider<MediaProcessRepo>((ref) {
-  return MediaProcessRepo(
+  final repo = MediaProcessRepo(
     ref.read(googleDriveServiceProvider),
     ref.read(dropboxServiceProvider),
     ref.read(localMediaServiceProvider),
     ref.read(notificationHandlerProvider),
   );
+  ref.onDispose(repo.dispose);
+
+  return repo;
 });
 
 class LocalDatabaseConstants {
@@ -110,6 +113,12 @@ class MediaProcessRepo extends ChangeNotifier {
         runAutoBackupQueue();
       },
     );
+  }
+
+  @override
+  Future<void> dispose() async {
+    await database.close();
+    super.dispose();
   }
 
   Future<void> updateQueue(Database db) async {
