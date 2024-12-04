@@ -25,6 +25,7 @@
   "common_not_available": "N/A",
   "common_delete_from_google_drive": "Delete from Google Drive",
   "common_delete_from_device": "Delete from Device",
+  "common_open_settings": "Open Settings",
 
 
 
@@ -43,9 +44,9 @@
 
   "back_up_on_google_drive_text": "Back up on Google Drive",
 
-  "cant_find_media_title": "Can't find your photos or videos",
-  "ask_for_media_permission_message": "Please give us permission to access your local media, so you can load and enjoy all your favorite photos and videos effortlessly.",
-  "load_local_media_button_text": "Load local media",
+  "@_NO_MEDIA_ACCESS": {},
+  "no_media_access_screen_title": "Media Access Required",
+  "no_media_access_screen_message": "To help you explore and enjoy all your favorite photos and videos, please allow us access to your local media.",
 
   "theme_text": "Theme",
   "notification_text": "Notification",

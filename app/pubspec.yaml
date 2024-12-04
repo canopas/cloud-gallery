@@ -79,6 +79,7 @@ dev_dependencies:
   # code generation
   build_runner: ^2.4.13
   go_router_builder: ^2.7.1
+  flutter_gen_runner: ^5.8.0
 
 flutter:
   uses-material-design: true

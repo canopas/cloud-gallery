@@ -192,13 +192,20 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
               end: _localMediaCount + 30,
             );
 
+      _localMediaCount += localMedia.length;
       if (localMedia.length < 30) {
         _localMaxLoaded = true;
       }
 
       state = state.copyWith(
-        lastLocalMediaId:
-            localMedia.isNotEmpty ? localMedia.last.id : state.lastLocalMediaId,
+        loading: false,
+        medias: sortMedias(
+          medias: [
+            ...state.medias.values.expand((element) => element.values),
+            ...localMedia,
+          ],
+        ),
+        lastLocalMediaId: localMedia.isNotEmpty ? localMedia.last.id : null,
       );
 
       final List<AppMedia> cloudBasedMedias = [];
@@ -234,12 +241,47 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         );
         cloudBasedMedias.addAll(dropboxMediaCollection.onlyCloudBasedMedias);
       }
-      final List<AppMedia> previousMedias =
-          state.medias.values.expand((element) => element.values).toList();
 
       final List<AppMedia> allMergedMedias = [];
 
-      for (final media in [...previousMedias, ...localMedia]) {
+      for (final media
+          in state.medias.values.expand((element) => element.values)) {
+        if (_googleDriveMediasWithLocalRef.isEmpty &&
+            !_googleDriveMaxLoaded &&
+            state.googleAccount != null) {
+          final res = await _googleDriveService.getPaginatedMedias(
+            folder: _backUpFolderId!,
+            nextPageToken: _googleDrivePageToken,
+            pageSize: 30,
+          );
+
+          _googleDriveMaxLoaded = res.nextPageToken == null;
+          _googleDrivePageToken = res.nextPageToken;
+
+          final gdMediaCollection = await splitLocalRefMedias(res.medias);
+          _googleDriveMediasWithLocalRef
+              .addAll(gdMediaCollection.localRefMedias);
+          cloudBasedMedias.addAll(gdMediaCollection.onlyCloudBasedMedias);
+        }
+
+        if (_dropboxMediasWithLocalRef.isEmpty &&
+            !_dropboxMaxLoaded &&
+            state.dropboxAccount != null) {
+          final res = await _dropboxService.getPaginatedMedias(
+            folder: ProviderConstants.backupFolderPath,
+            nextPageToken: _dropboxPageToken,
+            pageSize: 30,
+          );
+          _dropboxMaxLoaded = res.nextPageToken == null;
+          _dropboxPageToken = res.nextPageToken;
+
+          final dropboxMediaCollection = await splitLocalRefMedias(res.medias);
+          _dropboxMediasWithLocalRef.addAll(
+            dropboxMediaCollection.localRefMedias,
+          );
+          cloudBasedMedias.addAll(dropboxMediaCollection.onlyCloudBasedMedias);
+        }
+
         AppMedia mergedMedia = media;
         for (final gdMedia in _googleDriveMediasWithLocalRef) {
           if (media.id == gdMedia.id) {
@@ -252,7 +294,6 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           }
         }
 
-        ///TODO: fetch more cloud media list if its empty
         allMergedMedias.add(mergedMedia);
       }
       state = state.copyWith(

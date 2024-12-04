@@ -1,6 +1,5 @@
 import '../../../components/app_page.dart';
 import '../../../components/thumbnail_builder.dart';
-import '../../../domain/assets/assets_paths.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../domain/formatter/date_formatter.dart';
 import '../../../domain/formatter/duration_formatter.dart';
@@ -10,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
+import '../../../gen/assets.gen.dart';
 
 class MediaMetadataDetailsScreen extends StatelessWidget {
   final AppMedia media;
@@ -117,7 +117,7 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                         ),
                       if (media.sources.contains(AppMediaSource.googleDrive))
                         SvgPicture.asset(
-                          Assets.images.icons.googleDrive,
+                          Assets.images.icons.icGoogleDrive,
                           width: 20,
                         ),
                     ],

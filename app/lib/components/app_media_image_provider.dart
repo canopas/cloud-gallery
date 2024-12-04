@@ -34,6 +34,7 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
       debugLabel: '${key.media.runtimeType}-'
           '${key.media.id}-'
           '${key.media.thumbnailLink ?? ''}-'
+          '${key.media.dropboxMediaRefId ?? ''}-'
           '${key.media.sources.map((e) => e.value).join()}-'
           '${key.thumbnailSize}',
       informationCollector: () {

@@ -1,7 +1,7 @@
 import '../../../components/app_page.dart';
-import '../../../domain/assets/assets_paths.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../domain/extensions/widget_extensions.dart';
+import '../../../gen/assets.gen.dart';
 import 'accounts_screen_view_model.dart';
 import 'components/settings_action_list.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -107,7 +107,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           buttons: [
             ActionListButton(
               leading: SvgPicture.asset(
-                Assets.images.icons.googleDrive,
+                Assets.images.icons.icGoogleDrive,
                 height: 24,
                 width: 24,
               ),
@@ -161,7 +161,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           buttons: [
             ActionListButton(
               leading: SvgPicture.asset(
-                Assets.images.icons.dropbox,
+                Assets.images.icons.icDropbox,
                 height: 24,
                 width: 24,
               ),

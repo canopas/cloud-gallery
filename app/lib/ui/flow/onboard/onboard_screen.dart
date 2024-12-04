@@ -1,5 +1,6 @@
 import '../../../components/app_page.dart';
 import '../../../domain/extensions/context_extensions.dart';
+import '../../../gen/assets.gen.dart';
 import '../../navigation/app_route.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 import 'package:style/animations/on_tap_scale.dart';
-import '../../../domain/assets/assets_paths.dart';
 
 class OnBoardScreen extends ConsumerWidget {
   const OnBoardScreen({super.key});
@@ -58,7 +58,7 @@ class OnBoardScreen extends ConsumerWidget {
   }
 
   Widget _appLogo(BuildContext context) => Image.asset(
-        Assets.images.appIcon,
+        Assets.images.appLogo.path,
         width: 250,
       );
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 import '../../../../domain/extensions/context_extensions.dart';
+import '../../../../gen/assets.gen.dart';
 import '../../../navigation/app_route.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
@@ -14,7 +15,6 @@ import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../../components/app_dialog.dart';
 import '../../../../components/app_page.dart';
-import '../../../../domain/assets/assets_paths.dart';
 import '../../../../domain/formatter/date_formatter.dart';
 import '../media_preview_view_model.dart';
 import 'package:share_plus/share_plus.dart';
@@ -162,7 +162,7 @@ class PreviewTopBar extends StatelessWidget {
                                     ),
                                   ),
                                   SvgPicture.asset(
-                                    Assets.images.icons.googleDrive,
+                                    Assets.images.icons.icGoogleDrive,
                                     width: 14,
                                     height: 14,
                                   ),
