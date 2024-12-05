@@ -117,6 +117,23 @@ class MediaProcessRepo extends ChangeNotifier {
 
   @override
   Future<void> dispose() async {
+    for (var element in _uploadQueue.where(
+      (element) => element.status.isRunning,
+    )) {
+      updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.failed,
+        id: element.id,
+      );
+    }
+
+    for (var element in _downloadQueue.where(
+      (element) => element.status.isRunning,
+    )) {
+      updateDownloadProcessStatus(
+        status: MediaQueueProcessStatus.failed,
+        id: element.id,
+      );
+    }
     await database.close();
     super.dispose();
   }
