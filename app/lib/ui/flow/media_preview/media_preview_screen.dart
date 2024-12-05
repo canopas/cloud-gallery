@@ -38,7 +38,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
   late AutoDisposeStateNotifierProvider<MediaPreviewStateNotifier,
       MediaPreviewState> _provider;
   late PageController _pageController;
-  late MediaPreviewStateNotifier notifier;
+  late MediaPreviewStateNotifier _notifier;
 
   VideoPlayerController? _videoPlayerController;
 
@@ -51,7 +51,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _provider = mediaPreviewStateNotifierProvider(
       (startIndex: currentIndex, medias: widget.medias),
     );
-    notifier = ref.read(_provider.notifier);
+    _notifier = ref.read(_provider.notifier);
 
     _pageController = PageController(initialPage: currentIndex, keepPage: true);
 
@@ -73,26 +73,26 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _videoPlayerController = VideoPlayerController.file(File(path));
     _videoPlayerController?.addListener(_observeVideoController);
     await _videoPlayerController?.initialize();
-    notifier.updateVideoInitialized(
+    _notifier.updateVideoInitialized(
       _videoPlayerController?.value.isInitialized ?? false,
     );
     await _videoPlayerController?.play();
   }
 
   void _observeVideoController() {
-    notifier.updateVideoInitialized(
+    _notifier.updateVideoInitialized(
       _videoPlayerController?.value.isInitialized ?? false,
     );
-    notifier.updateVideoBuffering(
+    _notifier.updateVideoBuffering(
       _videoPlayerController?.value.isBuffering ?? false,
     );
-    notifier.updateVideoPosition(
+    _notifier.updateVideoPosition(
       _videoPlayerController?.value.position ?? Duration.zero,
     );
-    notifier.updateVideoMaxDuration(
+    _notifier.updateVideoMaxDuration(
       _videoPlayerController?.value.duration ?? Duration.zero,
     );
-    notifier
+    _notifier
         .updateVideoPlaying(_videoPlayerController?.value.isPlaying ?? false);
   }
 
@@ -112,7 +112,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         (previous, next) {
       if (_videoPlayerController != null) {
         _videoPlayerController?.removeListener(_observeVideoController);
-        notifier.updateVideoInitialized(false);
+        _notifier.updateVideoInitialized(false);
         _videoPlayerController?.dispose();
         _videoPlayerController = null;
       }
@@ -147,7 +147,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       backgroundColor: context.colorScheme.surface,
       onProgress: (progress) {
         if (progress > 0 && state.showActions) {
-          notifier.toggleActionVisibility();
+          _notifier.toggleActionVisibility();
         }
       },
       onDismiss: () {
@@ -160,9 +160,9 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           children: [
             GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: notifier.toggleActionVisibility,
+              onTap: _notifier.toggleActionVisibility,
               child: PageView.builder(
-                onPageChanged: notifier.changeVisibleMediaIndex,
+                onPageChanged: _notifier.changeVisibleMediaIndex,
                 controller: _pageController,
                 itemCount: state.medias.length,
                 itemBuilder: (context, index) =>
@@ -246,9 +246,9 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           downloadProcess: process,
           onDownload: () {
             if (media.isGoogleDriveStored) {
-              notifier.downloadFromGoogleDrive(media: media);
+              _notifier.downloadFromGoogleDrive(media: media);
             } else if (media.isDropboxStored) {
-              notifier.downloadFromDropbox(media: media);
+              _notifier.downloadFromDropbox(media: media);
             }
           },
         );
@@ -321,7 +321,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               _videoPlayerController?.seekTo(duration);
             },
             onChanged: (duration) {
-              notifier.updateVideoPosition(duration);
+              _notifier.updateVideoPosition(duration);
             },
           );
         },

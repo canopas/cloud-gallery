@@ -48,16 +48,18 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   final MediaProcessRepo _mediaProcessRepo;
 
   StreamSubscription? _googleAccountSubscription;
+
+  // Local
   int _localMediaCount = 0;
   bool _localMaxLoaded = false;
 
-  ///Google Drive
+  // Google Drive
   String? _backUpFolderId;
   String? _googleDrivePageToken;
   bool _googleDriveMaxLoaded = false;
   final List<AppMedia> _googleDriveMediasWithLocalRef = [];
 
-  ///Dropbox
+  // Dropbox
   String? _dropboxPageToken;
   bool _dropboxMaxLoaded = false;
   final List<AppMedia> _dropboxMediasWithLocalRef = [];
@@ -76,6 +78,31 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     loadMedias();
   }
 
+  // ACCOUNT LISTENERS ---------------------------------------------------------
+
+  /// Listen to google account changes and update the state accordingly.
+  void _listenUserGoogleAccount() {
+    _googleAccountSubscription =
+        _authService.onGoogleAccountChange.listen((event) async {
+      state = state.copyWith(googleAccount: event);
+      if (event != null) {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } else {
+        _backUpFolderId = null;
+        state = state.copyWith(
+          medias: mediaMapUpdate(
+            update: (media) => media.driveMediaRefId != null &&
+                    media.sources.contains(AppMediaSource.googleDrive)
+                ? media.removeGoogleDriveRef()
+                : media,
+            medias: state.medias,
+          ),
+        );
+      }
+    });
+  }
+
+  /// Listen to dropbox account changes and update the state accordingly.
   void updateDropboxAccount(DropboxAccount? dropboxAccount) {
     if (dropboxAccount == null) {
       state = state.copyWith(
@@ -89,10 +116,12 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         ),
       );
     } else {
-      loadMedias(reload: true);
       state = state.copyWith(dropboxAccount: dropboxAccount);
+      loadMedias(reload: true);
     }
   }
+
+  // MEDIA PROCESS OBSERVER ---------------------------------------------------
 
   void _mediaProcessObserve() {
     state = state.copyWith(
@@ -147,30 +176,14 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     }
   }
 
-  void _listenUserGoogleAccount() {
-    _googleAccountSubscription =
-        _authService.onGoogleAccountChange.listen((event) async {
-      state = state.copyWith(googleAccount: event);
-      if (event != null) {
-        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
-      } else {
-        _backUpFolderId = null;
-        state = state.copyWith(
-          medias: mediaMapUpdate(
-            update: (media) => media.driveMediaRefId != null &&
-                    media.sources.contains(AppMediaSource.googleDrive)
-                ? media.removeGoogleDriveRef()
-                : media,
-            medias: state.medias,
-          ),
-        );
-      }
-    });
-  }
+  // MEDIA OPERATIONS ---------------------------------------------------------
 
+  /// Loads medias from local, google drive and dropbox.
+  /// it append the medias to the existing medias if reload is false.
   Future<void> loadMedias({bool reload = false}) async {
     state = state.copyWith(loading: true, error: null);
     try {
+      // Reset all the variables if reload is true
       if (reload) {
         _localMediaCount = 0;
         _localMaxLoaded = false;
@@ -182,9 +195,11 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         _dropboxMediasWithLocalRef.clear();
       }
 
+      // Request local media permission if not granted
       final hasAccess = await _localMediaService.requestPermission();
       state = state.copyWith(hasLocalMediaAccess: hasAccess);
 
+      // Load local media if access is granted and not max loaded
       final localMedia = !hasAccess || _localMaxLoaded
           ? <AppMedia>[]
           : await _localMediaService.getLocalMedia(
@@ -192,11 +207,13 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
               end: _localMediaCount + 30,
             );
 
+      // Update the local media count and max loaded
       _localMediaCount += localMedia.length;
       if (localMedia.length < 30) {
         _localMaxLoaded = true;
       }
 
+      // Update the state with the loaded medias and stop showing loading
       state = state.copyWith(
         loading: false,
         medias: sortMedias(
@@ -208,8 +225,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         lastLocalMediaId: localMedia.isNotEmpty ? localMedia.last.id : null,
       );
 
+      // Here we store the only cloud based medias.
       final List<AppMedia> cloudBasedMedias = [];
 
+      // Load medias from google drive and separate the local ref medias and only cloud based medias.
       if (!_googleDriveMaxLoaded && state.googleAccount != null) {
         _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
 
@@ -226,6 +245,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         cloudBasedMedias.addAll(gdMediaCollection.onlyCloudBasedMedias);
       }
 
+      // Load medias from dropbox and separate the local ref medias and only cloud based medias.
       if (!_dropboxMaxLoaded && state.dropboxAccount != null) {
         final res = await _dropboxService.getPaginatedMedias(
           folder: ProviderConstants.backupFolderPath,
@@ -242,10 +262,12 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         cloudBasedMedias.addAll(dropboxMediaCollection.onlyCloudBasedMedias);
       }
 
+      // Here we store all successfully merged medias.
       final List<AppMedia> allMergedMedias = [];
 
       for (final media
           in state.medias.values.expand((element) => element.values)) {
+        // Refill the google drive local ref medias if it is empty and not max loaded
         if (_googleDriveMediasWithLocalRef.isEmpty &&
             !_googleDriveMaxLoaded &&
             state.googleAccount != null) {
@@ -264,6 +286,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           cloudBasedMedias.addAll(gdMediaCollection.onlyCloudBasedMedias);
         }
 
+        // Refill the dropbox local ref medias if it is empty and not max loaded
         if (_dropboxMediasWithLocalRef.isEmpty &&
             !_dropboxMaxLoaded &&
             state.dropboxAccount != null) {
@@ -282,15 +305,21 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           cloudBasedMedias.addAll(dropboxMediaCollection.onlyCloudBasedMedias);
         }
 
+        // Merge the media with google drive or dropbox media if it exists
         AppMedia mergedMedia = media;
-        for (final gdMedia in _googleDriveMediasWithLocalRef) {
+
+        for (final gdMedia in _googleDriveMediasWithLocalRef.toList()) {
           if (media.id == gdMedia.id) {
             mergedMedia = media.mergeGoogleDriveMedia(gdMedia);
+            _googleDriveMediasWithLocalRef
+                .removeWhere((e) => e.id == gdMedia.id);
           }
         }
-        for (final dropboxMedia in _dropboxMediasWithLocalRef) {
+        for (final dropboxMedia in _dropboxMediasWithLocalRef.toList()) {
           if (media.id == dropboxMedia.id) {
             mergedMedia = media.mergeDropboxMedia(dropboxMedia);
+            _dropboxMediasWithLocalRef
+                .removeWhere((e) => e.id == dropboxMedia.id);
           }
         }
 
@@ -389,7 +418,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         .map((e) => e.value)
         .toList();
 
-    state = state.copyWith(selectedMedias: {});
+    state = state.copyWith(selectedMedias: {}, actionError: null);
 
     _mediaProcessRepo.downloadMedia(
       folderId: _backUpFolderId!,
@@ -407,7 +436,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         .map((e) => e.value)
         .toList();
 
-    state = state.copyWith(selectedMedias: {});
+    state = state.copyWith(selectedMedias: {}, actionError: null);
 
     _mediaProcessRepo.downloadMedia(
       folderId: ProviderConstants.backupFolderPath,
@@ -425,10 +454,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           .map((e) => e.key)
           .toList();
 
-      state = state.copyWith(
-        selectedMedias: {},
-        actionError: null,
-      );
+      state = state.copyWith(selectedMedias: {}, actionError: null);
 
       await _localMediaService.deleteMedias(ids);
 
@@ -467,10 +493,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           .map((e) => e.value.driveMediaRefId!)
           .toList();
 
-      state = state.copyWith(
-        selectedMedias: {},
-        actionError: null,
-      );
+      state = state.copyWith(selectedMedias: {}, actionError: null);
 
       await Future.wait(
         ids.map((id) => _googleDriveService.deleteMedia(id: id)),
@@ -515,10 +538,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           .map((e) => e.value.dropboxMediaRefId!)
           .toList();
 
-      state = state.copyWith(
-        selectedMedias: {},
-        actionError: null,
-      );
+      state = state.copyWith(selectedMedias: {}, actionError: null);
 
       await Future.wait(ids.map((id) => _dropboxService.deleteMedia(id: id)));
 

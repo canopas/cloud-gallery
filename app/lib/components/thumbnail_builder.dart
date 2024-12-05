@@ -1,10 +1,13 @@
 import 'package:data/models/media/media.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
-import 'app_media_image_provider.dart';
 
-class AppMediaImage extends StatelessWidget {
+import '../domain/image_providers/app_media_image_provider.dart';
+
+class AppMediaImage extends ConsumerWidget {
   final Object? heroTag;
   final AppMedia media;
   final Size size;
@@ -19,13 +22,18 @@ class AppMediaImage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: Hero(
         tag: heroTag ?? '',
         child: Image(
-          image: AppMediaImageProvider(media: media, thumbnailSize: size * 2),
+          image: AppMediaImageProvider(
+            media: media,
+            dropboxAccessToken:
+                ref.read(AppPreferences.dropboxToken)?.access_token,
+            thumbnailSize: size,
+          ),
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress != null) {
               return AppMediaPlaceHolder(
