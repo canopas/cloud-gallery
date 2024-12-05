@@ -18,7 +18,7 @@ class SettingsActionList extends ConsumerWidget {
     return ActionList(
       buttons: [
         ActionListButton(
-          title: context.l10n.notification_text,
+          title: context.l10n.notification_title,
           trailing: AppSwitch(
             value: notifications,
             onChanged: (value) {
@@ -27,20 +27,20 @@ class SettingsActionList extends ConsumerWidget {
           ),
         ),
         ActionListButton(
-          title: context.l10n.theme_text,
+          title: context.l10n.theme_title,
           trailing: AppSegmentedButton(
             segments: [
               AppButtonSegment(
                 value: true,
-                label: context.l10n.dark_theme_text,
+                label: context.l10n.dark_theme_title,
               ),
               AppButtonSegment(
                 value: false,
-                label: context.l10n.light_theme_text,
+                label: context.l10n.light_theme_title,
               ),
               AppButtonSegment(
                 value: null,
-                label: context.l10n.system_theme_text,
+                label: context.l10n.system_theme_title,
               ),
             ],
             selected: isDarkMode,
@@ -50,7 +50,7 @@ class SettingsActionList extends ConsumerWidget {
           ),
         ),
         ActionListButton(
-          title: context.l10n.common_term_and_condition,
+          title: context.l10n.term_and_condition_title,
           onPressed: () {
             final colors = _getWebPageColors(context, ref);
             showWebView(
@@ -60,7 +60,7 @@ class SettingsActionList extends ConsumerWidget {
           },
         ),
         ActionListButton(
-          title: context.l10n.common_privacy_policy,
+          title: context.l10n.privacy_policy_title,
           onPressed: () {
             final colors = _getWebPageColors(context, ref);
             showWebView(

@@ -49,7 +49,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   Widget build(BuildContext context) {
     _errorObserver();
     return AppPage(
-      title: context.l10n.common_accounts,
+      title: context.l10n.accounts_title,
       bodyBuilder: (context) {
         return ListView(
           padding: context.systemPadding +
@@ -82,7 +82,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             actionList: ActionList(
               buttons: [
                 ActionListButton(
-                  title: context.l10n.common_auto_back_up,
+                  title: context.l10n.auto_back_up_title,
                   trailing: Consumer(
                     builder: (context, ref, child) {
                       final googleDriveAutoBackUp =
@@ -95,7 +95,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                   ),
                 ),
                 ActionListButton(
-                  title: context.l10n.common_sign_out,
+                  title: context.l10n.sign_out_title,
                   onPressed: notifier.signOutWithGoogle,
                 ),
               ],
@@ -111,7 +111,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                 height: 24,
                 width: 24,
               ),
-              title: context.l10n.sign_in_with_google_drive_text,
+              title: context.l10n.sign_in_with_google_drive_title,
               onPressed: () {
                 notifier.signInWithGoogle();
               },
@@ -136,7 +136,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             actionList: ActionList(
               buttons: [
                 ActionListButton(
-                  title: context.l10n.common_auto_back_up,
+                  title: context.l10n.auto_back_up_title,
                   trailing: Consumer(
                     builder: (context, ref, child) {
                       final dropboxAutoBackUp =
@@ -149,7 +149,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                   ),
                 ),
                 ActionListButton(
-                  title: context.l10n.common_sign_out,
+                  title: context.l10n.sign_out_title,
                   onPressed: notifier.signOutWithDropbox,
                 ),
               ],
@@ -165,7 +165,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                 height: 24,
                 width: 24,
               ),
-              title: context.l10n.sign_in_with_dropbox_text,
+              title: context.l10n.sign_in_with_dropbox_title,
               onPressed: () {
                 notifier.signInWithDropbox();
               },
@@ -184,7 +184,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           return Visibility(
             visible: version != null,
             child: Text(
-              "${context.l10n.version_text} $version",
+              "${context.l10n.version_title} $version",
               style: AppTextStyles.body2.copyWith(
                 color: context.colorScheme.textSecondary,
               ),

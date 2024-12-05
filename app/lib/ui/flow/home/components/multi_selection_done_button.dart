@@ -34,9 +34,10 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             children: [
               if (selectedMedias.values.any(
                 (element) =>
-                    !element.sources.contains(AppMediaSource.googleDrive),
+                    !element.sources.contains(AppMediaSource.googleDrive) &&
+                    element.sources.contains(AppMediaSource.local),
               ))
-                _uploadFromGoogleDriveAction(context, ref),
+                _uploadToGoogleDriveAction(context, ref),
               if (selectedMedias.values
                   .any((element) => element.isGoogleDriveStored))
                 _downloadFromGoogleDriveAction(context, ref),
@@ -46,9 +47,11 @@ class MultiSelectionDoneButton extends ConsumerWidget {
               ))
                 _deleteMediaFromGoogleDriveAction(context, ref),
               if (selectedMedias.values.any(
-                (element) => !element.sources.contains(AppMediaSource.dropbox),
+                (element) =>
+                    !element.sources.contains(AppMediaSource.dropbox) &&
+                    element.sources.contains(AppMediaSource.local),
               ))
-                _uploadFromDropboxAction(context, ref),
+                _uploadToDropboxAction(context, ref),
               if (selectedMedias.values
                   .any((element) => element.isDropboxStored))
                 _downloadFromDropboxAction(context, ref),
@@ -73,7 +76,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
     );
   }
 
-  Widget _uploadFromGoogleDriveAction(BuildContext context, WidgetRef ref) {
+  Widget _uploadToGoogleDriveAction(BuildContext context, WidgetRef ref) {
     return AppSheetAction(
       icon: Stack(
         alignment: Alignment.bottomRight,
@@ -93,10 +96,28 @@ class MultiSelectionDoneButton extends ConsumerWidget {
           ),
         ],
       ),
-      title: "Upload to Google Drive",
+      title: context.l10n.upload_to_google_drive_title,
       onPressed: () {
-        ref.read(homeViewStateNotifier.notifier).uploadToGoogleDrive();
-        context.pop();
+        showAppAlertDialog(
+          context: context,
+          title: context.l10n.upload_to_google_drive_title,
+          message: context.l10n.upload_to_google_drive_confirmation_message,
+          actions: [
+            AppAlertAction(
+              title: context.l10n.common_cancel,
+              onPressed: () {
+                context.pop();
+              },
+            ),
+            AppAlertAction(
+              title: context.l10n.common_upload,
+              onPressed: () {
+                ref.read(homeViewStateNotifier.notifier).uploadToGoogleDrive();
+                context.pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -121,13 +142,13 @@ class MultiSelectionDoneButton extends ConsumerWidget {
           ),
         ],
       ),
-      title: context.l10n.download_from_google_drive_text,
+      title: context.l10n.download_from_google_drive_title,
       onPressed: () async {
         context.pop();
         showAppAlertDialog(
           context: context,
-          title: context.l10n.download_from_google_drive_text,
-          message: context.l10n.download_from_google_drive_alert_message,
+          title: context.l10n.download_from_google_drive_title,
+          message: context.l10n.download_from_google_drive_confirmation_message,
           actions: [
             AppAlertAction(
               title: context.l10n.common_cancel,
@@ -136,7 +157,6 @@ class MultiSelectionDoneButton extends ConsumerWidget {
               },
             ),
             AppAlertAction(
-              isDestructiveAction: true,
               title: context.l10n.common_download,
               onPressed: () {
                 ref
@@ -174,14 +194,13 @@ class MultiSelectionDoneButton extends ConsumerWidget {
           ),
         ],
       ),
-      title: context.l10n.common_delete_from_google_drive,
+      title: context.l10n.delete_from_google_drive_title,
       onPressed: () {
         context.pop();
         showAppAlertDialog(
           context: context,
-          title: context.l10n.common_delete_from_google_drive,
-          message:
-              context.l10n.delete_media_from_google_drive_confirmation_message,
+          title: context.l10n.delete_from_google_drive_title,
+          message: context.l10n.delete_from_google_drive_confirmation_message,
           actions: [
             AppAlertAction(
               title: context.l10n.common_cancel,
@@ -205,7 +224,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
     );
   }
 
-  Widget _uploadFromDropboxAction(BuildContext context, WidgetRef ref) {
+  Widget _uploadToDropboxAction(BuildContext context, WidgetRef ref) {
     return AppSheetAction(
       icon: Stack(
         alignment: Alignment.bottomRight,
@@ -225,10 +244,28 @@ class MultiSelectionDoneButton extends ConsumerWidget {
           ),
         ],
       ),
-      title: "Upload to Dropbox",
+      title: context.l10n.upload_to_dropbox_title,
       onPressed: () {
-        ref.read(homeViewStateNotifier.notifier).uploadToDropbox();
-        context.pop();
+        showAppAlertDialog(
+          context: context,
+          title: context.l10n.upload_to_dropbox_title,
+          message: context.l10n.upload_to_dropbox_confirmation_message,
+          actions: [
+            AppAlertAction(
+              title: context.l10n.common_cancel,
+              onPressed: () {
+                context.pop();
+              },
+            ),
+            AppAlertAction(
+              title: context.l10n.common_upload,
+              onPressed: () {
+                ref.read(homeViewStateNotifier.notifier).uploadToDropbox();
+                context.pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -253,14 +290,13 @@ class MultiSelectionDoneButton extends ConsumerWidget {
           ),
         ],
       ),
-      title: "Download from Dropbox",
+      title: context.l10n.download_from_dropbox_title,
       onPressed: () async {
         context.pop();
         showAppAlertDialog(
           context: context,
-          title: "Download from Dropbox",
-          message:
-              "Are you sure you want to download the selected media from Dropbox?",
+          title: context.l10n.download_from_dropbox_title,
+          message: context.l10n.download_from_dropbox_confirmation_message,
           actions: [
             AppAlertAction(
               title: context.l10n.common_cancel,
@@ -269,7 +305,6 @@ class MultiSelectionDoneButton extends ConsumerWidget {
               },
             ),
             AppAlertAction(
-              isDestructiveAction: true,
               title: context.l10n.common_download,
               onPressed: () {
                 ref.read(homeViewStateNotifier.notifier).downloadFromDropbox();
@@ -302,14 +337,13 @@ class MultiSelectionDoneButton extends ConsumerWidget {
           ),
         ],
       ),
-      title: "Delete from Dropbox",
+      title: context.l10n.delete_from_dropbox_title,
       onPressed: () {
         context.pop();
         showAppAlertDialog(
           context: context,
-          title: "Delete from Dropbox",
-          message:
-              "Are you sure you want to delete the selected media from Dropbox?",
+          title: context.l10n.delete_from_dropbox_title,
+          message: context.l10n.delete_from_dropbox_confirmation_message,
           actions: [
             AppAlertAction(
               title: context.l10n.common_cancel,
@@ -337,12 +371,12 @@ class MultiSelectionDoneButton extends ConsumerWidget {
         CupertinoIcons.delete,
         size: 24,
       ),
-      title: context.l10n.common_delete_from_device,
+      title: context.l10n.delete_from_device_title,
       onPressed: () {
         showAppAlertDialog(
           context: context,
-          title: context.l10n.common_delete_from_device,
-          message: context.l10n.delete_media_from_device_confirmation_message,
+          title: context.l10n.delete_from_device_title,
+          message: context.l10n.delete_from_device_confirmation_message,
           actions: [
             AppAlertAction(
               title: context.l10n.common_cancel,
