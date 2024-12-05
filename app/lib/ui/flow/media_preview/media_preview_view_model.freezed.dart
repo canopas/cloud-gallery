@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$MediaPreviewState {
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
+  DropboxAccount? get dropboxAccount => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   Object? get actionError => throw _privateConstructorUsedError;
   List<AppMedia> get medias => throw _privateConstructorUsedError;
@@ -47,6 +48,7 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {GoogleSignInAccount? googleAccount,
+      DropboxAccount? dropboxAccount,
       Object? error,
       Object? actionError,
       List<AppMedia> medias,
@@ -59,6 +61,8 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       bool isVideoPlaying,
       Map<String, UploadMediaProcess> uploadMediaProcesses,
       Map<String, DownloadMediaProcess> downloadMediaProcesses});
+
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount;
 }
 
 /// @nodoc
@@ -77,6 +81,7 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
   @override
   $Res call({
     Object? googleAccount = freezed,
+    Object? dropboxAccount = freezed,
     Object? error = freezed,
     Object? actionError = freezed,
     Object? medias = null,
@@ -95,6 +100,10 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
+      dropboxAccount: freezed == dropboxAccount
+          ? _value.dropboxAccount
+          : dropboxAccount // ignore: cast_nullable_to_non_nullable
+              as DropboxAccount?,
       error: freezed == error ? _value.error : error,
       actionError: freezed == actionError ? _value.actionError : actionError,
       medias: null == medias
@@ -139,6 +148,20 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
               as Map<String, DownloadMediaProcess>,
     ) as $Val);
   }
+
+  /// Create a copy of MediaPreviewState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount {
+    if (_value.dropboxAccount == null) {
+      return null;
+    }
+
+    return $DropboxAccountCopyWith<$Res>(_value.dropboxAccount!, (value) {
+      return _then(_value.copyWith(dropboxAccount: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -151,6 +174,7 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {GoogleSignInAccount? googleAccount,
+      DropboxAccount? dropboxAccount,
       Object? error,
       Object? actionError,
       List<AppMedia> medias,
@@ -163,6 +187,9 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       bool isVideoPlaying,
       Map<String, UploadMediaProcess> uploadMediaProcesses,
       Map<String, DownloadMediaProcess> downloadMediaProcesses});
+
+  @override
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount;
 }
 
 /// @nodoc
@@ -179,6 +206,7 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? googleAccount = freezed,
+    Object? dropboxAccount = freezed,
     Object? error = freezed,
     Object? actionError = freezed,
     Object? medias = null,
@@ -197,6 +225,10 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
               as GoogleSignInAccount?,
+      dropboxAccount: freezed == dropboxAccount
+          ? _value.dropboxAccount
+          : dropboxAccount // ignore: cast_nullable_to_non_nullable
+              as DropboxAccount?,
       error: freezed == error ? _value.error : error,
       actionError: freezed == actionError ? _value.actionError : actionError,
       medias: null == medias
@@ -248,6 +280,7 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
 class _$MediaPreviewStateImpl implements _MediaPreviewState {
   const _$MediaPreviewStateImpl(
       {this.googleAccount,
+      this.dropboxAccount,
       this.error,
       this.actionError,
       final List<AppMedia> medias = const [],
@@ -267,6 +300,8 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
   @override
   final GoogleSignInAccount? googleAccount;
+  @override
+  final DropboxAccount? dropboxAccount;
   @override
   final Object? error;
   @override
@@ -323,7 +358,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
   @override
   String toString() {
-    return 'MediaPreviewState(googleAccount: $googleAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
+    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
   }
 
   @override
@@ -333,6 +368,8 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
             other is _$MediaPreviewStateImpl &&
             (identical(other.googleAccount, googleAccount) ||
                 other.googleAccount == googleAccount) &&
+            (identical(other.dropboxAccount, dropboxAccount) ||
+                other.dropboxAccount == dropboxAccount) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             const DeepCollectionEquality()
                 .equals(other.actionError, actionError) &&
@@ -361,6 +398,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   int get hashCode => Object.hash(
       runtimeType,
       googleAccount,
+      dropboxAccount,
       const DeepCollectionEquality().hash(error),
       const DeepCollectionEquality().hash(actionError),
       const DeepCollectionEquality().hash(_medias),
@@ -387,6 +425,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 abstract class _MediaPreviewState implements MediaPreviewState {
   const factory _MediaPreviewState(
           {final GoogleSignInAccount? googleAccount,
+          final DropboxAccount? dropboxAccount,
           final Object? error,
           final Object? actionError,
           final List<AppMedia> medias,
@@ -403,6 +442,8 @@ abstract class _MediaPreviewState implements MediaPreviewState {
 
   @override
   GoogleSignInAccount? get googleAccount;
+  @override
+  DropboxAccount? get dropboxAccount;
   @override
   Object? get error;
   @override

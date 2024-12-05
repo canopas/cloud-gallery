@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:data/domain/config.dart';
+import 'package:data/models/dropbox/account/dropbox_account.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:data/models/media_process/media_process.dart';
@@ -8,6 +9,7 @@ import 'package:data/services/auth_service.dart';
 import 'package:data/services/dropbox_services.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:data/services/local_media_service.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -21,8 +23,8 @@ final mediaPreviewStateNotifierProvider =
         ({
           int startIndex,
           List<AppMedia> medias,
-        })>(
-  (ref, state) => MediaPreviewStateNotifier(
+        })>((ref, state) {
+  final notifier = MediaPreviewStateNotifier(
     ref.read(localMediaServiceProvider),
     ref.read(googleDriveServiceProvider),
     ref.read(dropboxServiceProvider),
@@ -30,8 +32,13 @@ final mediaPreviewStateNotifierProvider =
     ref.read(authServiceProvider),
     state.medias,
     state.startIndex,
-  ),
-);
+    ref.read(AppPreferences.dropboxCurrentUserAccount),
+  );
+  ref.listen(AppPreferences.dropboxCurrentUserAccount, (previous, next) {
+    notifier._listenDropboxAccount(next);
+  });
+  return notifier;
+});
 
 class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   final LocalMediaService _localMediaService;
@@ -51,17 +58,21 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     this._authService,
     List<AppMedia> medias,
     int startIndex,
+    DropboxAccount? dropboxAccount,
   ) : super(
           MediaPreviewState(
             googleAccount: _authService.googleAccount,
             currentIndex: startIndex,
             medias: medias,
+            dropboxAccount: dropboxAccount,
           ),
         ) {
     _mediaProcessRepo.addListener(_mediaProcessObserve);
     _setBackUpFolderId();
     _listenGoogleAccount();
   }
+
+  // Google Account Listener ---------------------------------------------------
 
   void _listenGoogleAccount() {
     _googleAccountSubscription = _authService.onGoogleAccountChange.listen(
@@ -76,9 +87,15 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     );
   }
 
+  void _listenDropboxAccount(DropboxAccount? account) {
+    state = state.copyWith(dropboxAccount: account);
+  }
+
   Future<void> _setBackUpFolderId() async {
     _backUpFolderId = await _googleDriveService.getBackUpFolderId();
   }
+
+  // Media Process Observer ----------------------------------------------------
 
   void _mediaProcessObserve() {
     state = state.copyWith(
@@ -130,6 +147,8 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
       }
     }
   }
+
+  // Media Actions -------------------------------------------------------------
 
   Future<void> deleteMediaFromLocal(String id) async {
     try {
@@ -185,12 +204,12 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     }
   }
 
-  Future<void> downloadFromDropbox({required AppMedia media}) async {
-    if (_authService.dropboxAccount == null) return;
-    _mediaProcessRepo.downloadMedia(
-      folderId: ProviderConstants.backupFolderPath,
+  Future<void> uploadMediaInGoogleDrive({required AppMedia media}) async {
+    if (state.googleAccount == null) return;
+    _mediaProcessRepo.uploadMedia(
+      folderId: _backUpFolderId!,
       medias: [media],
-      provider: MediaProvider.dropbox,
+      provider: MediaProvider.googleDrive,
     );
   }
 
@@ -203,15 +222,6 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     );
   }
 
-  Future<void> uploadMediaInGoogleDrive({required AppMedia media}) async {
-    if (state.googleAccount == null) return;
-    _mediaProcessRepo.uploadMedia(
-      folderId: _backUpFolderId!,
-      medias: [media],
-      provider: MediaProvider.googleDrive,
-    );
-  }
-
   Future<void> downloadFromGoogleDrive({required AppMedia media}) async {
     if (state.googleAccount == null) return;
     _mediaProcessRepo.downloadMedia(
@@ -221,11 +231,22 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     );
   }
 
+  Future<void> downloadFromDropbox({required AppMedia media}) async {
+    if (_authService.dropboxAccount == null) return;
+    _mediaProcessRepo.downloadMedia(
+      folderId: ProviderConstants.backupFolderPath,
+      medias: [media],
+      provider: MediaProvider.dropbox,
+    );
+  }
+
+  // Preview Actions -----------------------------------------------------------
+
   void changeVisibleMediaIndex(int index) {
     state = state.copyWith(currentIndex: index);
   }
 
-  ///Video Player Actions
+  // Video Player Actions ------------------------------------------------------
 
   void toggleActionVisibility() {
     state = state.copyWith(showActions: !state.showActions);
@@ -268,6 +289,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
 class MediaPreviewState with _$MediaPreviewState {
   const factory MediaPreviewState({
     GoogleSignInAccount? googleAccount,
+    DropboxAccount? dropboxAccount,
     Object? error,
     Object? actionError,
     @Default([]) List<AppMedia> medias,

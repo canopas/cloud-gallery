@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:data/storage/app_preferences.dart';
 import '../../../components/app_page.dart';
 import '../../../components/error_view.dart';
 import '../../../components/snack_bar.dart';
@@ -47,7 +48,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     final currentIndex =
         widget.medias.indexWhere((element) => element.id == widget.startFrom);
 
-    //initialize view notifier with initial state
     _provider = mediaPreviewStateNotifierProvider(
       (startIndex: currentIndex, medias: widget.medias),
     );
@@ -62,8 +62,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           path: widget.medias[currentIndex].path,
         ),
       );
-    } else if (widget.medias[currentIndex].type.isVideo &&
-        widget.medias[currentIndex].isGoogleDriveStored) {}
+    }
     super.initState();
   }
 
@@ -216,8 +215,9 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           },
         ),
       );
-    } else if (media.type.isVideo && media.isGoogleDriveStored) {
-      return _googleDriveVideoView(context: context, media: media);
+    } else if (media.type.isVideo &&
+        (media.isGoogleDriveStored || media.isDropboxStored)) {
+      return _cloudVideoView(context: context, media: media);
     } else if (media.type.isImage) {
       return ImagePreview(media: media);
     } else {
@@ -228,7 +228,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     }
   }
 
-  Widget _googleDriveVideoView({
+  Widget _cloudVideoView({
     required BuildContext context,
     required AppMedia media,
   }) {
@@ -236,12 +236,17 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       builder: (context, ref, child) {
         final process = ref.watch(
           _provider.select(
-            (value) => media.isGoogleDriveStored
-                ? value.downloadMediaProcesses[media.driveMediaRefId]
-                : value.downloadMediaProcesses[media.dropboxMediaRefId],
+            (value) =>
+                media.driveMediaRefId != null && media.isGoogleDriveStored
+                    ? value.downloadMediaProcesses[media.driveMediaRefId]
+                    : media.dropboxMediaRefId != null
+                        ? value.downloadMediaProcesses[media.dropboxMediaRefId]
+                        : null,
           ),
         );
         return DownloadRequireView(
+          dropboxAccessToken:
+              ref.read(AppPreferences.dropboxToken)?.access_token,
           media: media,
           downloadProcess: process,
           onDownload: () {

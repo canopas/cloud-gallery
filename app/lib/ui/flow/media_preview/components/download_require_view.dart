@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import '../../../../components/error_view.dart';
+import '../../../../domain/image_providers/app_media_image_provider.dart';
 
 class DownloadRequireView extends StatelessWidget {
   final AppMedia media;
+  final String? dropboxAccessToken;
   final DownloadMediaProcess? downloadProcess;
   final void Function() onDownload;
 
@@ -18,6 +20,7 @@ class DownloadRequireView extends StatelessWidget {
     required this.media,
     this.downloadProcess,
     required this.onDownload,
+    this.dropboxAccessToken,
   });
 
   @override
@@ -28,10 +31,14 @@ class DownloadRequireView extends StatelessWidget {
         children: [
           Hero(
             tag: media,
-            child: Image.network(
+            child: Image(
+              image: AppMediaImageProvider(
+                media: media,
+                dropboxAccessToken: dropboxAccessToken,
+                thumbnailSize: Size(2000, 1500),
+              ),
               height: double.infinity,
               width: double.infinity,
-              media.thumbnailLink ?? '',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return const SizedBox();

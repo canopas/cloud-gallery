@@ -17,9 +17,9 @@ class LocalAssetCachedThumbnailImageProvider
 
   @override
   Future<LocalAssetCachedThumbnailImageProvider> obtainKey(
-      ImageConfiguration configuration) {
-    return SynchronousFuture<LocalAssetCachedThumbnailImageProvider>(this);
-  }
+    ImageConfiguration configuration,
+  ) =>
+      SynchronousFuture<LocalAssetCachedThumbnailImageProvider>(this);
 
   @override
   ImageStreamCompleter loadImage(
