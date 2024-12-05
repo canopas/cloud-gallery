@@ -92,6 +92,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   }
 
   Future<void> _setBackUpFolderId() async {
+    if (state.googleAccount == null) return;
     _backUpFolderId = await _googleDriveService.getBackUpFolderId();
   }
 

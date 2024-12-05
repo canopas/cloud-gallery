@@ -47,6 +47,8 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         (state) => (
           media: state.medias[state.currentIndex],
           showAction: state.showActions,
+          googleAccount: state.googleAccount,
+          dropboxAccount: state.dropboxAccount,
         ),
       ),
     );
@@ -77,21 +79,28 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
                   infoAction(context, state.media),
                   if (!state.media.sources
                           .contains(AppMediaSource.googleDrive) &&
-                      state.media.sources.contains(AppMediaSource.local))
+                      state.media.sources.contains(AppMediaSource.local) &&
+                      state.googleAccount != null)
                     _uploadToGoogleDriveAction(context, state.media),
                   if (state.media.sources
                           .contains(AppMediaSource.googleDrive) &&
-                      !state.media.sources.contains(AppMediaSource.local))
+                      !state.media.sources.contains(AppMediaSource.local) &&
+                      state.googleAccount != null)
                     _downloadFromGoogleDriveAction(context, state.media),
-                  if (state.media.sources.contains(AppMediaSource.googleDrive))
+                  if (state.media.sources
+                          .contains(AppMediaSource.googleDrive) &&
+                      state.googleAccount != null)
                     _deleteFromGoogleDriveAction(context, state.media),
                   if (!state.media.sources.contains(AppMediaSource.dropbox) &&
-                      state.media.sources.contains(AppMediaSource.local))
+                      state.media.sources.contains(AppMediaSource.local) &&
+                      state.dropboxAccount != null)
                     _uploadToDropboxAction(context, state.media),
                   if (state.media.sources.contains(AppMediaSource.dropbox) &&
-                      !state.media.sources.contains(AppMediaSource.local))
+                      !state.media.sources.contains(AppMediaSource.local) &&
+                      state.dropboxAccount != null)
                     _downloadFromDropboxAction(context, state.media),
-                  if (state.media.sources.contains(AppMediaSource.dropbox))
+                  if (state.media.sources.contains(AppMediaSource.dropbox) &&
+                      state.dropboxAccount != null)
                     _deleteFromDropboxAction(context, state.media),
                   if (state.media.sources.contains(AppMediaSource.local))
                     _deleteFromDeviceAction(context, state.media),

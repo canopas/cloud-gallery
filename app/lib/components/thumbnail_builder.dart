@@ -32,7 +32,7 @@ class AppMediaImage extends ConsumerWidget {
             media: media,
             dropboxAccessToken:
                 ref.read(AppPreferences.dropboxToken)?.access_token,
-            thumbnailSize: size,
+            thumbnailSize: size * 2,
           ),
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress != null) {

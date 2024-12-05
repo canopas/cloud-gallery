@@ -18,6 +18,7 @@ import '../models/media_process/media_process.dart';
 import '../services/dropbox_services.dart';
 import '../services/google_drive_service.dart';
 import '../services/local_media_service.dart';
+import '../storage/app_preferences.dart';
 
 final mediaProcessRepoProvider = Provider<MediaProcessRepo>((ref) {
   final repo = MediaProcessRepo(
@@ -25,8 +26,15 @@ final mediaProcessRepoProvider = Provider<MediaProcessRepo>((ref) {
     ref.read(dropboxServiceProvider),
     ref.read(localMediaServiceProvider),
     ref.read(notificationHandlerProvider),
+    ref.read(AppPreferences.notifications),
   );
   ref.onDispose(repo.dispose);
+  ref.listen(
+    AppPreferences.notifications,
+    (previous, next) {
+      repo.updateShowNotification(next);
+    },
+  );
 
   return repo;
 });
@@ -49,6 +57,7 @@ class MediaProcessRepo extends ChangeNotifier {
   final DropboxService _dropboxService;
   final LocalMediaService _localMediaService;
   final NotificationHandler _notificationHandler;
+  bool _showNotification;
 
   late Database database;
 
@@ -64,8 +73,17 @@ class MediaProcessRepo extends ChangeNotifier {
     this._dropboxService,
     this._localMediaService,
     this._notificationHandler,
+    this._showNotification,
   ) {
     initializeLocalDatabase();
+  }
+
+  void updateShowNotification(bool showNotification) {
+    _showNotification = showNotification;
+
+    if (!showNotification) {
+      _notificationHandler.cancelAllNotification();
+    }
   }
 
   // DATABASE COMMON OPERATIONS ------------------------------------------------
@@ -358,6 +376,14 @@ class MediaProcessRepo extends ChangeNotifier {
     await updateQueue(database);
   }
 
+  Future<void> removeAllWaitingUploadsOfProvider(MediaProvider provider) async {
+    await database.rawDelete(
+      "DELETE FROM ${LocalDatabaseConstants.uploadQueueTable} WHERE provider = ? AND status = ?",
+      [MediaProvider.googleDrive.value, MediaQueueProcessStatus.waiting.value],
+    );
+    await updateQueue(database);
+  }
+
   Future<void> removeItemFromUploadQueue(String id) async {
     await database.rawDelete(
       "DELETE FROM ${LocalDatabaseConstants.uploadQueueTable} WHERE id = ?",
@@ -394,6 +420,7 @@ class MediaProcessRepo extends ChangeNotifier {
       int? chunk,
       int total = 100,
     }) async {
+      if (!_showNotification) return;
       _notificationHandler.showNotification(
         silent: true,
         id: process.notification_id,
@@ -473,6 +500,7 @@ class MediaProcessRepo extends ChangeNotifier {
       int? chunk,
       int total = 100,
     }) async {
+      if (!_showNotification) return;
       _notificationHandler.showNotification(
         silent: true,
         id: process.notification_id,
@@ -658,6 +686,7 @@ class MediaProcessRepo extends ChangeNotifier {
       int? chunk,
       int total = 100,
     }) async {
+      if (!_showNotification) return;
       _notificationHandler.showNotification(
         silent: true,
         id: process.notification_id,
@@ -774,6 +803,7 @@ class MediaProcessRepo extends ChangeNotifier {
       int? chunk,
       int total = 100,
     }) async {
+      if (!_showNotification) return;
       _notificationHandler.showNotification(
         silent: true,
         id: process.notification_id,

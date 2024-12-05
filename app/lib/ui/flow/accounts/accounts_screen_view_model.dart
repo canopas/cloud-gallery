@@ -68,6 +68,8 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
   Future<void> signOutWithGoogle() async {
     try {
       state = state.copyWith(error: null);
+      _mediaProcessRepo
+          .removeAllWaitingUploadsOfProvider(MediaProvider.googleDrive);
       await _authService.signOutWithGoogle();
     } catch (e) {
       state = state.copyWith(error: e);
@@ -86,6 +88,8 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
   Future<void> signOutWithDropbox() async {
     try {
       state = state.copyWith(error: null);
+      _mediaProcessRepo
+          .removeAllWaitingUploadsOfProvider(MediaProvider.dropbox);
       await _authService.signOutWithDropBox();
     } catch (e) {
       state = state.copyWith(error: e);

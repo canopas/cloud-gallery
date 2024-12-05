@@ -67,6 +67,10 @@ class NotificationHandler {
     await _flutterLocalNotificationsPlugin.cancel(id);
   }
 
+  Future<void> cancelAllNotification() async {
+    await _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
   Future<void> showNotification({
     required int id,
     required String name,
@@ -80,6 +84,7 @@ class NotificationHandler {
     bool silent = false,
     int? progress,
     int maxProgress = 100,
+    bool onlyAlertOnce = false,
   }) async {
     await _flutterLocalNotificationsPlugin.show(
       id,
@@ -106,6 +111,7 @@ class NotificationHandler {
           styleInformation: styleInformation,
           channelDescription: _androidChannel.description,
           setAsGroupSummary: setAsGroupSummary,
+          onlyAlertOnce: onlyAlertOnce,
         ),
       ),
     );

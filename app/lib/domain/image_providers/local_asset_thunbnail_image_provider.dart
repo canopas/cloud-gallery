@@ -50,6 +50,9 @@ class LocalAssetCachedThumbnailImageProvider
       codec.dispose();
       return ImageInfo(image: frame.image);
     } else {
+      // Create the cache file if it doesn't exist.
+      await cacheFile.create(recursive: true);
+
       // Fetch the image from the network
       final response = await Dio().get(url);
 

@@ -67,6 +67,9 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
         ),
       );
     } else {
+      // Create the cache file if it doesn't exist.
+      await cacheFile.create(recursive: true);
+
       if (media.sources.contains(AppMediaSource.local)) {
         // If the media is local, generate thumbnail from the local asset and cache it.
         final Uint8List? bytes = await media.loadThumbnail(size: thumbnailSize);

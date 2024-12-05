@@ -56,6 +56,9 @@ class DropboxThumbnailProvider extends ImageProvider<DropboxThumbnailProvider> {
       codec.dispose();
       return ImageInfo(image: frame.image);
     } else {
+      // Create the cache file if it doesn't exist.
+      await cacheFile.create(recursive: true);
+
       // Fetch the thumbnail from Dropbox API
       final response = await Dio().post(
         'https://content.dropboxapi.com/2/files/get_thumbnail_v2',

@@ -20,8 +20,15 @@ class MultiSelectionDoneButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedMedias = ref
-        .watch(homeViewStateNotifier.select((state) => state.selectedMedias));
+    final state = ref.watch(
+      homeViewStateNotifier.select(
+        (state) => (
+          selectedMedias: state.selectedMedias,
+          googleAccount: state.googleAccount,
+          dropboxAccount: state.dropboxAccount
+        ),
+      ),
+    );
 
     return FloatingActionButton(
       elevation: 3,
@@ -32,39 +39,47 @@ class MultiSelectionDoneButton extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (selectedMedias.values.any(
+              if (state.selectedMedias.values.any(
                 (element) =>
                     !element.sources.contains(AppMediaSource.googleDrive) &&
-                    element.sources.contains(AppMediaSource.local),
+                    element.sources.contains(AppMediaSource.local) &&
+                    state.googleAccount != null,
               ))
                 _uploadToGoogleDriveAction(context, ref),
-              if (selectedMedias.values
-                  .any((element) => element.isGoogleDriveStored))
+              if (state.selectedMedias.values
+                      .any((element) => element.isGoogleDriveStored) &&
+                  state.googleAccount != null)
                 _downloadFromGoogleDriveAction(context, ref),
-              if (selectedMedias.values.any(
-                (element) =>
-                    element.sources.contains(AppMediaSource.googleDrive),
-              ))
+              if (state.selectedMedias.values.any(
+                    (element) =>
+                        element.sources.contains(AppMediaSource.googleDrive),
+                  ) &&
+                  state.googleAccount != null)
                 _deleteMediaFromGoogleDriveAction(context, ref),
-              if (selectedMedias.values.any(
+              if (state.selectedMedias.values.any(
                 (element) =>
                     !element.sources.contains(AppMediaSource.dropbox) &&
-                    element.sources.contains(AppMediaSource.local),
+                    element.sources.contains(AppMediaSource.local) &&
+                    state.dropboxAccount != null,
               ))
                 _uploadToDropboxAction(context, ref),
-              if (selectedMedias.values
-                  .any((element) => element.isDropboxStored))
+              if (state.selectedMedias.values
+                      .any((element) => element.isDropboxStored) &&
+                  state.dropboxAccount != null)
                 _downloadFromDropboxAction(context, ref),
-              if (selectedMedias.values.any(
-                (element) => element.sources.contains(AppMediaSource.dropbox),
-              ))
+              if (state.selectedMedias.values.any(
+                    (element) =>
+                        element.sources.contains(AppMediaSource.dropbox),
+                  ) &&
+                  state.dropboxAccount != null)
                 _deleteMediaFromDropboxAction(context, ref),
-              if (selectedMedias.values.any(
+              if (state.selectedMedias.values.any(
                 (element) => element.sources.contains(AppMediaSource.local),
               ))
                 _deleteFromDevice(context, ref),
-              if (selectedMedias.values.any((element) => element.isLocalStored))
-                _shareAction(context, selectedMedias),
+              if (state.selectedMedias.values
+                  .any((element) => element.isLocalStored))
+                _shareAction(context, state.selectedMedias),
             ],
           ),
         );
