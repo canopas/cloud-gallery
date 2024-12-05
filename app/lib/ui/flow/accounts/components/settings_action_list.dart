@@ -1,3 +1,4 @@
+import 'package:permission_handler/permission_handler.dart';
 import '../../../../components/web_view_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -7,22 +8,61 @@ import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/segmented_button.dart';
 import 'package:style/buttons/switch.dart';
 import 'package:style/extensions/context_extensions.dart';
+import '../accounts_screen_view_model.dart';
 
-class SettingsActionList extends ConsumerWidget {
+class SettingsActionList extends ConsumerStatefulWidget {
   const SettingsActionList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsActionList> createState() => _SettingsActionListState();
+}
+
+class _SettingsActionListState extends ConsumerState<SettingsActionList>
+    with WidgetsBindingObserver {
+  late AccountsStateNotifier notifier;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    notifier = ref.read(accountsStateNotifierProvider.notifier);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      notifier.updateNotificationsPermissionStatus();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isDarkMode = ref.watch(AppPreferences.isDarkMode);
     final notifications = ref.watch(AppPreferences.notifications);
+    final notificationsPermissionStatusAllowed = ref.watch(
+      accountsStateNotifierProvider.select(
+        (value) => value.notificationsPermissionStatus,
+      ),
+    );
     return ActionList(
       buttons: [
         ActionListButton(
           title: context.l10n.notification_title,
           trailing: AppSwitch(
-            value: notifications,
-            onChanged: (value) {
-              ref.read(AppPreferences.notifications.notifier).state = value;
+            value: notificationsPermissionStatusAllowed ? notifications : false,
+            onChanged: (value) async {
+              if (notificationsPermissionStatusAllowed) {
+                ref.read(AppPreferences.notifications.notifier).state = value;
+              } else {
+                final status = await Permission.notification.request();
+                notifier.updateNotificationsPermissionStatus(status: status);
+              }
             },
           ),
         ),

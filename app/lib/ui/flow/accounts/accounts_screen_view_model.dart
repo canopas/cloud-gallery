@@ -8,6 +8,7 @@ import 'package:data/storage/provider/preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 part 'accounts_screen_view_model.freezed.dart';
 
@@ -36,7 +37,10 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
     this._autoBackupInDropboxController,
     this._autoBackupInGoogleDriveController,
     this._mediaProcessRepo,
-  ) : super(AccountsState(googleAccount: _authService.googleAccount));
+  ) : super(AccountsState(googleAccount: _authService.googleAccount)) {
+    init();
+    updateNotificationsPermissionStatus();
+  }
 
   Future<void> init() async {
     _getAppVersion();
@@ -50,6 +54,11 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
   void dispose() {
     _googleAccountSubscription?.cancel();
     super.dispose();
+  }
+
+  Future<void> updateNotificationsPermissionStatus({PermissionStatus? status}) async {
+     status ??= await Permission.notification.status;
+    state = state.copyWith(notificationsPermissionStatus: status.isGranted);
   }
 
   void updateUser(GoogleSignInAccount? account) {
@@ -125,6 +134,7 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
 @freezed
 class AccountsState with _$AccountsState {
   const factory AccountsState({
+    @Default(true) bool notificationsPermissionStatus,
     String? version,
     Object? error,
     GoogleSignInAccount? googleAccount,

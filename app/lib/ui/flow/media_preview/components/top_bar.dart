@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:flutter_svg/svg.dart';
 import '../../../../domain/extensions/context_extensions.dart';
+import '../../../../gen/assets.gen.dart';
 import '../../../navigation/app_route.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
@@ -153,10 +155,23 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
     return PopupMenuItem(
       child: Row(
         children: [
-          Icon(
-            CupertinoIcons.cloud_upload,
-            color: context.colorScheme.textSecondary,
-            size: 22,
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 0, right: 8),
+                child: Icon(
+                  CupertinoIcons.cloud_upload,
+                  color: context.colorScheme.textSecondary,
+                  size: 20,
+                ),
+              ),
+              SvgPicture.asset(
+                Assets.images.icons.icGoogleDrive,
+                width: 14,
+                height: 14,
+              ),
+            ],
           ),
           const SizedBox(width: 16),
           Text(
@@ -168,6 +183,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.upload_to_google_drive_title,
@@ -199,10 +215,23 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
     return PopupMenuItem(
       child: Row(
         children: [
-          Icon(
-            CupertinoIcons.cloud_download,
-            color: context.colorScheme.textSecondary,
-            size: 22,
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 0, right: 8),
+                child: Icon(
+                  CupertinoIcons.cloud_download,
+                  color: context.colorScheme.textSecondary,
+                  size: 20,
+                ),
+              ),
+              SvgPicture.asset(
+                Assets.images.icons.icGoogleDrive,
+                width: 14,
+                height: 14,
+              ),
+            ],
           ),
           const SizedBox(width: 16),
           Text(
@@ -214,6 +243,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.download_from_google_drive_title,
@@ -245,10 +275,23 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
     return PopupMenuItem(
       child: Row(
         children: [
-          Icon(
-            CupertinoIcons.delete,
-            color: context.colorScheme.textSecondary,
-            size: 22,
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2, right: 2),
+                child: Icon(
+                  CupertinoIcons.trash,
+                  color: context.colorScheme.textSecondary,
+                  size: 20,
+                ),
+              ),
+              SvgPicture.asset(
+                Assets.images.icons.icGoogleDrive,
+                width: 14,
+                height: 14,
+              ),
+            ],
           ),
           const SizedBox(width: 16),
           Text(
@@ -260,6 +303,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.delete_from_google_drive_title,
@@ -292,10 +336,23 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
     return PopupMenuItem(
       child: Row(
         children: [
-          Icon(
-            CupertinoIcons.cloud_upload,
-            color: context.colorScheme.textSecondary,
-            size: 22,
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 0, right: 8),
+                child: Icon(
+                  CupertinoIcons.cloud_upload,
+                  color: context.colorScheme.textSecondary,
+                  size: 20,
+                ),
+              ),
+              SvgPicture.asset(
+                Assets.images.icons.icDropbox,
+                width: 14,
+                height: 14,
+              ),
+            ],
           ),
           const SizedBox(width: 16),
           Text(
@@ -307,6 +364,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.upload_to_dropbox_title,
@@ -338,10 +396,23 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
     return PopupMenuItem(
       child: Row(
         children: [
-          Icon(
-            CupertinoIcons.cloud_download,
-            color: context.colorScheme.textSecondary,
-            size: 22,
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 0, right: 8),
+                child: Icon(
+                  CupertinoIcons.cloud_download,
+                  color: context.colorScheme.textSecondary,
+                  size: 20,
+                ),
+              ),
+              SvgPicture.asset(
+                Assets.images.icons.icDropbox,
+                width: 14,
+                height: 14,
+              ),
+            ],
           ),
           const SizedBox(width: 16),
           Text(
@@ -353,6 +424,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.download_from_dropbox_title,
@@ -384,10 +456,23 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
     return PopupMenuItem(
       child: Row(
         children: [
-          Icon(
-            CupertinoIcons.delete,
-            color: context.colorScheme.textSecondary,
-            size: 22,
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2, right: 2),
+                child: Icon(
+                  CupertinoIcons.trash,
+                  color: context.colorScheme.textSecondary,
+                  size: 20,
+                ),
+              ),
+              SvgPicture.asset(
+                Assets.images.icons.icDropbox,
+                width: 14,
+                height: 14,
+              ),
+            ],
           ),
           const SizedBox(width: 16),
           Text(
@@ -399,6 +484,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.delete_from_dropbox_title,
@@ -446,6 +532,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.delete_from_device_title,
@@ -474,6 +561,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
   PopupMenuItem _shareAction(BuildContext context, AppMedia media) {
     return PopupMenuItem(
       onTap: () async {
+        context.pop();
         await Share.shareXFiles([XFile(media.path)]);
       },
       child: Row(

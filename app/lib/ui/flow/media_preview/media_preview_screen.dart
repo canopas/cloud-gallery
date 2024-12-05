@@ -199,19 +199,27 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               ),
             );
 
-            if (!state.initialized || state.buffring) {
+            if (!state.initialized) {
               return AppCircularProgressIndicator(
                 color: context.colorScheme.onPrimary,
               );
-            } else {
-              return Hero(
-                tag: media,
-                child: AspectRatio(
-                  aspectRatio: _videoPlayerController!.value.aspectRatio,
-                  child: VideoPlayer(_videoPlayerController!),
-                ),
-              );
             }
+            return Hero(
+              tag: media,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  AspectRatio(
+                    aspectRatio: _videoPlayerController!.value.aspectRatio,
+                    child: VideoPlayer(_videoPlayerController!),
+                  ),
+                  if (state.buffring)
+                    AppCircularProgressIndicator(
+                      color: context.colorScheme.onPrimary,
+                    ),
+                ],
+              ),
+            );
           },
         ),
       );

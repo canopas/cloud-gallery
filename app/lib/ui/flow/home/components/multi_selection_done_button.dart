@@ -113,6 +113,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
       ),
       title: context.l10n.upload_to_google_drive_title,
       onPressed: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.upload_to_google_drive_title,
@@ -261,6 +262,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
       ),
       title: context.l10n.upload_to_dropbox_title,
       onPressed: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.upload_to_dropbox_title,
@@ -388,6 +390,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
       ),
       title: context.l10n.delete_from_device_title,
       onPressed: () {
+        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.delete_from_device_title,

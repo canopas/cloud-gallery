@@ -463,7 +463,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           update: (media) {
             if (ids.contains(media.id) && media.isCommonStored) {
               return media.removeLocalRef();
-            } else if (ids.contains(media.id) && !media.isLocalStored) {
+            } else if (ids.contains(media.id) && media.isLocalStored) {
               return null;
             }
             return media;

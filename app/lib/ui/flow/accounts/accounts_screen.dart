@@ -1,6 +1,5 @@
 import '../../../components/app_page.dart';
 import '../../../domain/extensions/context_extensions.dart';
-import '../../../domain/extensions/widget_extensions.dart';
 import '../../../gen/assets.gen.dart';
 import 'accounts_screen_view_model.dart';
 import 'components/settings_action_list.dart';
@@ -33,7 +32,6 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   void initState() {
     super.initState();
     notifier = ref.read(accountsStateNotifierProvider.notifier);
-    runPostFrame(() => notifier.init());
   }
 
   void _errorObserver() {
