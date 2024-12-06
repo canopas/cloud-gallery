@@ -414,6 +414,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
   Future<void> _uploadInGoogleDrive(UploadMediaProcess uploadProcess) async {
     UploadMediaProcess process = uploadProcess;
+    Timer? updateDatabaseDebounce;
 
     Future<void> showNotification(
       String message, {
@@ -453,19 +454,26 @@ class MediaProcessRepo extends ChangeNotifier {
               _uploadQueue.firstWhere((element) => element.id == process.id);
           if (process.status.isTerminated) {
             cancelToken.cancel();
-          } else {
-            showNotification(
-              '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+          }
+
+          if (updateDatabaseDebounce == null ||
+              !updateDatabaseDebounce!.isActive) {
+            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
+
+            if (!process.status.isTerminated) {
+              showNotification(
+                '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+                chunk: chunk,
+                total: total,
+              );
+            }
+
+            await updateUploadProcessProgress(
+              id: process.id,
               chunk: chunk,
               total: total,
             );
           }
-
-          await updateUploadProcessProgress(
-            id: process.id,
-            chunk: chunk,
-            total: total,
-          );
         },
         cancelToken: cancelToken,
       );
@@ -494,6 +502,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
   Future<void> _uploadInDropbox(UploadMediaProcess uploadProcess) async {
     UploadMediaProcess process = uploadProcess;
+    Timer? updateDatabaseDebounce;
 
     Future showNotification(
       String message, {
@@ -533,19 +542,25 @@ class MediaProcessRepo extends ChangeNotifier {
               _uploadQueue.firstWhere((element) => element.id == process.id);
           if (process.status.isTerminated) {
             cancelToken.cancel();
-          } else {
-            showNotification(
-              '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+          }
+          if (updateDatabaseDebounce == null ||
+              !updateDatabaseDebounce!.isActive) {
+            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
+
+            if (!process.status.isTerminated) {
+              showNotification(
+                '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+                chunk: chunk,
+                total: total,
+              );
+            }
+
+            await updateUploadProcessProgress(
+              id: process.id,
               chunk: chunk,
               total: total,
             );
           }
-
-          await updateUploadProcessProgress(
-            id: process.id,
-            chunk: chunk,
-            total: total,
-          );
         },
         cancelToken: cancelToken,
       );
@@ -725,6 +740,8 @@ class MediaProcessRepo extends ChangeNotifier {
 
           if (updateDatabaseDebounce == null ||
               !updateDatabaseDebounce!.isActive) {
+            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
+
             if (!process.status.isTerminated) {
               showNotification(
                 '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
@@ -732,8 +749,6 @@ class MediaProcessRepo extends ChangeNotifier {
                 total: total,
               );
             }
-
-            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
 
             await updateDownloadProcessProgress(
               id: process.id,
@@ -842,6 +857,8 @@ class MediaProcessRepo extends ChangeNotifier {
 
           if (updateDatabaseDebounce == null ||
               !updateDatabaseDebounce!.isActive) {
+            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
+
             if (!process.status.isTerminated) {
               showNotification(
                 '${received.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (received / total * 100).round()}%',
@@ -850,7 +867,6 @@ class MediaProcessRepo extends ChangeNotifier {
               );
             }
 
-            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
             await updateDownloadProcessProgress(
               id: process.id,
               received: received,
