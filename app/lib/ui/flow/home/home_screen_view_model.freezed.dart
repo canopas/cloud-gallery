@@ -20,6 +20,7 @@ mixin _$HomeViewState {
   Object? get actionError => throw _privateConstructorUsedError;
   bool get hasLocalMediaAccess => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
+  bool get cloudLoading => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
   DropboxAccount? get dropboxAccount => throw _privateConstructorUsedError;
   Map<DateTime, Map<String, AppMedia>> get medias =>
@@ -50,6 +51,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
       Object? actionError,
       bool hasLocalMediaAccess,
       bool loading,
+      bool cloudLoading,
       GoogleSignInAccount? googleAccount,
       DropboxAccount? dropboxAccount,
       Map<DateTime, Map<String, AppMedia>> medias,
@@ -80,6 +82,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? actionError = freezed,
     Object? hasLocalMediaAccess = null,
     Object? loading = null,
+    Object? cloudLoading = null,
     Object? googleAccount = freezed,
     Object? dropboxAccount = freezed,
     Object? medias = null,
@@ -98,6 +101,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      cloudLoading: null == cloudLoading
+          ? _value.cloudLoading
+          : cloudLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       googleAccount: freezed == googleAccount
           ? _value.googleAccount
@@ -158,6 +165,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       Object? actionError,
       bool hasLocalMediaAccess,
       bool loading,
+      bool cloudLoading,
       GoogleSignInAccount? googleAccount,
       DropboxAccount? dropboxAccount,
       Map<DateTime, Map<String, AppMedia>> medias,
@@ -187,6 +195,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? actionError = freezed,
     Object? hasLocalMediaAccess = null,
     Object? loading = null,
+    Object? cloudLoading = null,
     Object? googleAccount = freezed,
     Object? dropboxAccount = freezed,
     Object? medias = null,
@@ -205,6 +214,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      cloudLoading: null == cloudLoading
+          ? _value.cloudLoading
+          : cloudLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       googleAccount: freezed == googleAccount
           ? _value.googleAccount
@@ -246,6 +259,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.actionError,
       this.hasLocalMediaAccess = false,
       this.loading = false,
+      this.cloudLoading = false,
       this.googleAccount,
       this.dropboxAccount,
       final Map<DateTime, Map<String, AppMedia>> medias = const {},
@@ -268,6 +282,9 @@ class _$HomeViewStateImpl implements _HomeViewState {
   @override
   @JsonKey()
   final bool loading;
+  @override
+  @JsonKey()
+  final bool cloudLoading;
   @override
   final GoogleSignInAccount? googleAccount;
   @override
@@ -315,7 +332,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
 
   @override
   String toString() {
-    return 'HomeViewState(error: $error, actionError: $actionError, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, medias: $medias, selectedMedias: $selectedMedias, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses, lastLocalMediaId: $lastLocalMediaId)';
+    return 'HomeViewState(error: $error, actionError: $actionError, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, cloudLoading: $cloudLoading, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, medias: $medias, selectedMedias: $selectedMedias, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses, lastLocalMediaId: $lastLocalMediaId)';
   }
 
   @override
@@ -329,6 +346,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
             (identical(other.hasLocalMediaAccess, hasLocalMediaAccess) ||
                 other.hasLocalMediaAccess == hasLocalMediaAccess) &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.cloudLoading, cloudLoading) ||
+                other.cloudLoading == cloudLoading) &&
             (identical(other.googleAccount, googleAccount) ||
                 other.googleAccount == googleAccount) &&
             (identical(other.dropboxAccount, dropboxAccount) ||
@@ -351,6 +370,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       const DeepCollectionEquality().hash(actionError),
       hasLocalMediaAccess,
       loading,
+      cloudLoading,
       googleAccount,
       dropboxAccount,
       const DeepCollectionEquality().hash(_medias),
@@ -374,6 +394,7 @@ abstract class _HomeViewState implements HomeViewState {
       final Object? actionError,
       final bool hasLocalMediaAccess,
       final bool loading,
+      final bool cloudLoading,
       final GoogleSignInAccount? googleAccount,
       final DropboxAccount? dropboxAccount,
       final Map<DateTime, Map<String, AppMedia>> medias,
@@ -390,6 +411,8 @@ abstract class _HomeViewState implements HomeViewState {
   bool get hasLocalMediaAccess;
   @override
   bool get loading;
+  @override
+  bool get cloudLoading;
   @override
   GoogleSignInAccount? get googleAccount;
   @override

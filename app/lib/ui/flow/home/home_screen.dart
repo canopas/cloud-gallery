@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-
 import '../../../components/app_page.dart';
 import '../../../domain/extensions/widget_extensions.dart';
 import '../../../domain/formatter/date_formatter.dart';
@@ -128,8 +127,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             return FadeInSwitcher(
               child: state.loading
                   ? const Center(
-                      child: AppCircularProgressIndicator(
-                        size: 20,
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: AppCircularProgressIndicator(
+                          size: 20,
+                        ),
                       ),
                     )
                   : const SizedBox(),

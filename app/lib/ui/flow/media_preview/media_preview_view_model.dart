@@ -136,10 +136,18 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
         state = state.copyWith(
           medias: state.medias.map(
             (media) {
-              if (media.id == process.media_id &&
+              if (media.driveMediaRefId != null &&
+                  media.driveMediaRefId == process.media_id &&
+                  process.provider == MediaProvider.googleDrive &&
                   !media.sources.contains(AppMediaSource.local) &&
                   process.response != null) {
                 return process.response!.mergeGoogleDriveMedia(media);
+              } else if (media.dropboxMediaRefId != null &&
+                  media.dropboxMediaRefId == process.media_id &&
+                  process.provider == MediaProvider.dropbox &&
+                  !media.sources.contains(AppMediaSource.local) &&
+                  process.response != null) {
+                return process.response!.mergeDropboxMedia(media);
               }
               return media;
             },

@@ -15,7 +15,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import 'home_view_model_helper_mixin.dart';
 import 'package:data/repositories/media_process_repository.dart';
-
 import 'package:data/domain/config.dart';
 
 part 'home_screen_view_model.freezed.dart';
@@ -76,6 +75,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     _mediaProcessRepo.addListener(_mediaProcessObserve);
     _listenUserGoogleAccount();
     loadMedias();
+    _mediaProcessObserve();
   }
 
   // ACCOUNT LISTENERS ---------------------------------------------------------
@@ -84,17 +84,26 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   void _listenUserGoogleAccount() {
     _googleAccountSubscription =
         _authService.onGoogleAccountChange.listen((event) async {
-      state = state.copyWith(googleAccount: event);
       if (event != null) {
+        state = state.copyWith(googleAccount: event);
         _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+        loadMedias(reload: true);
       } else {
         _backUpFolderId = null;
         state = state.copyWith(
+          googleAccount: null,
           medias: mediaMapUpdate(
-            update: (media) => media.driveMediaRefId != null &&
-                    media.sources.contains(AppMediaSource.googleDrive)
-                ? media.removeGoogleDriveRef()
-                : media,
+            update: (media) {
+              if (media.driveMediaRefId != null &&
+                  media.sources.contains(AppMediaSource.googleDrive) &&
+                  media.sources.length > 1) {
+                return media.removeDropboxRef();
+              } else if (!media.sources.contains(AppMediaSource.googleDrive) &&
+                  media.driveMediaRefId == null) {
+                return media;
+              }
+              return null;
+            },
             medias: state.medias,
           ),
         );
@@ -108,10 +117,17 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       state = state.copyWith(
         dropboxAccount: null,
         medias: mediaMapUpdate(
-          update: (media) => media.dropboxMediaRefId != null ||
-                  media.sources.contains(AppMediaSource.dropbox)
-              ? media.removeDropboxRef()
-              : media,
+          update: (media) {
+            if (media.dropboxMediaRefId != null &&
+                media.sources.contains(AppMediaSource.dropbox) &&
+                media.sources.length > 1) {
+              return media.removeDropboxRef();
+            } else if (!media.sources.contains(AppMediaSource.dropbox) &&
+                media.dropboxMediaRefId == null) {
+              return media;
+            }
+            return null;
+          },
           medias: state.medias,
         ),
       );
@@ -121,7 +137,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     }
   }
 
-  // MEDIA PROCESS OBSERVER ---------------------------------------------------
+  // MEDIA PROCESS OBSERVER ----------------------------------------------------
 
   void _mediaProcessObserve() {
     state = state.copyWith(
@@ -162,10 +178,18 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         state = state.copyWith(
           medias: mediaMapUpdate(
             update: (media) {
-              if (media.id == process.media_id &&
+              if (media.driveMediaRefId != null &&
+                  media.driveMediaRefId == process.media_id &&
+                  process.provider == MediaProvider.googleDrive &&
                   !media.sources.contains(AppMediaSource.local) &&
                   process.response != null) {
                 return process.response!.mergeGoogleDriveMedia(media);
+              } else if (media.dropboxMediaRefId != null &&
+                  media.dropboxMediaRefId == process.media_id &&
+                  process.provider == MediaProvider.dropbox &&
+                  !media.sources.contains(AppMediaSource.local) &&
+                  process.response != null) {
+                return process.response!.mergeDropboxMedia(media);
               }
               return media;
             },
@@ -181,7 +205,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   /// Loads medias from local, google drive and dropbox.
   /// it append the medias to the existing medias if reload is false.
   Future<void> loadMedias({bool reload = false}) async {
-    state = state.copyWith(loading: true, error: null);
+    if (state.loading || state.cloudLoading) return;
+    state = state.copyWith(loading: true, cloudLoading: true, error: null);
     try {
       // Reset all the variables if reload is true
       if (reload) {
@@ -217,10 +242,12 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       state = state.copyWith(
         loading: false,
         medias: sortMedias(
-          medias: [
-            ...state.medias.values.expand((element) => element.values),
-            ...localMedia,
-          ],
+          medias: reload
+              ? localMedia
+              : [
+                  ...state.medias.values.expand((element) => element.values),
+                  ...localMedia,
+                ],
         ),
         lastLocalMediaId: localMedia.isNotEmpty ? localMedia.last.id : null,
       );
@@ -328,9 +355,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       state = state.copyWith(
         loading: false,
         medias: sortMedias(medias: [...allMergedMedias, ...cloudBasedMedias]),
+        cloudLoading: false,
       );
     } catch (e, s) {
-      state = state.copyWith(error: e, loading: false);
+      state = state.copyWith(error: e, loading: false, cloudLoading: false);
       _logger.e(
         "HomeViewStateNotifier: unable to load medias",
         error: e,
@@ -584,6 +612,7 @@ class HomeViewState with _$HomeViewState {
     Object? actionError,
     @Default(false) bool hasLocalMediaAccess,
     @Default(false) bool loading,
+    @Default(false) bool cloudLoading,
     GoogleSignInAccount? googleAccount,
     DropboxAccount? dropboxAccount,
     @Default({}) Map<DateTime, Map<String, AppMedia>> medias,
