@@ -351,6 +351,16 @@ class MediaProcessRepo extends ChangeNotifier {
     await updateQueue(database);
   }
 
+  Future<void> clearUploadProcessResponse({
+    required String id,
+  }) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET response = ? WHERE id = ?",
+      [null, id],
+    );
+    await updateQueue(database);
+  }
+
   Future<void> updateUploadProcessProgress({
     required String id,
     required int chunk,
@@ -485,6 +495,8 @@ class MediaProcessRepo extends ChangeNotifier {
         response: res,
         id: process.id,
       );
+
+      await clearUploadProcessResponse(id: process.id);
     } catch (e) {
       if (e is RequestCancelledByUser) {
         showNotification('Upload to Google Drive cancelled');
@@ -572,6 +584,8 @@ class MediaProcessRepo extends ChangeNotifier {
         response: res,
         id: process.id,
       );
+
+      await clearUploadProcessResponse(id: process.id);
     } catch (e) {
       if (e is RequestCancelledByUser) {
         showNotification('Upload to Dropbox cancelled');
@@ -634,6 +648,16 @@ class MediaProcessRepo extends ChangeNotifier {
     await database.rawUpdate(
       "UPDATE ${LocalDatabaseConstants.downloadQueueTable} SET status = ?, response = ? WHERE id = ?",
       [status.value, LocalDatabaseAppMediaConverter().toJson(response), id],
+    );
+    await updateQueue(database);
+  }
+
+  Future<void> clearDownloadProcessResponse({
+    required String id,
+  }) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.downloadQueueTable} SET response = ? WHERE id = ?",
+      [null, id],
     );
     await updateQueue(database);
   }
@@ -787,6 +811,8 @@ class MediaProcessRepo extends ChangeNotifier {
         response: localMedia,
         id: process.id,
       );
+
+      await clearDownloadProcessResponse(id: process.id);
     } catch (error) {
       if (error is RequestCancelledByUser) {
         showNotification('Download from Google Drive cancelled');
@@ -903,6 +929,8 @@ class MediaProcessRepo extends ChangeNotifier {
         response: localMedia,
         id: process.id,
       );
+
+      await clearDownloadProcessResponse(id: process.id);
     } catch (error) {
       if (error is RequestCancelledByUser) {
         showNotification('Download from Dropbox cancelled');

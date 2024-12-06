@@ -1,4 +1,3 @@
-import '../../errors/app_error.dart';
 import '../../log/logger.dart';
 import '../../services/auth_service.dart';
 import 'package:dio/dio.dart';
@@ -51,48 +50,40 @@ final rawDioProvider = Provider((ref) {
 
 extension DioExtensions on Dio {
   Future<Response<T>> req<T>(Endpoint endpoint) async {
-    try {
-      return await request(
-        endpoint.baseUrl + endpoint.path,
-        queryParameters: endpoint.queryParameters,
-        options: Options(
-          method: endpoint.method.name,
-          headers: endpoint.headers,
-          responseType: endpoint.responseType,
-          contentType: endpoint.contentType,
-          validateStatus: (status) =>
-              status != null && status >= 200 && status < 300,
-        ),
-        data: endpoint.data,
-        cancelToken: endpoint.cancelToken,
-        onReceiveProgress: endpoint.onReceiveProgress,
-        onSendProgress: endpoint.onSendProgress,
-      );
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    return await request(
+      endpoint.baseUrl + endpoint.path,
+      queryParameters: endpoint.queryParameters,
+      options: Options(
+        method: endpoint.method.name,
+        headers: endpoint.headers,
+        responseType: endpoint.responseType,
+        contentType: endpoint.contentType,
+        validateStatus: (status) =>
+            status != null && status >= 200 && status < 300,
+      ),
+      data: endpoint.data,
+      cancelToken: endpoint.cancelToken,
+      onReceiveProgress: endpoint.onReceiveProgress,
+      onSendProgress: endpoint.onSendProgress,
+    );
   }
 
   Future<Response> downloadReq(DownloadEndpoint endpoint) async {
-    try {
-      return await download(
-        endpoint.baseUrl + endpoint.path,
-        endpoint.storePath,
-        queryParameters: endpoint.queryParameters,
-        options: Options(
-          method: endpoint.method.name,
-          headers: endpoint.headers,
-          responseType: endpoint.responseType,
-          contentType: endpoint.contentType,
-          validateStatus: (status) =>
-              status != null && status >= 200 && status < 300,
-        ),
-        data: endpoint.data,
-        cancelToken: endpoint.cancelToken,
-        onReceiveProgress: endpoint.onReceiveProgress,
-      );
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    return await download(
+      endpoint.baseUrl + endpoint.path,
+      endpoint.storePath,
+      queryParameters: endpoint.queryParameters,
+      options: Options(
+        method: endpoint.method.name,
+        headers: endpoint.headers,
+        responseType: endpoint.responseType,
+        contentType: endpoint.contentType,
+        validateStatus: (status) =>
+            status != null && status >= 200 && status < 300,
+      ),
+      data: endpoint.data,
+      cancelToken: endpoint.cancelToken,
+      onReceiveProgress: endpoint.onReceiveProgress,
+    );
   }
 }

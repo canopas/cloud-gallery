@@ -181,8 +181,21 @@ class DropboxService extends CloudProviderService {
               : null,
         );
       }
-      throw AppError.fromError(response.statusMessage ?? '');
+      throw SomethingWentWrongError(
+        statusCode: response.statusCode,
+        message: response.statusMessage ?? '',
+      );
     } catch (e) {
+      if (e is DioException &&
+          e.response?.statusCode == 409 &&
+          e.response?.data?['error']?['path']?['.tag'] == 'not_found') {
+        await createFolder(ProviderConstants.backupFolderName);
+        return getPaginatedMedias(
+          folder: folder,
+          nextPageToken: nextPageToken,
+          pageSize: pageSize,
+        );
+      }
       throw AppError.fromError(e);
     }
   }
