@@ -1,26 +1,37 @@
+import 'dart:io';
+import 'package:collection/collection.dart';
+import '../apis/dropbox/dropbox_content_endpoints.dart';
 import '../apis/network/client.dart';
+import '../domain/config.dart';
 import '../errors/app_error.dart';
-import '../models/dropbox_account/dropbox_account.dart';
+import '../models/dropbox/account/dropbox_account.dart';
+import '../models/media/media.dart';
+import '../models/media_content/media_content.dart';
 import '../storage/app_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../apis/dropbox/dropbox_auth_endpoints.dart';
 import '../storage/provider/preferences_provider.dart';
+import 'cloud_provider_service.dart';
 
 final dropboxServiceProvider = Provider<DropboxService>((ref) {
   return DropboxService(
     ref.read(dropboxAuthenticatedDioProvider),
     ref.read(AppPreferences.dropboxCurrentUserAccount.notifier),
+    ref.read(AppPreferences.dropboxFileIdAppPropertyTemplateId.notifier),
   );
 });
 
-class DropboxService {
+class DropboxService extends CloudProviderService {
   final Dio _dropboxAuthenticatedDio;
   final PreferenceNotifier<DropboxAccount?> _dropboxAccountController;
+  final PreferenceNotifier<String?>
+      _dropboxFileIdAppPropertyTemplateIdController;
 
   const DropboxService(
     this._dropboxAuthenticatedDio,
     this._dropboxAccountController,
+    this._dropboxFileIdAppPropertyTemplateIdController,
   );
 
   Future<void> setCurrentUserAccount() async {
@@ -32,4 +43,290 @@ class DropboxService {
       AppError.fromError(e);
     }
   }
+
+  Future<void> setFileIdAppPropertyTemplate() async {
+    try {
+      // Get all the app property templates
+      final res = await _dropboxAuthenticatedDio
+          .req(const DropboxGetAppPropertyTemplate());
+
+      if (res.statusCode == 200) {
+        final templateIds = res.data['template_ids'] as List;
+
+        // Find the template id for the app
+        String? appTemplateId;
+        for (final templateId in templateIds) {
+          final res = await _dropboxAuthenticatedDio.req(
+            DropboxGetAppPropertiesTemplateDetails(templateId),
+          );
+
+          if (res.statusCode == 200) {
+            if (res.data is Map<String, dynamic> &&
+                res.data['name'] == ProviderConstants.dropboxAppTemplateName) {
+              appTemplateId = templateId;
+              break;
+            }
+          }
+        }
+
+        // If the template id is found, set it else create a new one
+        if (appTemplateId != null) {
+          _dropboxFileIdAppPropertyTemplateIdController.state = appTemplateId;
+        } else {
+          final res = await _dropboxAuthenticatedDio.req(
+            DropboxCreateAppPropertyTemplate(),
+          );
+          if (res.statusCode == 200) {
+            _dropboxFileIdAppPropertyTemplateIdController.state =
+                res.data['template_id'];
+          }
+        }
+      }
+    } catch (e) {
+      AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<List<AppMedia>> getAllMedias({
+    required String folder,
+  }) async {
+    try {
+      if (_dropboxFileIdAppPropertyTemplateIdController.state == null) {
+        await setFileIdAppPropertyTemplate();
+      }
+      bool hasMore = true;
+      String? nextPageToken;
+      final List<AppMedia> medias = [];
+
+      while (hasMore) {
+        final response = await _dropboxAuthenticatedDio.req(
+          nextPageToken == null
+              ? DropboxListFolderEndpoint(
+                  folderPath: folder,
+                  limit: 2000,
+                  appPropertyTemplateId:
+                      _dropboxFileIdAppPropertyTemplateIdController.state!,
+                )
+              : DropboxListFolderContinueEndpoint(cursor: nextPageToken),
+        );
+        if (response.statusCode == 200) {
+          hasMore = response.data['has_more'] == true;
+          nextPageToken = response.data['cursor'];
+          medias.addAll(
+            (response.data['entries'] as List)
+                .where((element) => element['.tag'] == 'file')
+                .map((e) => AppMedia.fromDropboxJson(json: e))
+                .toList(),
+          );
+        } else {
+          throw AppError.fromError(response.statusMessage ?? '');
+        }
+      }
+
+      return medias;
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<GetPaginatedMediasResponse> getPaginatedMedias({
+    required String folder,
+    String? nextPageToken,
+    int pageSize = 30,
+  }) async {
+    if (_dropboxFileIdAppPropertyTemplateIdController.state == null) {
+      await setFileIdAppPropertyTemplate();
+    }
+    try {
+      final response = await _dropboxAuthenticatedDio.req(
+        nextPageToken == null
+            ? DropboxListFolderEndpoint(
+                folderPath: folder,
+                limit: pageSize,
+                appPropertyTemplateId:
+                    _dropboxFileIdAppPropertyTemplateIdController.state!,
+              )
+            : DropboxListFolderContinueEndpoint(cursor: nextPageToken),
+      );
+      if (response.statusCode == 200) {
+        final files = (response.data['entries'] as List).where(
+          (element) => element['.tag'] == 'file',
+        );
+
+        final metadataResponses = await Future.wait(
+          files.map(
+            (e) => _dropboxAuthenticatedDio.req(
+              DropboxGetFileMetadata(id: e['id']),
+            ),
+          ),
+        );
+
+        return GetPaginatedMediasResponse(
+          medias: files
+              .map(
+                (e) => AppMedia.fromDropboxJson(
+                  json: e,
+                  metadataJson: metadataResponses
+                      .firstWhereOrNull(
+                        (m) => m.statusCode == 200 && m.data['id'] == e['id'],
+                      )
+                      ?.data,
+                ),
+              )
+              .toList(),
+          nextPageToken: response.data['has_more'] == true
+              ? response.data['cursor']
+              : null,
+        );
+      }
+      throw SomethingWentWrongError(
+        statusCode: response.statusCode,
+        message: response.statusMessage ?? '',
+      );
+    } catch (e) {
+      if (e is DioException &&
+          e.response?.statusCode == 409 &&
+          e.response?.data?['error']?['path']?['.tag'] == 'not_found') {
+        await createFolder(ProviderConstants.backupFolderName);
+        return getPaginatedMedias(
+          folder: folder,
+          nextPageToken: nextPageToken,
+          pageSize: pageSize,
+        );
+      }
+      throw AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<String> createFolder(String folderName) async {
+    final response = await _dropboxAuthenticatedDio.req(
+      DropboxCreateFolderEndpoint(name: folderName),
+    );
+
+    if (response.statusCode == 200) {
+      return response.data['metadata']['id'];
+    }
+
+    throw AppError.fromError(response.statusMessage ?? '');
+  }
+
+  @override
+  Future<AppMedia> uploadMedia({
+    required String folderId,
+    required String path,
+    String? mimeType,
+    String? localRefId,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    if (_dropboxFileIdAppPropertyTemplateIdController.state == null) {
+      await setFileIdAppPropertyTemplate();
+    }
+    final localFile = File(path);
+    try {
+      final res = await _dropboxAuthenticatedDio.req(
+        DropboxUploadEndpoint(
+          appPropertyTemplateId:
+              _dropboxFileIdAppPropertyTemplateIdController.state!,
+          localRefId: localRefId,
+          content: AppMediaContent(
+            stream: localFile.openRead(),
+            length: localFile.lengthSync(),
+            contentType: 'application/octet-stream',
+          ),
+          filePath:
+              "/${ProviderConstants.backupFolderName}/${localFile.path.split('/').last}",
+          onProgress: onProgress,
+          cancellationToken: cancelToken,
+        ),
+      );
+      final metadata = await _dropboxAuthenticatedDio.req(
+        DropboxGetFileMetadata(id: res.data['id']),
+      );
+
+      if (res.statusCode == 200) {
+        return AppMedia.fromDropboxJson(
+          json: res.data,
+          metadataJson: metadata.data,
+        );
+      }
+      throw AppError.fromError(res.statusMessage ?? '');
+    } catch (error) {
+      throw AppError.fromError(error);
+    }
+  }
+
+  @override
+  Future<void> downloadMedia({
+    required String id,
+    required String saveLocation,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    try {
+      await _dropboxAuthenticatedDio.downloadReq(
+        DropboxDownloadEndpoint(
+          filePath: id,
+          storagePath: saveLocation,
+          cancellationToken: cancelToken,
+          onProgress: onProgress,
+        ),
+      );
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  Future<void> updateAppProperties({
+    required String id,
+    required String localRefId,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      await _dropboxAuthenticatedDio.req(
+        DropboxUpdateAppPropertyEndpoint(
+          id: id,
+          cancellationToken: cancelToken,
+          appPropertyTemplateId:
+              _dropboxFileIdAppPropertyTemplateIdController.state!,
+          localRefId: localRefId,
+        ),
+      );
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+
+  @override
+  Future<void> deleteMedia({
+    required String id,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final res = await _dropboxAuthenticatedDio.req(
+        DropboxDeleteEndpoint(
+          id: id,
+          cancellationToken: cancelToken,
+        ),
+      );
+      if (res.statusCode == 200) return;
+
+      throw AppError.fromError(res.statusMessage ?? '');
+    } catch (e) {
+      throw AppError.fromError(e);
+    }
+  }
+}
+
+class DropboxMediaListResponse {
+  final List<AppMedia> medias;
+  final String? cursor;
+
+  const DropboxMediaListResponse({
+    required this.medias,
+    required this.cursor,
+  });
 }

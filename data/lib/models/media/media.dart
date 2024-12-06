@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:googleapis/drive/v3.dart' as drive show File;
 import 'package:photo_manager/photo_manager.dart' show AssetEntity;
 
+import '../../domain/config.dart';
 import '../../domain/json_converters/date_time_json_converter.dart';
 import '../../domain/json_converters/duration_json_converter.dart';
 
@@ -83,7 +84,8 @@ enum AppMediaOrientation {
 @JsonEnum(valueField: 'value')
 enum AppMediaSource {
   local('local'),
-  googleDrive('google_drive');
+  googleDrive('google_drive'),
+  dropbox('dropbox');
 
   final String value;
 
@@ -93,9 +95,11 @@ enum AppMediaSource {
 @freezed
 class AppMedia with _$AppMedia {
   const AppMedia._();
+
   const factory AppMedia({
     required String id,
     String? driveMediaRefId,
+    String? dropboxMediaRefId,
     String? name,
     required String path,
     String? thumbnailLink,
@@ -143,9 +147,10 @@ class AppMedia with _$AppMedia {
                     int.parse(file.videoMediaMetadata?.durationMillis ?? '0'),
               )
             : null;
+
     return AppMedia(
-      id: file.id!,
-      path: file.description ?? '',
+      id: file.appProperties?[ProviderConstants.localRefIdKey] ?? file.id!,
+      path: file.name ?? '',
       thumbnailLink: file.thumbnailLink,
       name: file.name,
       driveMediaRefId: file.id,
@@ -168,6 +173,7 @@ class AppMedia with _$AppMedia {
     final file = await asset.originFile;
 
     if (file == null) return null;
+
     final type =
         AppMediaType.getType(mimeType: asset.mimeType, location: file.path);
     final length = await file.length();
@@ -189,6 +195,37 @@ class AppMedia with _$AppMedia {
       modifiedTime: asset.modifiedDateTime,
       displayHeight: asset.size.height,
       displayWidth: asset.size.width,
+    );
+  }
+
+  static AppMedia fromDropboxJson({
+    required Map<String, dynamic> json,
+    Map<String, dynamic>? metadataJson,
+  }) {
+    return AppMedia(
+      id: json['property_groups'] != null && json['property_groups'].isNotEmpty
+          ? json['property_groups'][0]['fields'][0]['value']
+          : json['id'],
+      path: json['path_display'],
+      name: json['name'],
+      videoDuration:
+          metadataJson?['media_info']?['metadata']?['duration'] != null
+              ? Duration(
+                  milliseconds:
+                      metadataJson!['media_info']!['metadata']!['duration'],
+                )
+              : null,
+      displayHeight: metadataJson?['media_info']?['metadata']?['dimensions']
+              ?['height']
+          ?.toDouble(),
+      displayWidth: metadataJson?['media_info']?['metadata']?['dimensions']
+              ?['width']
+          ?.toDouble(),
+      size: json['size'].toString(),
+      dropboxMediaRefId: json['id'],
+      createdTime: DateTime.parse(json['client_modified']),
+      type: AppMediaType.getType(location: json['path_display']),
+      sources: [AppMediaSource.dropbox],
     );
   }
 }

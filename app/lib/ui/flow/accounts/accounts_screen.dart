@@ -1,7 +1,6 @@
 import '../../../components/app_page.dart';
-import '../../../domain/assets/assets_paths.dart';
 import '../../../domain/extensions/context_extensions.dart';
-import '../../../domain/extensions/widget_extensions.dart';
+import '../../../gen/assets.gen.dart';
 import 'accounts_screen_view_model.dart';
 import 'components/settings_action_list.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -33,7 +32,6 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   void initState() {
     super.initState();
     notifier = ref.read(accountsStateNotifierProvider.notifier);
-    runPostFrame(() => notifier.init());
   }
 
   void _errorObserver() {
@@ -49,7 +47,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
   Widget build(BuildContext context) {
     _errorObserver();
     return AppPage(
-      title: context.l10n.common_accounts,
+      title: context.l10n.accounts_title,
       bodyBuilder: (context) {
         return ListView(
           padding: context.systemPadding +
@@ -82,26 +80,20 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             actionList: ActionList(
               buttons: [
                 ActionListButton(
-                  title: context.l10n.common_auto_back_up,
+                  title: context.l10n.auto_back_up_title,
                   trailing: Consumer(
                     builder: (context, ref, child) {
                       final googleDriveAutoBackUp =
                           ref.watch(AppPreferences.googleDriveAutoBackUp);
                       return AppSwitch(
                         value: googleDriveAutoBackUp,
-                        onChanged: (bool value) {
-                          ref
-                              .read(
-                                AppPreferences.googleDriveAutoBackUp.notifier,
-                              )
-                              .state = value;
-                        },
+                        onChanged: notifier.toggleAutoBackupInGoogleDrive,
                       );
                     },
                   ),
                 ),
                 ActionListButton(
-                  title: context.l10n.common_sign_out,
+                  title: context.l10n.sign_out_title,
                   onPressed: notifier.signOutWithGoogle,
                 ),
               ],
@@ -113,11 +105,11 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           buttons: [
             ActionListButton(
               leading: SvgPicture.asset(
-                Assets.images.icons.googleDrive,
+                Assets.images.icons.icGoogleDrive,
                 height: 24,
                 width: 24,
               ),
-              title: context.l10n.sign_in_with_google_drive_text,
+              title: context.l10n.sign_in_with_google_drive_title,
               onPressed: () {
                 notifier.signInWithGoogle();
               },
@@ -142,24 +134,20 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             actionList: ActionList(
               buttons: [
                 ActionListButton(
-                  title: context.l10n.common_auto_back_up,
+                  title: context.l10n.auto_back_up_title,
                   trailing: Consumer(
                     builder: (context, ref, child) {
                       final dropboxAutoBackUp =
                           ref.watch(AppPreferences.dropboxAutoBackUp);
                       return AppSwitch(
                         value: dropboxAutoBackUp,
-                        onChanged: (bool value) {
-                          ref
-                              .read(AppPreferences.dropboxAutoBackUp.notifier)
-                              .state = value;
-                        },
+                        onChanged: notifier.toggleAutoBackupInDropbox,
                       );
                     },
                   ),
                 ),
                 ActionListButton(
-                  title: context.l10n.common_sign_out,
+                  title: context.l10n.sign_out_title,
                   onPressed: notifier.signOutWithDropbox,
                 ),
               ],
@@ -171,11 +159,11 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           buttons: [
             ActionListButton(
               leading: SvgPicture.asset(
-                Assets.images.icons.dropbox,
+                Assets.images.icons.icDropbox,
                 height: 24,
                 width: 24,
               ),
-              title: context.l10n.sign_in_with_dropbox_text,
+              title: context.l10n.sign_in_with_dropbox_title,
               onPressed: () {
                 notifier.signInWithDropbox();
               },
@@ -194,7 +182,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           return Visibility(
             visible: version != null,
             child: Text(
-              "${context.l10n.version_text} $version",
+              "${context.l10n.version_title} $version",
               style: AppTextStyles.body2.copyWith(
                 color: context.colorScheme.textSecondary,
               ),

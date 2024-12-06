@@ -2,7 +2,8 @@ import 'dart:async';
 import '../apis/network/client.dart';
 import '../apis/network/oauth2.dart';
 import '../errors/app_error.dart';
-import '../models/dropbox_account/dropbox_account.dart';
+import '../models/dropbox/account/dropbox_account.dart';
+import '../models/dropbox/token/dropbox_token.dart';
 import '../storage/app_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../apis/dropbox/dropbox_auth_endpoints.dart';
 import '../apis/network/secrets.dart';
 import '../apis/network/urls.dart';
-import '../models/token/token.dart';
 import '../storage/provider/preferences_provider.dart';
 
 final googleUserAccountProvider = StateProvider<GoogleSignInAccount?>((ref) {
@@ -43,6 +43,7 @@ final authServiceProvider = Provider<AuthService>(
     ref.read(AppPreferences.dropboxCurrentUserAccount.notifier),
     ref.read(AppPreferences.googleDriveAutoBackUp.notifier),
     ref.read(AppPreferences.dropboxAutoBackUp.notifier),
+    ref.read(AppPreferences.dropboxFileIdAppPropertyTemplateId.notifier),
   ),
 );
 
@@ -55,6 +56,8 @@ class AuthService {
   final PreferenceNotifier<String?> _dropboxCodeVerifierPrefProvider;
   final PreferenceNotifier<bool> _googleDriveAutoBackUpController;
   final PreferenceNotifier<bool> _dropboxAutoBackUpController;
+  final PreferenceNotifier<String?>
+      _dropboxFileIdAppPropertyTemplateIdController;
 
   AuthService(
     this._googleSignIn,
@@ -65,6 +68,7 @@ class AuthService {
     this._dropboxAccountController,
     this._googleDriveAutoBackUpController,
     this._dropboxAutoBackUpController,
+    this._dropboxFileIdAppPropertyTemplateIdController,
   ) {
     signInSilently();
   }
@@ -134,7 +138,16 @@ class AuthService {
         ),
       );
       if (res.data != null) {
-        _dropboxTokenController.state = DropboxToken.fromJson(res.data);
+        _dropboxTokenController.state = DropboxToken(
+          access_token: res.data['access_token'],
+          token_type: res.data['token_type'],
+          refresh_token: res.data['refresh_token'],
+          expires_in:
+              DateTime.now().add(Duration(seconds: res.data['expires_in'])),
+          account_id: res.data['account_id'],
+          scope: res.data['scope'],
+          uid: res.data['uid'],
+        );
         _dropboxCodeVerifierPrefProvider.state = null;
       }
     } catch (e) {
@@ -146,6 +159,7 @@ class AuthService {
     _dropboxTokenController.state = null;
     _dropboxAccountController.state = null;
     _dropboxAutoBackUpController.state = false;
+    _dropboxFileIdAppPropertyTemplateIdController.state = null;
   }
 
   Future<void> refreshDropboxToken() async {
@@ -158,11 +172,14 @@ class AuthService {
             clientSecret: AppSecretes.dropBoxAppSecret,
           ),
         );
-        final newToken = DropboxToken.fromJson(res.data);
         _dropboxTokenController.state = _dropboxTokenController.state!.copyWith(
-          access_token: newToken.access_token,
-          expires_in: newToken.expires_in,
-          token_type: newToken.token_type,
+          access_token: res.data['access_token'],
+          expires_in: DateTime.now().add(
+            Duration(
+              seconds: res.data['expires_in'],
+            ),
+          ),
+          token_type: res.data['token_type'],
         );
       } else {
         throw const AuthSessionExpiredError();
@@ -178,4 +195,6 @@ class AuthService {
 
   Stream<GoogleSignInAccount?> get onGoogleAccountChange =>
       _googleSignIn.onCurrentUserChanged;
+
+  DropboxAccount? get dropboxAccount => _dropboxAccountController.state;
 }

@@ -1,89 +1,226 @@
+import 'package:data/domain/formatters/byte_formatter.dart';
+import 'package:data/models/media_process/media_process.dart';
 import '../../../../domain/extensions/context_extensions.dart';
-import '../../../../domain/formatter/byte_formatter.dart';
-import 'package:data/models/app_process/app_process.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:style/buttons/action_button.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
-import '../../../../components/thumbnail_builder.dart';
 
-class ProcessItem extends StatelessWidget {
-  final AppProcess process;
+class UploadProcessItem extends StatelessWidget {
+  final UploadMediaProcess process;
   final void Function() onCancelTap;
+  final void Function() onRemoveTap;
 
-  const ProcessItem({
+  const UploadProcessItem({
     super.key,
     required this.process,
     required this.onCancelTap,
+    required this.onRemoveTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        AppMediaImage(size: const Size(80, 80), media: process.media),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                process.media.name != null &&
-                        process.media.name!.trim().isNotEmpty
-                    ? process.media.name!
-                    : process.media.path,
-                style: AppTextStyles.body.copyWith(
-                  color: context.colorScheme.textPrimary,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-              const SizedBox(height: 8),
-              if (process.status.isWaiting)
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  context.l10n.waiting_in_queue_text,
-                  style: AppTextStyles.body2.copyWith(
-                    color: context.colorScheme.textSecondary,
+                  process.path.split('/').lastOrNull ?? process.media_id,
+                  style: AppTextStyles.body.copyWith(
+                    color: context.colorScheme.textPrimary,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
-              if (process.progress != null && process.status.isProcessing) ...[
-                LinearProgressIndicator(
-                  value: process.progress?.percentageInPoint,
-                  backgroundColor: context.colorScheme.outline,
-                  borderRadius: BorderRadius.circular(4),
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    context.colorScheme.primary,
+                const SizedBox(height: 2),
+                if (!process.status.isRunning)
+                  Text(
+                    _getUploadMessage(context),
+                    style: AppTextStyles.body2.copyWith(
+                      color: context.colorScheme.textSecondary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${process.progress?.chunk.formatBytes}  ${process.progress?.percentage.toStringAsFixed(0)}%',
-                      style: AppTextStyles.body2.copyWith(
-                        color: context.colorScheme.textSecondary,
-                      ),
+                if (process.status.isRunning) ...[
+                  LinearProgressIndicator(
+                    value: process.progress,
+                    backgroundColor: context.colorScheme.outline,
+                    borderRadius: BorderRadius.circular(4),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      context.colorScheme.primary,
                     ),
-                    Text(
-                      '${process.progress?.total.formatBytes}',
-                      style: AppTextStyles.body2.copyWith(
-                        color: context.colorScheme.textSecondary,
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${process.chunk.formatBytes} - ${process.progressPercentage.toStringAsFixed(0)}%',
+                        style: AppTextStyles.body2.copyWith(
+                          color: context.colorScheme.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                      Text(
+                        process.total.formatBytes,
+                        style: AppTextStyles.body2.copyWith(
+                          color: context.colorScheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-        ActionButton(
-          onPressed: onCancelTap,
-          icon: const Icon(CupertinoIcons.xmark),
-        ),
-      ],
+          if (process.status.isRunning || process.status.isWaiting)
+            ActionButton(
+              onPressed: onCancelTap,
+              icon: Icon(
+                CupertinoIcons.xmark,
+                color: context.colorScheme.textPrimary,
+                size: 20,
+              ),
+            ),
+          if (process.status.isTerminated ||
+              process.status.isFailed ||
+              process.status.isCompleted)
+            ActionButton(
+              onPressed: onRemoveTap,
+              icon: Icon(
+                CupertinoIcons.trash,
+                color: context.colorScheme.textSecondary,
+                size: 20,
+              ),
+            ),
+        ],
+      ),
     );
+  }
+
+  String _getUploadMessage(BuildContext context) {
+    if (process.status.isWaiting) {
+      return context.l10n.upload_status_waiting;
+    } else if (process.status.isFailed) {
+      return context.l10n.upload_status_failed;
+    } else if (process.status.isCompleted) {
+      return context.l10n.upload_status_success;
+    } else if (process.status.isTerminated) {
+      return context.l10n.upload_status_cancelled;
+    }
+    return '';
+  }
+}
+
+class DownloadProcessItem extends StatelessWidget {
+  final DownloadMediaProcess process;
+  final void Function() onCancelTap;
+  final void Function() onRemoveTap;
+
+  const DownloadProcessItem({
+    super.key,
+    required this.process,
+    required this.onCancelTap,
+    required this.onRemoveTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  process.name,
+                  style: AppTextStyles.body.copyWith(
+                    color: context.colorScheme.textPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 2),
+                if (!process.status.isRunning)
+                  Text(
+                    _getMessage(context),
+                    style: AppTextStyles.body2.copyWith(
+                      color: context.colorScheme.textSecondary,
+                    ),
+                  ),
+                if (process.status.isRunning) ...[
+                  LinearProgressIndicator(
+                    value: process.progress,
+                    backgroundColor: context.colorScheme.outline,
+                    borderRadius: BorderRadius.circular(4),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      context.colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${process.chunk.formatBytes}  ${process.progressPercentage.toStringAsFixed(0)}%',
+                        style: AppTextStyles.body2.copyWith(
+                          color: context.colorScheme.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        process.total.formatBytes,
+                        style: AppTextStyles.body2.copyWith(
+                          color: context.colorScheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (process.status.isRunning || process.status.isWaiting)
+            ActionButton(
+              onPressed: onCancelTap,
+              icon: Icon(
+                CupertinoIcons.xmark,
+                color: context.colorScheme.textPrimary,
+                size: 20,
+              ),
+            ),
+          if (process.status.isTerminated ||
+              process.status.isFailed ||
+              process.status.isCompleted)
+            ActionButton(
+              onPressed: onRemoveTap,
+              icon: Icon(
+                CupertinoIcons.trash,
+                color: context.colorScheme.textPrimary,
+                size: 20,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _getMessage(BuildContext context) {
+    if (process.status.isWaiting) {
+      return context.l10n.download_status_waiting;
+    } else if (process.status.isFailed) {
+      return context.l10n.download_status_failed;
+    } else if (process.status.isCompleted) {
+      return context.l10n.download_status_success;
+    } else if (process.status.isTerminated) {
+      return context.l10n.download_status_cancelled;
+    }
+    return '';
   }
 }

@@ -35,12 +35,10 @@ class NetworkImagePreview extends ConsumerWidget {
           },
         ),
       );
-    } else if (state.error != null) {
-      return ErrorView(
-        title: context.l10n.unable_to_load_media_error,
-        message: context.l10n.unable_to_load_media_message,
-      );
     }
-    return const SizedBox();
+    return ErrorView(
+      title: context.l10n.unable_to_load_media_error,
+      message: context.l10n.unable_to_load_media_message,
+    );
   }
 }

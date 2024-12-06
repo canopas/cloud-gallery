@@ -17,8 +17,10 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$MediaTransferState {
   Object? get error => throw _privateConstructorUsedError;
-  List<AppProcess> get upload => throw _privateConstructorUsedError;
-  List<AppProcess> get download => throw _privateConstructorUsedError;
+  List<UploadMediaProcess> get uploadProcesses =>
+      throw _privateConstructorUsedError;
+  List<DownloadMediaProcess> get downloadProcesses =>
+      throw _privateConstructorUsedError;
   int get page => throw _privateConstructorUsedError;
 
   /// Create a copy of MediaTransferState
@@ -36,8 +38,8 @@ abstract class $MediaTransferStateCopyWith<$Res> {
   @useResult
   $Res call(
       {Object? error,
-      List<AppProcess> upload,
-      List<AppProcess> download,
+      List<UploadMediaProcess> uploadProcesses,
+      List<DownloadMediaProcess> downloadProcesses,
       int page});
 }
 
@@ -57,20 +59,20 @@ class _$MediaTransferStateCopyWithImpl<$Res, $Val extends MediaTransferState>
   @override
   $Res call({
     Object? error = freezed,
-    Object? upload = null,
-    Object? download = null,
+    Object? uploadProcesses = null,
+    Object? downloadProcesses = null,
     Object? page = null,
   }) {
     return _then(_value.copyWith(
       error: freezed == error ? _value.error : error,
-      upload: null == upload
-          ? _value.upload
-          : upload // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
-      download: null == download
-          ? _value.download
-          : download // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
+      uploadProcesses: null == uploadProcesses
+          ? _value.uploadProcesses
+          : uploadProcesses // ignore: cast_nullable_to_non_nullable
+              as List<UploadMediaProcess>,
+      downloadProcesses: null == downloadProcesses
+          ? _value.downloadProcesses
+          : downloadProcesses // ignore: cast_nullable_to_non_nullable
+              as List<DownloadMediaProcess>,
       page: null == page
           ? _value.page
           : page // ignore: cast_nullable_to_non_nullable
@@ -89,8 +91,8 @@ abstract class _$$MediaTransferStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {Object? error,
-      List<AppProcess> upload,
-      List<AppProcess> download,
+      List<UploadMediaProcess> uploadProcesses,
+      List<DownloadMediaProcess> downloadProcesses,
       int page});
 }
 
@@ -108,20 +110,20 @@ class __$$MediaTransferStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? error = freezed,
-    Object? upload = null,
-    Object? download = null,
+    Object? uploadProcesses = null,
+    Object? downloadProcesses = null,
     Object? page = null,
   }) {
     return _then(_$MediaTransferStateImpl(
       error: freezed == error ? _value.error : error,
-      upload: null == upload
-          ? _value._upload
-          : upload // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
-      download: null == download
-          ? _value._download
-          : download // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
+      uploadProcesses: null == uploadProcesses
+          ? _value._uploadProcesses
+          : uploadProcesses // ignore: cast_nullable_to_non_nullable
+              as List<UploadMediaProcess>,
+      downloadProcesses: null == downloadProcesses
+          ? _value._downloadProcesses
+          : downloadProcesses // ignore: cast_nullable_to_non_nullable
+              as List<DownloadMediaProcess>,
       page: null == page
           ? _value.page
           : page // ignore: cast_nullable_to_non_nullable
@@ -135,30 +137,31 @@ class __$$MediaTransferStateImplCopyWithImpl<$Res>
 class _$MediaTransferStateImpl implements _MediaTransferState {
   const _$MediaTransferStateImpl(
       {this.error,
-      final List<AppProcess> upload = const [],
-      final List<AppProcess> download = const [],
+      final List<UploadMediaProcess> uploadProcesses = const [],
+      final List<DownloadMediaProcess> downloadProcesses = const [],
       this.page = 0})
-      : _upload = upload,
-        _download = download;
+      : _uploadProcesses = uploadProcesses,
+        _downloadProcesses = downloadProcesses;
 
   @override
   final Object? error;
-  final List<AppProcess> _upload;
+  final List<UploadMediaProcess> _uploadProcesses;
   @override
   @JsonKey()
-  List<AppProcess> get upload {
-    if (_upload is EqualUnmodifiableListView) return _upload;
+  List<UploadMediaProcess> get uploadProcesses {
+    if (_uploadProcesses is EqualUnmodifiableListView) return _uploadProcesses;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_upload);
+    return EqualUnmodifiableListView(_uploadProcesses);
   }
 
-  final List<AppProcess> _download;
+  final List<DownloadMediaProcess> _downloadProcesses;
   @override
   @JsonKey()
-  List<AppProcess> get download {
-    if (_download is EqualUnmodifiableListView) return _download;
+  List<DownloadMediaProcess> get downloadProcesses {
+    if (_downloadProcesses is EqualUnmodifiableListView)
+      return _downloadProcesses;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_download);
+    return EqualUnmodifiableListView(_downloadProcesses);
   }
 
   @override
@@ -167,7 +170,7 @@ class _$MediaTransferStateImpl implements _MediaTransferState {
 
   @override
   String toString() {
-    return 'MediaTransferState(error: $error, upload: $upload, download: $download, page: $page)';
+    return 'MediaTransferState(error: $error, uploadProcesses: $uploadProcesses, downloadProcesses: $downloadProcesses, page: $page)';
   }
 
   @override
@@ -176,8 +179,10 @@ class _$MediaTransferStateImpl implements _MediaTransferState {
         (other.runtimeType == runtimeType &&
             other is _$MediaTransferStateImpl &&
             const DeepCollectionEquality().equals(other.error, error) &&
-            const DeepCollectionEquality().equals(other._upload, _upload) &&
-            const DeepCollectionEquality().equals(other._download, _download) &&
+            const DeepCollectionEquality()
+                .equals(other._uploadProcesses, _uploadProcesses) &&
+            const DeepCollectionEquality()
+                .equals(other._downloadProcesses, _downloadProcesses) &&
             (identical(other.page, page) || other.page == page));
   }
 
@@ -185,8 +190,8 @@ class _$MediaTransferStateImpl implements _MediaTransferState {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(error),
-      const DeepCollectionEquality().hash(_upload),
-      const DeepCollectionEquality().hash(_download),
+      const DeepCollectionEquality().hash(_uploadProcesses),
+      const DeepCollectionEquality().hash(_downloadProcesses),
       page);
 
   /// Create a copy of MediaTransferState
@@ -202,16 +207,16 @@ class _$MediaTransferStateImpl implements _MediaTransferState {
 abstract class _MediaTransferState implements MediaTransferState {
   const factory _MediaTransferState(
       {final Object? error,
-      final List<AppProcess> upload,
-      final List<AppProcess> download,
+      final List<UploadMediaProcess> uploadProcesses,
+      final List<DownloadMediaProcess> downloadProcesses,
       final int page}) = _$MediaTransferStateImpl;
 
   @override
   Object? get error;
   @override
-  List<AppProcess> get upload;
+  List<UploadMediaProcess> get uploadProcesses;
   @override
-  List<AppProcess> get download;
+  List<DownloadMediaProcess> get downloadProcesses;
   @override
   int get page;
 

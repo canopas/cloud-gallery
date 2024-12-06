@@ -34,9 +34,60 @@ extension AppMediaExtension on AppMedia {
 
   AppMedia mergeGoogleDriveMedia(AppMedia media) {
     return copyWith(
+      mimeType: mimeType ?? media.mimeType,
+      longitude: longitude ?? media.longitude,
+      latitude: latitude ?? media.latitude,
+      orientation: orientation ?? media.orientation,
+      videoDuration: videoDuration ?? media.videoDuration,
+      displayWidth: displayWidth ?? media.displayWidth,
+      displayHeight: displayHeight ?? media.displayHeight,
+      size: size ?? media.size,
+      modifiedTime: modifiedTime ?? media.modifiedTime,
+      createdTime: createdTime ?? media.createdTime,
+      name: name ?? media.name,
       thumbnailLink: media.thumbnailLink,
       driveMediaRefId: media.driveMediaRefId,
       sources: sources.toList()..add(AppMediaSource.googleDrive),
+    );
+  }
+
+  AppMedia removeGoogleDriveRef() {
+    return copyWith(
+      thumbnailLink: null,
+      driveMediaRefId: null,
+      sources: sources.toList()..remove(AppMediaSource.googleDrive),
+    );
+  }
+
+  AppMedia mergeDropboxMedia(AppMedia media) {
+    return copyWith(
+      mimeType: mimeType ?? media.mimeType,
+      longitude: longitude ?? media.longitude,
+      latitude: latitude ?? media.latitude,
+      orientation: orientation ?? media.orientation,
+      videoDuration: videoDuration ?? media.videoDuration,
+      displayWidth: displayWidth ?? media.displayWidth,
+      displayHeight: displayHeight ?? media.displayHeight,
+      size: size ?? media.size,
+      modifiedTime: modifiedTime ?? media.modifiedTime,
+      createdTime: createdTime ?? media.createdTime,
+      name: name ?? media.name,
+      dropboxMediaRefId: media.dropboxMediaRefId,
+      sources: sources.toList()..add(AppMediaSource.dropbox),
+    );
+  }
+
+  AppMedia removeDropboxRef() {
+    return copyWith(
+      dropboxMediaRefId: null,
+      sources: sources.toList()..remove(AppMediaSource.dropbox),
+    );
+  }
+
+  AppMedia removeLocalRef() {
+    return copyWith(
+      id: driveMediaRefId ?? dropboxMediaRefId ?? '',
+      sources: sources.toList()..remove(AppMediaSource.local),
     );
   }
 
@@ -45,6 +96,9 @@ extension AppMediaExtension on AppMedia {
 
   bool get isLocalStored =>
       sources.contains(AppMediaSource.local) && sources.length == 1;
+
+  bool get isDropboxStored =>
+      sources.contains(AppMediaSource.dropbox) && sources.length == 1;
 
   bool get isCommonStored => sources.length > 1;
 

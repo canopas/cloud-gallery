@@ -24,11 +24,15 @@ dependencies:
   google_sign_in: ^6.2.2
   extension_google_sign_in_as_googleapis_auth: ^2.0.12
 
+  # notifications
+  flutter_local_notifications: ^18.0.1
+
   # state management
   flutter_riverpod: ^2.6.1
 
   # storage
   shared_preferences: ^2.3.3
+  sqflite: ^2.4.1
 
   # code generation
   freezed: ^2.5.7
@@ -36,6 +40,9 @@ dependencies:
   json_serializable: ^6.8.0
 
   collection: ^1.18.0
+
+  # logging
+  logger: ^2.5.0
 
 dev_dependencies:
   flutter_test:

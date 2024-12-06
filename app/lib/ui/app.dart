@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'navigation/app_route.dart';
 import '../domain/extensions/context_extensions.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,7 @@ import 'package:style/extensions/context_extensions.dart';
 import 'package:style/theme/theme.dart';
 import 'package:style/theme/app_theme_builder.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:data/handlers/notification_handler.dart';
 
 class CloudGalleryApp extends ConsumerStatefulWidget {
   const CloudGalleryApp({super.key});
@@ -21,6 +23,7 @@ class CloudGalleryApp extends ConsumerStatefulWidget {
 
 class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
   late GoRouter _router;
+  late NotificationHandler _notificationHandler;
 
   String _configureInitialRoute() {
     if (!ref.read(AppPreferences.isOnBoardComplete)) {
@@ -32,11 +35,28 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
 
   @override
   void initState() {
+    _notificationHandler = ref.read(notificationHandlerProvider);
+    _handleNotification();
+
     _router = GoRouter(
       initialLocation: _configureInitialRoute(),
       routes: $appRoutes,
     );
     super.initState();
+  }
+
+  Future<void> _handleNotification() async {
+    final res = await _notificationHandler.init(
+      onDidReceiveBackgroundNotificationResponse:
+          onBackgroundNotificationReceived,
+      onDidReceiveNotificationResponse: (response) {
+        ///TODO: manage notification tap
+      },
+    );
+    if (res?.didNotificationLaunchApp == true) {
+      ///TODO: manage notification tap
+    }
+    _notificationHandler.requestPermission();
   }
 
   @override
@@ -87,3 +107,6 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
     );
   }
 }
+
+@pragma('vm:entry-point')
+void onBackgroundNotificationReceived(NotificationResponse response) {}
