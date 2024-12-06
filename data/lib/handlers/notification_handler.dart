@@ -113,6 +113,12 @@ class NotificationHandler {
           setAsGroupSummary: setAsGroupSummary,
           onlyAlertOnce: onlyAlertOnce,
         ),
+        iOS: DarwinNotificationDetails(
+          presentSound: !silent,
+          threadIdentifier: groupKey,
+          presentBanner: !silent,
+          presentAlert: !silent,
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import '../../../components/app_page.dart';
+import '../../../components/error_view.dart';
 import '../../../domain/extensions/widget_extensions.dart';
 import '../../../domain/formatter/date_formatter.dart';
 import '../../../domain/extensions/context_extensions.dart';
@@ -77,6 +78,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           hasSelectedMedia: value.selectedMedias.isNotEmpty,
           isLoading: value.loading,
           hasLocalMediaAccess: value.hasLocalMediaAccess,
+          error: value.error,
         ),
       ),
     );
@@ -85,6 +87,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return const Center(child: AppCircularProgressIndicator());
     } else if (!state.hasMedia && !state.hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
+    } else if (state.error != null) {
+      return ErrorView(
+        title: context.l10n.unable_to_load_media_error,
+        message: context.l10n.unable_to_load_media_message,
+      );
     }
 
     return Stack(
