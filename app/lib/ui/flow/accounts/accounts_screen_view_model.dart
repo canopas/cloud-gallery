@@ -56,8 +56,10 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
     super.dispose();
   }
 
-  Future<void> updateNotificationsPermissionStatus({PermissionStatus? status}) async {
-     status ??= await Permission.notification.status;
+  Future<void> updateNotificationsPermissionStatus({
+    PermissionStatus? status,
+  }) async {
+    status ??= await Permission.notification.status;
     state = state.copyWith(notificationsPermissionStatus: status.isGranted);
   }
 
