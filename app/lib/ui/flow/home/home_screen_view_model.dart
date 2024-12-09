@@ -576,7 +576,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
             if (media.dropboxMediaRefId != null &&
                 ids.contains(media.dropboxMediaRefId) &&
                 media.isCommonStored) {
-              return media.removeLocalRef();
+              return media.removeDropboxRef();
             } else if (media.dropboxMediaRefId != null &&
                 ids.contains(media.dropboxMediaRefId) &&
                 media.isDropboxStored) {
