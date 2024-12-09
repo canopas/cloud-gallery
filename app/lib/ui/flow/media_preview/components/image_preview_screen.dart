@@ -30,10 +30,17 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
     if (!widget.media.sources.contains(AppMediaSource.local)) {
       notifier = ref.read(networkImagePreviewStateNotifierProvider.notifier);
       runPostFrame(() async {
-        await notifier.loadImageFromGoogleDrive(
-          id: widget.media.id,
-          extension: widget.media.extension,
-        );
+        if (widget.media.driveMediaRefId != null) {
+          await notifier.loadImageFromGoogleDrive(
+            id: widget.media.driveMediaRefId!,
+            extension: widget.media.extension,
+          );
+        } else if (widget.media.dropboxMediaRefId != null) {
+          await notifier.loadImageFromDropbox(
+            id: widget.media.dropboxMediaRefId!,
+            extension: widget.media.extension,
+          );
+        }
       });
     }
     super.initState();
@@ -48,9 +55,7 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
           width: double.infinity,
           child: widget.media.sources.contains(AppMediaSource.local)
               ? _displayLocalImage(context: context)
-              : NetworkImagePreview(
-                  media: widget.media,
-                ),
+              : NetworkImagePreview(media: widget.media),
         ),
       ),
     );

@@ -13,19 +13,19 @@ class NoLocalMediasAccessScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(homeViewStateNotifier.notifier);
     return ErrorView(
-      title: context.l10n.cant_find_media_title,
+      title: context.l10n.no_media_access_screen_title,
       icon: Icon(
-        CupertinoIcons.photo,
-        color: context.colorScheme.containerHighOnSurface,
-        size: 100,
+        CupertinoIcons.photo_on_rectangle,
+        color: context.colorScheme.containerNormalOnSurface,
+        size: 120,
       ),
-      message: context.l10n.ask_for_media_permission_message,
+      message: context.l10n.no_media_access_screen_message,
       action: ErrorViewAction(
         onPressed: () async {
           await openAppSettings();
-          await notifier.loadLocalMedia();
+          notifier.loadMedias(reload: true);
         },
-        title: context.l10n.load_local_media_button_text,
+        title: context.l10n.common_open_settings,
       ),
     );
   }

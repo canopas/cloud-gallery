@@ -16,7 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$MediaPreviewState {
+  GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
+  DropboxAccount? get dropboxAccount => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
+  Object? get actionError => throw _privateConstructorUsedError;
   List<AppMedia> get medias => throw _privateConstructorUsedError;
   int get currentIndex => throw _privateConstructorUsedError;
   bool get showActions => throw _privateConstructorUsedError;
@@ -25,9 +28,10 @@ mixin _$MediaPreviewState {
   Duration get videoPosition => throw _privateConstructorUsedError;
   Duration get videoMaxDuration => throw _privateConstructorUsedError;
   bool get isVideoPlaying => throw _privateConstructorUsedError;
-  List<AppProcess> get uploadProcess => throw _privateConstructorUsedError;
-  List<AppProcess> get downloadProcess => throw _privateConstructorUsedError;
-  List<AppProcess> get deleteProcess => throw _privateConstructorUsedError;
+  Map<String, UploadMediaProcess> get uploadMediaProcesses =>
+      throw _privateConstructorUsedError;
+  Map<String, DownloadMediaProcess> get downloadMediaProcesses =>
+      throw _privateConstructorUsedError;
 
   /// Create a copy of MediaPreviewState
   /// with the given fields replaced by the non-null parameter values.
@@ -43,7 +47,10 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       _$MediaPreviewStateCopyWithImpl<$Res, MediaPreviewState>;
   @useResult
   $Res call(
-      {Object? error,
+      {GoogleSignInAccount? googleAccount,
+      DropboxAccount? dropboxAccount,
+      Object? error,
+      Object? actionError,
       List<AppMedia> medias,
       int currentIndex,
       bool showActions,
@@ -52,9 +59,10 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       Duration videoPosition,
       Duration videoMaxDuration,
       bool isVideoPlaying,
-      List<AppProcess> uploadProcess,
-      List<AppProcess> downloadProcess,
-      List<AppProcess> deleteProcess});
+      Map<String, UploadMediaProcess> uploadMediaProcesses,
+      Map<String, DownloadMediaProcess> downloadMediaProcesses});
+
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount;
 }
 
 /// @nodoc
@@ -72,7 +80,10 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? googleAccount = freezed,
+    Object? dropboxAccount = freezed,
     Object? error = freezed,
+    Object? actionError = freezed,
     Object? medias = null,
     Object? currentIndex = null,
     Object? showActions = null,
@@ -81,12 +92,20 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
     Object? isVideoPlaying = null,
-    Object? uploadProcess = null,
-    Object? downloadProcess = null,
-    Object? deleteProcess = null,
+    Object? uploadMediaProcesses = null,
+    Object? downloadMediaProcesses = null,
   }) {
     return _then(_value.copyWith(
+      googleAccount: freezed == googleAccount
+          ? _value.googleAccount
+          : googleAccount // ignore: cast_nullable_to_non_nullable
+              as GoogleSignInAccount?,
+      dropboxAccount: freezed == dropboxAccount
+          ? _value.dropboxAccount
+          : dropboxAccount // ignore: cast_nullable_to_non_nullable
+              as DropboxAccount?,
       error: freezed == error ? _value.error : error,
+      actionError: freezed == actionError ? _value.actionError : actionError,
       medias: null == medias
           ? _value.medias
           : medias // ignore: cast_nullable_to_non_nullable
@@ -119,19 +138,29 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.isVideoPlaying
           : isVideoPlaying // ignore: cast_nullable_to_non_nullable
               as bool,
-      uploadProcess: null == uploadProcess
-          ? _value.uploadProcess
-          : uploadProcess // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
-      downloadProcess: null == downloadProcess
-          ? _value.downloadProcess
-          : downloadProcess // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
-      deleteProcess: null == deleteProcess
-          ? _value.deleteProcess
-          : deleteProcess // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
+      uploadMediaProcesses: null == uploadMediaProcesses
+          ? _value.uploadMediaProcesses
+          : uploadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, UploadMediaProcess>,
+      downloadMediaProcesses: null == downloadMediaProcesses
+          ? _value.downloadMediaProcesses
+          : downloadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, DownloadMediaProcess>,
     ) as $Val);
+  }
+
+  /// Create a copy of MediaPreviewState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount {
+    if (_value.dropboxAccount == null) {
+      return null;
+    }
+
+    return $DropboxAccountCopyWith<$Res>(_value.dropboxAccount!, (value) {
+      return _then(_value.copyWith(dropboxAccount: value) as $Val);
+    });
   }
 }
 
@@ -144,7 +173,10 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Object? error,
+      {GoogleSignInAccount? googleAccount,
+      DropboxAccount? dropboxAccount,
+      Object? error,
+      Object? actionError,
       List<AppMedia> medias,
       int currentIndex,
       bool showActions,
@@ -153,9 +185,11 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       Duration videoPosition,
       Duration videoMaxDuration,
       bool isVideoPlaying,
-      List<AppProcess> uploadProcess,
-      List<AppProcess> downloadProcess,
-      List<AppProcess> deleteProcess});
+      Map<String, UploadMediaProcess> uploadMediaProcesses,
+      Map<String, DownloadMediaProcess> downloadMediaProcesses});
+
+  @override
+  $DropboxAccountCopyWith<$Res>? get dropboxAccount;
 }
 
 /// @nodoc
@@ -171,7 +205,10 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? googleAccount = freezed,
+    Object? dropboxAccount = freezed,
     Object? error = freezed,
+    Object? actionError = freezed,
     Object? medias = null,
     Object? currentIndex = null,
     Object? showActions = null,
@@ -180,12 +217,20 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
     Object? isVideoPlaying = null,
-    Object? uploadProcess = null,
-    Object? downloadProcess = null,
-    Object? deleteProcess = null,
+    Object? uploadMediaProcesses = null,
+    Object? downloadMediaProcesses = null,
   }) {
     return _then(_$MediaPreviewStateImpl(
+      googleAccount: freezed == googleAccount
+          ? _value.googleAccount
+          : googleAccount // ignore: cast_nullable_to_non_nullable
+              as GoogleSignInAccount?,
+      dropboxAccount: freezed == dropboxAccount
+          ? _value.dropboxAccount
+          : dropboxAccount // ignore: cast_nullable_to_non_nullable
+              as DropboxAccount?,
       error: freezed == error ? _value.error : error,
+      actionError: freezed == actionError ? _value.actionError : actionError,
       medias: null == medias
           ? _value._medias
           : medias // ignore: cast_nullable_to_non_nullable
@@ -218,18 +263,14 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.isVideoPlaying
           : isVideoPlaying // ignore: cast_nullable_to_non_nullable
               as bool,
-      uploadProcess: null == uploadProcess
-          ? _value._uploadProcess
-          : uploadProcess // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
-      downloadProcess: null == downloadProcess
-          ? _value._downloadProcess
-          : downloadProcess // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
-      deleteProcess: null == deleteProcess
-          ? _value._deleteProcess
-          : deleteProcess // ignore: cast_nullable_to_non_nullable
-              as List<AppProcess>,
+      uploadMediaProcesses: null == uploadMediaProcesses
+          ? _value._uploadMediaProcesses
+          : uploadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, UploadMediaProcess>,
+      downloadMediaProcesses: null == downloadMediaProcesses
+          ? _value._downloadMediaProcesses
+          : downloadMediaProcesses // ignore: cast_nullable_to_non_nullable
+              as Map<String, DownloadMediaProcess>,
     ));
   }
 }
@@ -238,7 +279,10 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
 
 class _$MediaPreviewStateImpl implements _MediaPreviewState {
   const _$MediaPreviewStateImpl(
-      {this.error,
+      {this.googleAccount,
+      this.dropboxAccount,
+      this.error,
+      this.actionError,
       final List<AppMedia> medias = const [],
       this.currentIndex = 0,
       this.showActions = true,
@@ -247,16 +291,21 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       this.videoPosition = Duration.zero,
       this.videoMaxDuration = Duration.zero,
       this.isVideoPlaying = false,
-      final List<AppProcess> uploadProcess = const [],
-      final List<AppProcess> downloadProcess = const [],
-      final List<AppProcess> deleteProcess = const []})
+      final Map<String, UploadMediaProcess> uploadMediaProcesses = const {},
+      final Map<String, DownloadMediaProcess> downloadMediaProcesses =
+          const {}})
       : _medias = medias,
-        _uploadProcess = uploadProcess,
-        _downloadProcess = downloadProcess,
-        _deleteProcess = deleteProcess;
+        _uploadMediaProcesses = uploadMediaProcesses,
+        _downloadMediaProcesses = downloadMediaProcesses;
 
   @override
+  final GoogleSignInAccount? googleAccount;
+  @override
+  final DropboxAccount? dropboxAccount;
+  @override
   final Object? error;
+  @override
+  final Object? actionError;
   final List<AppMedia> _medias;
   @override
   @JsonKey()
@@ -287,36 +336,29 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   @override
   @JsonKey()
   final bool isVideoPlaying;
-  final List<AppProcess> _uploadProcess;
+  final Map<String, UploadMediaProcess> _uploadMediaProcesses;
   @override
   @JsonKey()
-  List<AppProcess> get uploadProcess {
-    if (_uploadProcess is EqualUnmodifiableListView) return _uploadProcess;
+  Map<String, UploadMediaProcess> get uploadMediaProcesses {
+    if (_uploadMediaProcesses is EqualUnmodifiableMapView)
+      return _uploadMediaProcesses;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_uploadProcess);
+    return EqualUnmodifiableMapView(_uploadMediaProcesses);
   }
 
-  final List<AppProcess> _downloadProcess;
+  final Map<String, DownloadMediaProcess> _downloadMediaProcesses;
   @override
   @JsonKey()
-  List<AppProcess> get downloadProcess {
-    if (_downloadProcess is EqualUnmodifiableListView) return _downloadProcess;
+  Map<String, DownloadMediaProcess> get downloadMediaProcesses {
+    if (_downloadMediaProcesses is EqualUnmodifiableMapView)
+      return _downloadMediaProcesses;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_downloadProcess);
-  }
-
-  final List<AppProcess> _deleteProcess;
-  @override
-  @JsonKey()
-  List<AppProcess> get deleteProcess {
-    if (_deleteProcess is EqualUnmodifiableListView) return _deleteProcess;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_deleteProcess);
+    return EqualUnmodifiableMapView(_downloadMediaProcesses);
   }
 
   @override
   String toString() {
-    return 'MediaPreviewState(error: $error, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadProcess: $uploadProcess, downloadProcess: $downloadProcess, deleteProcess: $deleteProcess)';
+    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
   }
 
   @override
@@ -324,7 +366,13 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$MediaPreviewStateImpl &&
+            (identical(other.googleAccount, googleAccount) ||
+                other.googleAccount == googleAccount) &&
+            (identical(other.dropboxAccount, dropboxAccount) ||
+                other.dropboxAccount == dropboxAccount) &&
             const DeepCollectionEquality().equals(other.error, error) &&
+            const DeepCollectionEquality()
+                .equals(other.actionError, actionError) &&
             const DeepCollectionEquality().equals(other._medias, _medias) &&
             (identical(other.currentIndex, currentIndex) ||
                 other.currentIndex == currentIndex) &&
@@ -341,17 +389,18 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
             (identical(other.isVideoPlaying, isVideoPlaying) ||
                 other.isVideoPlaying == isVideoPlaying) &&
             const DeepCollectionEquality()
-                .equals(other._uploadProcess, _uploadProcess) &&
-            const DeepCollectionEquality()
-                .equals(other._downloadProcess, _downloadProcess) &&
-            const DeepCollectionEquality()
-                .equals(other._deleteProcess, _deleteProcess));
+                .equals(other._uploadMediaProcesses, _uploadMediaProcesses) &&
+            const DeepCollectionEquality().equals(
+                other._downloadMediaProcesses, _downloadMediaProcesses));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      googleAccount,
+      dropboxAccount,
       const DeepCollectionEquality().hash(error),
+      const DeepCollectionEquality().hash(actionError),
       const DeepCollectionEquality().hash(_medias),
       currentIndex,
       showActions,
@@ -360,9 +409,8 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       videoPosition,
       videoMaxDuration,
       isVideoPlaying,
-      const DeepCollectionEquality().hash(_uploadProcess),
-      const DeepCollectionEquality().hash(_downloadProcess),
-      const DeepCollectionEquality().hash(_deleteProcess));
+      const DeepCollectionEquality().hash(_uploadMediaProcesses),
+      const DeepCollectionEquality().hash(_downloadMediaProcesses));
 
   /// Create a copy of MediaPreviewState
   /// with the given fields replaced by the non-null parameter values.
@@ -376,21 +424,30 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
 abstract class _MediaPreviewState implements MediaPreviewState {
   const factory _MediaPreviewState(
-      {final Object? error,
-      final List<AppMedia> medias,
-      final int currentIndex,
-      final bool showActions,
-      final bool isVideoInitialized,
-      final bool isVideoBuffering,
-      final Duration videoPosition,
-      final Duration videoMaxDuration,
-      final bool isVideoPlaying,
-      final List<AppProcess> uploadProcess,
-      final List<AppProcess> downloadProcess,
-      final List<AppProcess> deleteProcess}) = _$MediaPreviewStateImpl;
+          {final GoogleSignInAccount? googleAccount,
+          final DropboxAccount? dropboxAccount,
+          final Object? error,
+          final Object? actionError,
+          final List<AppMedia> medias,
+          final int currentIndex,
+          final bool showActions,
+          final bool isVideoInitialized,
+          final bool isVideoBuffering,
+          final Duration videoPosition,
+          final Duration videoMaxDuration,
+          final bool isVideoPlaying,
+          final Map<String, UploadMediaProcess> uploadMediaProcesses,
+          final Map<String, DownloadMediaProcess> downloadMediaProcesses}) =
+      _$MediaPreviewStateImpl;
 
   @override
+  GoogleSignInAccount? get googleAccount;
+  @override
+  DropboxAccount? get dropboxAccount;
+  @override
   Object? get error;
+  @override
+  Object? get actionError;
   @override
   List<AppMedia> get medias;
   @override
@@ -408,11 +465,9 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   @override
   bool get isVideoPlaying;
   @override
-  List<AppProcess> get uploadProcess;
+  Map<String, UploadMediaProcess> get uploadMediaProcesses;
   @override
-  List<AppProcess> get downloadProcess;
-  @override
-  List<AppProcess> get deleteProcess;
+  Map<String, DownloadMediaProcess> get downloadMediaProcesses;
 
   /// Create a copy of MediaPreviewState
   /// with the given fields replaced by the non-null parameter values.

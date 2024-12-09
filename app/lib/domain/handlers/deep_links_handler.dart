@@ -28,6 +28,7 @@ class DeepLinkHandler {
 
         final dropboxService = container.read(dropboxServiceProvider);
         await dropboxService.setCurrentUserAccount();
+        await dropboxService.setFileIdAppPropertyTemplate();
       }
     }
 

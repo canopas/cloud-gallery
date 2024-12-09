@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:data/storage/app_preferences.dart';
 import '../../../components/app_page.dart';
 import '../../../components/error_view.dart';
 import '../../../components/snack_bar.dart';
@@ -38,7 +39,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
   late AutoDisposeStateNotifierProvider<MediaPreviewStateNotifier,
       MediaPreviewState> _provider;
   late PageController _pageController;
-  late MediaPreviewStateNotifier notifier;
+  late MediaPreviewStateNotifier _notifier;
 
   VideoPlayerController? _videoPlayerController;
 
@@ -47,11 +48,10 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     final currentIndex =
         widget.medias.indexWhere((element) => element.id == widget.startFrom);
 
-    //initialize view notifier with initial state
     _provider = mediaPreviewStateNotifierProvider(
-      MediaPreviewState(currentIndex: currentIndex, medias: widget.medias),
+      (startIndex: currentIndex, medias: widget.medias),
     );
-    notifier = ref.read(_provider.notifier);
+    _notifier = ref.read(_provider.notifier);
 
     _pageController = PageController(initialPage: currentIndex, keepPage: true);
 
@@ -62,8 +62,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           path: widget.medias[currentIndex].path,
         ),
       );
-    } else if (widget.medias[currentIndex].type.isVideo &&
-        widget.medias[currentIndex].isGoogleDriveStored) {}
+    }
     super.initState();
   }
 
@@ -73,26 +72,26 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _videoPlayerController = VideoPlayerController.file(File(path));
     _videoPlayerController?.addListener(_observeVideoController);
     await _videoPlayerController?.initialize();
-    notifier.updateVideoInitialized(
+    _notifier.updateVideoInitialized(
       _videoPlayerController?.value.isInitialized ?? false,
     );
     await _videoPlayerController?.play();
   }
 
   void _observeVideoController() {
-    notifier.updateVideoInitialized(
+    _notifier.updateVideoInitialized(
       _videoPlayerController?.value.isInitialized ?? false,
     );
-    notifier.updateVideoBuffering(
+    _notifier.updateVideoBuffering(
       _videoPlayerController?.value.isBuffering ?? false,
     );
-    notifier.updateVideoPosition(
+    _notifier.updateVideoPosition(
       _videoPlayerController?.value.position ?? Duration.zero,
     );
-    notifier.updateVideoMaxDuration(
+    _notifier.updateVideoMaxDuration(
       _videoPlayerController?.value.duration ?? Duration.zero,
     );
-    notifier
+    _notifier
         .updateVideoPlaying(_videoPlayerController?.value.isPlaying ?? false);
   }
 
@@ -112,7 +111,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         (previous, next) {
       if (_videoPlayerController != null) {
         _videoPlayerController?.removeListener(_observeVideoController);
-        notifier.updateVideoInitialized(false);
+        _notifier.updateVideoInitialized(false);
         _videoPlayerController?.dispose();
         _videoPlayerController = null;
       }
@@ -147,7 +146,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       backgroundColor: context.colorScheme.surface,
       onProgress: (progress) {
         if (progress > 0 && state.showActions) {
-          notifier.toggleActionVisibility();
+          _notifier.toggleActionVisibility();
         }
       },
       onDismiss: () {
@@ -160,9 +159,9 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           children: [
             GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: notifier.toggleActionVisibility,
+              onTap: _notifier.toggleActionVisibility,
               child: PageView.builder(
-                onPageChanged: notifier.changeVisibleMediaIndex,
+                onPageChanged: _notifier.changeVisibleMediaIndex,
                 controller: _pageController,
                 itemCount: state.medias.length,
                 itemBuilder: (context, index) =>
@@ -200,24 +199,33 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               ),
             );
 
-            if (!state.initialized || state.buffring) {
+            if (!state.initialized) {
               return AppCircularProgressIndicator(
                 color: context.colorScheme.onPrimary,
               );
-            } else {
-              return Hero(
-                tag: media,
-                child: AspectRatio(
-                  aspectRatio: _videoPlayerController!.value.aspectRatio,
-                  child: VideoPlayer(_videoPlayerController!),
-                ),
-              );
             }
+            return Hero(
+              tag: media,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  AspectRatio(
+                    aspectRatio: _videoPlayerController!.value.aspectRatio,
+                    child: VideoPlayer(_videoPlayerController!),
+                  ),
+                  if (state.buffring)
+                    AppCircularProgressIndicator(
+                      color: context.colorScheme.onPrimary,
+                    ),
+                ],
+              ),
+            );
           },
         ),
       );
-    } else if (media.type.isVideo && media.isGoogleDriveStored) {
-      return _googleDriveVideoView(context: context, media: media);
+    } else if (media.type.isVideo &&
+        (media.isGoogleDriveStored || media.isDropboxStored)) {
+      return _cloudVideoView(context: context, media: media);
     } else if (media.type.isImage) {
       return ImagePreview(media: media);
     } else {
@@ -228,7 +236,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     }
   }
 
-  Widget _googleDriveVideoView({
+  Widget _cloudVideoView({
     required BuildContext context,
     required AppMedia media,
   }) {
@@ -236,16 +244,25 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       builder: (context, ref, child) {
         final process = ref.watch(
           _provider.select(
-            (value) => value.downloadProcess
-                .where((element) => element.id == media.id)
-                .firstOrNull,
+            (value) =>
+                media.driveMediaRefId != null && media.isGoogleDriveStored
+                    ? value.downloadMediaProcesses[media.driveMediaRefId]
+                    : media.dropboxMediaRefId != null
+                        ? value.downloadMediaProcesses[media.dropboxMediaRefId]
+                        : null,
           ),
         );
         return DownloadRequireView(
+          dropboxAccessToken:
+              ref.read(AppPreferences.dropboxToken)?.access_token,
           media: media,
           downloadProcess: process,
           onDownload: () {
-            notifier.downloadMediaFromGoogleDrive(media: media);
+            if (media.isGoogleDriveStored) {
+              _notifier.downloadFromGoogleDrive(media: media);
+            } else if (media.isDropboxStored) {
+              _notifier.downloadFromDropbox(media: media);
+            }
           },
         );
       },
@@ -317,7 +334,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               _videoPlayerController?.seekTo(duration);
             },
             onChanged: (duration) {
-              notifier.updateVideoPosition(duration);
+              _notifier.updateVideoPosition(duration);
             },
           );
         },

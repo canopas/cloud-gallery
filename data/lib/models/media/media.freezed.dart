@@ -22,6 +22,7 @@ AppMedia _$AppMediaFromJson(Map<String, dynamic> json) {
 mixin _$AppMedia {
   String get id => throw _privateConstructorUsedError;
   String? get driveMediaRefId => throw _privateConstructorUsedError;
+  String? get dropboxMediaRefId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
   String? get thumbnailLink => throw _privateConstructorUsedError;
@@ -59,6 +60,7 @@ abstract class $AppMediaCopyWith<$Res> {
   $Res call(
       {String id,
       String? driveMediaRefId,
+      String? dropboxMediaRefId,
       String? name,
       String path,
       String? thumbnailLink,
@@ -93,6 +95,7 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
   $Res call({
     Object? id = null,
     Object? driveMediaRefId = freezed,
+    Object? dropboxMediaRefId = freezed,
     Object? name = freezed,
     Object? path = null,
     Object? thumbnailLink = freezed,
@@ -117,6 +120,10 @@ class _$AppMediaCopyWithImpl<$Res, $Val extends AppMedia>
       driveMediaRefId: freezed == driveMediaRefId
           ? _value.driveMediaRefId
           : driveMediaRefId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dropboxMediaRefId: freezed == dropboxMediaRefId
+          ? _value.dropboxMediaRefId
+          : dropboxMediaRefId // ignore: cast_nullable_to_non_nullable
               as String?,
       name: freezed == name
           ? _value.name
@@ -193,6 +200,7 @@ abstract class _$$AppMediaImplCopyWith<$Res>
   $Res call(
       {String id,
       String? driveMediaRefId,
+      String? dropboxMediaRefId,
       String? name,
       String path,
       String? thumbnailLink,
@@ -225,6 +233,7 @@ class __$$AppMediaImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? driveMediaRefId = freezed,
+    Object? dropboxMediaRefId = freezed,
     Object? name = freezed,
     Object? path = null,
     Object? thumbnailLink = freezed,
@@ -249,6 +258,10 @@ class __$$AppMediaImplCopyWithImpl<$Res>
       driveMediaRefId: freezed == driveMediaRefId
           ? _value.driveMediaRefId
           : driveMediaRefId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dropboxMediaRefId: freezed == dropboxMediaRefId
+          ? _value.dropboxMediaRefId
+          : dropboxMediaRefId // ignore: cast_nullable_to_non_nullable
               as String?,
       name: freezed == name
           ? _value.name
@@ -320,6 +333,7 @@ class _$AppMediaImpl extends _AppMedia {
   const _$AppMediaImpl(
       {required this.id,
       this.driveMediaRefId,
+      this.dropboxMediaRefId,
       this.name,
       required this.path,
       this.thumbnailLink,
@@ -345,6 +359,8 @@ class _$AppMediaImpl extends _AppMedia {
   final String id;
   @override
   final String? driveMediaRefId;
+  @override
+  final String? dropboxMediaRefId;
   @override
   final String? name;
   @override
@@ -387,7 +403,7 @@ class _$AppMediaImpl extends _AppMedia {
 
   @override
   String toString() {
-    return 'AppMedia(id: $id, driveMediaRefId: $driveMediaRefId, name: $name, path: $path, thumbnailLink: $thumbnailLink, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
+    return 'AppMedia(id: $id, driveMediaRefId: $driveMediaRefId, dropboxMediaRefId: $dropboxMediaRefId, name: $name, path: $path, thumbnailLink: $thumbnailLink, displayHeight: $displayHeight, displayWidth: $displayWidth, type: $type, mimeType: $mimeType, createdTime: $createdTime, modifiedTime: $modifiedTime, orientation: $orientation, size: $size, videoDuration: $videoDuration, latitude: $latitude, longitude: $longitude, sources: $sources)';
   }
 
   @override
@@ -398,6 +414,8 @@ class _$AppMediaImpl extends _AppMedia {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.driveMediaRefId, driveMediaRefId) ||
                 other.driveMediaRefId == driveMediaRefId) &&
+            (identical(other.dropboxMediaRefId, dropboxMediaRefId) ||
+                other.dropboxMediaRefId == dropboxMediaRefId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.path, path) || other.path == path) &&
             (identical(other.thumbnailLink, thumbnailLink) ||
@@ -431,6 +449,7 @@ class _$AppMediaImpl extends _AppMedia {
       runtimeType,
       id,
       driveMediaRefId,
+      dropboxMediaRefId,
       name,
       path,
       thumbnailLink,
@@ -467,6 +486,7 @@ abstract class _AppMedia extends AppMedia {
   const factory _AppMedia(
       {required final String id,
       final String? driveMediaRefId,
+      final String? dropboxMediaRefId,
       final String? name,
       required final String path,
       final String? thumbnailLink,
@@ -491,6 +511,8 @@ abstract class _AppMedia extends AppMedia {
   String get id;
   @override
   String? get driveMediaRefId;
+  @override
+  String? get dropboxMediaRefId;
   @override
   String? get name;
   @override

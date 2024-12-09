@@ -65,6 +65,9 @@ dependencies:
   freezed_annotation: ^2.4.4
   json_serializable: ^6.8.0
 
+  # logging
+  logger: ^2.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -76,6 +79,7 @@ dev_dependencies:
   # code generation
   build_runner: ^2.4.13
   go_router_builder: ^2.7.1
+  flutter_gen_runner: ^5.8.0
 
 flutter:
   uses-material-design: true

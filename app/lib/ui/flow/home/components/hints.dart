@@ -17,7 +17,7 @@ class HomeScreenHints extends ConsumerWidget {
 
     if (!signInHintShown && googleAccount == null && dropboxAccount == null) {
       return HintView(
-        title: context.l10n.greetings_hey_there_text,
+        title: context.l10n.common_hey_there,
         hint: context.l10n.hint_sign_in_message,
         onClose: () {
           ref.read(AppPreferences.signInHintShown.notifier).state = true;

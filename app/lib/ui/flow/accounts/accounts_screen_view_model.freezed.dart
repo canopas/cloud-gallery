@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AccountsState {
+  bool get notificationsPermissionStatus => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
@@ -34,7 +35,10 @@ abstract class $AccountsStateCopyWith<$Res> {
       _$AccountsStateCopyWithImpl<$Res, AccountsState>;
   @useResult
   $Res call(
-      {String? version, Object? error, GoogleSignInAccount? googleAccount});
+      {bool notificationsPermissionStatus,
+      String? version,
+      Object? error,
+      GoogleSignInAccount? googleAccount});
 }
 
 /// @nodoc
@@ -52,11 +56,16 @@ class _$AccountsStateCopyWithImpl<$Res, $Val extends AccountsState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? notificationsPermissionStatus = null,
     Object? version = freezed,
     Object? error = freezed,
     Object? googleAccount = freezed,
   }) {
     return _then(_value.copyWith(
+      notificationsPermissionStatus: null == notificationsPermissionStatus
+          ? _value.notificationsPermissionStatus
+          : notificationsPermissionStatus // ignore: cast_nullable_to_non_nullable
+              as bool,
       version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -79,7 +88,10 @@ abstract class _$$AccountsStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? version, Object? error, GoogleSignInAccount? googleAccount});
+      {bool notificationsPermissionStatus,
+      String? version,
+      Object? error,
+      GoogleSignInAccount? googleAccount});
 }
 
 /// @nodoc
@@ -95,11 +107,16 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? notificationsPermissionStatus = null,
     Object? version = freezed,
     Object? error = freezed,
     Object? googleAccount = freezed,
   }) {
     return _then(_$AccountsStateImpl(
+      notificationsPermissionStatus: null == notificationsPermissionStatus
+          ? _value.notificationsPermissionStatus
+          : notificationsPermissionStatus // ignore: cast_nullable_to_non_nullable
+              as bool,
       version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -116,8 +133,15 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AccountsStateImpl implements _AccountsState {
-  const _$AccountsStateImpl({this.version, this.error, this.googleAccount});
+  const _$AccountsStateImpl(
+      {this.notificationsPermissionStatus = true,
+      this.version,
+      this.error,
+      this.googleAccount});
 
+  @override
+  @JsonKey()
+  final bool notificationsPermissionStatus;
   @override
   final String? version;
   @override
@@ -127,7 +151,7 @@ class _$AccountsStateImpl implements _AccountsState {
 
   @override
   String toString() {
-    return 'AccountsState(version: $version, error: $error, googleAccount: $googleAccount)';
+    return 'AccountsState(notificationsPermissionStatus: $notificationsPermissionStatus, version: $version, error: $error, googleAccount: $googleAccount)';
   }
 
   @override
@@ -135,6 +159,10 @@ class _$AccountsStateImpl implements _AccountsState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AccountsStateImpl &&
+            (identical(other.notificationsPermissionStatus,
+                    notificationsPermissionStatus) ||
+                other.notificationsPermissionStatus ==
+                    notificationsPermissionStatus) &&
             (identical(other.version, version) || other.version == version) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.googleAccount, googleAccount) ||
@@ -142,8 +170,8 @@ class _$AccountsStateImpl implements _AccountsState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, version,
-      const DeepCollectionEquality().hash(error), googleAccount);
+  int get hashCode => Object.hash(runtimeType, notificationsPermissionStatus,
+      version, const DeepCollectionEquality().hash(error), googleAccount);
 
   /// Create a copy of AccountsState
   /// with the given fields replaced by the non-null parameter values.
@@ -156,10 +184,13 @@ class _$AccountsStateImpl implements _AccountsState {
 
 abstract class _AccountsState implements AccountsState {
   const factory _AccountsState(
-      {final String? version,
+      {final bool notificationsPermissionStatus,
+      final String? version,
       final Object? error,
       final GoogleSignInAccount? googleAccount}) = _$AccountsStateImpl;
 
+  @override
+  bool get notificationsPermissionStatus;
   @override
   String? get version;
   @override
