@@ -15,11 +15,11 @@ class MediaTransferStateNotifier extends StateNotifier<MediaTransferState> {
 
   MediaTransferStateNotifier(this._mediaProcessRepo)
       : super(const MediaTransferState()) {
-    _listenGoogleDriveProcess();
-    _mediaProcessRepo.addListener(_listenGoogleDriveProcess);
+    _listenMediaProcess();
+    _mediaProcessRepo.addListener(_listenMediaProcess);
   }
 
-  void _listenGoogleDriveProcess() {
+  void _listenMediaProcess() {
     state = state.copyWith(
       downloadProcesses: _mediaProcessRepo.downloadQueue.toList(),
       uploadProcesses: _mediaProcessRepo.uploadQueue.toList(),
@@ -48,7 +48,7 @@ class MediaTransferStateNotifier extends StateNotifier<MediaTransferState> {
 
   @override
   void dispose() {
-    _mediaProcessRepo.removeListener(_listenGoogleDriveProcess);
+    _mediaProcessRepo.removeListener(_listenMediaProcess);
     super.dispose();
   }
 }

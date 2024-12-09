@@ -87,9 +87,9 @@
 
   "@_TRANSFER":{},
   "transfer_screen_title": "Transfer",
-  "empty_upload_title":"No Files Being Uploads",
+  "empty_upload_title":"No Files Being Uploaded",
   "empty_upload_message":  "No uploads are happening right now. If you have files to upload, go ahead and start uploading.",
-  "empty_download_title":"No Files Being Downloads",
+  "empty_download_title":"No Files Being Downloaded",
   "empty_download_message":  "No downloads are happening right now. If you have files to download, go ahead and start downloading.",
 
   "@_PREVIEW":{},
