@@ -188,10 +188,10 @@ class MediaProcessRepo extends ChangeNotifier {
 
     for (AppMedia localMedia in localMedias.toList()) {
       if (_uploadQueue
-              .where((element) => element.media_id == localMedia.id)
+              .where((element) => element.media_id == localMedia.id && element.status.isRunning)
               .isNotEmpty ||
           dgMedias
-              .where((gdMedia) => gdMedia.path == localMedia.id)
+              .where((gdMedia) => gdMedia.id == localMedia.id)
               .isNotEmpty) {
         localMedias.removeWhere((media) => media.id == localMedia.id);
       }
@@ -230,7 +230,7 @@ class MediaProcessRepo extends ChangeNotifier {
               .where((element) => element.media_id == localMedia.id)
               .isNotEmpty ||
           dropboxMedias
-              .where((gdMedia) => gdMedia.path == localMedia.id)
+              .where((gdMedia) => gdMedia.id == localMedia.id)
               .isNotEmpty) {
         localMedias.removeWhere((media) => media.id == localMedia.id);
       }
