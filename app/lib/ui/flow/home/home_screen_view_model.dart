@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:data/log/logger.dart';
 import 'package:data/models/dropbox/account/dropbox_account.dart';
 import 'package:data/models/media/media_extension.dart';
@@ -97,7 +98,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
               if (media.driveMediaRefId != null &&
                   media.sources.contains(AppMediaSource.googleDrive) &&
                   media.sources.length > 1) {
-                return media.removeDropboxRef();
+                return media.removeGoogleDriveRef();
               } else if (!media.sources.contains(AppMediaSource.googleDrive) &&
                   media.driveMediaRefId == null) {
                 return media;
