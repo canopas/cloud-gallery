@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:data/log/logger.dart';
 import 'package:data/models/dropbox/account/dropbox_account.dart';
 import 'package:data/models/media/media_extension.dart';
