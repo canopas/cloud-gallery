@@ -13,10 +13,11 @@ and your device, all in a simple, user-friendly interface.
 
 ## Overview
 
-Cloud Gallery is a Flutter application designed to manage user media seamlessly across multiple
-cloud providers like Google Drive, Dropbox, while also allowing users to access and organize their
-local media. With intuitive features and a user-friendly interface, Cloud Gallery simplifies media
-management, offering convenience and accessibility.
+Cloud Gallery is an open-source Flutter project that makes managing your photos and videos
+effortless. Keep all your media in one place,
+whether it’s stored locally or in the cloud with Google Drive or Dropbox. Automatically back up
+your local media to the cloud, and seamlessly upload, download, or organize your files anywhere.
+It’s the simplest way to keep your memories safe and accessible.
 
 <br/>
 
@@ -68,23 +69,30 @@ management, offering convenience and accessibility.
 
 ## Features 🌟
 
-- **Sync with Google Drive**: Easily access and manage your photos and videos stored on your device
-  and Google Drive account directly in one place. Enjoy the convenience of having your memories at
-  your fingertips, wherever you go.
-- **Auto Backup In Google Drive**: Worried about losing your cherished memories? Cloud Gallery's
-  auto backup feature ensures that your local photos and videos are automatically backed up to your
-  Google Drive account, keeping them safe and secure.
-- **Effortless Uploads & Downloads**: Easily upload photos and
-  videos from your device's local storage to your Google Drive account, and download files from
-  Google Drive to your device with just a tap.
-- **Access Media On Multiple Devices**: Access your media seamlessly across multiple devices with
-  our backup feature, ensuring your content is always at your fingertips
-- **Stay Organized**: Arrange and categorize your photos and videos in your Google Drive account,
+- **Sync with Cloud Providers**: Easily access and manage your photos and videos stored on both your
+  device and cloud accounts like Google Drive and Dropbox, all in one place. Enjoy the convenience
+  of having your memories at your fingertips, wherever you go.
+
+- **Auto Backup to Cloud**: Never worry about losing your cherished memories again! Cloud
+  Gallery’s auto backup feature ensures your local photos and videos are automatically backed up to
+  either Google Drive or Dropbox, keeping them safe and secure.
+
+- **Effortless Uploads & Downloads**: Upload photos and videos from your device’s local storage to
+  your cloud account, and easily download files from Google Drive or Dropbox to your device with
+  just a tap.
+
+- **Access Media on Multiple Devices**: With the cloud feature, access your media seamlessly across
+  multiple devices, ensuring your content is always at your fingertips, no matter where you are.
+
+- **Stay Organized**: Organize and categorize your photos and videos in Google Drive or Dropbox,
   making it easy to find and manage your media files.
-- **Secure User Data**: We prioritize your privacy and security. Cloud Gallery utilizes your Google
-  Drive storage, ensuring that your data remains secure within your own account.
+
+- **Secure User Data**: With an intuitive and user-friendly interface, Cloud Gallery makes it easy
+  to manage your media files, ensuring a hassle-free experience.
+
 - **Cross-Platform Compatibility**: Whether you're using an Android or iOS device, Cloud Gallery
   offers seamless compatibility across platforms.
+
 - **User-Friendly Interface**: With an intuitive and user-friendly interface, Cloud Gallery makes it
   easy to manage your media files, ensuring a hassle-free experience.
 
@@ -95,12 +103,15 @@ management, offering convenience and accessibility.
 
 ## What's Coming Next? 🚀
 
-- **Dropbox Integration**: Cloud Gallery will soon support Dropbox integration, allowing users to
-  access and manage their media files on Dropbox.
 - **Sharing Between Clouds**: Easily share your media files between Google Drive and Dropbox, making
   it convenient to access and manage your files across multiple cloud providers.
-- **Auto Backup In Multiple Cloud**: Cloud Gallery will soon support backup in multiple cloud
-  providers, ensuring that your media files are securely stored across multiple platforms.
+
+- **Custom Folders & Albums**: Create custom folders and albums to organize your media files, making
+  it easy to categorize and manage your photos and videos.
+
+- **Enhanced Search & Filter**: Quickly find and filter your media files with advanced search and
+  filter options, making it easy to locate specific photos
+
 - **Improve User Experience**: We're continuously working on improving the user experience, with
   plans to incorporate additional features and enhancements shortly.
 
@@ -113,13 +124,18 @@ practices. Below is the current technologies stack used in the development proce
 
 - [Dart](https://dart.dev/)
 - [Flutter](https://flutter.dev/)
+- Navigation 2.0 With [Go Router](https://pub.dev/packages/go_router) & [Go Router Builder](https://pub.dev/packages/go_router_builder)
 - [Google Drive API](https://developers.google.com/drive/api/guides/about-sdk)
 - [googleapis SDK](https://pub.dev/packages/googleapis)
-- [Navigation 2.0 (Go Router)](https://pub.dev/packages/go_router)
+- [Dropbox API](https://www.dropbox.com/developers)
 - [Firebase](https://firebase.google.com/)
+- [Crashlytics](https://firebase.google.com/docs/crashlytics)
 - [Riverpod](https://riverpod.dev/)
 - [Dio](https://pub.dev/packages/dio)
 - [Photo manager](https://pub.dev/packages/photo_manager)
+- [SQFLite](https://pub.dev/packages/sqflite)
+- [Shared Preferences](https://pub.dev/packages/shared_preferences)
+- [Google Sign-In](https://pub.dev/packages/google_sign_in)
 
 #### Best Practices
 
@@ -131,21 +147,24 @@ practices. Below is the current technologies stack used in the development proce
 - Error Handling
 - Code Generation
 - Responsive Design
+- Type Safe Navigation
+- Cache Management
 
 <br/>
 
-## Feedback & Suggestions ✨ 
+## Feedback & Suggestions ✨
 
 We value
 your [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions).
-If you have any ideas or
-suggestions, please let us know. We'd love to hear from you!
+If you have any ideas or suggestions, please let us know. We'd love to hear from you!
 
 <br/>
 
 ## Contributions 🤝
 
- We are not currently accepting contributions. However, we appreciate community [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions) for future improvements.
+We are not currently accepting contributions. However, we appreciate
+community [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions)
+for future improvements.
 
 <br/>
 
