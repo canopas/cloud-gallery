@@ -67,6 +67,8 @@ dependencies:
 
   # logging
   logger: ^2.5.0
+  firebase_crashlytics: ^4.2.0
+  firebase_analytics: ^11.3.6
 
 dev_dependencies:
   flutter_test:
