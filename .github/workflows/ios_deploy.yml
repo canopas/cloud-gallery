@@ -4,7 +4,7 @@ on: push
 
 jobs:
   ios_deploy:
-    runs-on: macos-13
+    runs-on: macos-14
 
     env:
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
