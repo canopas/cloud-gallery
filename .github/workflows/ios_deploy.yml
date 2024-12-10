@@ -82,6 +82,9 @@ jobs:
       - name: Set up code signing settings on Xcode project
         run: xcode-project use-profiles
 
+      - name: Activate flutterfire CLI
+        run: dart pub global activate flutterfire_cli
+
       - name: Build ipa for distribution
         run: |
           cd app
