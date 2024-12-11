@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-
 import 'domain/handlers/deep_links_handler.dart';
 import 'firebase_options.dart';
 import 'package:data/storage/provider/preferences_provider.dart';

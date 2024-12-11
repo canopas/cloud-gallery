@@ -1,4 +1,4 @@
-import '../../../components/error_view.dart';
+import '../../../components/place_holder_screen.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import 'components/transfer_item.dart';
 import 'media_transfer_view_model.dart';
@@ -100,7 +100,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
         );
 
         if (uploadProcesses.isEmpty) {
-          return ErrorView(
+          return PlaceHolderScreen(
             title: context.l10n.empty_upload_title,
             message: context.l10n.empty_upload_message,
             icon: Icon(
@@ -141,7 +141,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
         );
 
         if (downloadProcesses.isEmpty) {
-          return ErrorView(
+          return PlaceHolderScreen(
             title: context.l10n.empty_download_title,
             message: context.l10n.empty_download_message,
             icon: Icon(

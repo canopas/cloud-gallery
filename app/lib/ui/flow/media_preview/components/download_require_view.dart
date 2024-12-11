@@ -1,12 +1,12 @@
 import 'package:data/domain/formatters/byte_formatter.dart';
 import 'package:data/models/media_process/media_process.dart';
+import '../../../../components/place_holder_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
-import '../../../../components/error_view.dart';
 import '../../../../domain/image_providers/app_media_image_provider.dart';
 
 class DownloadRequireView extends StatelessWidget {
@@ -52,7 +52,7 @@ class DownloadRequireView extends StatelessWidget {
           ),
           if (downloadProcess?.progress != null &&
               downloadProcess!.status.isRunning) ...[
-            ErrorView(
+            PlaceHolderScreen(
               foregroundColor: context.colorScheme.onPrimary,
               icon: Stack(
                 alignment: Alignment.center,
@@ -77,7 +77,7 @@ class DownloadRequireView extends StatelessWidget {
             ),
           ],
           if (downloadProcess?.progress == null)
-            ErrorView(
+            PlaceHolderScreen(
               foregroundColor: context.colorScheme.onPrimary,
               icon: Icon(
                 CupertinoIcons.cloud_download,
@@ -86,7 +86,7 @@ class DownloadRequireView extends StatelessWidget {
               ),
               title: context.l10n.download_require_text,
               message: context.l10n.download_require_message,
-              action: ErrorViewAction(
+              action: PlaceHolderScreenAction(
                 title: context.l10n.common_download,
                 onPressed: onDownload,
               ),

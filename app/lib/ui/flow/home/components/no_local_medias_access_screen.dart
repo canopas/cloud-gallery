@@ -1,4 +1,4 @@
-import '../../../../components/error_view.dart';
+import '../../../../components/place_holder_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import '../home_screen_view_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +12,7 @@ class NoLocalMediasAccessScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(homeViewStateNotifier.notifier);
-    return ErrorView(
+    return PlaceHolderScreen(
       title: context.l10n.no_media_access_screen_title,
       icon: Icon(
         CupertinoIcons.photo_on_rectangle,
@@ -20,7 +20,7 @@ class NoLocalMediasAccessScreen extends ConsumerWidget {
         size: 120,
       ),
       message: context.l10n.no_media_access_screen_message,
-      action: ErrorViewAction(
+      action: PlaceHolderScreenAction(
         onPressed: () async {
           await openAppSettings();
           notifier.loadMedias(reload: true);

@@ -3,21 +3,21 @@ import 'package:style/buttons/primary_button.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 
-class ErrorViewAction {
+class PlaceHolderScreenAction {
   final String title;
   final VoidCallback onPressed;
 
-  const ErrorViewAction({required this.title, required this.onPressed});
+  const PlaceHolderScreenAction({required this.title, required this.onPressed});
 }
 
-class ErrorView extends StatelessWidget {
+class PlaceHolderScreen extends StatelessWidget {
   final Widget? icon;
   final String title;
   final String message;
   final Color? foregroundColor;
-  final ErrorViewAction? action;
+  final PlaceHolderScreenAction? action;
 
-  const ErrorView({
+  const PlaceHolderScreen({
     super.key,
     this.icon,
     required this.title,

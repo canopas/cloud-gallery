@@ -105,7 +105,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           buttons: [
             ActionListButton(
               leading: SvgPicture.asset(
-                Assets.images.icons.icGoogleDrive,
+                Assets.images.icGoogleDrive,
                 height: 24,
                 width: 24,
               ),
@@ -159,7 +159,7 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           buttons: [
             ActionListButton(
               leading: SvgPicture.asset(
-                Assets.images.icons.icDropbox,
+                Assets.images.icDropbox,
                 height: 24,
                 width: 24,
               ),

@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
+import 'package:data/handlers/connectivity_handler.dart';
 import 'home_view_model_helper_mixin.dart';
 import 'package:data/repositories/media_process_repository.dart';
 import 'package:data/domain/config.dart';
@@ -29,6 +30,7 @@ final homeViewStateNotifier =
     ref.read(authServiceProvider),
     ref.read(mediaProcessRepoProvider),
     ref.read(loggerProvider),
+    ref.read(connectivityHandlerProvider),
     ref.read(AppPreferences.dropboxCurrentUserAccount),
   );
   ref.listen(AppPreferences.dropboxCurrentUserAccount, (previous, next) {
@@ -45,6 +47,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   final DropboxService _dropboxService;
   final LocalMediaService _localMediaService;
   final MediaProcessRepo _mediaProcessRepo;
+  final ConnectivityHandler _connectivityHandler;
 
   StreamSubscription? _googleAccountSubscription;
 
@@ -70,6 +73,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     this._authService,
     this._mediaProcessRepo,
     this._logger,
+    this._connectivityHandler,
     DropboxAccount? _dropboxAccount,
   ) : super(HomeViewState(dropboxAccount: _dropboxAccount)) {
     _mediaProcessRepo.addListener(_mediaProcessObserve);
@@ -86,7 +90,15 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         _authService.onGoogleAccountChange.listen((event) async {
       if (event != null) {
         state = state.copyWith(googleAccount: event);
-        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+        try {
+          _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+        } catch (e, s) {
+          _logger.e(
+            "HomeViewStateNotifier: unable to get google drive back up folder id",
+            error: e,
+            stackTrace: s,
+          );
+        }
         loadMedias(reload: true);
       } else {
         _backUpFolderId = null;
@@ -220,12 +232,22 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         _dropboxMediasWithLocalRef.clear();
       }
 
-      // Request local media permission if not granted
-      final hasAccess = await _localMediaService.requestPermission();
-      state = state.copyWith(hasLocalMediaAccess: hasAccess);
+      // Request local media permission and internet connection
+      final res = await Future.wait([
+        _localMediaService.requestPermission(),
+        _connectivityHandler.hasInternetAccess(),
+      ]);
+
+      final hasLocalMediaAccess = res[0];
+      final hasInternet = res[1];
+
+      state = state.copyWith(
+        hasLocalMediaAccess: hasLocalMediaAccess,
+        hasInternet: hasInternet,
+      );
 
       // Load local media if access is granted and not max loaded
-      final localMedia = !hasAccess || _localMaxLoaded
+      final localMedia = !hasLocalMediaAccess || _localMaxLoaded
           ? <AppMedia>[]
           : await _localMediaService.getLocalMedia(
               start: _localMediaCount,
@@ -256,7 +278,9 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       final List<AppMedia> cloudBasedMedias = [];
 
       // Load medias from google drive and separate the local ref medias and only cloud based medias.
-      if (!_googleDriveMaxLoaded && state.googleAccount != null) {
+      if (!_googleDriveMaxLoaded &&
+          state.googleAccount != null &&
+          hasInternet) {
         _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
 
         final res = await _googleDriveService.getPaginatedMedias(
@@ -273,7 +297,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       }
 
       // Load medias from dropbox and separate the local ref medias and only cloud based medias.
-      if (!_dropboxMaxLoaded && state.dropboxAccount != null) {
+      if (!_dropboxMaxLoaded && state.dropboxAccount != null && hasInternet) {
         final res = await _dropboxService.getPaginatedMedias(
           folder: ProviderConstants.backupFolderPath,
           nextPageToken: _dropboxPageToken,
@@ -297,7 +321,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         // Refill the google drive local ref medias if it is empty and not max loaded
         if (_googleDriveMediasWithLocalRef.isEmpty &&
             !_googleDriveMaxLoaded &&
-            state.googleAccount != null) {
+            state.googleAccount != null &&
+            hasInternet) {
           final res = await _googleDriveService.getPaginatedMedias(
             folder: _backUpFolderId!,
             nextPageToken: _googleDrivePageToken,
@@ -316,7 +341,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         // Refill the dropbox local ref medias if it is empty and not max loaded
         if (_dropboxMediasWithLocalRef.isEmpty &&
             !_dropboxMaxLoaded &&
-            state.dropboxAccount != null) {
+            state.dropboxAccount != null &&
+            hasInternet) {
           final res = await _dropboxService.getPaginatedMedias(
             folder: ProviderConstants.backupFolderPath,
             nextPageToken: _dropboxPageToken,
@@ -358,7 +384,12 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         cloudLoading: false,
       );
     } catch (e, s) {
-      state = state.copyWith(error: e, loading: false, cloudLoading: false);
+      state = state.copyWith(
+        error: state.medias.isEmpty ? e : null,
+        actionError: state.medias.isNotEmpty ? e : null,
+        loading: false,
+        cloudLoading: false,
+      );
       _logger.e(
         "HomeViewStateNotifier: unable to load medias",
         error: e,
@@ -398,79 +429,121 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   }
 
   Future<void> uploadToGoogleDrive() async {
-    if (state.googleAccount == null) return;
-    final selectedMedias = state.selectedMedias.entries
-        .where(
-          (element) => element.value.sources.contains(AppMediaSource.local),
-        )
-        .map((e) => e.value)
-        .toList();
+    try {
+      if (state.googleAccount == null) return;
+      final selectedMedias = state.selectedMedias.entries
+          .where(
+            (element) => element.value.sources.contains(AppMediaSource.local),
+          )
+          .map((e) => e.value)
+          .toList();
 
-    state = state.copyWith(
-      selectedMedias: {},
-      actionError: null,
-    );
-    _mediaProcessRepo.uploadMedia(
-      medias: selectedMedias,
-      provider: MediaProvider.googleDrive,
-      folderId: _backUpFolderId!,
-    );
+      state = state.copyWith(
+        selectedMedias: {},
+        actionError: null,
+      );
+      _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
+      _mediaProcessRepo.uploadMedia(
+        medias: selectedMedias,
+        provider: MediaProvider.googleDrive,
+        folderId: _backUpFolderId!,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "HomeViewStateNotifier: unable to upload to google drive",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   Future<void> uploadToDropbox() async {
     if (state.dropboxAccount == null) return;
-    final selectedMedias = state.selectedMedias.entries
-        .where(
-          (element) => element.value.sources.contains(AppMediaSource.local),
-        )
-        .map((e) => e.value)
-        .toList();
+    try {
+      final selectedMedias = state.selectedMedias.entries
+          .where(
+            (element) => element.value.sources.contains(AppMediaSource.local),
+          )
+          .map((e) => e.value)
+          .toList();
 
-    state = state.copyWith(
-      selectedMedias: {},
-      actionError: null,
-    );
-    _mediaProcessRepo.uploadMedia(
-      medias: selectedMedias,
-      provider: MediaProvider.dropbox,
-      folderId: ProviderConstants.backupFolderPath,
-    );
+      state = state.copyWith(
+        selectedMedias: {},
+        actionError: null,
+      );
+      await _connectivityHandler.lookUpDropbox();
+      _mediaProcessRepo.uploadMedia(
+        medias: selectedMedias,
+        provider: MediaProvider.dropbox,
+        folderId: ProviderConstants.backupFolderPath,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "HomeViewStateNotifier: unable to upload to dropbox",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   Future<void> downloadFromGoogleDrive() async {
-    if (state.googleAccount == null) return;
-    final selectedMedias = state.selectedMedias.entries
-        .where(
-          (element) => element.value.isGoogleDriveStored,
-        )
-        .map((e) => e.value)
-        .toList();
+    try {
+      if (state.googleAccount == null) return;
+      final selectedMedias = state.selectedMedias.entries
+          .where(
+            (element) => element.value.isGoogleDriveStored,
+          )
+          .map((e) => e.value)
+          .toList();
 
-    state = state.copyWith(selectedMedias: {}, actionError: null);
+      state = state.copyWith(selectedMedias: {}, actionError: null);
 
-    _mediaProcessRepo.downloadMedia(
-      folderId: _backUpFolderId!,
-      medias: selectedMedias,
-      provider: MediaProvider.googleDrive,
-    );
+      _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
+
+      _mediaProcessRepo.downloadMedia(
+        folderId: _backUpFolderId!,
+        medias: selectedMedias,
+        provider: MediaProvider.googleDrive,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "HomeViewStateNotifier: unable to download from google drive",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   Future<void> downloadFromDropbox() async {
-    if (state.dropboxAccount == null) return;
-    final selectedMedias = state.selectedMedias.entries
-        .where(
-          (element) => element.value.isDropboxStored,
-        )
-        .map((e) => e.value)
-        .toList();
+    try {
+      if (state.dropboxAccount == null) return;
+      final selectedMedias = state.selectedMedias.entries
+          .where(
+            (element) => element.value.isDropboxStored,
+          )
+          .map((e) => e.value)
+          .toList();
 
-    state = state.copyWith(selectedMedias: {}, actionError: null);
+      state = state.copyWith(selectedMedias: {}, actionError: null);
 
-    _mediaProcessRepo.downloadMedia(
-      folderId: ProviderConstants.backupFolderPath,
-      medias: selectedMedias,
-      provider: MediaProvider.dropbox,
-    );
+      await _connectivityHandler.lookUpDropbox();
+
+      _mediaProcessRepo.downloadMedia(
+        folderId: ProviderConstants.backupFolderPath,
+        medias: selectedMedias,
+        provider: MediaProvider.dropbox,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "HomeViewStateNotifier: unable to download from dropbox",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   Future<void> deleteLocalMedias() async {
@@ -611,6 +684,7 @@ class HomeViewState with _$HomeViewState {
     Object? error,
     Object? actionError,
     @Default(false) bool hasLocalMediaAccess,
+    @Default(false) bool hasInternet,
     @Default(false) bool loading,
     @Default(false) bool cloudLoading,
     GoogleSignInAccount? googleAccount,

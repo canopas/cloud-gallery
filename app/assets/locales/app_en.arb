@@ -18,16 +18,20 @@
   "common_delete": "Delete",
   "common_share": "Share",
   "common_cancel": "Cancel",
+  "common_retry": "Retry",
   "common_done": "Done",
   "common_not_available": "N/A",
   "common_open_settings": "Open Settings",
+  "common_sign_in": "Sign In",
+  "common_skip_for_now": "Skip for Now",
 
   "@_ERROR":{},
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
-  "something_went_wrong_error": "Something went wrong! Please try again later.",
+  "something_went_wrong_error": "Oops, something went wrong. Please try again, we’re on it and will fix it soon!",
   "user_google_sign_in_account_not_found_error": "You haven't signed in with Google account yet. Please sign in with Google account and try again.",
   "back_up_folder_not_found_error": "Back up folder not found!",
   "auth_session_expired_error": "Your session has expired. Please log in again to continue using the app.",
+  "save_media_in_gallery_error": "There was an issue saving your media to the gallery. Please try again, we’ll have it sorted out shortly",
 
   "@_MEDIA_ACTIONS":{},
   "upload_to_google_drive_title": "Upload to Google Drive",
@@ -51,7 +55,15 @@
   "@_HOME":{},
   "unable_to_load_media_error": "Unable to load media!",
   "unable_to_load_media_message": "Oops! It looks like we're having trouble loading the media right now. Please try again later.",
-  "hint_sign_in_message": "Sign in with Google Drive or Dropbox and enjoy quick access to all your awesome content in one spot",
+  "sign_in_hint_message": "Store your media in the cloud! Sign in with Google Drive or Dropbox and never lose track of your awesome memories.",
+
+  "@_NO_INTERNET_CONNECTION_SCREEN":{},
+  "no_internet_connection_title": "No Internet Connection",
+  "no_internet_connection_message": "Looks like the internet took a coffee break. We couldn’t sync to the cloud—please check your connection?",
+
+  "@_ERROR_SCREEN":{},
+  "error_screen_title": "Something Went Wrong",
+  "error_screen_message": "Uh-oh! Something didn’t go as planned. Please try again—rest assured, we're working to get things back on track as quickly as possible!",
 
   "@_NO_MEDIA_ACCESS": {},
   "no_media_access_screen_title": "Media Access Required",

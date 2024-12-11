@@ -149,7 +149,7 @@ class AppMediaItem extends StatelessWidget {
                 color: Colors.white,
               ),
               child: SvgPicture.asset(
-                Assets.images.icons.icGoogleDrive,
+                Assets.images.icGoogleDrive,
                 height: 10,
                 width: 10,
               ),
@@ -165,7 +165,7 @@ class AppMediaItem extends StatelessWidget {
                 color: Colors.white,
               ),
               child: SvgPicture.asset(
-                Assets.images.icons.icDropbox,
+                Assets.images.icDropbox,
                 height: 10,
                 width: 10,
               ),

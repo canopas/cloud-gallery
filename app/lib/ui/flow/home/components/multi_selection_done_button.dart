@@ -105,7 +105,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             ),
           ),
           SvgPicture.asset(
-            Assets.images.icons.icGoogleDrive,
+            Assets.images.icGoogleDrive,
             width: 14,
             height: 14,
           ),
@@ -152,7 +152,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             ),
           ),
           SvgPicture.asset(
-            Assets.images.icons.icGoogleDrive,
+            Assets.images.icGoogleDrive,
             width: 14,
             height: 14,
           ),
@@ -204,7 +204,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             ),
           ),
           SvgPicture.asset(
-            Assets.images.icons.icGoogleDrive,
+            Assets.images.icGoogleDrive,
             width: 14,
             height: 14,
           ),
@@ -254,7 +254,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             ),
           ),
           SvgPicture.asset(
-            Assets.images.icons.icDropbox,
+            Assets.images.icDropbox,
             width: 14,
             height: 14,
           ),
@@ -301,7 +301,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             ),
           ),
           SvgPicture.asset(
-            Assets.images.icons.icDropbox,
+            Assets.images.icDropbox,
             width: 14,
             height: 14,
           ),
@@ -348,7 +348,7 @@ class MultiSelectionDoneButton extends ConsumerWidget {
             ),
           ),
           SvgPicture.asset(
-            Assets.images.icons.icDropbox,
+            Assets.images.icDropbox,
             width: 14,
             height: 14,
           ),

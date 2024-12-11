@@ -117,12 +117,12 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                         ),
                       if (media.sources.contains(AppMediaSource.googleDrive))
                         SvgPicture.asset(
-                          Assets.images.icons.icGoogleDrive,
+                          Assets.images.icGoogleDrive,
                           width: 20,
                         ),
                       if (media.sources.contains(AppMediaSource.dropbox))
                         SvgPicture.asset(
-                          Assets.images.icons.icDropbox,
+                          Assets.images.icDropbox,
                           width: 20,
                         ),
                     ],

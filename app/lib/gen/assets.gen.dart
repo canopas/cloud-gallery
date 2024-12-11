@@ -16,24 +16,21 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
-  /// Directory path: assets/images/icons
-  $AssetsImagesIconsGen get icons => const $AssetsImagesIconsGen();
+  /// File path: assets/images/ic_dropbox.svg
+  String get icDropbox => 'assets/images/ic_dropbox.svg';
+
+  /// File path: assets/images/ic_error.svg
+  String get icError => 'assets/images/ic_error.svg';
+
+  /// File path: assets/images/ic_google_drive.svg
+  String get icGoogleDrive => 'assets/images/ic_google_drive.svg';
+
+  /// File path: assets/images/ic_no_internet.svg
+  String get icNoInternet => 'assets/images/ic_no_internet.svg';
 
   /// List of all assets
-  List<AssetGenImage> get values => [appLogo];
-}
-
-class $AssetsImagesIconsGen {
-  const $AssetsImagesIconsGen();
-
-  /// File path: assets/images/icons/ic_dropbox.svg
-  String get icDropbox => 'assets/images/icons/ic_dropbox.svg';
-
-  /// File path: assets/images/icons/ic_google_drive.svg
-  String get icGoogleDrive => 'assets/images/icons/ic_google_drive.svg';
-
-  /// List of all assets
-  List<String> get values => [icDropbox, icGoogleDrive];
+  List<dynamic> get values =>
+      [appLogo, icDropbox, icError, icGoogleDrive, icNoInternet];
 }
 
 class Assets {
