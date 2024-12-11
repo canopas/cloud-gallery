@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../models/media/media.dart';
+import '../../models/media/media.dart';
 
 abstract class CloudProviderService {
   const CloudProviderService();

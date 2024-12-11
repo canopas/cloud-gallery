@@ -12,7 +12,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../apis/dropbox/dropbox_auth_endpoints.dart';
 import '../storage/provider/preferences_provider.dart';
-import 'cloud_provider_service.dart';
+import 'base/cloud_provider_service.dart';
 
 final dropboxServiceProvider = Provider<DropboxService>((ref) {
   return DropboxService(
@@ -35,55 +35,67 @@ class DropboxService extends CloudProviderService {
   );
 
   Future<void> setCurrentUserAccount() async {
-    try {
-      final res = await _dropboxAuthenticatedDio
-          .req(const DropboxGetUserAccountEndpoint());
+    final res = await _dropboxAuthenticatedDio
+        .req(const DropboxGetUserAccountEndpoint());
+    if (res.statusCode == 200) {
       _dropboxAccountController.state = DropboxAccount.fromJson(res.data);
-    } catch (e) {
-      AppError.fromError(e);
+    } else {
+      throw SomethingWentWrongError(
+        statusCode: res.statusCode,
+        message: res.statusMessage,
+      );
     }
   }
 
   Future<void> setFileIdAppPropertyTemplate() async {
-    try {
-      // Get all the app property templates
-      final res = await _dropboxAuthenticatedDio
-          .req(const DropboxGetAppPropertyTemplate());
+    // Get all the app property templates
+    final res = await _dropboxAuthenticatedDio
+        .req(const DropboxGetAppPropertyTemplate());
 
-      if (res.statusCode == 200) {
-        final templateIds = res.data['template_ids'] as List;
+    if (res.statusCode == 200) {
+      final templateIds = res.data['template_ids'] as List;
 
-        // Find the template id for the app
-        String? appTemplateId;
-        for (final templateId in templateIds) {
-          final res = await _dropboxAuthenticatedDio.req(
-            DropboxGetAppPropertiesTemplateDetails(templateId),
-          );
+      // Find the template id for the app
+      String? appTemplateId;
+      for (final templateId in templateIds) {
+        final res = await _dropboxAuthenticatedDio.req(
+          DropboxGetAppPropertiesTemplateDetails(templateId),
+        );
 
-          if (res.statusCode == 200) {
-            if (res.data is Map<String, dynamic> &&
-                res.data['name'] == ProviderConstants.dropboxAppTemplateName) {
-              appTemplateId = templateId;
-              break;
-            }
-          }
-        }
-
-        // If the template id is found, set it else create a new one
-        if (appTemplateId != null) {
-          _dropboxFileIdAppPropertyTemplateIdController.state = appTemplateId;
+        if (res.statusCode == 200 &&
+            res.data?['name'] == ProviderConstants.dropboxAppTemplateName) {
+          appTemplateId = templateId;
+          break;
         } else {
-          final res = await _dropboxAuthenticatedDio.req(
-            DropboxCreateAppPropertyTemplate(),
+          throw SomethingWentWrongError(
+            statusCode: res.statusCode,
+            message: res.statusMessage,
           );
-          if (res.statusCode == 200) {
-            _dropboxFileIdAppPropertyTemplateIdController.state =
-                res.data['template_id'];
-          }
         }
       }
-    } catch (e) {
-      AppError.fromError(e);
+
+      // If the template id is found, set it else create a new one
+      if (appTemplateId != null) {
+        _dropboxFileIdAppPropertyTemplateIdController.state = appTemplateId;
+      } else {
+        final res = await _dropboxAuthenticatedDio.req(
+          DropboxCreateAppPropertyTemplate(),
+        );
+        if (res.statusCode == 200) {
+          _dropboxFileIdAppPropertyTemplateIdController.state =
+              res.data['template_id'];
+        } else {
+          throw SomethingWentWrongError(
+            statusCode: res.statusCode,
+            message: res.statusMessage,
+          );
+        }
+      }
+    } else {
+      throw SomethingWentWrongError(
+        statusCode: res.statusCode,
+        message: res.statusMessage,
+      );
     }
   }
 
@@ -120,13 +132,22 @@ class DropboxService extends CloudProviderService {
                 .toList(),
           );
         } else {
-          throw AppError.fromError(response.statusMessage ?? '');
+          throw SomethingWentWrongError(
+            statusCode: response.statusCode,
+            message: response.statusMessage,
+          );
         }
       }
 
       return medias;
     } catch (e) {
-      throw AppError.fromError(e);
+      if (e is DioException &&
+          e.response?.statusCode == 409 &&
+          e.response?.data?['error']?['path']?['.tag'] == 'not_found') {
+        await createFolder(ProviderConstants.backupFolderName);
+        return getAllMedias(folder: folder);
+      }
+      rethrow;
     }
   }
 
@@ -196,7 +217,7 @@ class DropboxService extends CloudProviderService {
           pageSize: pageSize,
         );
       }
-      throw AppError.fromError(e);
+      rethrow;
     }
   }
 
@@ -210,7 +231,10 @@ class DropboxService extends CloudProviderService {
       return response.data['metadata']['id'];
     }
 
-    throw AppError.fromError(response.statusMessage ?? '');
+    throw SomethingWentWrongError(
+      statusCode: response.statusCode,
+      message: response.statusMessage,
+    );
   }
 
   @override
@@ -226,37 +250,46 @@ class DropboxService extends CloudProviderService {
       await setFileIdAppPropertyTemplate();
     }
     final localFile = File(path);
-    try {
-      final res = await _dropboxAuthenticatedDio.req(
-        DropboxUploadEndpoint(
-          appPropertyTemplateId:
-              _dropboxFileIdAppPropertyTemplateIdController.state!,
-          localRefId: localRefId,
-          content: AppMediaContent(
-            stream: localFile.openRead(),
-            length: localFile.lengthSync(),
-            contentType: 'application/octet-stream',
-          ),
-          filePath:
-              "/${ProviderConstants.backupFolderName}/${localFile.path.split('/').last}",
-          onProgress: onProgress,
-          cancellationToken: cancelToken,
-        ),
-      );
-      final metadata = await _dropboxAuthenticatedDio.req(
-        DropboxGetFileMetadata(id: res.data['id']),
-      );
 
-      if (res.statusCode == 200) {
-        return AppMedia.fromDropboxJson(
-          json: res.data,
-          metadataJson: metadata.data,
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxUploadEndpoint(
+        appPropertyTemplateId:
+            _dropboxFileIdAppPropertyTemplateIdController.state!,
+        localRefId: localRefId,
+        content: AppMediaContent(
+          stream: localFile.openRead(),
+          length: localFile.lengthSync(),
+          contentType: 'application/octet-stream',
+        ),
+        filePath:
+            "/${ProviderConstants.backupFolderName}/${localFile.path.split('/').last}",
+        onProgress: onProgress,
+        cancellationToken: cancelToken,
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      // Get the metadata of the uploaded file
+      try {
+        final metadata = await _dropboxAuthenticatedDio.req(
+          DropboxGetFileMetadata(id: res.data['id']),
         );
-      }
-      throw AppError.fromError(res.statusMessage ?? '');
-    } catch (error) {
-      throw AppError.fromError(error);
+
+        if (metadata.statusCode == 200) {
+          return AppMedia.fromDropboxJson(
+            json: res.data,
+            metadataJson: metadata.data,
+          );
+        }
+      } catch (_) {}
+
+      // If metadata is not available, return the uploaded file
+      return AppMedia.fromDropboxJson(json: res.data);
     }
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
   }
 
   @override
@@ -266,18 +299,21 @@ class DropboxService extends CloudProviderService {
     CancelToken? cancelToken,
     void Function(int sent, int total)? onProgress,
   }) async {
-    try {
-      await _dropboxAuthenticatedDio.downloadReq(
-        DropboxDownloadEndpoint(
-          filePath: id,
-          storagePath: saveLocation,
-          cancellationToken: cancelToken,
-          onProgress: onProgress,
-        ),
-      );
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    final res = await _dropboxAuthenticatedDio.downloadReq(
+      DropboxDownloadEndpoint(
+        filePath: id,
+        storagePath: saveLocation,
+        cancellationToken: cancelToken,
+        onProgress: onProgress,
+      ),
+    );
+
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
   }
 
   Future<void> updateAppProperties({
@@ -285,19 +321,22 @@ class DropboxService extends CloudProviderService {
     required String localRefId,
     CancelToken? cancelToken,
   }) async {
-    try {
-      await _dropboxAuthenticatedDio.req(
-        DropboxUpdateAppPropertyEndpoint(
-          id: id,
-          cancellationToken: cancelToken,
-          appPropertyTemplateId:
-              _dropboxFileIdAppPropertyTemplateIdController.state!,
-          localRefId: localRefId,
-        ),
-      );
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxUpdateAppPropertyEndpoint(
+        id: id,
+        cancellationToken: cancelToken,
+        appPropertyTemplateId:
+            _dropboxFileIdAppPropertyTemplateIdController.state!,
+        localRefId: localRefId,
+      ),
+    );
+
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
   }
 
   @override
@@ -305,28 +344,17 @@ class DropboxService extends CloudProviderService {
     required String id,
     CancelToken? cancelToken,
   }) async {
-    try {
-      final res = await _dropboxAuthenticatedDio.req(
-        DropboxDeleteEndpoint(
-          id: id,
-          cancellationToken: cancelToken,
-        ),
-      );
-      if (res.statusCode == 200) return;
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxDeleteEndpoint(
+        id: id,
+        cancellationToken: cancelToken,
+      ),
+    );
+    if (res.statusCode == 200) return;
 
-      throw AppError.fromError(res.statusMessage ?? '');
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
   }
-}
-
-class DropboxMediaListResponse {
-  final List<AppMedia> medias;
-  final String? cursor;
-
-  const DropboxMediaListResponse({
-    required this.medias,
-    required this.cursor,
-  });
 }

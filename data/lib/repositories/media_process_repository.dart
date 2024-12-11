@@ -504,7 +504,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
       await clearUploadProcessResponse(id: process.id);
     } catch (e) {
-      if (e is RequestCancelledByUser) {
+      if (e is DioException && e.type == DioExceptionType.cancel) {
         showNotification('Upload to Google Drive cancelled');
         return;
       }
@@ -593,7 +593,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
       await clearUploadProcessResponse(id: process.id);
     } catch (e) {
-      if (e is RequestCancelledByUser) {
+      if (e is DioException && e.type == DioExceptionType.cancel) {
         showNotification('Upload to Dropbox cancelled');
         return;
       }
@@ -820,7 +820,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
       await clearDownloadProcessResponse(id: process.id);
     } catch (error) {
-      if (error is RequestCancelledByUser) {
+      if (error is DioException && error.type == DioExceptionType.cancel) {
         showNotification('Download from Google Drive cancelled');
         return;
       }
@@ -938,7 +938,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
       await clearDownloadProcessResponse(id: process.id);
     } catch (error) {
-      if (error is RequestCancelledByUser) {
+      if (error is DioException && error.type == DioExceptionType.cancel) {
         showNotification('Download from Dropbox cancelled');
         return;
       }
