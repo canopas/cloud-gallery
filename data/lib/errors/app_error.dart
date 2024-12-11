@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'l10n_error_codes.dart';
 import 'package:dio/dio.dart' show DioException, DioExceptionType;
 
@@ -27,9 +28,8 @@ class AppError implements Exception {
         message: error.message,
         statusCode: error.response?.statusCode,
       );
-    } else {
-      return const SomethingWentWrongError();
     }
+    return SomethingWentWrongError(message: error.toString());
   }
 }
 
@@ -54,7 +54,7 @@ class UserGoogleSignInAccountNotFound extends AppError {
 class RequestCancelledByUser extends AppError {
   const RequestCancelledByUser()
       : super(
-          message: "Request cancelled.",
+          message: "Request cancelled",
         );
 }
 
