@@ -245,7 +245,6 @@ class GoogleDriveService extends CloudProviderService {
     final res = await _client.req(
       GoogleDriveUpdateAppPropertiesEndpoint(
         id: id,
-        cancellationToken: cancelToken,
         localFileId: localRefId,
       ),
     );

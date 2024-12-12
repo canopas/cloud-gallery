@@ -101,12 +101,10 @@ class GoogleDriveDownloadEndpoint extends DownloadEndpoint {
 class GoogleDriveUpdateAppPropertiesEndpoint extends Endpoint {
   final String id;
   final String localFileId;
-  final CancelToken? cancellationToken;
 
   const GoogleDriveUpdateAppPropertiesEndpoint({
     required this.id,
     required this.localFileId,
-    this.cancellationToken,
   });
 
   @override
@@ -116,11 +114,11 @@ class GoogleDriveUpdateAppPropertiesEndpoint extends Endpoint {
   String get path => '/files/$id';
 
   @override
-  CancelToken? get cancelToken => cancellationToken;
+  HttpMethod get method => HttpMethod.patch;
 
   @override
   Object? get data => {
-        "properties": {
+        "appProperties": {
           ProviderConstants.localRefIdKey: localFileId,
         },
       };
