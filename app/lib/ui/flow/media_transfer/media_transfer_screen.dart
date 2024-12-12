@@ -1,5 +1,7 @@
+import 'package:flutter_svg/svg.dart';
 import '../../../components/place_holder_screen.dart';
 import '../../../domain/extensions/context_extensions.dart';
+import '../../../gen/assets.gen.dart';
 import 'components/transfer_item.dart';
 import 'media_transfer_view_model.dart';
 import 'package:flutter/material.dart';
@@ -103,10 +105,10 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
           return PlaceHolderScreen(
             title: context.l10n.empty_upload_title,
             message: context.l10n.empty_upload_message,
-            icon: Icon(
-              Icons.cloud_upload_outlined,
-              size: 100,
-              color: context.colorScheme.containerNormal,
+            icon: SvgPicture.asset(
+              Assets.images.icUpload,
+              height: 200,
+              width: 200,
             ),
           );
         }
@@ -144,10 +146,10 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
           return PlaceHolderScreen(
             title: context.l10n.empty_download_title,
             message: context.l10n.empty_download_message,
-            icon: Icon(
-              Icons.cloud_download_outlined,
-              size: 100,
-              color: context.colorScheme.containerNormal,
+            icon: SvgPicture.asset(
+              Assets.images.icDownload,
+              height: 200,
+              width: 200,
             ),
           );
         }

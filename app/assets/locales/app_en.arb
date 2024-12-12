@@ -99,10 +99,10 @@
 
   "@_TRANSFER":{},
   "transfer_screen_title": "Transfer",
-  "empty_upload_title":"No Files Being Uploaded",
-  "empty_upload_message":  "No uploads are happening right now. If you have files to upload, go ahead and start uploading.",
-  "empty_download_title":"No Files Being Downloaded",
-  "empty_download_message":  "No downloads are happening right now. If you have files to download, go ahead and start downloading.",
+  "empty_upload_title": "Your Cloud Awaits!",
+  "empty_upload_message": "Let’s store your precious memories safely in the cloud so you’ll never lose them. Start uploading now and keep them secure forever!",
+  "empty_download_title": "Memories on Demand!",
+  "empty_download_message": "Bring your favorite photos and videos with you to enjoy anytime, even without the internet. Start downloading now and make them yours!",
 
   "@_PREVIEW":{},
   "download_require_text": "Download required",

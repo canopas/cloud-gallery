@@ -86,7 +86,7 @@ class AppMediaItem extends StatelessWidget {
               begin: Alignment.topRight,
               end: Alignment.bottomRight,
               colors: [
-                Colors.black.withOpacity(0.4),
+                Colors.black.withValues(alpha: 0.4),
                 Colors.transparent,
               ],
             ),
@@ -134,7 +134,7 @@ class AppMediaItem extends StatelessWidget {
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            Colors.black.withOpacity(0.4),
+            Colors.black.withValues(alpha: 0.4),
             Colors.transparent,
           ],
         ),

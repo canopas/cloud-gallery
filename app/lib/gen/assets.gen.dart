@@ -16,6 +16,9 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/ic_download.svg
+  String get icDownload => 'assets/images/ic_download.svg';
+
   /// File path: assets/images/ic_dropbox.svg
   String get icDropbox => 'assets/images/ic_dropbox.svg';
 
@@ -28,9 +31,19 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_no_internet.svg
   String get icNoInternet => 'assets/images/ic_no_internet.svg';
 
+  /// File path: assets/images/ic_upload.svg
+  String get icUpload => 'assets/images/ic_upload.svg';
+
   /// List of all assets
-  List<dynamic> get values =>
-      [appLogo, icDropbox, icError, icGoogleDrive, icNoInternet];
+  List<dynamic> get values => [
+        appLogo,
+        icDownload,
+        icDropbox,
+        icError,
+        icGoogleDrive,
+        icNoInternet,
+        icUpload
+      ];
 }
 
 class Assets {

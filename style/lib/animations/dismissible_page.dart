@@ -58,7 +58,7 @@ class _DismissiblePageState extends State<DismissiblePage> {
       child: Stack(
         children: [
           Container(
-            color: widget.backgroundColor.withOpacity(1 - percentage),
+            color: widget.backgroundColor.withValues(alpha: 1 - percentage),
             height: double.infinity,
             width: double.infinity,
           ),
