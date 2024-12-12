@@ -253,7 +253,11 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
 
       state = state.copyWith(actionError: null);
 
-      _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
+      if (_backUpFolderId == null) {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } else {
+        await _connectivityHandler.checkInternetAccess();
+      }
 
       _mediaProcessRepo.uploadMedia(
         folderId: _backUpFolderId!,
@@ -297,7 +301,12 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     try {
       if (state.googleAccount == null) return;
       state = state.copyWith(actionError: null);
-      _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
+
+      if (_backUpFolderId == null) {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } else {
+        await _connectivityHandler.checkInternetAccess();
+      }
 
       _mediaProcessRepo.downloadMedia(
         folderId: _backUpFolderId!,
