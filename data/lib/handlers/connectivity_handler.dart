@@ -1,21 +1,13 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../apis/network/urls.dart';
+import '../errors/app_error.dart';
 
 final connectivityHandlerProvider = Provider<ConnectivityHandler>((ref) {
   return ConnectivityHandler();
 });
 
 class ConnectivityHandler {
-  Future<void> lookUpDropbox() async {
-    await InternetAddress.lookup(BaseURL.dropboxV2);
-  }
-
-  Future<void> lookUpGoogleDrive() async {
-    await InternetAddress.lookup(BaseURL.googleDriveV3);
-  }
-
+  // This method is used to check internet connection
   Future<bool> hasInternetAccess() async {
     try {
       final result = await InternetAddress.lookup('example.com');
@@ -23,8 +15,21 @@ class ConnectivityHandler {
         return true; // Internet access
       }
     } on SocketException catch (_) {
-      return false; // No Internet access
+      return false;
     }
     return false;
+  }
+
+  // This method is used to check internet connection and throw an exception if there is no internet connection
+  Future<void> checkInternetAccess() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return; // Internet access
+      }
+    } on SocketException catch (_) {
+      throw NoConnectionError();
+    }
+    throw NoConnectionError();
   }
 }

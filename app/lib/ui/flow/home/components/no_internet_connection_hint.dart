@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/animations/fade_in_switcher.dart';
@@ -13,7 +13,7 @@ class NoInternetConnectionHint extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final showHint = ref.read(
+    final showHint = ref.watch(
       homeViewStateNotifier.select(
         (value) =>
             !value.hasInternet &&
@@ -33,21 +33,46 @@ class NoInternetConnectionHint extends ConsumerWidget {
                   color: context.colorScheme.outline,
                 ),
               ),
-              child: Row(
+              child: Column(
                 children: [
-                  SvgPicture.asset(
-                    Assets.images.icNoInternet,
-                    height: 50,
-                    width: 50,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      context.l10n.no_internet_connection_message,
-                      style: AppTextStyles.body2.copyWith(
-                        letterSpacing: 0.05,
-                        color: context.colorScheme.textPrimary,
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        Assets.images.icNoInternet,
+                        height: 50,
+                        width: 50,
                       ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          context.l10n.no_internet_connection_message,
+                          style: AppTextStyles.body2.copyWith(
+                            letterSpacing: 0.05,
+                            color: context.colorScheme.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () {
+                      ref
+                          .read(homeViewStateNotifier.notifier)
+                          .loadMedias(reload: true);
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: context.colorScheme.containerLow,
+                      foregroundColor: context.colorScheme.textPrimary,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: const Size(double.maxFinite, 40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      context.l10n.common_retry,
+                      style: AppTextStyles.button,
                     ),
                   ),
                 ],

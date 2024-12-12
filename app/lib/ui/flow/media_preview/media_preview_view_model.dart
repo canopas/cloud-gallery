@@ -276,7 +276,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
 
       state = state.copyWith(actionError: null);
 
-      await _connectivityHandler.lookUpDropbox();
+      await _connectivityHandler.checkInternetAccess();
 
       _mediaProcessRepo.uploadMedia(
         folderId: ProviderConstants.backupFolderPath,
@@ -320,7 +320,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
 
       state = state.copyWith(actionError: null);
 
-      await _connectivityHandler.lookUpDropbox();
+      await _connectivityHandler.checkInternetAccess();
 
       _mediaProcessRepo.downloadMedia(
         folderId: ProviderConstants.backupFolderPath,

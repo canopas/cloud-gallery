@@ -442,7 +442,11 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         selectedMedias: {},
         actionError: null,
       );
-      _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
+      if (_backUpFolderId == null) {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } else {
+        await _connectivityHandler.checkInternetAccess();
+      }
       _mediaProcessRepo.uploadMedia(
         medias: selectedMedias,
         provider: MediaProvider.googleDrive,
@@ -472,7 +476,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         selectedMedias: {},
         actionError: null,
       );
-      await _connectivityHandler.lookUpDropbox();
+      await _connectivityHandler.checkInternetAccess();
       _mediaProcessRepo.uploadMedia(
         medias: selectedMedias,
         provider: MediaProvider.dropbox,
@@ -500,7 +504,11 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
       state = state.copyWith(selectedMedias: {}, actionError: null);
 
-      _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
+      if (_backUpFolderId == null) {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } else {
+        await _connectivityHandler.checkInternetAccess();
+      }
 
       _mediaProcessRepo.downloadMedia(
         folderId: _backUpFolderId!,
@@ -529,7 +537,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
       state = state.copyWith(selectedMedias: {}, actionError: null);
 
-      await _connectivityHandler.lookUpDropbox();
+      await _connectivityHandler.checkInternetAccess();
 
       _mediaProcessRepo.downloadMedia(
         folderId: ProviderConstants.backupFolderPath,
