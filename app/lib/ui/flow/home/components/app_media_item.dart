@@ -86,7 +86,7 @@ class AppMediaItem extends StatelessWidget {
               begin: Alignment.topRight,
               end: Alignment.bottomRight,
               colors: [
-                Colors.black.withOpacity(0.4),
+                Colors.black.withValues(alpha: 0.4),
                 Colors.transparent,
               ],
             ),
@@ -134,7 +134,7 @@ class AppMediaItem extends StatelessWidget {
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            Colors.black.withOpacity(0.4),
+            Colors.black.withValues(alpha: 0.4),
             Colors.transparent,
           ],
         ),
@@ -149,7 +149,7 @@ class AppMediaItem extends StatelessWidget {
                 color: Colors.white,
               ),
               child: SvgPicture.asset(
-                Assets.images.icons.icGoogleDrive,
+                Assets.images.icGoogleDrive,
                 height: 10,
                 width: 10,
               ),
@@ -165,7 +165,7 @@ class AppMediaItem extends StatelessWidget {
                 color: Colors.white,
               ),
               child: SvgPicture.asset(
-                Assets.images.icons.icDropbox,
+                Assets.images.icDropbox,
                 height: 10,
                 width: 10,
               ),
@@ -221,7 +221,7 @@ class AppMediaItem extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          "${uploadMediaProcess?.progressPercentage.toInt()}%",
+          "${progressPercentage.toInt()}%",
           style: AppTextStyles.caption.copyWith(
             color: Colors.white,
             shadows: [

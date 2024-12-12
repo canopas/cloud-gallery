@@ -24,7 +24,7 @@ class OnBoardScreen extends ConsumerWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  context.colorScheme.primary.withOpacity(0.2),
+                  context.colorScheme.primary.withValues(alpha: 0.2),
                   Colors.transparent,
                 ],
               ),

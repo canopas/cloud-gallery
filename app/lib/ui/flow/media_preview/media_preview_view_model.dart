@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:data/domain/config.dart';
+import 'package:data/handlers/connectivity_handler.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/models/dropbox/account/dropbox_account.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
@@ -13,6 +15,7 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logger/logger.dart';
 
 part 'media_preview_view_model.freezed.dart';
 
@@ -30,6 +33,8 @@ final mediaPreviewStateNotifierProvider =
     ref.read(dropboxServiceProvider),
     ref.read(mediaProcessRepoProvider),
     ref.read(authServiceProvider),
+    ref.read(connectivityHandlerProvider),
+    ref.read(loggerProvider),
     state.medias,
     state.startIndex,
     ref.read(AppPreferences.dropboxCurrentUserAccount),
@@ -45,7 +50,9 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   final GoogleDriveService _googleDriveService;
   final DropboxService _dropboxService;
   final MediaProcessRepo _mediaProcessRepo;
+  final ConnectivityHandler _connectivityHandler;
   final AuthService _authService;
+  final Logger _logger;
 
   StreamSubscription? _googleAccountSubscription;
   String? _backUpFolderId;
@@ -56,6 +63,8 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     this._dropboxService,
     this._mediaProcessRepo,
     this._authService,
+    this._connectivityHandler,
+    this._logger,
     List<AppMedia> medias,
     int startIndex,
     DropboxAccount? dropboxAccount,
@@ -92,8 +101,18 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   }
 
   Future<void> _setBackUpFolderId() async {
-    if (state.googleAccount == null) return;
-    _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+    try {
+      if (state.googleAccount == null) return;
+      state = state.copyWith(actionError: null);
+      _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to get backup folder id",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   // Media Process Observer ----------------------------------------------------
@@ -172,8 +191,13 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
         }
       }
       state = state.copyWith(medias: medias);
-    } catch (error) {
-      state = state.copyWith(actionError: error);
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to delete media from local",
+        error: e,
+        stackTrace: s,
+      );
     }
   }
 
@@ -190,8 +214,13 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
           medias.add(media.removeGoogleDriveRef());
         }
       }
-    } catch (error) {
-      state = state.copyWith(actionError: error);
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to delete media from Google Drive",
+        error: e,
+        stackTrace: s,
+      );
     }
   }
 
@@ -208,50 +237,119 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
           medias.add(media.removeDropboxRef());
         }
       }
-    } catch (error) {
-      state = state.copyWith(actionError: error);
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to delete media from Dropbox",
+        error: e,
+        stackTrace: s,
+      );
     }
   }
 
   Future<void> uploadMediaInGoogleDrive({required AppMedia media}) async {
-    if (state.googleAccount == null) return;
-    _mediaProcessRepo.uploadMedia(
-      folderId: _backUpFolderId!,
-      medias: [media],
-      provider: MediaProvider.googleDrive,
-    );
+    try {
+      if (state.googleAccount == null) return;
+
+      state = state.copyWith(actionError: null);
+
+      if (_backUpFolderId == null) {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } else {
+        await _connectivityHandler.checkInternetAccess();
+      }
+
+      _mediaProcessRepo.uploadMedia(
+        folderId: _backUpFolderId!,
+        medias: [media],
+        provider: MediaProvider.googleDrive,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to upload media to Google Drive",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   Future<void> uploadMediaInDropbox({required AppMedia media}) async {
-    if (_authService.dropboxAccount == null) return;
-    _mediaProcessRepo.uploadMedia(
-      folderId: ProviderConstants.backupFolderPath,
-      medias: [media],
-      provider: MediaProvider.dropbox,
-    );
+    try {
+      if (_authService.dropboxAccount == null) return;
+
+      state = state.copyWith(actionError: null);
+
+      await _connectivityHandler.checkInternetAccess();
+
+      _mediaProcessRepo.uploadMedia(
+        folderId: ProviderConstants.backupFolderPath,
+        medias: [media],
+        provider: MediaProvider.dropbox,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to upload media to Dropbox",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   Future<void> downloadFromGoogleDrive({required AppMedia media}) async {
-    if (state.googleAccount == null) return;
-    _mediaProcessRepo.downloadMedia(
-      folderId: _backUpFolderId!,
-      medias: [media],
-      provider: MediaProvider.googleDrive,
-    );
+    try {
+      if (state.googleAccount == null) return;
+      state = state.copyWith(actionError: null);
+
+      if (_backUpFolderId == null) {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } else {
+        await _connectivityHandler.checkInternetAccess();
+      }
+
+      _mediaProcessRepo.downloadMedia(
+        folderId: _backUpFolderId!,
+        medias: [media],
+        provider: MediaProvider.googleDrive,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to download media from Google Drive",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   Future<void> downloadFromDropbox({required AppMedia media}) async {
-    if (_authService.dropboxAccount == null) return;
-    _mediaProcessRepo.downloadMedia(
-      folderId: ProviderConstants.backupFolderPath,
-      medias: [media],
-      provider: MediaProvider.dropbox,
-    );
+    try {
+      if (_authService.dropboxAccount == null) return;
+
+      state = state.copyWith(actionError: null);
+
+      await _connectivityHandler.checkInternetAccess();
+
+      _mediaProcessRepo.downloadMedia(
+        folderId: ProviderConstants.backupFolderPath,
+        medias: [media],
+        provider: MediaProvider.dropbox,
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "MediaPreviewStateNotifier: unable to download media from Dropbox",
+        error: e,
+        stackTrace: s,
+      );
+    }
   }
 
   // Preview Actions -----------------------------------------------------------
 
   void changeVisibleMediaIndex(int index) {
+    ///TODO: return user back if there is no media to preview
     state = state.copyWith(currentIndex: index);
   }
 

@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
 import '../../../components/app_page.dart';
-import '../../../components/error_view.dart';
+import '../../../components/error_screen.dart';
 import '../../../domain/extensions/widget_extensions.dart';
 import '../../../domain/formatter/date_formatter.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../gen/assets.gen.dart';
+import 'components/no_internet_connection_hint.dart';
 import 'components/no_local_medias_access_screen.dart';
+import 'components/sign_in_hint.dart';
 import 'home_screen_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +19,6 @@ import 'package:style/text/app_text_style.dart';
 import '../../../components/snack_bar.dart';
 import '../../navigation/app_route.dart';
 import 'components/app_media_item.dart';
-import 'components/hints.dart';
 import 'components/multi_selection_done_button.dart';
 import 'package:style/buttons/action_button.dart';
 import 'package:style/animations/fade_in_switcher.dart';
@@ -87,10 +88,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return const Center(child: AppCircularProgressIndicator());
     } else if (!state.hasMedia && !state.hasLocalMediaAccess) {
       return const NoLocalMediasAccessScreen();
-    } else if (state.error != null) {
-      return ErrorView(
-        title: context.l10n.unable_to_load_media_error,
-        message: context.l10n.unable_to_load_media_message,
+    } else if (state.error != null && !state.hasMedia) {
+      return ErrorScreen(
+        error: state.error!,
+        onRetryTap: () => _notifier.loadMedias(reload: true),
       );
     }
 
@@ -129,7 +130,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         itemCount: state.medias.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return const HomeScreenHints();
+            return Column(
+              children: [
+                const HomeScreenHints(),
+                const NoInternetConnectionHint(),
+              ],
+            );
           } else if (index == state.medias.length + 1) {
             return FadeInSwitcher(
               child: state.loading

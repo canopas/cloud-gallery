@@ -1,6 +1,6 @@
 import 'dart:io';
 import '../../../../components/app_page.dart';
-import '../../../../components/error_view.dart';
+import '../../../../components/place_holder_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
@@ -69,7 +69,7 @@ class _ImagePreviewScreenState extends ConsumerState<ImagePreview> {
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           return AppPage(
-            body: ErrorView(
+            body: PlaceHolderScreen(
               title: context.l10n.unable_to_load_media_error,
               message: context.l10n.unable_to_load_media_message,
             ),

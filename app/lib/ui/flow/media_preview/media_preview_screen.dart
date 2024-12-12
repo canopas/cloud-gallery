@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:data/storage/app_preferences.dart';
 import '../../../components/app_page.dart';
-import '../../../components/error_view.dart';
+import '../../../components/place_holder_screen.dart';
 import '../../../components/snack_bar.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../domain/extensions/widget_extensions.dart';
@@ -229,7 +229,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     } else if (media.type.isImage) {
       return ImagePreview(media: media);
     } else {
-      return ErrorView(
+      return PlaceHolderScreen(
         title: context.l10n.unable_to_load_media_error,
         message: context.l10n.unable_to_load_media_message,
       );

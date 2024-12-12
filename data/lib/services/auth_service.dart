@@ -74,84 +74,66 @@ class AuthService {
   }
 
   Future<void> signInSilently() async {
-    try {
-      await _googleSignIn.signInSilently(suppressErrors: true);
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    await _googleSignIn.signInSilently(suppressErrors: true);
   }
 
   Future<void> signInWithGoogle() async {
-    try {
-      final googleSignInAccount = await _googleSignIn.signIn();
-      if (googleSignInAccount != null) {
-        await googleSignInAccount.authentication;
-      }
-    } catch (e) {
-      throw AppError.fromError(e);
+    final googleSignInAccount = await _googleSignIn.signIn();
+    if (googleSignInAccount != null) {
+      await googleSignInAccount.authentication;
     }
   }
 
   Future<void> signOutWithGoogle() async {
-    try {
-      await _googleSignIn.signOut();
-      _googleDriveAutoBackUpController.state = false;
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    await _googleSignIn.signOut();
+    _googleDriveAutoBackUpController.state = false;
   }
 
   /// Launches the URL in the browser for OAuth 2 authentication with Dropbox.
-  /// Retrieves the access token using the Proof of Key Code Exchange (PKCE) flow.
+  /// Retrieves the code to fetch access token using the Proof of Key Code Exchange (PKCE) flow.
   Future<void> signInWithDropBox() async {
-    try {
-      final codeVerifier = _oauth2.generateCodeVerifier;
-      _dropboxCodeVerifierPrefProvider.state = codeVerifier;
-      final authorizationUrl = _oauth2.getAuthorizationUrl(
-        clientId: AppSecretes.dropBoxAppKey,
-        authorizationEndpoint:
-            Uri.parse('${BaseURL.dropboxOAuth2Web}/authorize'),
-        additionalParameters: {'token_access_type': 'offline'},
-        redirectUri: RedirectURL.auth,
-        codeVerifier: codeVerifier,
-      );
-      await launchUrl(authorizationUrl);
-    } catch (e) {
-      throw AppError.fromError(e);
-    }
+    final codeVerifier = _oauth2.generateCodeVerifier;
+    _dropboxCodeVerifierPrefProvider.state = codeVerifier;
+    final authorizationUrl = _oauth2.getAuthorizationUrl(
+      clientId: AppSecretes.dropBoxAppKey,
+      authorizationEndpoint: Uri.parse('${BaseURL.dropboxOAuth2Web}/authorize'),
+      additionalParameters: {'token_access_type': 'offline'},
+      redirectUri: RedirectURL.auth,
+      codeVerifier: codeVerifier,
+    );
+    await launchUrl(authorizationUrl);
   }
 
+  /// Fetch dropbox access token using the code using the Proof of Key Code Exchange (PKCE) flow.
   Future<void> setDropboxTokenFromCode({required String code}) async {
-    try {
-      if (_dropboxCodeVerifierPrefProvider.state == null) {
-        throw const SomethingWentWrongError(
-          message: "Dropbox code verifier is missing",
-        );
-      }
-      final res = await _dio.req(
-        DropboxTokenEndpoint(
-          code: code,
-          codeVerifier: _dropboxCodeVerifierPrefProvider.state!,
-          clientId: AppSecretes.dropBoxAppKey,
-          redirectUrl: RedirectURL.auth,
-          clientSecret: AppSecretes.dropBoxAppSecret,
-        ),
+    if (_dropboxCodeVerifierPrefProvider.state == null) {
+      throw const SomethingWentWrongError(
+        message: "Dropbox code verifier is missing",
       );
-      if (res.data != null) {
-        _dropboxTokenController.state = DropboxToken(
-          access_token: res.data['access_token'],
-          token_type: res.data['token_type'],
-          refresh_token: res.data['refresh_token'],
-          expires_in:
-              DateTime.now().add(Duration(seconds: res.data['expires_in'])),
-          account_id: res.data['account_id'],
-          scope: res.data['scope'],
-          uid: res.data['uid'],
-        );
-        _dropboxCodeVerifierPrefProvider.state = null;
-      }
-    } catch (e) {
-      throw AppError.fromError(e);
+    }
+    final res = await _dio.req(
+      DropboxTokenEndpoint(
+        code: code,
+        codeVerifier: _dropboxCodeVerifierPrefProvider.state!,
+        clientId: AppSecretes.dropBoxAppKey,
+        redirectUrl: RedirectURL.auth,
+        clientSecret: AppSecretes.dropBoxAppSecret,
+      ),
+    );
+    if (res.statusCode == 200) {
+      _dropboxTokenController.state = DropboxToken(
+        access_token: res.data['access_token'],
+        token_type: res.data['token_type'],
+        refresh_token: res.data['refresh_token'],
+        expires_in:
+            DateTime.now().add(Duration(seconds: res.data['expires_in'])),
+        account_id: res.data['account_id'],
+        scope: res.data['scope'],
+        uid: res.data['uid'],
+      );
+      _dropboxCodeVerifierPrefProvider.state = null;
+    } else {
+      throw const DropboxAuthSessionExpiredError();
     }
   }
 
@@ -163,15 +145,15 @@ class AuthService {
   }
 
   Future<void> refreshDropboxToken() async {
-    try {
-      if (_dropboxTokenController.state != null) {
-        final res = await _dio.req(
-          DropboxRefreshTokenEndpoint(
-            refreshToken: _dropboxTokenController.state!.refresh_token,
-            clientId: AppSecretes.dropBoxAppKey,
-            clientSecret: AppSecretes.dropBoxAppSecret,
-          ),
-        );
+    if (_dropboxTokenController.state != null) {
+      final res = await _dio.req(
+        DropboxRefreshTokenEndpoint(
+          refreshToken: _dropboxTokenController.state!.refresh_token,
+          clientId: AppSecretes.dropBoxAppKey,
+          clientSecret: AppSecretes.dropBoxAppSecret,
+        ),
+      );
+      if (res.statusCode == 200) {
         _dropboxTokenController.state = _dropboxTokenController.state!.copyWith(
           access_token: res.data['access_token'],
           expires_in: DateTime.now().add(
@@ -181,12 +163,10 @@ class AuthService {
           ),
           token_type: res.data['token_type'],
         );
-      } else {
-        throw const AuthSessionExpiredError();
+        return;
       }
-    } catch (e) {
-      throw AppError.fromError(e);
     }
+    throw DropboxAuthSessionExpiredError();
   }
 
   bool get signedInWithGoogle => _googleSignIn.currentUser != null;

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'l10n_error_codes.dart';
-import 'package:dio/dio.dart' show DioException, DioExceptionType;
+import 'package:dio/dio.dart' show DioException;
 
 class AppError implements Exception {
   final String? message;
@@ -20,16 +20,12 @@ class AppError implements Exception {
     } else if (error is SocketException) {
       return const NoConnectionError();
     } else if (error is DioException) {
-      if (error.type == DioExceptionType.cancel) {
-        return const RequestCancelledByUser();
-      }
       return SomethingWentWrongError(
         message: error.message,
         statusCode: error.response?.statusCode,
       );
-    } else {
-      return const SomethingWentWrongError();
     }
+    return SomethingWentWrongError(message: error.toString());
   }
 }
 
@@ -48,13 +44,6 @@ class UserGoogleSignInAccountNotFound extends AppError {
           l10nCode: AppErrorL10nCodes.googleSignInUserNotFoundError,
           message:
               "User google signed in account not found. Please sign in again",
-        );
-}
-
-class RequestCancelledByUser extends AppError {
-  const RequestCancelledByUser()
-      : super(
-          message: "Request cancelled.",
         );
 }
 
@@ -82,12 +71,12 @@ class SomethingWentWrongError extends AppError {
         );
 }
 
-class AuthSessionExpiredError extends AppError {
-  const AuthSessionExpiredError()
+class DropboxAuthSessionExpiredError extends AppError {
+  const DropboxAuthSessionExpiredError()
       : super(
           l10nCode: AppErrorL10nCodes.authSessionExpiredError,
           message:
-              "User authentication session expired. Unable to get access token.",
+              "User authentication session expired. Unable to get dropbox access token.",
           statusCode: 401,
         );
 }

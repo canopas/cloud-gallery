@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:app_links/app_links.dart';
 import 'package:data/apis/network/urls.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/services/auth_service.dart';
 import 'package:data/services/dropbox_services.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +15,7 @@ class DeepLinkHandler {
     required ProviderContainer container,
   }) async {
     final appLinks = container.read(appLinksProvider);
+    final logger = container.read(loggerProvider);
 
     Future<void> handleDeepLink(Uri link) async {
       if (link.toString().contains(RedirectURL.auth) &&
@@ -27,29 +27,31 @@ class DeepLinkHandler {
         );
 
         final dropboxService = container.read(dropboxServiceProvider);
-        await dropboxService.setCurrentUserAccount();
-        await dropboxService.setFileIdAppPropertyTemplate();
+        await Future.wait([
+          dropboxService.setCurrentUserAccount(),
+          dropboxService.setFileIdAppPropertyTemplate(),
+        ]);
       }
     }
 
     try {
       final initialLink = await appLinks.getInitialLink();
       if (initialLink != null && !kDebugMode) handleDeepLink(initialLink);
-    } catch (error) {
-      log(
-        "Failed to handle initial deep link",
-        error: error,
-        name: "DeepLinkHandler",
+    } catch (e, s) {
+      logger.e(
+        "DEEP LINK ERROR: Failed to handle deep link",
+        error: e,
+        stackTrace: s,
       );
     }
 
     appLinks.uriLinkStream.listen(
       (link) => handleDeepLink(link),
-      onError: (error) {
-        log(
-          "Failed to listen to deep links",
-          error: error,
-          name: "DeepLinkHandler",
+      onError: (e, s) {
+        logger.e(
+          "DEEP LINK ERROR: Failed to handle deep link",
+          error: e,
+          stackTrace: s,
         );
       },
     );

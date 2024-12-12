@@ -19,6 +19,7 @@ mixin _$HomeViewState {
   Object? get error => throw _privateConstructorUsedError;
   Object? get actionError => throw _privateConstructorUsedError;
   bool get hasLocalMediaAccess => throw _privateConstructorUsedError;
+  bool get hasInternet => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   bool get cloudLoading => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
       {Object? error,
       Object? actionError,
       bool hasLocalMediaAccess,
+      bool hasInternet,
       bool loading,
       bool cloudLoading,
       GoogleSignInAccount? googleAccount,
@@ -81,6 +83,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? error = freezed,
     Object? actionError = freezed,
     Object? hasLocalMediaAccess = null,
+    Object? hasInternet = null,
     Object? loading = null,
     Object? cloudLoading = null,
     Object? googleAccount = freezed,
@@ -97,6 +100,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       hasLocalMediaAccess: null == hasLocalMediaAccess
           ? _value.hasLocalMediaAccess
           : hasLocalMediaAccess // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasInternet: null == hasInternet
+          ? _value.hasInternet
+          : hasInternet // ignore: cast_nullable_to_non_nullable
               as bool,
       loading: null == loading
           ? _value.loading
@@ -164,6 +171,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       {Object? error,
       Object? actionError,
       bool hasLocalMediaAccess,
+      bool hasInternet,
       bool loading,
       bool cloudLoading,
       GoogleSignInAccount? googleAccount,
@@ -194,6 +202,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? error = freezed,
     Object? actionError = freezed,
     Object? hasLocalMediaAccess = null,
+    Object? hasInternet = null,
     Object? loading = null,
     Object? cloudLoading = null,
     Object? googleAccount = freezed,
@@ -210,6 +219,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
       hasLocalMediaAccess: null == hasLocalMediaAccess
           ? _value.hasLocalMediaAccess
           : hasLocalMediaAccess // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasInternet: null == hasInternet
+          ? _value.hasInternet
+          : hasInternet // ignore: cast_nullable_to_non_nullable
               as bool,
       loading: null == loading
           ? _value.loading
@@ -258,6 +271,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       {this.error,
       this.actionError,
       this.hasLocalMediaAccess = false,
+      this.hasInternet = false,
       this.loading = false,
       this.cloudLoading = false,
       this.googleAccount,
@@ -279,6 +293,9 @@ class _$HomeViewStateImpl implements _HomeViewState {
   @override
   @JsonKey()
   final bool hasLocalMediaAccess;
+  @override
+  @JsonKey()
+  final bool hasInternet;
   @override
   @JsonKey()
   final bool loading;
@@ -332,7 +349,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
 
   @override
   String toString() {
-    return 'HomeViewState(error: $error, actionError: $actionError, hasLocalMediaAccess: $hasLocalMediaAccess, loading: $loading, cloudLoading: $cloudLoading, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, medias: $medias, selectedMedias: $selectedMedias, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses, lastLocalMediaId: $lastLocalMediaId)';
+    return 'HomeViewState(error: $error, actionError: $actionError, hasLocalMediaAccess: $hasLocalMediaAccess, hasInternet: $hasInternet, loading: $loading, cloudLoading: $cloudLoading, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, medias: $medias, selectedMedias: $selectedMedias, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses, lastLocalMediaId: $lastLocalMediaId)';
   }
 
   @override
@@ -345,6 +362,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
                 .equals(other.actionError, actionError) &&
             (identical(other.hasLocalMediaAccess, hasLocalMediaAccess) ||
                 other.hasLocalMediaAccess == hasLocalMediaAccess) &&
+            (identical(other.hasInternet, hasInternet) ||
+                other.hasInternet == hasInternet) &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.cloudLoading, cloudLoading) ||
                 other.cloudLoading == cloudLoading) &&
@@ -369,6 +388,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       const DeepCollectionEquality().hash(error),
       const DeepCollectionEquality().hash(actionError),
       hasLocalMediaAccess,
+      hasInternet,
       loading,
       cloudLoading,
       googleAccount,
@@ -393,6 +413,7 @@ abstract class _HomeViewState implements HomeViewState {
       {final Object? error,
       final Object? actionError,
       final bool hasLocalMediaAccess,
+      final bool hasInternet,
       final bool loading,
       final bool cloudLoading,
       final GoogleSignInAccount? googleAccount,
@@ -409,6 +430,8 @@ abstract class _HomeViewState implements HomeViewState {
   Object? get actionError;
   @override
   bool get hasLocalMediaAccess;
+  @override
+  bool get hasInternet;
   @override
   bool get loading;
   @override
