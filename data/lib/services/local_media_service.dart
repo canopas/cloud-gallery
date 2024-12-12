@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:collection/collection.dart';
 import '../models/media/media.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -47,7 +46,7 @@ class LocalMediaService {
         (asset) => AppMedia.fromAssetEntity(asset),
       ),
     );
-    return files.whereNotNull().toList();
+    return files.nonNulls.toList();
   }
 
   Future<List<AppMedia>> getLocalMedia({
@@ -66,7 +65,7 @@ class LocalMediaService {
         (asset) => AppMedia.fromAssetEntity(asset),
       ),
     );
-    return files.whereNotNull().toList();
+    return files.nonNulls.toList();
   }
 
   Future<List<String>> deleteMedias(List<String> medias) async {
