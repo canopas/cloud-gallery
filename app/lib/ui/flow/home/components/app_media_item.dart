@@ -221,7 +221,7 @@ class AppMediaItem extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          "${uploadMediaProcess?.progressPercentage.toInt()}%",
+          "${progressPercentage.toInt()}%",
           style: AppTextStyles.caption.copyWith(
             color: Colors.white,
             shadows: [
