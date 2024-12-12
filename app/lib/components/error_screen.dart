@@ -1,4 +1,3 @@
-
 import '../domain/extensions/context_extensions.dart';
 import 'place_holder_screen.dart';
 import 'package:data/errors/app_error.dart';

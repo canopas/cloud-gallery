@@ -19,8 +19,8 @@ class HomeScreenHints extends ConsumerWidget {
 
     return FadeInSwitcher(
       child: (googleAccount != null ||
-                  dropboxAccount != null ||
-                  signInHintShown) 
+              dropboxAccount != null ||
+              signInHintShown)
           ? const SizedBox()
           : Container(
               margin: const EdgeInsets.all(16),
