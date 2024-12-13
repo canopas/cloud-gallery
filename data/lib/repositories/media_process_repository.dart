@@ -825,6 +825,8 @@ class MediaProcessRepo extends ChangeNotifier {
         return;
       }
 
+      rethrow;
+
       showNotification('Failed to download from Google Drive');
 
       await updateDownloadProcessStatus(
