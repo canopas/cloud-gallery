@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -819,13 +820,12 @@ class MediaProcessRepo extends ChangeNotifier {
       );
 
       await clearDownloadProcessResponse(id: process.id);
-    } catch (error) {
+    } catch (error, s) {
+      FirebaseCrashlytics.instance.recordError(error, s);
       if (error is DioException && error.type == DioExceptionType.cancel) {
         showNotification('Download from Google Drive cancelled');
         return;
       }
-
-      rethrow;
 
       showNotification('Failed to download from Google Drive');
 

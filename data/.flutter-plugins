@@ -1,4 +1,7 @@
 # This is a generated file; do not edit or check into version control.
+firebase_core=/Users/pratikcanopas/.pub-cache/hosted/pub.dev/firebase_core-3.8.1/
+firebase_core_web=/Users/pratikcanopas/.pub-cache/hosted/pub.dev/firebase_core_web-2.18.2/
+firebase_crashlytics=/Users/pratikcanopas/.pub-cache/hosted/pub.dev/firebase_crashlytics-4.2.0/
 flutter_local_notifications=/Users/pratikcanopas/.pub-cache/hosted/pub.dev/flutter_local_notifications-18.0.1/
 flutter_local_notifications_linux=/Users/pratikcanopas/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-5.0.0/
 google_sign_in=/Users/pratikcanopas/.pub-cache/hosted/pub.dev/google_sign_in-6.2.2/

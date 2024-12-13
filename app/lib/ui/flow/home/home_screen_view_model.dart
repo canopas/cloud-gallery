@@ -516,7 +516,6 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         provider: MediaProvider.googleDrive,
       );
     } catch (e, s) {
-      throw e;
       state = state.copyWith(actionError: e);
       _logger.e(
         "HomeViewStateNotifier: unable to download from google drive",

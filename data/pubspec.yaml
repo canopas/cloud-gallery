@@ -19,6 +19,7 @@ dependencies:
   path_provider: ^2.1.5
   crypto: ^3.0.3
   url_launcher: ^6.2.6
+  firebase_crashlytics: ^4.2.0
 
   # authentication
   google_sign_in: ^6.2.2
