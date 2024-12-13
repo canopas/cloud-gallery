@@ -90,8 +90,10 @@ class NetworkImagePreviewStateNotifier
   }
 
   @override
-  void dispose() {
-    tempFile?.deleteSync();
+  Future<void> dispose() async {
+    if (tempFile != null && await tempFile!.exists()) {
+      await tempFile!.delete();
+    }
     cancelToken?.cancel();
     super.dispose();
   }
