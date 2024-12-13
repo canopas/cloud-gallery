@@ -9,6 +9,7 @@ import 'package:data/services/auth_service.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:data/services/local_media_service.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -516,6 +517,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         provider: MediaProvider.googleDrive,
       );
     } catch (e, s) {
+      await FirebaseCrashlytics.instance.recordError(e, s);
       state = state.copyWith(actionError: e);
       _logger.e(
         "HomeViewStateNotifier: unable to download from google drive",
