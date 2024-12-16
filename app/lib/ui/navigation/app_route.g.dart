@@ -8,6 +8,7 @@ part of 'app_route.dart';
 
 List<RouteBase> get $appRoutes => [
       $homeRoute,
+      $albumsRoute,
       $onBoardRoute,
       $accountRoute,
       $transferRoute,
@@ -25,6 +26,28 @@ extension $HomeRouteExtension on HomeRoute {
 
   String get location => GoRouteData.$location(
         '/',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $albumsRoute => GoRouteData.$route(
+      path: '/albums',
+      factory: $AlbumsRouteExtension._fromState,
+    );
+
+extension $AlbumsRouteExtension on AlbumsRoute {
+  static AlbumsRoute _fromState(GoRouterState state) => const AlbumsRoute();
+
+  String get location => GoRouteData.$location(
+        '/albums',
       );
 
   void go(BuildContext context) => context.go(location);
