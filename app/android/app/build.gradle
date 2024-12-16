@@ -94,11 +94,11 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
-}
-
-// Disable the use of firebase_analytics ad_id
-configurations {
-    all {
-        exclude group: 'com.google.android.gms.ads'
+    configurations {
+        all {
+            exclude group: 'com.google.android.gms.ads'
+        }
     }
 }
+
+
