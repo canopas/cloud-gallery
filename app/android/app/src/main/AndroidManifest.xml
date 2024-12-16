@@ -33,6 +33,11 @@
                 android:name="com.canopas.cloud_gallery.notification_icon"
                 android:resource="@drawable/cloud_gallery_logo" />
 
+            <!-- Disable firebase analytics ad id usage -->
+            <meta-data
+                android:name="google_analytics_adid_collection_enabled"
+                android:value="false" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
