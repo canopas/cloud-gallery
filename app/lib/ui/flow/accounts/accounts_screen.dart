@@ -43,9 +43,25 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
     });
   }
 
+  void _clearCacheSucceedObserver() {
+    ref.listen(
+        accountsStateNotifierProvider.select(
+          (value) =>
+              (clearCacheLoading: value.clearCacheLoading, error: value.error),
+        ), (previous, next) {
+      if (previous!.clearCacheLoading &&
+          !next.clearCacheLoading &&
+          next.error == null) {
+        showSnackBar(
+            context: context, text: context.l10n.clear_cache_succeed_message);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     _errorObserver();
+    _clearCacheSucceedObserver();
     return AppPage(
       title: context.l10n.accounts_title,
       bodyBuilder: (context) {

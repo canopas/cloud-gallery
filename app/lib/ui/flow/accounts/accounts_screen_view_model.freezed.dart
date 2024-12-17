@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AccountsState {
   bool get notificationsPermissionStatus => throw _privateConstructorUsedError;
+  bool get clearCacheLoading => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
@@ -36,6 +37,7 @@ abstract class $AccountsStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool notificationsPermissionStatus,
+      bool clearCacheLoading,
       String? version,
       Object? error,
       GoogleSignInAccount? googleAccount});
@@ -57,6 +59,7 @@ class _$AccountsStateCopyWithImpl<$Res, $Val extends AccountsState>
   @override
   $Res call({
     Object? notificationsPermissionStatus = null,
+    Object? clearCacheLoading = null,
     Object? version = freezed,
     Object? error = freezed,
     Object? googleAccount = freezed,
@@ -65,6 +68,10 @@ class _$AccountsStateCopyWithImpl<$Res, $Val extends AccountsState>
       notificationsPermissionStatus: null == notificationsPermissionStatus
           ? _value.notificationsPermissionStatus
           : notificationsPermissionStatus // ignore: cast_nullable_to_non_nullable
+              as bool,
+      clearCacheLoading: null == clearCacheLoading
+          ? _value.clearCacheLoading
+          : clearCacheLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       version: freezed == version
           ? _value.version
@@ -89,6 +96,7 @@ abstract class _$$AccountsStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool notificationsPermissionStatus,
+      bool clearCacheLoading,
       String? version,
       Object? error,
       GoogleSignInAccount? googleAccount});
@@ -108,6 +116,7 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? notificationsPermissionStatus = null,
+    Object? clearCacheLoading = null,
     Object? version = freezed,
     Object? error = freezed,
     Object? googleAccount = freezed,
@@ -116,6 +125,10 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
       notificationsPermissionStatus: null == notificationsPermissionStatus
           ? _value.notificationsPermissionStatus
           : notificationsPermissionStatus // ignore: cast_nullable_to_non_nullable
+              as bool,
+      clearCacheLoading: null == clearCacheLoading
+          ? _value.clearCacheLoading
+          : clearCacheLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       version: freezed == version
           ? _value.version
@@ -135,6 +148,7 @@ class __$$AccountsStateImplCopyWithImpl<$Res>
 class _$AccountsStateImpl implements _AccountsState {
   const _$AccountsStateImpl(
       {this.notificationsPermissionStatus = true,
+      this.clearCacheLoading = false,
       this.version,
       this.error,
       this.googleAccount});
@@ -142,6 +156,9 @@ class _$AccountsStateImpl implements _AccountsState {
   @override
   @JsonKey()
   final bool notificationsPermissionStatus;
+  @override
+  @JsonKey()
+  final bool clearCacheLoading;
   @override
   final String? version;
   @override
@@ -151,7 +168,7 @@ class _$AccountsStateImpl implements _AccountsState {
 
   @override
   String toString() {
-    return 'AccountsState(notificationsPermissionStatus: $notificationsPermissionStatus, version: $version, error: $error, googleAccount: $googleAccount)';
+    return 'AccountsState(notificationsPermissionStatus: $notificationsPermissionStatus, clearCacheLoading: $clearCacheLoading, version: $version, error: $error, googleAccount: $googleAccount)';
   }
 
   @override
@@ -163,6 +180,8 @@ class _$AccountsStateImpl implements _AccountsState {
                     notificationsPermissionStatus) ||
                 other.notificationsPermissionStatus ==
                     notificationsPermissionStatus) &&
+            (identical(other.clearCacheLoading, clearCacheLoading) ||
+                other.clearCacheLoading == clearCacheLoading) &&
             (identical(other.version, version) || other.version == version) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.googleAccount, googleAccount) ||
@@ -170,8 +189,13 @@ class _$AccountsStateImpl implements _AccountsState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, notificationsPermissionStatus,
-      version, const DeepCollectionEquality().hash(error), googleAccount);
+  int get hashCode => Object.hash(
+      runtimeType,
+      notificationsPermissionStatus,
+      clearCacheLoading,
+      version,
+      const DeepCollectionEquality().hash(error),
+      googleAccount);
 
   /// Create a copy of AccountsState
   /// with the given fields replaced by the non-null parameter values.
@@ -185,12 +209,15 @@ class _$AccountsStateImpl implements _AccountsState {
 abstract class _AccountsState implements AccountsState {
   const factory _AccountsState(
       {final bool notificationsPermissionStatus,
+      final bool clearCacheLoading,
       final String? version,
       final Object? error,
       final GoogleSignInAccount? googleAccount}) = _$AccountsStateImpl;
 
   @override
   bool get notificationsPermissionStatus;
+  @override
+  bool get clearCacheLoading;
   @override
   String? get version;
   @override

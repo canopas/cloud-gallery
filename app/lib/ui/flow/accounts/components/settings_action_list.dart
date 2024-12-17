@@ -1,4 +1,5 @@
 import 'package:permission_handler/permission_handler.dart';
+import 'package:style/indicators/circular_progress_indicator.dart';
 import '../../../../components/web_view_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -96,6 +97,21 @@ class _SettingsActionListState extends ConsumerState<SettingsActionList>
         ActionListButton(
           title: context.l10n.clear_cache_title,
           onPressed: notifier.clearCache,
+          trailing: Consumer(
+            builder: (context, ref, child) {
+              final clearCacheLoading = ref.watch(
+                accountsStateNotifierProvider.select(
+                  (value) => value.clearCacheLoading,
+                ),
+              );
+              return clearCacheLoading
+                  ? Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: AppCircularProgressIndicator(size: 18),
+                  )
+                  : const SizedBox();
+            },
+          ),
         ),
         ActionListButton(
           title: context.l10n.term_and_condition_title,

@@ -67,6 +67,7 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
 
   Future<void> clearCache() async {
     try {
+      state = state.copyWith(clearCacheLoading: true, error: null);
       final cacheDirectory = await getApplicationDocumentsDirectory();
       if (await cacheDirectory.exists()) {
         final files = cacheDirectory.listSync().where(
@@ -76,13 +77,16 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
           await file.delete();
         }
       }
+      await Future.delayed(const Duration(seconds: 1));
+      state = state.copyWith(clearCacheLoading: false);
     } catch (e) {
-      state = state.copyWith(error: e);
+      state = state.copyWith(error: e, clearCacheLoading: false);
     }
   }
 
   Future<void> rateUs() async {
     try {
+      state = state.copyWith(error: null);
       await _deviceService.rateApp();
     } catch (e) {
       state = state.copyWith(error: e);
@@ -163,6 +167,7 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
 class AccountsState with _$AccountsState {
   const factory AccountsState({
     @Default(true) bool notificationsPermissionStatus,
+    @Default(false) bool clearCacheLoading,
     String? version,
     Object? error,
     GoogleSignInAccount? googleAccount,
