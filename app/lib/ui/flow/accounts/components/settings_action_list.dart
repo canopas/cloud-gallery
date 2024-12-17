@@ -1,3 +1,4 @@
+import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../components/web_view_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
@@ -8,6 +9,7 @@ import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/segmented_button.dart';
 import 'package:style/buttons/switch.dart';
 import 'package:style/extensions/context_extensions.dart';
+import '../../../../gen/assets.gen.dart';
 import '../accounts_screen_view_model.dart';
 
 class SettingsActionList extends ConsumerStatefulWidget {
@@ -88,6 +90,14 @@ class _SettingsActionListState extends ConsumerState<SettingsActionList>
               ref.read(AppPreferences.isDarkMode.notifier).state = source;
             },
           ),
+        ),
+        ActionListButton(
+          title: context.l10n.rate_us_title,
+          onPressed: notifier.rateUs,
+        ),
+        ActionListButton(
+          title: context.l10n.clear_cache_title,
+          onPressed: notifier.clearCache,
         ),
         ActionListButton(
           title: context.l10n.term_and_condition_title,
