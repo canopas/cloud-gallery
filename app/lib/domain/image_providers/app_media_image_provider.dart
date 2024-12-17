@@ -62,9 +62,7 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
     if (await cacheFile.exists()) {
       // Decode cached file if it exist and return it.
       return await decode(
-        await ui.ImmutableBuffer.fromUint8List(
-          await cacheFile.readAsBytes(),
-        ),
+        await ui.ImmutableBuffer.fromFilePath(cacheFile.path),
       );
     } else {
       // Create the cache file if it doesn't exist.
@@ -76,7 +74,7 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
         // If the media is local, generate thumbnail from the local asset and cache it.
         final Uint8List? bytes = await media.loadThumbnail(size: thumbnailSize);
         if (bytes != null) {
-          await cacheFile.writeAsBytes(bytes);
+          cacheFile.writeAsBytesSync(bytes);
           return decode(await ui.ImmutableBuffer.fromUint8List(bytes));
         }
         throw Exception('Unable to load thumbnail from local: ${media.id}');
@@ -87,7 +85,7 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
           _loadNetworkImageInBackground,
           IsolateParameters<String>(data: media.thumbnailLink!),
         );
-        await cacheFile.writeAsBytes(bytes);
+        cacheFile.writeAsBytesSync(bytes);
         return decode(await ui.ImmutableBuffer.fromUint8List(bytes));
       } else if (media.dropboxMediaRefId != null) {
         // If the media is from Dropbox, fetch the image from Dropbox API and cache it.
@@ -97,7 +95,7 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
             data: [media.dropboxMediaRefId!, _getDropboxThumbnailSize()],
           ),
         );
-        await cacheFile.writeAsBytes(bytes);
+        cacheFile.writeAsBytesSync(bytes);
         return decode(await ui.ImmutableBuffer.fromUint8List(bytes));
       }
       throw Exception('No image source found for media: ${media.id}');

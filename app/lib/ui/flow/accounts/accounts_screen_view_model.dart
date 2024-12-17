@@ -59,10 +59,21 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
   }
 
   Future<void> updateNotificationsPermissionStatus({
-    PermissionStatus? status,
+    bool openSettingsIfPermanentlyDenied = false,
   }) async {
-    status ??= await Permission.notification.status;
-    state = state.copyWith(notificationsPermissionStatus: status.isGranted);
+    try {
+      state = state.copyWith(error: null);
+      PermissionStatus status = await Permission.notification.request();
+      if ((status.isDenied || status.isPermanentlyDenied) &&
+          openSettingsIfPermanentlyDenied) {
+        await openAppSettings();
+        status = await Permission.notification.request();
+      }
+
+      state = state.copyWith(notificationsPermissionStatus: status.isGranted);
+    } catch (e) {
+      state = state.copyWith(error: e);
+    }
   }
 
   Future<void> clearCache() async {
