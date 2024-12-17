@@ -1,4 +1,6 @@
-import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:style/animations/fade_in_switcher.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import '../../../../components/web_view_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
@@ -9,67 +11,91 @@ import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/segmented_button.dart';
 import 'package:style/buttons/switch.dart';
 import 'package:style/extensions/context_extensions.dart';
+import '../../../../gen/assets.gen.dart';
 import '../accounts_screen_view_model.dart';
 
-class SettingsActionList extends ConsumerStatefulWidget {
+class SettingsActionList extends ConsumerWidget {
   const SettingsActionList({super.key});
 
   @override
-  ConsumerState<SettingsActionList> createState() => _SettingsActionListState();
-}
-
-class _SettingsActionListState extends ConsumerState<SettingsActionList>
-    with WidgetsBindingObserver {
-  late AccountsStateNotifier notifier;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addObserver(this);
-    notifier = ref.read(accountsStateNotifierProvider.notifier);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      notifier.updateNotificationsPermissionStatus();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDarkMode = ref.watch(AppPreferences.isDarkMode);
-    final notifications = ref.watch(AppPreferences.notifications);
-    final notificationsPermissionStatusAllowed = ref.watch(
-      accountsStateNotifierProvider.select(
-        (value) => value.notificationsPermissionStatus,
-      ),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
     return ActionList(
       buttons: [
-        ActionListButton(
-          title: context.l10n.notification_title,
-          trailing: AppSwitch(
-            value: notificationsPermissionStatusAllowed ? notifications : false,
-            onChanged: (value) async {
-              if (notificationsPermissionStatusAllowed) {
-                ref.read(AppPreferences.notifications.notifier).state = value;
-              } else {
-                final status = await Permission.notification.request();
-                notifier.updateNotificationsPermissionStatus(status: status);
-              }
-            },
+        _notificationAction(context),
+        _themeAction(context, ref),
+        _rateUsAction(context, ref),
+        _clearCacheAction(context, ref),
+        _termAndConditionAction(context, ref),
+        _privacyPolicyAction(context, ref),
+      ],
+    );
+  }
+
+  ActionListButton _notificationAction(BuildContext context) =>
+      ActionListButton(
+        leading: SvgPicture.asset(
+          width: 22,
+          height: 22,
+          Assets.images.icNotification,
+          colorFilter: ColorFilter.mode(
+            context.colorScheme.textPrimary,
+            BlendMode.srcATop,
           ),
         ),
-        ActionListButton(
-          title: context.l10n.theme_title,
-          trailing: AppSegmentedButton(
+        title: context.l10n.notification_title,
+        trailing: Consumer(
+          builder: (context, ref, child) {
+            final notifications = ref.watch(AppPreferences.notifications);
+            final notificationsPermissionStatusAllowed = ref.watch(
+              accountsStateNotifierProvider.select(
+                (value) => value.notificationsPermissionStatus,
+              ),
+            );
+
+            return AppSwitch(
+              value:
+                  notificationsPermissionStatusAllowed ? notifications : false,
+              onChanged: (value) async {
+                if (notificationsPermissionStatusAllowed) {
+                  ref.read(AppPreferences.notifications.notifier).state = value;
+                } else {
+                  ref
+                      .read(accountsStateNotifierProvider.notifier)
+                      .updateNotificationsPermissionStatus(
+                        openSettingsIfPermanentlyDenied: true,
+                      );
+                }
+              },
+            );
+          },
+        ),
+      );
+
+  ActionListButton _themeAction(BuildContext context, WidgetRef ref) {
+    return ActionListButton(
+      leading: Builder(
+        builder: (context) {
+          final isDarkMode = ref.watch(AppPreferences.isDarkMode);
+          return FadeInSwitcher(
+            child: isDarkMode ?? context.systemThemeIsDark
+                ? Icon(
+                    CupertinoIcons.moon_stars,
+                    color: context.colorScheme.textPrimary,
+                    size: 22,
+                  )
+                : Icon(
+                    CupertinoIcons.sun_max,
+                    color: context.colorScheme.textPrimary,
+                    size: 22,
+                  ),
+          );
+        },
+      ),
+      title: context.l10n.theme_title,
+      trailing: Consumer(
+        builder: (context, ref, child) {
+          final isDarkMode = ref.watch(AppPreferences.isDarkMode);
+          return AppSegmentedButton(
             segments: [
               AppButtonSegment(
                 value: true,
@@ -88,54 +114,97 @@ class _SettingsActionListState extends ConsumerState<SettingsActionList>
             onSelectionChanged: (source) {
               ref.read(AppPreferences.isDarkMode.notifier).state = source;
             },
+          );
+        },
+      ),
+    );
+  }
+
+  ActionListButton _rateUsAction(BuildContext context, WidgetRef ref) =>
+      ActionListButton(
+        leading: SvgPicture.asset(
+          width: 22,
+          height: 22,
+          Assets.images.icRateUs,
+          colorFilter: ColorFilter.mode(
+            context.colorScheme.textPrimary,
+            BlendMode.srcATop,
           ),
         ),
-        ActionListButton(
-          title: context.l10n.rate_us_title,
-          onPressed: notifier.rateUs,
+        title: context.l10n.rate_us_title,
+        onPressed: ref.read(accountsStateNotifierProvider.notifier).rateUs,
+      );
+
+  ActionListButton _clearCacheAction(BuildContext context, WidgetRef ref) =>
+      ActionListButton(
+        leading: Icon(
+          Icons.clear_all_rounded,
+          color: context.colorScheme.textPrimary,
+          size: 22,
         ),
-        ActionListButton(
-          title: context.l10n.clear_cache_title,
-          onPressed: notifier.clearCache,
-          trailing: Consumer(
-            builder: (context, ref, child) {
-              final clearCacheLoading = ref.watch(
-                accountsStateNotifierProvider.select(
-                  (value) => value.clearCacheLoading,
-                ),
-              );
-              return clearCacheLoading
-                  ? Padding(
+        title: context.l10n.clear_cache_title,
+        onPressed: ref.read(accountsStateNotifierProvider.notifier).clearCache,
+        trailing: Consumer(
+          builder: (context, ref, child) {
+            final clearCacheLoading = ref.watch(
+              accountsStateNotifierProvider.select(
+                (value) => value.clearCacheLoading,
+              ),
+            );
+            return clearCacheLoading
+                ? Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: AppCircularProgressIndicator(size: 18),
                   )
-                  : const SizedBox();
-            },
+                : const SizedBox();
+          },
+        ),
+      );
+
+  ActionListButton _termAndConditionAction(
+    BuildContext context,
+    WidgetRef ref,
+  ) =>
+      ActionListButton(
+        leading: SvgPicture.asset(
+          width: 22,
+          height: 22,
+          Assets.images.icTermOfService,
+          colorFilter: ColorFilter.mode(
+            context.colorScheme.textPrimary,
+            BlendMode.srcATop,
           ),
         ),
-        ActionListButton(
-          title: context.l10n.term_and_condition_title,
-          onPressed: () {
-            final colors = _getWebPageColors(context, ref);
-            showWebView(
-              context,
-              "https://canopas.github.io/cloud-gallery/terms-and-conditions?bgColor=${colors.background}&textColor=${colors.text}",
-            );
-          },
+        title: context.l10n.term_and_condition_title,
+        onPressed: () {
+          final colors = _getWebPageColors(context, ref);
+          showWebView(
+            context,
+            "https://canopas.github.io/cloud-gallery/terms-and-conditions?bgColor=${colors.background}&textColor=${colors.text}",
+          );
+        },
+      );
+
+  ActionListButton _privacyPolicyAction(BuildContext context, WidgetRef ref) =>
+      ActionListButton(
+        leading: SvgPicture.asset(
+          width: 22,
+          height: 22,
+          Assets.images.icPrivacyPolicy,
+          colorFilter: ColorFilter.mode(
+            context.colorScheme.textPrimary,
+            BlendMode.srcATop,
+          ),
         ),
-        ActionListButton(
-          title: context.l10n.privacy_policy_title,
-          onPressed: () {
-            final colors = _getWebPageColors(context, ref);
-            showWebView(
-              context,
-              "https://canopas.github.io/cloud-gallery/privacy-policy?bgColor=${colors.background}&textColor=${colors.text}",
-            );
-          },
-        ),
-      ],
-    );
-  }
+        title: context.l10n.privacy_policy_title,
+        onPressed: () {
+          final colors = _getWebPageColors(context, ref);
+          showWebView(
+            context,
+            "https://canopas.github.io/cloud-gallery/privacy-policy?bgColor=${colors.background}&textColor=${colors.text}",
+          );
+        },
+      );
 
   ({String background, String text}) _getWebPageColors(
     BuildContext context,

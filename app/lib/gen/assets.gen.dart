@@ -28,11 +28,23 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_google_drive.svg
   String get icGoogleDrive => 'assets/images/ic_google_drive.svg';
 
+  /// File path: assets/images/ic_logout.svg
+  String get icLogout => 'assets/images/ic_logout.svg';
+
   /// File path: assets/images/ic_no_internet.svg
   String get icNoInternet => 'assets/images/ic_no_internet.svg';
 
   /// File path: assets/images/ic_notification.svg
   String get icNotification => 'assets/images/ic_notification.svg';
+
+  /// File path: assets/images/ic_privacy_policy.svg
+  String get icPrivacyPolicy => 'assets/images/ic_privacy_policy.svg';
+
+  /// File path: assets/images/ic_rate_us.svg
+  String get icRateUs => 'assets/images/ic_rate_us.svg';
+
+  /// File path: assets/images/ic_term_of_service.svg
+  String get icTermOfService => 'assets/images/ic_term_of_service.svg';
 
   /// File path: assets/images/ic_upload.svg
   String get icUpload => 'assets/images/ic_upload.svg';
@@ -44,8 +56,12 @@ class $AssetsImagesGen {
         icDropbox,
         icError,
         icGoogleDrive,
+        icLogout,
         icNoInternet,
         icNotification,
+        icPrivacyPolicy,
+        icRateUs,
+        icTermOfService,
         icUpload
       ];
 }

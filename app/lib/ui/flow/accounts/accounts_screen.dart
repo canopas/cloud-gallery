@@ -5,8 +5,6 @@ import 'accounts_screen_view_model.dart';
 import 'components/settings_action_list.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:style/extensions/context_extensions.dart';
@@ -25,13 +23,15 @@ class AccountsScreen extends ConsumerStatefulWidget {
   ConsumerState<AccountsScreen> createState() => _AccountsScreenState();
 }
 
-class _AccountsScreenState extends ConsumerState<AccountsScreen> {
+class _AccountsScreenState extends ConsumerState<AccountsScreen>
+    with WidgetsBindingObserver {
   late AccountsStateNotifier notifier;
 
   @override
   void initState() {
-    super.initState();
+    WidgetsBinding.instance.addObserver(this);
     notifier = ref.read(accountsStateNotifierProvider.notifier);
+    super.initState();
   }
 
   void _errorObserver() {
@@ -53,9 +53,24 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
           !next.clearCacheLoading &&
           next.error == null) {
         showSnackBar(
-            context: context, text: context.l10n.clear_cache_succeed_message);
+          context: context,
+          text: context.l10n.clear_cache_succeed_message,
+        );
       }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      notifier.updateNotificationsPermissionStatus();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -96,6 +111,11 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             actionList: ActionList(
               buttons: [
                 ActionListButton(
+                  leading: Icon(
+                    CupertinoIcons.arrow_2_circlepath,
+                    color: context.colorScheme.textPrimary,
+                    size: 22,
+                  ),
                   title: context.l10n.auto_back_up_title,
                   trailing: Consumer(
                     builder: (context, ref, child) {
@@ -109,6 +129,15 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                   ),
                 ),
                 ActionListButton(
+                  leading: SvgPicture.asset(
+                    Assets.images.icLogout,
+                    height: 22,
+                    width: 22,
+                    colorFilter: ColorFilter.mode(
+                      context.colorScheme.textPrimary,
+                      BlendMode.srcATop,
+                    ),
+                  ),
                   title: context.l10n.sign_out_title,
                   onPressed: notifier.signOutWithGoogle,
                 ),
@@ -122,8 +151,8 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             ActionListButton(
               leading: SvgPicture.asset(
                 Assets.images.icGoogleDrive,
-                height: 24,
-                width: 24,
+                height: 22,
+                width: 22,
               ),
               title: context.l10n.sign_in_with_google_drive_title,
               onPressed: () {
@@ -150,6 +179,11 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             actionList: ActionList(
               buttons: [
                 ActionListButton(
+                  leading: Icon(
+                    CupertinoIcons.arrow_2_circlepath,
+                    color: context.colorScheme.textPrimary,
+                    size: 22,
+                  ),
                   title: context.l10n.auto_back_up_title,
                   trailing: Consumer(
                     builder: (context, ref, child) {
@@ -163,6 +197,15 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
                   ),
                 ),
                 ActionListButton(
+                  leading: SvgPicture.asset(
+                    Assets.images.icLogout,
+                    height: 22,
+                    width: 22,
+                    colorFilter: ColorFilter.mode(
+                      context.colorScheme.textPrimary,
+                      BlendMode.srcATop,
+                    ),
+                  ),
                   title: context.l10n.sign_out_title,
                   onPressed: notifier.signOutWithDropbox,
                 ),
@@ -176,8 +219,8 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             ActionListButton(
               leading: SvgPicture.asset(
                 Assets.images.icDropbox,
-                height: 24,
-                width: 24,
+                height: 22,
+                width: 22,
               ),
               title: context.l10n.sign_in_with_dropbox_title,
               onPressed: () {
