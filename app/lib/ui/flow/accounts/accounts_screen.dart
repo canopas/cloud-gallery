@@ -108,47 +108,45 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
             serviceDescription:
                 "${context.l10n.common_google_drive} - ${googleAccount.email}",
             profileImage: googleAccount.photoUrl,
-            actionList: ActionList(
-              buttons: [
-                ActionListButton(
-                  leading: Icon(
-                    CupertinoIcons.arrow_2_circlepath,
-                    color: context.colorScheme.textPrimary,
-                    size: 22,
-                  ),
-                  title: context.l10n.auto_back_up_title,
-                  trailing: Consumer(
-                    builder: (context, ref, child) {
-                      final googleDriveAutoBackUp =
-                          ref.watch(AppPreferences.googleDriveAutoBackUp);
-                      return AppSwitch(
-                        value: googleDriveAutoBackUp,
-                        onChanged: notifier.toggleAutoBackupInGoogleDrive,
-                      );
-                    },
+            actions: [
+              ActionListItem(
+                leading: Icon(
+                  CupertinoIcons.arrow_2_circlepath,
+                  color: context.colorScheme.textPrimary,
+                  size: 22,
+                ),
+                title: context.l10n.auto_back_up_title,
+                trailing: Consumer(
+                  builder: (context, ref, child) {
+                    final googleDriveAutoBackUp =
+                        ref.watch(AppPreferences.googleDriveAutoBackUp);
+                    return AppSwitch(
+                      value: googleDriveAutoBackUp,
+                      onChanged: notifier.toggleAutoBackupInGoogleDrive,
+                    );
+                  },
+                ),
+              ),
+              ActionListItem(
+                leading: SvgPicture.asset(
+                  Assets.images.icLogout,
+                  height: 22,
+                  width: 22,
+                  colorFilter: ColorFilter.mode(
+                    context.colorScheme.textPrimary,
+                    BlendMode.srcATop,
                   ),
                 ),
-                ActionListButton(
-                  leading: SvgPicture.asset(
-                    Assets.images.icLogout,
-                    height: 22,
-                    width: 22,
-                    colorFilter: ColorFilter.mode(
-                      context.colorScheme.textPrimary,
-                      BlendMode.srcATop,
-                    ),
-                  ),
-                  title: context.l10n.sign_out_title,
-                  onPressed: notifier.signOutWithGoogle,
-                ),
-              ],
-            ),
-            backgroundColor: AppColors.googleDriveColor.withAlpha(50),
+                title: context.l10n.sign_out_title,
+                onPressed: notifier.signOutWithGoogle,
+              ),
+            ],
+            backgroundColor: AppColors.googleDriveColor,
           );
         }
         return ActionList(
           buttons: [
-            ActionListButton(
+            ActionListItem(
               leading: SvgPicture.asset(
                 Assets.images.icGoogleDrive,
                 height: 22,
@@ -176,47 +174,45 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
             serviceDescription:
                 "${context.l10n.common_dropbox} - ${dropboxAccount.email}",
             profileImage: dropboxAccount.profile_photo_url,
-            actionList: ActionList(
-              buttons: [
-                ActionListButton(
-                  leading: Icon(
-                    CupertinoIcons.arrow_2_circlepath,
-                    color: context.colorScheme.textPrimary,
-                    size: 22,
-                  ),
-                  title: context.l10n.auto_back_up_title,
-                  trailing: Consumer(
-                    builder: (context, ref, child) {
-                      final dropboxAutoBackUp =
-                          ref.watch(AppPreferences.dropboxAutoBackUp);
-                      return AppSwitch(
-                        value: dropboxAutoBackUp,
-                        onChanged: notifier.toggleAutoBackupInDropbox,
-                      );
-                    },
+            actions: [
+              ActionListItem(
+                leading: Icon(
+                  CupertinoIcons.arrow_2_circlepath,
+                  color: context.colorScheme.textPrimary,
+                  size: 22,
+                ),
+                title: context.l10n.auto_back_up_title,
+                trailing: Consumer(
+                  builder: (context, ref, child) {
+                    final dropboxAutoBackUp =
+                        ref.watch(AppPreferences.dropboxAutoBackUp);
+                    return AppSwitch(
+                      value: dropboxAutoBackUp,
+                      onChanged: notifier.toggleAutoBackupInDropbox,
+                    );
+                  },
+                ),
+              ),
+              ActionListItem(
+                leading: SvgPicture.asset(
+                  Assets.images.icLogout,
+                  height: 22,
+                  width: 22,
+                  colorFilter: ColorFilter.mode(
+                    context.colorScheme.textPrimary,
+                    BlendMode.srcATop,
                   ),
                 ),
-                ActionListButton(
-                  leading: SvgPicture.asset(
-                    Assets.images.icLogout,
-                    height: 22,
-                    width: 22,
-                    colorFilter: ColorFilter.mode(
-                      context.colorScheme.textPrimary,
-                      BlendMode.srcATop,
-                    ),
-                  ),
-                  title: context.l10n.sign_out_title,
-                  onPressed: notifier.signOutWithDropbox,
-                ),
-              ],
-            ),
-            backgroundColor: AppColors.dropBoxColor.withAlpha(50),
+                title: context.l10n.sign_out_title,
+                onPressed: notifier.signOutWithDropbox,
+              ),
+            ],
+            backgroundColor: AppColors.dropBoxColor,
           );
         }
         return ActionList(
           buttons: [
-            ActionListButton(
+            ActionListItem(
               leading: SvgPicture.asset(
                 Assets.images.icDropbox,
                 height: 22,

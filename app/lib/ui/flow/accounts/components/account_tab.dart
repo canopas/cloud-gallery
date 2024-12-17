@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:style/extensions/column_extension.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 
@@ -8,13 +10,13 @@ class AccountsTab extends StatelessWidget {
   final Color backgroundColor;
   final String? profileImage;
   final String? serviceDescription;
-  final Widget? actionList;
+  final List<Widget>? actions;
 
   const AccountsTab({
     super.key,
     required this.name,
     this.serviceDescription,
-    this.actionList,
+    this.actions,
     this.profileImage,
     required this.backgroundColor,
   });
@@ -24,14 +26,21 @@ class AccountsTab extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
+        color: backgroundColor,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            backgroundColor.withAlpha(50),
+            backgroundColor.withAlpha(40),
+          ],
+        ),
       ),
       child: Column(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 _buildProfileAvtar(context: context),
@@ -64,11 +73,27 @@ class AccountsTab extends StatelessWidget {
               ],
             ),
           ),
-          if (actionList != null)
-            Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8),
-              child: actionList,
+          if (actions != null) ...[
+            Divider(
+              color: context.colorScheme.outline,
+              height: 0,
+              thickness: 0.8,
+              indent: 16,
+              endIndent: 16,
             ),
+            ColumnBuilder.separated(
+              itemCount: actions!.length,
+              itemBuilder: (index) => actions![index],
+              separatorBuilder: (index) => Divider(
+                color: context.colorScheme.outline,
+                height: 0,
+                thickness: 0.8,
+                indent: 16,
+                endIndent: 16,
+              ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+          ],
         ],
       ),
     );

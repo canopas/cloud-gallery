@@ -31,8 +31,7 @@ class SettingsActionList extends ConsumerWidget {
     );
   }
 
-  ActionListButton _notificationAction(BuildContext context) =>
-      ActionListButton(
+  Widget _notificationAction(BuildContext context) => ActionListItem(
         leading: SvgPicture.asset(
           width: 22,
           height: 22,
@@ -71,8 +70,8 @@ class SettingsActionList extends ConsumerWidget {
         ),
       );
 
-  ActionListButton _themeAction(BuildContext context, WidgetRef ref) {
-    return ActionListButton(
+  Widget _themeAction(BuildContext context, WidgetRef ref) {
+    return ActionListItem(
       leading: Builder(
         builder: (context) {
           final isDarkMode = ref.watch(AppPreferences.isDarkMode);
@@ -120,8 +119,7 @@ class SettingsActionList extends ConsumerWidget {
     );
   }
 
-  ActionListButton _rateUsAction(BuildContext context, WidgetRef ref) =>
-      ActionListButton(
+  Widget _rateUsAction(BuildContext context, WidgetRef ref) => ActionListItem(
         leading: SvgPicture.asset(
           width: 22,
           height: 22,
@@ -135,8 +133,8 @@ class SettingsActionList extends ConsumerWidget {
         onPressed: ref.read(accountsStateNotifierProvider.notifier).rateUs,
       );
 
-  ActionListButton _clearCacheAction(BuildContext context, WidgetRef ref) =>
-      ActionListButton(
+  Widget _clearCacheAction(BuildContext context, WidgetRef ref) =>
+      ActionListItem(
         leading: Icon(
           Icons.clear_all_rounded,
           color: context.colorScheme.textPrimary,
@@ -161,11 +159,11 @@ class SettingsActionList extends ConsumerWidget {
         ),
       );
 
-  ActionListButton _termAndConditionAction(
+  Widget _termAndConditionAction(
     BuildContext context,
     WidgetRef ref,
   ) =>
-      ActionListButton(
+      ActionListItem(
         leading: SvgPicture.asset(
           width: 22,
           height: 22,
@@ -185,8 +183,8 @@ class SettingsActionList extends ConsumerWidget {
         },
       );
 
-  ActionListButton _privacyPolicyAction(BuildContext context, WidgetRef ref) =>
-      ActionListButton(
+  Widget _privacyPolicyAction(BuildContext context, WidgetRef ref) =>
+      ActionListItem(
         leading: SvgPicture.asset(
           width: 22,
           height: 22,

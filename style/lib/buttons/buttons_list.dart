@@ -4,22 +4,8 @@ import '../extensions/column_extension.dart';
 import '../extensions/context_extensions.dart';
 import '../text/app_text_style.dart';
 
-class ActionListButton {
-  final String title;
-  final Widget? leading;
-  final VoidCallback? onPressed;
-  final Widget? trailing;
-
-  const ActionListButton({
-    required this.title,
-    this.leading,
-    this.onPressed,
-    this.trailing,
-  });
-}
-
 class ActionList extends StatelessWidget {
-  final List<ActionListButton> buttons;
+  final List<Widget> buttons;
   final EdgeInsetsGeometry margin;
   final BorderRadius borderRadius;
   final Color? background;
@@ -42,8 +28,7 @@ class ActionList extends StatelessWidget {
       ),
       child: ColumnBuilder.separated(
         itemCount: buttons.length,
-        itemBuilder: (index) =>
-            _buildButton(context: context, button: buttons[index]),
+        itemBuilder: (index) => buttons[index],
         separatorBuilder: (index) => Divider(
           color: context.colorScheme.outline,
           height: 0,
@@ -55,33 +40,46 @@ class ActionList extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildButton({
-    required BuildContext context,
-    required ActionListButton button,
-  }) {
+class ActionListItem extends StatelessWidget {
+  final String title;
+  final Widget? leading;
+  final VoidCallback? onPressed;
+  final Widget? trailing;
+
+  const ActionListItem({
+    super.key,
+    required this.title,
+    this.leading,
+    this.onPressed,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return OnTapScale(
-      enabled: button.onPressed != null,
-      onTap: button.onPressed,
+      enabled: onPressed != null,
+      onTap: onPressed,
       child: SizedBox(
         height: 50,
         child: Padding(
           padding: const EdgeInsets.only(left: 16, right: 8),
           child: Row(
             children: [
-              if (button.leading != null) ...[
-                button.leading!,
+              if (leading != null) ...[
+                leading!,
                 const SizedBox(width: 16),
               ],
               Expanded(
                 child: Text(
-                  button.title,
+                  title,
                   style: AppTextStyles.body2
                       .copyWith(color: context.colorScheme.textPrimary),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (button.trailing != null) button.trailing!,
+              if (trailing != null) trailing!,
             ],
           ),
         ),
