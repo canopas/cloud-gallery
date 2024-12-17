@@ -22,6 +22,6 @@ class DeviceService {
             ? "itms-apps://itunes.apple.com/app/$packageName"
             : "";
 
-   await launchUrlString(targetUrl);
+    await launchUrlString(targetUrl);
   }
 }
