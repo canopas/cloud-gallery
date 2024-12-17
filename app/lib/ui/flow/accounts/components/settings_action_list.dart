@@ -1,4 +1,3 @@
-import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../components/web_view_screen.dart';
 import '../../../../domain/extensions/context_extensions.dart';
@@ -9,7 +8,6 @@ import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/segmented_button.dart';
 import 'package:style/buttons/switch.dart';
 import 'package:style/extensions/context_extensions.dart';
-import '../../../../gen/assets.gen.dart';
 import '../accounts_screen_view_model.dart';
 
 class SettingsActionList extends ConsumerStatefulWidget {
