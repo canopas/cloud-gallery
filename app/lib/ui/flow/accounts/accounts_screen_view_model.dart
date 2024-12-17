@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:data/models/media_process/media_process.dart';
 import 'package:data/repositories/media_process_repository.dart';
 import 'package:data/services/auth_service.dart';
@@ -8,6 +9,7 @@ import 'package:data/storage/provider/preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 part 'accounts_screen_view_model.freezed.dart';
@@ -61,6 +63,30 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
   }) async {
     status ??= await Permission.notification.status;
     state = state.copyWith(notificationsPermissionStatus: status.isGranted);
+  }
+
+  Future<void> clearCache() async {
+    try {
+      final cacheDirectory = await getApplicationDocumentsDirectory();
+      if (await cacheDirectory.exists()) {
+        final files = cacheDirectory.listSync().where(
+              (file) => file is File && file.path.contains('thumbnail_'),
+            );
+        for (var file in files) {
+          await file.delete();
+        }
+      }
+    } catch (e) {
+      state = state.copyWith(error: e);
+    }
+  }
+
+  Future<void> rateUs() async {
+    try {
+      await _deviceService.rateApp();
+    } catch (e) {
+      state = state.copyWith(error: e);
+    }
   }
 
   void updateUser(GoogleSignInAccount? account) {

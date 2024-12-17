@@ -84,6 +84,8 @@
   "version_title": "Version",
   "sign_in_with_google_drive_title": "Sign in with Google Drive",
   "sign_in_with_dropbox_title": "Sign in with Dropbox",
+  "rate_us_title": "Rate us",
+  "clear_cache_title": "Clear cache",
 
   "@_UPLOAD_ITEM":{},
   "upload_status_waiting": "Upload is in the queue",

@@ -31,6 +31,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_no_internet.svg
   String get icNoInternet => 'assets/images/ic_no_internet.svg';
 
+  /// File path: assets/images/ic_notification.svg
+  String get icNotification => 'assets/images/ic_notification.svg';
+
   /// File path: assets/images/ic_upload.svg
   String get icUpload => 'assets/images/ic_upload.svg';
 
@@ -42,6 +45,7 @@ class $AssetsImagesGen {
         icError,
         icGoogleDrive,
         icNoInternet,
+        icNotification,
         icUpload
       ];
 }

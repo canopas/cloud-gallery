@@ -90,6 +90,14 @@ class _SettingsActionListState extends ConsumerState<SettingsActionList>
           ),
         ),
         ActionListButton(
+          title: context.l10n.rate_us_title,
+          onPressed: notifier.rateUs,
+        ),
+        ActionListButton(
+          title: context.l10n.clear_cache_title,
+          onPressed: notifier.clearCache,
+        ),
+        ActionListButton(
           title: context.l10n.term_and_condition_title,
           onPressed: () {
             final colors = _getWebPageColors(context, ref);
