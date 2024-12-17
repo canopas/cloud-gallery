@@ -86,6 +86,7 @@
   "sign_in_with_dropbox_title": "Sign in with Dropbox",
   "rate_us_title": "Rate us",
   "clear_cache_title": "Clear cache",
+  "clear_cache_succeed_message": "Cache cleared successfully",
 
   "@_UPLOAD_ITEM":{},
   "upload_status_waiting": "Upload is in the queue",
