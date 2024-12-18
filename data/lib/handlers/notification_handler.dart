@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -32,15 +33,33 @@ class NotificationHandler {
       onDidReceiveNotificationResponse,
     );
 
+    await requestPermission();
+
     return await _flutterLocalNotificationsPlugin
         .getNotificationAppLaunchDetails();
   }
 
-  void requestPermission() {
-    _flutterLocalNotificationsPlugin
+  Future<bool?> requestPermission() async {
+    return await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
+  }
+
+  Future<bool?> checkPermissionIsEnabled() async {
+    if (Platform.isIOS) {
+      final res = await _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.checkPermissions();
+
+      return res?.isEnabled;
+    } else {
+      return await _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled();
+    }
   }
 
   Future<void> _initLocalNotifications(

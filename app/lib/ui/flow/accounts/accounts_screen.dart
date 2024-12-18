@@ -5,8 +5,6 @@ import 'accounts_screen_view_model.dart';
 import 'components/settings_action_list.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:style/extensions/context_extensions.dart';
@@ -16,7 +14,6 @@ import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/switch.dart';
 import '../../../components/snack_bar.dart';
 import 'components/account_tab.dart';
-import 'package:data/domain/config.dart';
 
 class AccountsScreen extends ConsumerStatefulWidget {
   const AccountsScreen({super.key});
@@ -25,13 +22,15 @@ class AccountsScreen extends ConsumerStatefulWidget {
   ConsumerState<AccountsScreen> createState() => _AccountsScreenState();
 }
 
-class _AccountsScreenState extends ConsumerState<AccountsScreen> {
+class _AccountsScreenState extends ConsumerState<AccountsScreen>
+    with WidgetsBindingObserver {
   late AccountsStateNotifier notifier;
 
   @override
   void initState() {
-    super.initState();
+    WidgetsBinding.instance.addObserver(this);
     notifier = ref.read(accountsStateNotifierProvider.notifier);
+    super.initState();
   }
 
   void _errorObserver() {
@@ -43,9 +42,40 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
     });
   }
 
+  void _clearCacheSucceedObserver() {
+    ref.listen(
+        accountsStateNotifierProvider.select(
+          (value) =>
+              (clearCacheLoading: value.clearCacheLoading, error: value.error),
+        ), (previous, next) {
+      if (previous!.clearCacheLoading &&
+          !next.clearCacheLoading &&
+          next.error == null) {
+        showSnackBar(
+          context: context,
+          text: context.l10n.clear_cache_succeed_message,
+        );
+      }
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      notifier.updateNotificationsPermissionStatus();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     _errorObserver();
+    _clearCacheSucceedObserver();
     return AppPage(
       title: context.l10n.accounts_title,
       bodyBuilder: (context) {
@@ -54,7 +84,9 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
               const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
             _googleAccount(context: context),
-            if (FeatureFlags.dropboxEnabled) _dropboxAccount(context: context),
+            const SizedBox(height: 8),
+            _dropboxAccount(context: context),
+            const SizedBox(height: 8),
             const SettingsActionList(),
             const SizedBox(height: 16),
             _buildVersion(context: context),
@@ -77,37 +109,58 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             serviceDescription:
                 "${context.l10n.common_google_drive} - ${googleAccount.email}",
             profileImage: googleAccount.photoUrl,
-            actionList: ActionList(
-              buttons: [
-                ActionListButton(
-                  title: context.l10n.auto_back_up_title,
-                  trailing: Consumer(
-                    builder: (context, ref, child) {
-                      final googleDriveAutoBackUp =
-                          ref.watch(AppPreferences.googleDriveAutoBackUp);
-                      return AppSwitch(
-                        value: googleDriveAutoBackUp,
-                        onChanged: notifier.toggleAutoBackupInGoogleDrive,
-                      );
-                    },
+            actions: [
+              ActionListItem(
+                leading: Icon(
+                  CupertinoIcons.arrow_2_circlepath,
+                  color: context.colorScheme.textPrimary,
+                  size: 22,
+                ),
+                title: context.l10n.auto_back_up_title,
+                trailing: Consumer(
+                  builder: (context, ref, child) {
+                    final googleDriveAutoBackUp =
+                        ref.watch(AppPreferences.googleDriveAutoBackUp);
+                    return AppSwitch(
+                      value: googleDriveAutoBackUp,
+                      onChanged: notifier.toggleAutoBackupInGoogleDrive,
+                    );
+                  },
+                ),
+              ),
+              ActionListItem(
+                leading: SvgPicture.asset(
+                  Assets.images.icLogout,
+                  height: 22,
+                  width: 22,
+                  colorFilter: ColorFilter.mode(
+                    context.colorScheme.textPrimary,
+                    BlendMode.srcATop,
                   ),
                 ),
-                ActionListButton(
-                  title: context.l10n.sign_out_title,
-                  onPressed: notifier.signOutWithGoogle,
-                ),
-              ],
-            ),
-            backgroundColor: AppColors.googleDriveColor.withAlpha(50),
+                title: context.l10n.sign_out_title,
+                onPressed: notifier.signOutWithGoogle,
+              ),
+            ],
+            backgroundColor: AppColors.googleDriveColor,
           );
         }
         return ActionList(
           buttons: [
-            ActionListButton(
+            ActionListItem(
               leading: SvgPicture.asset(
                 Assets.images.icGoogleDrive,
-                height: 24,
-                width: 24,
+                height: 22,
+                width: 22,
+              ),
+              subtitle: context.l10n.sign_in_with_google_drive_message,
+              trailing: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Icon(
+                  CupertinoIcons.forward,
+                  color: context.colorScheme.containerHigh,
+                  size: 18,
+                ),
               ),
               title: context.l10n.sign_in_with_google_drive_title,
               onPressed: () {
@@ -131,38 +184,59 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
             serviceDescription:
                 "${context.l10n.common_dropbox} - ${dropboxAccount.email}",
             profileImage: dropboxAccount.profile_photo_url,
-            actionList: ActionList(
-              buttons: [
-                ActionListButton(
-                  title: context.l10n.auto_back_up_title,
-                  trailing: Consumer(
-                    builder: (context, ref, child) {
-                      final dropboxAutoBackUp =
-                          ref.watch(AppPreferences.dropboxAutoBackUp);
-                      return AppSwitch(
-                        value: dropboxAutoBackUp,
-                        onChanged: notifier.toggleAutoBackupInDropbox,
-                      );
-                    },
+            actions: [
+              ActionListItem(
+                leading: Icon(
+                  CupertinoIcons.arrow_2_circlepath,
+                  color: context.colorScheme.textPrimary,
+                  size: 22,
+                ),
+                title: context.l10n.auto_back_up_title,
+                trailing: Consumer(
+                  builder: (context, ref, child) {
+                    final dropboxAutoBackUp =
+                        ref.watch(AppPreferences.dropboxAutoBackUp);
+                    return AppSwitch(
+                      value: dropboxAutoBackUp,
+                      onChanged: notifier.toggleAutoBackupInDropbox,
+                    );
+                  },
+                ),
+              ),
+              ActionListItem(
+                leading: SvgPicture.asset(
+                  Assets.images.icLogout,
+                  height: 22,
+                  width: 22,
+                  colorFilter: ColorFilter.mode(
+                    context.colorScheme.textPrimary,
+                    BlendMode.srcATop,
                   ),
                 ),
-                ActionListButton(
-                  title: context.l10n.sign_out_title,
-                  onPressed: notifier.signOutWithDropbox,
-                ),
-              ],
-            ),
-            backgroundColor: AppColors.dropBoxColor.withAlpha(50),
+                title: context.l10n.sign_out_title,
+                onPressed: notifier.signOutWithDropbox,
+              ),
+            ],
+            backgroundColor: AppColors.dropBoxColor,
           );
         }
         return ActionList(
           buttons: [
-            ActionListButton(
+            ActionListItem(
               leading: SvgPicture.asset(
                 Assets.images.icDropbox,
-                height: 24,
-                width: 24,
+                height: 22,
+                width: 22,
               ),
+              trailing: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Icon(
+                  CupertinoIcons.forward,
+                  color: context.colorScheme.containerHigh,
+                  size: 18,
+                ),
+              ),
+              subtitle: context.l10n.sign_in_with_dropbox_message,
               title: context.l10n.sign_in_with_dropbox_title,
               onPressed: () {
                 notifier.signInWithDropbox();
