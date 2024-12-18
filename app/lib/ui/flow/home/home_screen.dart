@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:style/buttons/primary_button.dart';
 import '../../../components/app_page.dart';
 import '../../../components/error_screen.dart';
 import '../../../domain/extensions/widget_extensions.dart';
@@ -134,6 +135,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 const HomeScreenHints(),
                 const NoInternetConnectionHint(),
+                PrimaryButton(
+                  onPressed: () {
+                    AlbumsRoute().push(context);
+                  },
+                  text: "Albums",
+                ),
               ],
             );
           } else if (index == state.medias.length + 1) {

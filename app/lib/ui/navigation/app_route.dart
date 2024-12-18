@@ -1,4 +1,5 @@
 import '../flow/accounts/accounts_screen.dart';
+import '../flow/albums/albums_screen.dart';
 import '../flow/media_transfer/media_transfer_screen.dart';
 import '../flow/onboard/onboard_screen.dart';
 import 'package:data/models/media/media.dart';
@@ -17,6 +18,7 @@ class AppRoutePath {
   static const preview = '/preview';
   static const transfer = '/transfer';
   static const metaDataDetails = '/metadata-details';
+  static const albums = '/albums';
 }
 
 @TypedGoRoute<HomeRoute>(path: AppRoutePath.home)
@@ -25,6 +27,15 @@ class HomeRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
+}
+
+@TypedGoRoute<AlbumsRoute>(path: AppRoutePath.albums)
+class AlbumsRoute extends GoRouteData {
+  const AlbumsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const AlbumsScreen();
 }
 
 @TypedGoRoute<OnBoardRoute>(path: AppRoutePath.onBoard)
