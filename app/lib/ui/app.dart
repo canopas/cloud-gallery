@@ -56,7 +56,6 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
     if (res?.didNotificationLaunchApp == true) {
       ///TODO: manage notification tap
     }
-    _notificationHandler.requestPermission();
   }
 
   @override
