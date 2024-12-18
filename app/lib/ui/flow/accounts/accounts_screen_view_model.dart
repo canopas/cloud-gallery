@@ -103,7 +103,6 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
           await file.delete();
         }
       }
-      await Future.delayed(const Duration(seconds: 1));
       state = state.copyWith(clearCacheLoading: false);
     } catch (e, s) {
       state = state.copyWith(error: e, clearCacheLoading: false);
