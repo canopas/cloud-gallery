@@ -39,8 +39,8 @@ class NotificationHandler {
         .getNotificationAppLaunchDetails();
   }
 
-  void requestPermission() {
-    _flutterLocalNotificationsPlugin
+  Future<bool?> requestPermission() async {
+    return await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
