@@ -75,10 +75,15 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     this._logger,
     this._connectivityHandler,
     DropboxAccount? _dropboxAccount,
-  ) : super(HomeViewState(dropboxAccount: _dropboxAccount)) {
+  ) : super(
+          HomeViewState(
+            dropboxAccount: _dropboxAccount,
+            googleAccount: _authService.googleAccount,
+          ),
+        ) {
     _mediaProcessRepo.addListener(_mediaProcessObserve);
     _listenUserGoogleAccount();
-    loadMedias();
+    loadMedias(reload: true);
     _mediaProcessObserve();
   }
 
@@ -322,6 +327,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         if (_googleDriveMediasWithLocalRef.isEmpty &&
             !_googleDriveMaxLoaded &&
             state.googleAccount != null &&
+            _backUpFolderId != null &&
             hasInternet) {
           final res = await _googleDriveService.getPaginatedMedias(
             folder: _backUpFolderId!,
