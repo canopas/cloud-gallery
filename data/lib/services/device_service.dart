@@ -14,14 +14,9 @@ class DeviceService {
   }
 
   Future<void> rateApp() async {
-    final packageName =
-        await PackageInfo.fromPlatform().then((value) => value.packageName);
-    final targetUrl = (Platform.isAndroid)
-        ? "market://details?id=$packageName"
-        : (Platform.isIOS)
-            ? "itms-apps://itunes.apple.com/app/$packageName"
-            : "";
-
+    final targetUrl = (Platform.isIOS || Platform.isMacOS)
+        ? "itms-apps://itunes.apple.com/app/6480052005"
+        : "market://details?id=com.canopas.cloud_gallery";
     await launchUrlString(targetUrl);
   }
 }
