@@ -44,6 +44,7 @@ class ActionList extends StatelessWidget {
 
 class ActionListItem extends StatelessWidget {
   final String title;
+  final String? subtitle;
   final Widget? leading;
   final VoidCallback? onPressed;
   final Widget? trailing;
@@ -51,6 +52,7 @@ class ActionListItem extends StatelessWidget {
   const ActionListItem({
     super.key,
     required this.title,
+    this.subtitle,
     this.leading,
     this.onPressed,
     this.trailing,
@@ -61,27 +63,51 @@ class ActionListItem extends StatelessWidget {
     return OnTapScale(
       enabled: onPressed != null,
       onTap: onPressed,
-      child: SizedBox(
-        height: 50,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 8),
-          child: Row(
-            children: [
-              if (leading != null) ...[
-                leading!,
-                const SizedBox(width: 16),
-              ],
-              Expanded(
-                child: Text(
-                  title,
-                  style: AppTextStyles.body2
-                      .copyWith(color: context.colorScheme.textPrimary),
-                  overflow: TextOverflow.ellipsis,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Row(
+                  children: [
+                    if (leading != null) ...[
+                      leading!,
+                      const SizedBox(width: 16),
+                    ],
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: AppTextStyles.body2.copyWith(
+                              color: context.colorScheme.textPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (subtitle != null) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              subtitle!,
+                              style: AppTextStyles.body2.copyWith(
+                                color: context.colorScheme.textSecondary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              if (trailing != null) trailing!,
-            ],
-          ),
+            ),
+            if (trailing != null) trailing!,
+          ],
         ),
       ),
     );

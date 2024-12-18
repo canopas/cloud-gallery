@@ -51,6 +51,10 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.14" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/app_links-6.3.2" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.12" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/photo_manager-3.6.2" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.0" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.3.3" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
