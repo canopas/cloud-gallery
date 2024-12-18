@@ -87,6 +87,8 @@
   "rate_us_title": "Rate us",
   "clear_cache_title": "Clear cache",
   "clear_cache_succeed_message": "Cache cleared successfully",
+  "sign_in_with_google_drive_message": "Connect to unlock your Google Drive treasure chest.",
+  "sign_in_with_dropbox_message": "Drop into your Dropbox cloud and make it yours.",
 
   "@_UPLOAD_ITEM":{},
   "upload_status_waiting": "Upload is in the queue",

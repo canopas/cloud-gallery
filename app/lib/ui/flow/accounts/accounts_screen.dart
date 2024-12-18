@@ -85,7 +85,9 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
               const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
             _googleAccount(context: context),
-            if (FeatureFlags.dropboxEnabled) _dropboxAccount(context: context),
+            const SizedBox(height: 8),
+            _dropboxAccount(context: context),
+            const SizedBox(height: 8),
             const SettingsActionList(),
             const SizedBox(height: 16),
             _buildVersion(context: context),
@@ -151,6 +153,15 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
                 Assets.images.icGoogleDrive,
                 height: 22,
                 width: 22,
+              ),
+              subtitle: context.l10n.sign_in_with_google_drive_message,
+              trailing: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Icon(
+                  CupertinoIcons.forward,
+                  color: context.colorScheme.containerHigh,
+                  size: 18,
+                ),
               ),
               title: context.l10n.sign_in_with_google_drive_title,
               onPressed: () {
@@ -218,6 +229,15 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
                 height: 22,
                 width: 22,
               ),
+              trailing: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Icon(
+                  CupertinoIcons.forward,
+                  color: context.colorScheme.containerHigh,
+                  size: 18,
+                ),
+              ),
+              subtitle: context.l10n.sign_in_with_dropbox_message,
               title: context.l10n.sign_in_with_dropbox_title,
               onPressed: () {
                 notifier.signInWithDropbox();

@@ -1,7 +1,3 @@
-class FeatureFlags {
-  static const dropboxEnabled = true;
-}
-
 class ProviderConstants {
   static const String backupFolderName = 'Cloud Gallery Backup';
   static const String backupFolderPath = '/Cloud Gallery Backup';
