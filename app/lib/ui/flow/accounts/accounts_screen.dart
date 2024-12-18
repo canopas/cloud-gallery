@@ -14,7 +14,6 @@ import 'package:style/buttons/buttons_list.dart';
 import 'package:style/buttons/switch.dart';
 import '../../../components/snack_bar.dart';
 import 'components/account_tab.dart';
-import 'package:data/domain/config.dart';
 
 class AccountsScreen extends ConsumerStatefulWidget {
   const AccountsScreen({super.key});

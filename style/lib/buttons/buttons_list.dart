@@ -84,7 +84,8 @@ class ActionListItem extends StatelessWidget {
                           Text(
                             title,
                             style: AppTextStyles.body2.copyWith(
-                                color: context.colorScheme.textPrimary),
+                              color: context.colorScheme.textPrimary,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                           if (subtitle != null) ...[
@@ -92,7 +93,8 @@ class ActionListItem extends StatelessWidget {
                             Text(
                               subtitle!,
                               style: AppTextStyles.body2.copyWith(
-                                  color: context.colorScheme.textSecondary),
+                                color: context.colorScheme.textSecondary,
+                              ),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
                             ),
