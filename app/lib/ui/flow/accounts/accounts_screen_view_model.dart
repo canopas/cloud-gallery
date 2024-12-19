@@ -94,10 +94,13 @@ class AccountsStateNotifier extends StateNotifier<AccountsState> {
   Future<void> clearCache() async {
     try {
       state = state.copyWith(clearCacheLoading: true, error: null);
-      final cacheDirectory = await getApplicationDocumentsDirectory();
+      final cacheDirectory = await getApplicationCacheDirectory();
       if (await cacheDirectory.exists()) {
         final files = cacheDirectory.listSync().where(
-              (file) => file is File && file.path.contains('thumbnail_'),
+              (file) =>
+                  file is File &&
+                  (file.path.contains('thumbnail_') ||
+                      file.path.contains('network_image_')),
             );
         for (var file in files) {
           await file.delete();

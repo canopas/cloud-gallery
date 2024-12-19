@@ -401,6 +401,7 @@ class MediaPreviewState with _$MediaPreviewState {
     Object? actionError,
     @Default([]) List<AppMedia> medias,
     @Default(0) int currentIndex,
+    @Default(false) bool zoomed,
     @Default(true) bool showActions,
     @Default(false) bool isVideoInitialized,
     @Default(false) bool isVideoBuffering,

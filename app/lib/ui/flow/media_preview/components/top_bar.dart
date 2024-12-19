@@ -183,7 +183,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
-        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.upload_to_google_drive_title,
@@ -243,7 +242,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
-        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.download_from_google_drive_title,
@@ -303,7 +301,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
-        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.delete_from_google_drive_title,
@@ -364,7 +361,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
-        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.upload_to_dropbox_title,
@@ -424,7 +420,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
-        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.download_from_dropbox_title,
@@ -484,7 +479,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
-        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.delete_from_dropbox_title,
@@ -532,7 +526,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
         ],
       ),
       onTap: () {
-        context.pop();
         showAppAlertDialog(
           context: context,
           title: context.l10n.delete_from_device_title,
@@ -561,7 +554,6 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
   PopupMenuItem _shareAction(BuildContext context, AppMedia media) {
     return PopupMenuItem(
       onTap: () async {
-        context.pop();
         await Share.shareXFiles([XFile(media.path)]);
       },
       child: Row(

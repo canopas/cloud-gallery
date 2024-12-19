@@ -38,8 +38,8 @@ class NetworkImagePreviewStateNotifier
     try {
       state = state.copyWith(loading: true, error: null);
       cancelToken = CancelToken();
-      final dir = await getTemporaryDirectory();
-      tempFile = File('${dir.path}/$id.$extension');
+      final dir = await getApplicationDocumentsDirectory();
+      tempFile = File('${dir.path}/network_image_$id.$extension');
       await _googleDriveServices.downloadMedia(
         id: id,
         saveLocation: tempFile!.path,
@@ -67,8 +67,8 @@ class NetworkImagePreviewStateNotifier
     try {
       state = state.copyWith(loading: true, error: null);
       cancelToken = CancelToken();
-      final dir = await getTemporaryDirectory();
-      tempFile = File('${dir.path}/$id.$extension');
+      final dir = await getApplicationCacheDirectory();
+      tempFile = File('${dir.path}/network_image_$id.$extension');
       await _dropboxService.downloadMedia(
         id: id,
         saveLocation: tempFile!.path,
