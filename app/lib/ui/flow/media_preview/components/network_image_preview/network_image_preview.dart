@@ -76,15 +76,16 @@ class _NetworkImagePreviewState extends ConsumerState<NetworkImagePreview> {
               } else {
                 final width = context.mediaQuerySize.width;
                 double multiplier = 1;
-                if (widget.media.displayWidth != null && widget.media.displayWidth! > 0) {
+                if (widget.media.displayWidth != null &&
+                    widget.media.displayWidth! > 0) {
                   multiplier = width / widget.media.displayWidth!;
                 }
                 return SizedBox(
                   width: width,
-                  height:
-                  widget.media.displayHeight != null && widget.media.displayHeight! > 0
-                          ? widget.media.displayHeight! * multiplier
-                          : width,
+                  height: widget.media.displayHeight != null &&
+                          widget.media.displayHeight! > 0
+                      ? widget.media.displayHeight! * multiplier
+                      : width,
                   child: child,
                 );
               }
