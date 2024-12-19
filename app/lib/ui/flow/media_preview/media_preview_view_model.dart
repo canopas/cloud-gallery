@@ -371,6 +371,10 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     state = state.copyWith(currentIndex: index);
   }
 
+  void updateZoomed(bool zoomed) {
+    state = state.copyWith(zoomed: zoomed);
+  }
+
   // Video Player Actions ------------------------------------------------------
 
   void toggleActionVisibility() {

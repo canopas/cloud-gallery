@@ -8,15 +8,22 @@ import 'package:flutter/material.dart';
 
 class LocalMediaImagePreview extends StatelessWidget {
   final AppMedia media;
+  final void Function(double scale)? onScale;
 
   const LocalMediaImagePreview({
     super.key,
     required this.media,
+    this.onScale,
   });
 
   @override
   Widget build(BuildContext context) {
     return InteractiveViewer(
+      onInteractionUpdate: (details) {
+        if (details.pointerCount == 2) {
+          onScale?.call(details.scale);
+        }
+      },
       maxScale: 100,
       child: Center(
         child: Hero(

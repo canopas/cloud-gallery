@@ -136,16 +136,17 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _observeError();
     _updateVideoControllerOnMediaChange();
 
-    final ({List<AppMedia> medias, bool showActions}) state = ref.watch(
+    final state = ref.watch(
       _provider.select(
         (state) => (
           medias: state.medias,
           showActions: state.showActions,
+          zoomed: state.zoomed,
         ),
       ),
     );
     return DismissiblePage(
-      enable: false,
+      enable: !state.zoomed,
       backgroundColor: context.colorScheme.surface,
       onProgress: (progress) {
         if (progress > 0 && state.showActions) {
@@ -164,6 +165,8 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               behavior: HitTestBehavior.opaque,
               onTap: _notifier.toggleActionVisibility,
               child: PageView.builder(
+                physics:
+                    state.zoomed ? const NeverScrollableScrollPhysics() : null,
                 onPageChanged: _notifier.changeVisibleMediaIndex,
                 controller: _pageController,
                 itemCount: state.medias.length,
@@ -273,10 +276,20 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       return _cloudVideoView(context: context, media: media);
     } else if (media.type.isImage &&
         media.sources.contains(AppMediaSource.local)) {
-      return LocalMediaImagePreview(media: media);
+      return LocalMediaImagePreview(
+        media: media,
+        onScale: (scale) {
+          _notifier.updateZoomed(scale > 1);
+        },
+      );
     } else if (media.type.isImage &&
         (media.isGoogleDriveStored || media.isDropboxStored)) {
-      return NetworkImagePreview(media: media);
+      return NetworkImagePreview(
+        media: media,
+        onScale: (scale) {
+          _notifier.updateZoomed(scale > 1);
+        },
+      );
     } else {
       return PlaceHolderScreen(
         title: context.l10n.unable_to_load_media_error,

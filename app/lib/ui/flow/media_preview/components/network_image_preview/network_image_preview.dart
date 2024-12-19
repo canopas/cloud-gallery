@@ -13,8 +13,9 @@ import 'network_image_preview_view_model.dart';
 
 class NetworkImagePreview extends ConsumerStatefulWidget {
   final AppMedia media;
+  final void Function(double scale)? onScale;
 
-  const NetworkImagePreview({super.key, required this.media});
+  const NetworkImagePreview({super.key, required this.media, this.onScale});
 
   @override
   ConsumerState<NetworkImagePreview> createState() =>
@@ -50,6 +51,11 @@ class _NetworkImagePreviewState extends ConsumerState<NetworkImagePreview> {
     final state = ref.watch(networkImagePreviewStateNotifierProvider);
     return InteractiveViewer(
       maxScale: 100,
+      onInteractionUpdate: (details) {
+        if (details.pointerCount == 2) {
+          widget.onScale?.call(details.scale);
+        }
+      },
       child: Center(
         child: Hero(
           createRectTween: (begin, end) {
