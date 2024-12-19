@@ -125,6 +125,40 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
       downloadMediaProcesses: Map.fromEntries(
         _mediaProcessRepo.downloadQueue.map((e) => MapEntry(e.media_id, e)),
       ),
+      medias: state.medias
+          .map(
+            (media) {
+              if (_mediaProcessRepo.deleteMediaEvent[media.id]?.source ==
+                      AppMediaSource.local &&
+                  media.isCommonStored) {
+                return media.removeLocalRef();
+              } else if (media.driveMediaRefId != null &&
+                  _mediaProcessRepo
+                          .deleteMediaEvent[media.driveMediaRefId]?.source ==
+                      AppMediaSource.googleDrive &&
+                  media.isCommonStored) {
+                return media.removeGoogleDriveRef();
+              } else if (media.dropboxMediaRefId != null &&
+                  _mediaProcessRepo
+                          .deleteMediaEvent[media.dropboxMediaRefId]?.source ==
+                      AppMediaSource.dropbox &&
+                  media.isCommonStored) {
+                return media.removeDropboxRef();
+              } else if (_mediaProcessRepo.deleteMediaEvent
+                      .containsKey(media.id) ||
+                  (media.driveMediaRefId != null &&
+                      _mediaProcessRepo.deleteMediaEvent
+                          .containsKey(media.driveMediaRefId)) ||
+                  (media.dropboxMediaRefId != null &&
+                      _mediaProcessRepo.deleteMediaEvent
+                          .containsKey(media.dropboxMediaRefId))) {
+                return null;
+              }
+              return media;
+            },
+          )
+          .nonNulls
+          .toList(),
     );
 
     for (final process in _mediaProcessRepo.uploadQueue) {
@@ -182,15 +216,9 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     try {
       state = state.copyWith(actionError: null);
       await _localMediaService.deleteMedias([id]);
-      final List<AppMedia> medias = [];
-      for (final media in state.medias) {
-        if (media.id != id) {
-          medias.add(media);
-        } else if (media.id == id && media.isCommonStored) {
-          medias.add(media.removeLocalRef());
-        }
-      }
-      state = state.copyWith(medias: medias);
+      _mediaProcessRepo.notifyDeleteMedia([
+        DeleteMediaEvent(id: id, source: AppMediaSource.local),
+      ]);
     } catch (e, s) {
       state = state.copyWith(actionError: e);
       _logger.e(
@@ -206,14 +234,9 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
       if (state.googleAccount == null) return;
       state = state.copyWith(actionError: null);
       await _googleDriveService.deleteMedia(id: id);
-      final List<AppMedia> medias = [];
-      for (final media in state.medias) {
-        if (media.driveMediaRefId != id) {
-          medias.add(media);
-        } else if (media.driveMediaRefId == id && media.isCommonStored) {
-          medias.add(media.removeGoogleDriveRef());
-        }
-      }
+      _mediaProcessRepo.notifyDeleteMedia([
+        DeleteMediaEvent(id: id, source: AppMediaSource.googleDrive),
+      ]);
     } catch (e, s) {
       state = state.copyWith(actionError: e);
       _logger.e(
@@ -229,14 +252,9 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
       if (_authService.dropboxAccount == null) return;
       state = state.copyWith(actionError: null);
       await _dropboxService.deleteMedia(id: id);
-      final List<AppMedia> medias = [];
-      for (final media in state.medias) {
-        if (media.dropboxMediaRefId != id) {
-          medias.add(media);
-        } else if (media.dropboxMediaRefId == id && media.isCommonStored) {
-          medias.add(media.removeDropboxRef());
-        }
-      }
+      _mediaProcessRepo.notifyDeleteMedia([
+        DeleteMediaEvent(id: id, source: AppMediaSource.dropbox),
+      ]);
     } catch (e, s) {
       state = state.copyWith(actionError: e);
       _logger.e(

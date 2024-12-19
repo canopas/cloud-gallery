@@ -164,6 +164,37 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       downloadMediaProcesses: Map.fromEntries(
         _mediaProcessRepo.downloadQueue.map((e) => MapEntry(e.media_id, e)),
       ),
+      medias: mediaMapUpdate(
+        update: (media) {
+          if (_mediaProcessRepo.deleteMediaEvent[media.id]?.source ==
+                  AppMediaSource.local &&
+              media.isCommonStored) {
+            return media.removeLocalRef();
+          } else if (media.driveMediaRefId != null &&
+              _mediaProcessRepo
+                      .deleteMediaEvent[media.driveMediaRefId]?.source ==
+                  AppMediaSource.googleDrive &&
+              media.isCommonStored) {
+            return media.removeGoogleDriveRef();
+          } else if (media.dropboxMediaRefId != null &&
+              _mediaProcessRepo
+                      .deleteMediaEvent[media.dropboxMediaRefId]?.source ==
+                  AppMediaSource.dropbox &&
+              media.isCommonStored) {
+            return media.removeDropboxRef();
+          } else if (_mediaProcessRepo.deleteMediaEvent.containsKey(media.id) ||
+              (media.driveMediaRefId != null &&
+                  _mediaProcessRepo.deleteMediaEvent
+                      .containsKey(media.driveMediaRefId)) ||
+              (media.dropboxMediaRefId != null &&
+                  _mediaProcessRepo.deleteMediaEvent
+                      .containsKey(media.dropboxMediaRefId))) {
+            return null;
+          }
+          return media;
+        },
+        medias: state.medias,
+      ),
     );
 
     for (final process in _mediaProcessRepo.uploadQueue) {
@@ -573,18 +604,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
       await _localMediaService.deleteMedias(ids);
 
-      state = state.copyWith(
-        medias: mediaMapUpdate(
-          update: (media) {
-            if (ids.contains(media.id) && media.isCommonStored) {
-              return media.removeLocalRef();
-            } else if (ids.contains(media.id) && media.isLocalStored) {
-              return null;
-            }
-            return media;
-          },
-          medias: state.medias,
-        ),
+      _mediaProcessRepo.notifyDeleteMedia(
+        ids
+            .map((e) => DeleteMediaEvent(id: e, source: AppMediaSource.local))
+            .toList(),
       );
     } catch (e, s) {
       state = state.copyWith(actionError: e);
@@ -614,22 +637,13 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         ids.map((id) => _googleDriveService.deleteMedia(id: id)),
       );
 
-      state = state.copyWith(
-        medias: mediaMapUpdate(
-          update: (media) {
-            if (media.driveMediaRefId != null &&
-                ids.contains(media.driveMediaRefId) &&
-                media.isCommonStored) {
-              return media.removeGoogleDriveRef();
-            } else if (media.driveMediaRefId != null &&
-                ids.contains(media.driveMediaRefId) &&
-                media.isGoogleDriveStored) {
-              return null;
-            }
-            return media;
-          },
-          medias: state.medias,
-        ),
+      _mediaProcessRepo.notifyDeleteMedia(
+        ids
+            .map(
+              (e) =>
+                  DeleteMediaEvent(id: e, source: AppMediaSource.googleDrive),
+            )
+            .toList(),
       );
     } catch (e, s) {
       state = state.copyWith(actionError: e);
@@ -657,22 +671,12 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
       await Future.wait(ids.map((id) => _dropboxService.deleteMedia(id: id)));
 
-      state = state.copyWith(
-        medias: mediaMapUpdate(
-          update: (media) {
-            if (media.dropboxMediaRefId != null &&
-                ids.contains(media.dropboxMediaRefId) &&
-                media.isCommonStored) {
-              return media.removeDropboxRef();
-            } else if (media.dropboxMediaRefId != null &&
-                ids.contains(media.dropboxMediaRefId) &&
-                media.isDropboxStored) {
-              return null;
-            }
-            return media;
-          },
-          medias: state.medias,
-        ),
+      _mediaProcessRepo.notifyDeleteMedia(
+        ids
+            .map(
+              (e) => DeleteMediaEvent(id: e, source: AppMediaSource.dropbox),
+            )
+            .toList(),
       );
     } catch (e, s) {
       state = state.copyWith(actionError: e);

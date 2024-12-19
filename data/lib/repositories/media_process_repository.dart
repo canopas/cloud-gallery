@@ -52,6 +52,28 @@ class ProcessNotificationConstants {
       'cloud_gallery_download_process';
 }
 
+class DeleteMediaEvent {
+  final String id;
+  final AppMediaSource source;
+
+  DeleteMediaEvent({
+    required this.id,
+    required this.source,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is DeleteMediaEvent &&
+        other.id == id &&
+        other.source == source;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, source);
+}
+
 class MediaProcessRepo extends ChangeNotifier {
   final GoogleDriveService _googleDriveService;
   final DropboxService _dropboxService;
@@ -67,6 +89,16 @@ class MediaProcessRepo extends ChangeNotifier {
   List<UploadMediaProcess> get uploadQueue => _uploadQueue;
 
   List<DownloadMediaProcess> get downloadQueue => _downloadQueue;
+
+  Map<String, DeleteMediaEvent> deleteMediaEvent = {};
+
+  void notifyDeleteMedia(List<DeleteMediaEvent> events) {
+    deleteMediaEvent = Map.fromEntries(
+      events.map((e) => MapEntry(e.id, e)),
+    );
+    notifyListeners();
+    deleteMediaEvent = {};
+  }
 
   MediaProcessRepo(
     this._googleDriveService,
