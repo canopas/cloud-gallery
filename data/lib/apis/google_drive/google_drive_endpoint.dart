@@ -55,6 +55,8 @@ class GoogleDriveUploadEndpoint extends Endpoint {
   @override
   Map<String, dynamic>? get queryParameters => {
         'uploadType': 'multipart',
+        'fields':
+            'id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties',
       };
 
   @override
