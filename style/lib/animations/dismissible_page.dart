@@ -31,13 +31,16 @@ class _DismissiblePageState extends State<DismissiblePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.enable) {
+      return widget.child(0);
+    }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onVerticalDragStart: (DragStartDetails details) {
         _startY = details.globalPosition.dy;
       },
       onVerticalDragUpdate: (DragUpdateDetails details) {
-        if ((details.globalPosition.dy - _startY) > 0 && widget.enable) {
+        if ((details.globalPosition.dy - _startY) > 0) {
           setState(() {
             displacement = details.globalPosition.dy - _startY;
             percentage = (displacement / widget.threshold).clamp(0, 1);
