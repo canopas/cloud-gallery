@@ -22,6 +22,7 @@ mixin _$MediaPreviewState {
   Object? get actionError => throw _privateConstructorUsedError;
   List<AppMedia> get medias => throw _privateConstructorUsedError;
   int get currentIndex => throw _privateConstructorUsedError;
+  bool get zoomed => throw _privateConstructorUsedError;
   bool get showActions => throw _privateConstructorUsedError;
   bool get isVideoInitialized => throw _privateConstructorUsedError;
   bool get isVideoBuffering => throw _privateConstructorUsedError;
@@ -53,6 +54,7 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       Object? actionError,
       List<AppMedia> medias,
       int currentIndex,
+      bool zoomed,
       bool showActions,
       bool isVideoInitialized,
       bool isVideoBuffering,
@@ -86,6 +88,7 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
     Object? actionError = freezed,
     Object? medias = null,
     Object? currentIndex = null,
+    Object? zoomed = null,
     Object? showActions = null,
     Object? isVideoInitialized = null,
     Object? isVideoBuffering = null,
@@ -114,6 +117,10 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
+      zoomed: null == zoomed
+          ? _value.zoomed
+          : zoomed // ignore: cast_nullable_to_non_nullable
+              as bool,
       showActions: null == showActions
           ? _value.showActions
           : showActions // ignore: cast_nullable_to_non_nullable
@@ -179,6 +186,7 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       Object? actionError,
       List<AppMedia> medias,
       int currentIndex,
+      bool zoomed,
       bool showActions,
       bool isVideoInitialized,
       bool isVideoBuffering,
@@ -211,6 +219,7 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
     Object? actionError = freezed,
     Object? medias = null,
     Object? currentIndex = null,
+    Object? zoomed = null,
     Object? showActions = null,
     Object? isVideoInitialized = null,
     Object? isVideoBuffering = null,
@@ -239,6 +248,10 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.currentIndex
           : currentIndex // ignore: cast_nullable_to_non_nullable
               as int,
+      zoomed: null == zoomed
+          ? _value.zoomed
+          : zoomed // ignore: cast_nullable_to_non_nullable
+              as bool,
       showActions: null == showActions
           ? _value.showActions
           : showActions // ignore: cast_nullable_to_non_nullable
@@ -285,6 +298,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       this.actionError,
       final List<AppMedia> medias = const [],
       this.currentIndex = 0,
+      this.zoomed = false,
       this.showActions = true,
       this.isVideoInitialized = false,
       this.isVideoBuffering = false,
@@ -318,6 +332,9 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   @override
   @JsonKey()
   final int currentIndex;
+  @override
+  @JsonKey()
+  final bool zoomed;
   @override
   @JsonKey()
   final bool showActions;
@@ -358,7 +375,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
   @override
   String toString() {
-    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
+    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, zoomed: $zoomed, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
   }
 
   @override
@@ -376,6 +393,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
             const DeepCollectionEquality().equals(other._medias, _medias) &&
             (identical(other.currentIndex, currentIndex) ||
                 other.currentIndex == currentIndex) &&
+            (identical(other.zoomed, zoomed) || other.zoomed == zoomed) &&
             (identical(other.showActions, showActions) ||
                 other.showActions == showActions) &&
             (identical(other.isVideoInitialized, isVideoInitialized) ||
@@ -403,6 +421,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       const DeepCollectionEquality().hash(actionError),
       const DeepCollectionEquality().hash(_medias),
       currentIndex,
+      zoomed,
       showActions,
       isVideoInitialized,
       isVideoBuffering,
@@ -430,6 +449,7 @@ abstract class _MediaPreviewState implements MediaPreviewState {
           final Object? actionError,
           final List<AppMedia> medias,
           final int currentIndex,
+          final bool zoomed,
           final bool showActions,
           final bool isVideoInitialized,
           final bool isVideoBuffering,
@@ -452,6 +472,8 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   List<AppMedia> get medias;
   @override
   int get currentIndex;
+  @override
+  bool get zoomed;
   @override
   bool get showActions;
   @override

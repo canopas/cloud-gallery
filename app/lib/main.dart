@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'components/snack_bar.dart';
 import 'domain/handlers/deep_links_handler.dart';
 import 'firebase_options.dart';
 import 'package:data/storage/provider/preferences_provider.dart';
@@ -37,7 +38,16 @@ Future<void> main() async {
 
   final container = await _configureContainerWithAsyncDependency();
 
-  DeepLinkHandler.observeDeepLinks(container: container);
+  try {
+    DeepLinkHandler.observeDeepLinks(container: container);
+  } catch (e) {
+    final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+        GlobalKey<ScaffoldMessengerState>();
+    final context = scaffoldMessengerKey.currentContext;
+    if (context != null && context.mounted) {
+      showErrorSnackBar(context: context, error: e);
+    }
+  }
 
   runApp(
     UncontrolledProviderScope(

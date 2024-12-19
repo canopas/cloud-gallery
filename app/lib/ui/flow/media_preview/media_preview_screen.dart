@@ -5,8 +5,10 @@ import '../../../components/place_holder_screen.dart';
 import '../../../components/snack_bar.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../domain/extensions/widget_extensions.dart';
+import '../../../domain/image_providers/app_media_image_provider.dart';
 import 'components/download_require_view.dart';
-import 'components/image_preview_screen.dart';
+import 'components/local_media_image_preview.dart';
+import 'components/network_image_preview/network_image_preview.dart';
 import 'components/top_bar.dart';
 import 'components/video_player_components/video_actions.dart';
 import 'media_preview_view_model.dart';
@@ -134,15 +136,17 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     _observeError();
     _updateVideoControllerOnMediaChange();
 
-    final ({List<AppMedia> medias, bool showActions}) state = ref.watch(
+    final state = ref.watch(
       _provider.select(
         (state) => (
           medias: state.medias,
           showActions: state.showActions,
+          zoomed: state.zoomed,
         ),
       ),
     );
     return DismissiblePage(
+      enable: !state.zoomed,
       backgroundColor: context.colorScheme.surface,
       onProgress: (progress) {
         if (progress > 0 && state.showActions) {
@@ -161,6 +165,8 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               behavior: HitTestBehavior.opaque,
               onTap: _notifier.toggleActionVisibility,
               child: PageView.builder(
+                physics:
+                    state.zoomed ? const NeverScrollableScrollPhysics() : null,
                 onPageChanged: _notifier.changeVisibleMediaIndex,
                 controller: _pageController,
                 itemCount: state.medias.length,
@@ -200,8 +206,50 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             );
 
             if (!state.initialized) {
-              return AppCircularProgressIndicator(
-                color: context.colorScheme.onPrimary,
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  Hero(
+                    tag: media,
+                    child: Image(
+                      image: AppMediaImageProvider(media: media),
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return AppPage(
+                          body: PlaceHolderScreen(
+                            title: context.l10n.unable_to_load_media_error,
+                            message: context.l10n.unable_to_load_media_message,
+                          ),
+                        );
+                      },
+                      frameBuilder:
+                          (context, child, frame, wasSynchronouslyLoaded) {
+                        if (wasSynchronouslyLoaded) {
+                          return child;
+                        } else {
+                          final width = context.mediaQuerySize.width;
+                          double multiplier = 1;
+                          if (media.displayWidth != null &&
+                              media.displayWidth! > 0) {
+                            multiplier = width / media.displayWidth!;
+                          }
+                          return SizedBox(
+                            width: width,
+                            height: media.displayHeight != null &&
+                                    media.displayHeight! > 0
+                                ? media.displayHeight! * multiplier
+                                : width,
+                            child: child,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  AppCircularProgressIndicator(
+                    color: context.colorScheme.onPrimary,
+                  ),
+                ],
               );
             }
             return Hero(
@@ -226,8 +274,22 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     } else if (media.type.isVideo &&
         (media.isGoogleDriveStored || media.isDropboxStored)) {
       return _cloudVideoView(context: context, media: media);
-    } else if (media.type.isImage) {
-      return ImagePreview(media: media);
+    } else if (media.type.isImage &&
+        media.sources.contains(AppMediaSource.local)) {
+      return LocalMediaImagePreview(
+        media: media,
+        onScale: (scale) {
+          _notifier.updateZoomed(scale > 1);
+        },
+      );
+    } else if (media.type.isImage &&
+        (media.isGoogleDriveStored || media.isDropboxStored)) {
+      return NetworkImagePreview(
+        media: media,
+        onScale: (scale) {
+          _notifier.updateZoomed(scale > 1);
+        },
+      );
     } else {
       return PlaceHolderScreen(
         title: context.l10n.unable_to_load_media_error,

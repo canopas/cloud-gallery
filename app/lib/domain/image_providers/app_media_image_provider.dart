@@ -55,7 +55,7 @@ class AppMediaImageProvider extends ImageProvider<AppMediaImageProvider> {
     ImageDecoderCallback decode,
   ) async {
     // Get cached file directory.
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await getApplicationCacheDirectory();
     final cacheFilePath = '${directory.path}/thumbnail_${media.id}';
     final cacheFile = File(cacheFilePath);
 

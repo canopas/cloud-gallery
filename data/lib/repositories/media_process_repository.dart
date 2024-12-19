@@ -52,6 +52,28 @@ class ProcessNotificationConstants {
       'cloud_gallery_download_process';
 }
 
+class DeleteMediaEvent {
+  final String id;
+  final AppMediaSource source;
+
+  DeleteMediaEvent({
+    required this.id,
+    required this.source,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is DeleteMediaEvent &&
+        other.id == id &&
+        other.source == source;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, source);
+}
+
 class MediaProcessRepo extends ChangeNotifier {
   final GoogleDriveService _googleDriveService;
   final DropboxService _dropboxService;
@@ -67,6 +89,16 @@ class MediaProcessRepo extends ChangeNotifier {
   List<UploadMediaProcess> get uploadQueue => _uploadQueue;
 
   List<DownloadMediaProcess> get downloadQueue => _downloadQueue;
+
+  Map<String, DeleteMediaEvent> deleteMediaEvent = {};
+
+  void notifyDeleteMedia(List<DeleteMediaEvent> events) {
+    deleteMediaEvent = Map.fromEntries(
+      events.map((e) => MapEntry(e.id, e)),
+    );
+    notifyListeners();
+    deleteMediaEvent = {};
+  }
 
   MediaProcessRepo(
     this._googleDriveService,
@@ -203,7 +235,7 @@ class MediaProcessRepo extends ChangeNotifier {
       await database.insert(
         LocalDatabaseConstants.uploadQueueTable,
         UploadMediaProcess(
-          id: UniqueKey().toString(),
+          id: _generateUniqueIdV4(),
           media_id: media.id,
           folder_id: backUpFolderId,
           provider: MediaProvider.googleDrive,
@@ -246,7 +278,7 @@ class MediaProcessRepo extends ChangeNotifier {
       await database.insert(
         LocalDatabaseConstants.uploadQueueTable,
         UploadMediaProcess(
-          id: UniqueKey().toString(),
+          id: _generateUniqueIdV4(),
           media_id: media.id,
           folder_id: ProviderConstants.backupFolderPath,
           provider: MediaProvider.dropbox,
@@ -314,11 +346,26 @@ class MediaProcessRepo extends ChangeNotifier {
   // UPLOAD QUEUE DATABASE OPERATIONS ------------------------------------------
 
   int _generateUniqueUploadNotificationId() {
-    int baseId = math.Random().nextInt(9999999);
+    int baseId = math.Random.secure().nextInt(9999999);
     while (_uploadQueue.any((element) => element.notification_id == baseId)) {
       baseId = math.Random().nextInt(9999999);
     }
     return baseId;
+  }
+
+  ///Generate Cryptographically secure unique ID in UUIDv4 format
+  ///https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)
+  String _generateUniqueIdV4() {
+    final random = math.Random
+        .secure(); // Cryptographically secure random number generator
+
+    String generateHex(int length) {
+      return List.generate(length, (_) => random.nextInt(16).toRadixString(16))
+          .join();
+    }
+
+    // Generate UUID-like ID with shorter length
+    return '${generateHex(8)}-${generateHex(4)}-4${generateHex(3)}-${(8 + random.nextInt(4)).toRadixString(16)}${generateHex(3)}-${generateHex(8)}';
   }
 
   void uploadMedia({
@@ -330,7 +377,7 @@ class MediaProcessRepo extends ChangeNotifier {
       await database.insert(
         LocalDatabaseConstants.uploadQueueTable,
         UploadMediaProcess(
-          id: UniqueKey().toString(),
+          id: _generateUniqueIdV4(),
           media_id: media.id,
           folder_id: folderId,
           provider: provider,
@@ -633,7 +680,7 @@ class MediaProcessRepo extends ChangeNotifier {
           name: media.path.split('/').last.trim().isEmpty
               ? media.id
               : media.path.split('/').last,
-          id: UniqueKey().toString(),
+          id: _generateUniqueIdV4(),
           media_id: id ?? media.id,
           folder_id: folderId,
           notification_id: _generateUniqueDownloadNotificationId(),
