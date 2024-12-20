@@ -22,7 +22,6 @@ dependencies:
 
   # authentication
   google_sign_in: ^6.2.2
-  extension_google_sign_in_as_googleapis_auth: ^2.0.12
 
   # notifications
   flutter_local_notifications: ^18.0.1

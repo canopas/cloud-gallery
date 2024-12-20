@@ -7,6 +7,27 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http_parser/http_parser.dart';
 import '../network/urls.dart';
 
+class GoogleDriveCreateFolderEndpoint extends Endpoint {
+  final String name;
+
+  const GoogleDriveCreateFolderEndpoint({required this.name});
+
+  @override
+  String get baseUrl => BaseURL.googleDriveV3;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  Object? get data => {
+        'name': name,
+        'mimeType': 'application/vnd.google-apps.folder',
+      };
+
+  @override
+  String get path => '/files';
+}
+
 class GoogleDriveUploadEndpoint extends Endpoint {
   final drive.File request;
   final AppMediaContent content;
@@ -98,6 +119,56 @@ class GoogleDriveDownloadEndpoint extends DownloadEndpoint {
 
   @override
   String? get storePath => saveLocation;
+}
+
+class GoogleDriveDeleteEndpoint extends Endpoint {
+  final String id;
+
+  const GoogleDriveDeleteEndpoint({required this.id});
+
+  @override
+  String get baseUrl => BaseURL.googleDriveV3;
+
+  @override
+  String get path => '/files/$id';
+
+  @override
+  HttpMethod get method => HttpMethod.delete;
+}
+
+class GoogleDriveListEndpoint extends Endpoint {
+  final String? orderBy;
+  final String fields;
+  final String? q;
+  final int? pageSize;
+  final String? pageToken;
+
+  const GoogleDriveListEndpoint({
+    this.orderBy = 'createdTime desc',
+    this.pageSize,
+    this.pageToken,
+    this.q,
+    this.fields =
+        'nextPageToken, files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties)',
+  });
+
+  @override
+  String get baseUrl => BaseURL.googleDriveV3;
+
+  @override
+  String get path => '/files';
+
+  @override
+  HttpMethod get method => HttpMethod.get;
+
+  @override
+  Map<String, dynamic>? get queryParameters => {
+        if (orderBy != null) 'orderBy': orderBy,
+        if (pageSize != null) 'pageSize': pageSize,
+        if (pageToken != null) 'pageToken': pageToken,
+        if (q != null) 'q': q,
+        'fields': fields,
+      };
 }
 
 class GoogleDriveUpdateAppPropertiesEndpoint extends Endpoint {

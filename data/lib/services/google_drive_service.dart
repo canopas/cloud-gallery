@@ -6,99 +6,57 @@ import '../domain/config.dart';
 import '../models/media/media.dart';
 import '../models/media_content/media_content.dart';
 import 'package:dio/dio.dart';
-import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import '../errors/app_error.dart';
-import 'auth_service.dart';
 import 'base/cloud_provider_service.dart';
-
-final backUpFolderIdProvider =
-    StateNotifierProvider<BackUpFolderIdStateNotifier, String?>((ref) {
-  return BackUpFolderIdStateNotifier(
-    ref.read(authServiceProvider),
-    ref.read(googleDriveServiceProvider),
-  );
-});
-
-class BackUpFolderIdStateNotifier extends StateNotifier<String?> {
-  final AuthService _authService;
-  final GoogleDriveService _googleDriveService;
-  StreamSubscription? _googleAccountSubscription;
-
-  BackUpFolderIdStateNotifier(this._authService, this._googleDriveService)
-      : super(null) {
-    _googleAccountSubscription =
-        _authService.onGoogleAccountChange.listen((event) {
-      setBackUpFolderId(event);
-    });
-    setBackUpFolderId(_authService.googleAccount);
-  }
-
-  void setBackUpFolderId(GoogleSignInAccount? account) async {
-    state =
-        account == null ? null : await _googleDriveService.getBackUpFolderId();
-  }
-
-  @override
-  void dispose() {
-    _googleAccountSubscription?.cancel();
-    super.dispose();
-  }
-}
 
 final googleDriveServiceProvider = Provider<GoogleDriveService>(
   (ref) => GoogleDriveService(
-    ref.read(googleSignInProvider),
     ref.read(googleAuthenticatedDioProvider),
   ),
 );
 
 class GoogleDriveService extends CloudProviderService {
   final Dio _client;
-  final GoogleSignIn _googleSignIn;
 
-  GoogleDriveService(this._googleSignIn, this._client);
-
-  Future<drive.DriveApi> _getGoogleDriveAPI() async {
-    if (_googleSignIn.currentUser == null) {
-      throw const UserGoogleSignInAccountNotFound();
-    }
-    final client = await _googleSignIn.authenticatedClient();
-    final api = drive.DriveApi(client!);
-    client.close();
-    return api;
-  }
+  GoogleDriveService(this._client);
 
   @override
   Future<List<AppMedia>> getAllMedias({
     required String folder,
   }) async {
-    final driveApi = await _getGoogleDriveAPI();
-
     bool hasMore = true;
     String? pageToken;
     final List<AppMedia> medias = [];
 
     while (hasMore) {
-      final response = await driveApi.files.list(
-        q: "'$folder' in parents and trashed=false",
-        $fields:
-            "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties)",
-        pageSize: 1000,
-        pageToken: pageToken,
-        orderBy: "createdTime desc",
+      final res = await _client.req(
+        GoogleDriveListEndpoint(
+          q: "'$folder' in parents and trashed=false",
+          pageSize: 1000,
+          pageToken: pageToken,
+        ),
       );
-      hasMore = response.nextPageToken != null;
-      pageToken = response.nextPageToken;
-      medias.addAll(
-        (response.files ?? [])
-            .map(
-              (e) => AppMedia.fromGoogleDriveFile(e),
-            )
-            .toList(),
-      );
+
+      if (res.statusCode == 200) {
+        final body = drive.FileList.fromJson(res.data);
+        hasMore = body.nextPageToken != null;
+        pageToken = body.nextPageToken;
+        medias.addAll(
+          body.files
+                  ?.map(
+                    (e) => AppMedia.fromGoogleDriveFile(e),
+                  )
+                  .toList() ??
+              <AppMedia>[],
+        );
+      } else {
+        throw SomethingWentWrongError(
+          statusCode: res.statusCode,
+          message: res.statusMessage,
+        );
+      }
     }
 
     return medias;
@@ -110,24 +68,30 @@ class GoogleDriveService extends CloudProviderService {
     String? nextPageToken,
     int pageSize = 30,
   }) async {
-    final driveApi = await _getGoogleDriveAPI();
-
-    final response = await driveApi.files.list(
-      q: "'$folder' in parents and trashed=false",
-      orderBy: "createdTime desc",
-      $fields:
-          "files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties)",
-      pageSize: pageSize,
-      pageToken: nextPageToken,
+    final res = await _client.req(
+      GoogleDriveListEndpoint(
+        q: "'$folder' in parents and trashed=false",
+        pageSize: pageSize,
+        pageToken: nextPageToken,
+      ),
     );
 
-    return GetPaginatedMediasResponse(
-      nextPageToken: response.nextPageToken,
-      medias: (response.files ?? [])
-          .map(
-            (e) => AppMedia.fromGoogleDriveFile(e),
-          )
-          .toList(),
+    if (res.statusCode == 200) {
+      final body = drive.FileList.fromJson(res.data);
+      return GetPaginatedMediasResponse(
+        nextPageToken: body.nextPageToken,
+        medias: body.files
+                ?.map(
+                  (e) => AppMedia.fromGoogleDriveFile(e),
+                )
+                .toList() ??
+            <AppMedia>[],
+      );
+    }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
     );
   }
 
@@ -136,39 +100,66 @@ class GoogleDriveService extends CloudProviderService {
     required String id,
     CancelToken? cancelToken,
   }) async {
-    final driveApi = await _getGoogleDriveAPI();
-    await driveApi.files.delete(id);
+    final res = await _client.req(GoogleDriveDeleteEndpoint(id: id));
+
+    if (res.statusCode == 200 || res.statusCode == 204) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
   }
 
   Future<String?> getBackUpFolderId() async {
-    final driveApi = await _getGoogleDriveAPI();
-
-    final response = await driveApi.files.list(
-      q: "name='${ProviderConstants.backupFolderName}' and trashed=false and mimeType='application/vnd.google-apps.folder'",
+    final res = await _client.req(
+      GoogleDriveListEndpoint(
+        q: "name='${ProviderConstants.backupFolderName}' and trashed=false and mimeType='application/vnd.google-apps.folder'",
+        pageSize: 1,
+      ),
     );
 
-    if (response.files?.isNotEmpty ?? false) {
-      return response.files?.first.id;
-    } else {
-      final folder = drive.File(
-        name: ProviderConstants.backupFolderName,
-        mimeType: 'application/vnd.google-apps.folder',
-      );
-      final googleDriveFolder = await driveApi.files.create(folder);
-      return googleDriveFolder.id;
+    if (res.statusCode == 200) {
+      final body = drive.FileList.fromJson(res.data);
+      if (body.files?.isNotEmpty ?? false) {
+        return body.files?.first.id;
+      } else {
+        final createRes = await _client.req(
+          GoogleDriveCreateFolderEndpoint(
+            name: ProviderConstants.backupFolderName,
+          ),
+        );
+
+        if (createRes.statusCode == 200) {
+          return drive.File.fromJson(createRes.data).id;
+        }
+
+        throw SomethingWentWrongError(
+          statusCode: createRes.statusCode,
+          message: createRes.statusMessage,
+        );
+      }
     }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
   }
 
   @override
   Future<String?> createFolder(String folderName) async {
-    final driveApi = await _getGoogleDriveAPI();
-
-    final folder = drive.File(
-      name: folderName,
-      mimeType: 'application/vnd.google-apps.folder',
+    final res = await _client.req(
+      GoogleDriveCreateFolderEndpoint(name: folderName),
     );
-    final googleDriveFolder = await driveApi.files.create(folder);
-    return googleDriveFolder.id;
+
+    if (res.statusCode == 200) {
+      return drive.File.fromJson(res.data).id;
+    }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
   }
 
   @override
