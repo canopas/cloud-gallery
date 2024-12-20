@@ -122,108 +122,103 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
 
-    return Scrollbar(
+    return ListView.builder(
       controller: _scrollController,
-      interactive: true,
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: state.medias.length + 2,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Column(
-              children: [
-                const HomeScreenHints(),
-                const NoInternetConnectionHint(),
-              ],
-            );
-          } else if (index == state.medias.length + 1) {
-            return FadeInSwitcher(
-              child: state.loading
-                  ? const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
-                        child: AppCircularProgressIndicator(
-                          size: 20,
-                        ),
+      itemCount: state.medias.length + 2,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return Column(
+            children: [
+              const HomeScreenHints(),
+              const NoInternetConnectionHint(),
+            ],
+          );
+        } else if (index == state.medias.length + 1) {
+          return FadeInSwitcher(
+            child: state.loading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: AppCircularProgressIndicator(
+                        size: 20,
                       ),
-                    )
-                  : const SizedBox(),
-            );
-          } else {
-            final gridEntry = state.medias.entries.elementAt(index - 1);
-            return Column(
-              children: [
-                Container(
-                  height: 45,
-                  padding: const EdgeInsets.only(left: 16, top: 5),
-                  margin: EdgeInsets.zero,
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.surface,
-                  ),
-                  child: Text(
-                    gridEntry.key.format(context, DateFormatType.relative),
-                    style: AppTextStyles.subtitle1.copyWith(
-                      color: context.colorScheme.textPrimary,
                     ),
+                  )
+                : const SizedBox(),
+          );
+        } else {
+          final gridEntry = state.medias.entries.elementAt(index - 1);
+          return Column(
+            children: [
+              Container(
+                height: 45,
+                padding: const EdgeInsets.only(left: 16, top: 5),
+                margin: EdgeInsets.zero,
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
+                ),
+                child: Text(
+                  gridEntry.key.format(context, DateFormatType.relative),
+                  style: AppTextStyles.subtitle1.copyWith(
+                    color: context.colorScheme.textPrimary,
                   ),
                 ),
-                GridView.builder(
-                  padding: const EdgeInsets.all(4),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: context.mediaQuerySize.width > 600
-                        ? context.mediaQuerySize.width ~/ 180
-                        : context.mediaQuerySize.width ~/ 100,
-                    crossAxisSpacing: 4,
-                    mainAxisSpacing: 4,
-                  ),
-                  itemCount: gridEntry.value.entries.length,
-                  itemBuilder: (context, index) {
-                    final media =
-                        gridEntry.value.entries.elementAt(index).value;
+              ),
+              GridView.builder(
+                padding: const EdgeInsets.all(4),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: context.mediaQuerySize.width > 600
+                      ? context.mediaQuerySize.width ~/ 180
+                      : context.mediaQuerySize.width ~/ 100,
+                  crossAxisSpacing: 4,
+                  mainAxisSpacing: 4,
+                ),
+                itemCount: gridEntry.value.entries.length,
+                itemBuilder: (context, index) {
+                  final media = gridEntry.value.entries.elementAt(index).value;
 
-                    if (media.id == state.lastLocalMediaId) {
-                      runPostFrame(() {
-                        _notifier.loadMedias();
-                      });
-                    }
+                  if (media.id == state.lastLocalMediaId) {
+                    runPostFrame(() {
+                      _notifier.loadMedias();
+                    });
+                  }
 
-                    return AppMediaItem(
-                      key: ValueKey(media.id),
-                      onTap: () async {
-                        if (state.selectedMedias.isNotEmpty) {
-                          _notifier.toggleMediaSelection(media);
-                          HapticFeedback.lightImpact();
-                        } else {
-                          await MediaPreviewRoute(
-                            $extra: MediaPreviewRouteData(
-                              medias: state.medias.values
-                                  .expand((element) => element.values)
-                                  .toList(),
-                              startFrom: media.id,
-                            ),
-                          ).push(context);
-                        }
-                      },
-                      onLongTap: () {
+                  return AppMediaItem(
+                    key: ValueKey(media.id),
+                    onTap: () async {
+                      if (state.selectedMedias.isNotEmpty) {
                         _notifier.toggleMediaSelection(media);
                         HapticFeedback.lightImpact();
-                      },
-                      isSelected: state.selectedMedias.containsKey(media.id),
-                      uploadMediaProcess: state.uploadMediaProcesses[media.id],
-                      downloadMediaProcess:
-                          state.downloadMediaProcesses[media.id],
-                      media: media,
-                    );
-                  },
-                ),
-              ],
-            );
-          }
-        },
-      ),
+                      } else {
+                        await MediaPreviewRoute(
+                          $extra: MediaPreviewRouteData(
+                            medias: state.medias.values
+                                .expand((element) => element.values)
+                                .toList(),
+                            startFrom: media.id,
+                          ),
+                        ).push(context);
+                      }
+                    },
+                    onLongTap: () {
+                      _notifier.toggleMediaSelection(media);
+                      HapticFeedback.lightImpact();
+                    },
+                    isSelected: state.selectedMedias.containsKey(media.id),
+                    uploadMediaProcess: state.uploadMediaProcesses[media.id],
+                    downloadMediaProcess:
+                        state.downloadMediaProcesses[media.id],
+                    media: media,
+                  );
+                },
+              ),
+            ],
+          );
+        }
+      },
     );
   }
 }

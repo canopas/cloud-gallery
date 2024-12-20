@@ -27,29 +27,37 @@ final homeViewStateNotifier =
     ref.read(localMediaServiceProvider),
     ref.read(googleDriveServiceProvider),
     ref.read(dropboxServiceProvider),
-    ref.read(authServiceProvider),
     ref.read(mediaProcessRepoProvider),
     ref.read(loggerProvider),
     ref.read(connectivityHandlerProvider),
     ref.read(AppPreferences.dropboxCurrentUserAccount),
+    ref.read(googleUserAccountProvider),
   );
-  ref.listen(AppPreferences.dropboxCurrentUserAccount, (previous, next) {
+  final dropboxAccountSubscription =
+      ref.listen(AppPreferences.dropboxCurrentUserAccount, (previous, next) {
     notifier.updateDropboxAccount(next);
   });
+  final googleAccountSubscription =
+      ref.listen(googleUserAccountProvider, (previous, next) {
+    notifier.updateGoogleAccount(next);
+  });
+
+  ref.onDispose(() async {
+    dropboxAccountSubscription.close();
+    googleAccountSubscription.close();
+  });
+
   return notifier;
 });
 
 class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     with HomeViewModelHelperMixin {
-  final AuthService _authService;
   final Logger _logger;
   final GoogleDriveService _googleDriveService;
   final DropboxService _dropboxService;
   final LocalMediaService _localMediaService;
   final MediaProcessRepo _mediaProcessRepo;
   final ConnectivityHandler _connectivityHandler;
-
-  StreamSubscription? _googleAccountSubscription;
 
   // Local
   int _localMediaCount = 0;
@@ -70,62 +78,62 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     this._localMediaService,
     this._googleDriveService,
     this._dropboxService,
-    this._authService,
     this._mediaProcessRepo,
     this._logger,
     this._connectivityHandler,
     DropboxAccount? _dropboxAccount,
+    GoogleSignInAccount? _googleAccount,
   ) : super(
           HomeViewState(
             dropboxAccount: _dropboxAccount,
-            googleAccount: _authService.googleAccount,
+            googleAccount: _googleAccount,
           ),
         ) {
+    _init();
+  }
+
+  Future<void> _init() async {
     _mediaProcessRepo.addListener(_mediaProcessObserve);
-    _listenUserGoogleAccount();
-    loadMedias(reload: true);
+    await loadMedias(reload: true);
     _mediaProcessObserve();
   }
 
   // ACCOUNT LISTENERS ---------------------------------------------------------
 
   /// Listen to google account changes and update the state accordingly.
-  void _listenUserGoogleAccount() {
-    _googleAccountSubscription =
-        _authService.onGoogleAccountChange.listen((event) async {
-      if (event != null) {
-        state = state.copyWith(googleAccount: event);
-        try {
-          _backUpFolderId = await _googleDriveService.getBackUpFolderId();
-        } catch (e, s) {
-          _logger.e(
-            "HomeViewStateNotifier: unable to get google drive back up folder id",
-            error: e,
-            stackTrace: s,
-          );
-        }
-        loadMedias(reload: true);
-      } else {
-        _backUpFolderId = null;
-        state = state.copyWith(
-          googleAccount: null,
-          medias: mediaMapUpdate(
-            update: (media) {
-              if (media.driveMediaRefId != null &&
-                  media.sources.contains(AppMediaSource.googleDrive) &&
-                  media.sources.length > 1) {
-                return media.removeGoogleDriveRef();
-              } else if (!media.sources.contains(AppMediaSource.googleDrive) &&
-                  media.driveMediaRefId == null) {
-                return media;
-              }
-              return null;
-            },
-            medias: state.medias,
-          ),
+  Future<void> updateGoogleAccount(GoogleSignInAccount? googleAccount) async {
+    if (googleAccount != null) {
+      state = state.copyWith(googleAccount: googleAccount);
+      try {
+        _backUpFolderId = await _googleDriveService.getBackUpFolderId();
+      } catch (e, s) {
+        _logger.e(
+          "HomeViewStateNotifier: unable to get google drive back up folder id",
+          error: e,
+          stackTrace: s,
         );
       }
-    });
+      loadMedias(reload: true, force: true);
+    } else {
+      _backUpFolderId = null;
+      state = state.copyWith(
+        googleAccount: null,
+        medias: mediaMapUpdate(
+          update: (media) {
+            if (media.driveMediaRefId != null &&
+                media.sources.contains(AppMediaSource.googleDrive) &&
+                media.sources.length > 1) {
+              return media.removeGoogleDriveRef();
+            } else if (!media.sources.contains(AppMediaSource.googleDrive) &&
+                media.driveMediaRefId == null) {
+              return media;
+            }
+            return null;
+          },
+          medias: state.medias,
+        ),
+      );
+    }
   }
 
   /// Listen to dropbox account changes and update the state accordingly.
@@ -248,12 +256,13 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     }
   }
 
-  // MEDIA OPERATIONS ---------------------------------------------------------
+  // MEDIA OPERATIONS ----------------------------------------------------------
 
   /// Loads medias from local, google drive and dropbox.
   /// it append the medias to the existing medias if reload is false.
-  Future<void> loadMedias({bool reload = false}) async {
-    if (state.loading || state.cloudLoading) return;
+  /// force will load media event its already loading
+  Future<void> loadMedias({bool reload = false, bool force: false}) async {
+    if (state.cloudLoading && !force) return;
     state = state.copyWith(loading: true, cloudLoading: true, error: null);
     try {
       // Reset all the variables if reload is true
@@ -316,9 +325,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       // Load medias from google drive and separate the local ref medias and only cloud based medias.
       if (!_googleDriveMaxLoaded &&
           state.googleAccount != null &&
+          _backUpFolderId != null &&
           hasInternet) {
-        _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
-
         final res = await _googleDriveService.getPaginatedMedias(
           folder: _backUpFolderId!,
           nextPageToken: _googleDrivePageToken,
