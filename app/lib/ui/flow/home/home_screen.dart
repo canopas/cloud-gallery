@@ -178,8 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 itemCount: gridEntry.value.entries.length,
                 itemBuilder: (context, index) {
-                  final media =
-                      gridEntry.value.entries.elementAt(index).value;
+                  final media = gridEntry.value.entries.elementAt(index).value;
 
                   if (media.id == state.lastLocalMediaId) {
                     runPostFrame(() {
