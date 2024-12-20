@@ -93,7 +93,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   void _listenUserGoogleAccount() {
     _googleAccountSubscription =
         _authService.onGoogleAccountChange.listen((event) async {
-      if (event != null) {
+      if (event != null && state.googleAccount?.id != event.id) {
         state = state.copyWith(googleAccount: event);
         try {
           _backUpFolderId = await _googleDriveService.getBackUpFolderId();
@@ -105,7 +105,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
           );
         }
         loadMedias(reload: true);
-      } else {
+      } else if (event == null) {
         _backUpFolderId = null;
         state = state.copyWith(
           googleAccount: null,
@@ -248,7 +248,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     }
   }
 
-  // MEDIA OPERATIONS ---------------------------------------------------------
+  // MEDIA OPERATIONS ----------------------------------------------------------
 
   /// Loads medias from local, google drive and dropbox.
   /// it append the medias to the existing medias if reload is false.
@@ -316,9 +316,8 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
       // Load medias from google drive and separate the local ref medias and only cloud based medias.
       if (!_googleDriveMaxLoaded &&
           state.googleAccount != null &&
+          _backUpFolderId != null &&
           hasInternet) {
-        _backUpFolderId ??= await _googleDriveService.getBackUpFolderId();
-
         final res = await _googleDriveService.getPaginatedMedias(
           folder: _backUpFolderId!,
           nextPageToken: _googleDrivePageToken,

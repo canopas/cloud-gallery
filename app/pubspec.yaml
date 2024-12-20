@@ -54,6 +54,7 @@ dependencies:
   webview_flutter: ^4.10.0
   app_links: ^6.3.2
 
+  # file manager
   photo_manager: ^3.6.3
 
   # storage
