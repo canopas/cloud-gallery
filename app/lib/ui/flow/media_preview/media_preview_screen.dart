@@ -165,7 +165,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         ),
       ),
     );
-    print(state.swipeDownPercentage);
     return AppPage(
       backgroundColor: context.colorScheme.surface.withValues(
         alpha: 1 - state.swipeDownPercentage,
