@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:data/storage/app_preferences.dart';
+import 'package:go_router/go_router.dart';
+import 'package:style/animations/dismissible_page.dart';
 import '../../../components/app_page.dart';
 import '../../../components/place_holder_screen.dart';
 import '../../../components/snack_bar.dart';
@@ -16,12 +19,10 @@ import 'package:data/models/media/media.dart';
 import 'package:data/models/media/media_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:video_player/video_player.dart';
 import 'components/video_player_components/video_duration_slider.dart';
-import 'package:style/animations/dismissible_page.dart';
 
 class MediaPreview extends ConsumerStatefulWidget {
   final List<AppMedia> medias;
@@ -47,6 +48,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
   @override
   void initState() {
+    super.initState();
     final currentIndex =
         widget.medias.indexWhere((element) => element.id == widget.startFrom);
 
@@ -65,7 +67,6 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         ),
       );
     }
-    super.initState();
   }
 
   Future<void> _initializeVideoControllerWithListener({
@@ -108,16 +109,31 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     );
   }
 
+  void _observePopOnEmptyMedia() {
+    ref.listen(
+      _provider.select((value) => value.medias),
+      (previous, next) {
+        if (next.isEmpty && context.mounted) {
+          context.pop();
+        }
+      },
+    );
+  }
+
   void _updateVideoControllerOnMediaChange() {
-    ref.listen(_provider.select((value) => value.medias[value.currentIndex]),
-        (previous, next) {
+    ref.listen(
+        _provider.select(
+          (value) => value.medias.elementAtOrNull(value.currentIndex),
+        ), (previous, next) {
       if (_videoPlayerController != null) {
         _videoPlayerController?.removeListener(_observeVideoController);
         _notifier.updateVideoInitialized(false);
         _videoPlayerController?.dispose();
         _videoPlayerController = null;
       }
-      if (next.type.isVideo && next.sources.contains(AppMediaSource.local)) {
+      if (next != null &&
+          next.type.isVideo &&
+          next.sources.contains(AppMediaSource.local)) {
         _initializeVideoControllerWithListener(path: next.path);
       }
     });
@@ -134,6 +150,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
   @override
   Widget build(BuildContext context) {
     _observeError();
+    _observePopOnEmptyMedia();
     _updateVideoControllerOnMediaChange();
 
     final state = ref.watch(
@@ -141,39 +158,38 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         (state) => (
           medias: state.medias,
           showActions: state.showActions,
-          zoomed: state.zoomed,
+          isImageZoomed: state.isImageZoomed,
+          displacement: state.displacement,
         ),
       ),
     );
-    return DismissiblePage(
-      enable: !state.zoomed,
-      backgroundColor: context.colorScheme.surface,
-      onProgress: (progress) {
-        if (progress > 0 && state.showActions) {
-          _notifier.toggleActionVisibility();
-        }
-      },
-      onDismiss: () {
-        context.pop();
-      },
-      child: (progress) => AppPage(
-        backgroundColor:
-            progress == 0 ? context.colorScheme.surface : Colors.transparent,
-        body: Stack(
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _notifier.toggleActionVisibility,
-              child: PageView.builder(
-                physics:
-                    state.zoomed ? const NeverScrollableScrollPhysics() : null,
-                onPageChanged: _notifier.changeVisibleMediaIndex,
-                controller: _pageController,
-                itemCount: state.medias.length,
-                itemBuilder: (context, index) =>
-                    _preview(context: context, media: state.medias[index]),
-              ),
-            ),
+    return AppPage(
+      backgroundColor: state.displacement ? Colors.transparent : null,
+      body: Stack(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: _notifier.toggleActionVisibility,
+            child: state.medias.isEmpty
+                ? PlaceHolderScreen(
+                    title: "No media found",
+                    message: "No media found",
+                  )
+                : PageView.builder(
+                    physics: state.isImageZoomed
+                        ? const NeverScrollableScrollPhysics()
+                        : null,
+                    onPageChanged: _notifier.changeVisibleMediaIndex,
+                    controller: _pageController,
+                    itemCount: state.medias.length,
+                    itemBuilder: (context, index) => _preview(
+                      context: context,
+                      media: state.medias[index],
+                      isZoomed: state.isImageZoomed,
+                    ),
+                  ),
+          ),
+          if (!state.displacement) ...[
             PreviewTopBar(
               provider: _provider,
               onAction: () {
@@ -186,109 +202,140 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             _videoActions(context),
             _videoDurationSlider(context),
           ],
-        ),
+        ],
       ),
     );
   }
 
-  Widget _preview({required BuildContext context, required AppMedia media}) {
+  Widget _preview({
+    required BuildContext context,
+    required AppMedia media,
+    required bool isZoomed,
+  }) {
     if (media.type.isVideo && media.sources.contains(AppMediaSource.local)) {
-      return Center(
-        child: Consumer(
-          builder: (context, ref, child) {
-            final state = ref.watch(
-              _provider.select(
-                (state) => (
-                  initialized: state.isVideoInitialized,
-                  buffring: state.isVideoBuffering
+      return DismissiblePage(
+        backgroundColor: context.colorScheme.surface,
+        enableScale: false,
+        onDismiss: context.pop,
+        onDragDown: (displacement) {
+          _notifier.updateDisplacement(displacement != 0);
+        },
+        child: Center(
+          child: Consumer(
+            builder: (context, ref, child) {
+              final state = ref.watch(
+                _provider.select(
+                  (state) => (
+                    initialized: state.isVideoInitialized,
+                    buffring: state.isVideoBuffering
+                  ),
                 ),
-              ),
-            );
-
-            if (!state.initialized) {
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  Hero(
-                    tag: media,
-                    child: Image(
-                      image: AppMediaImageProvider(media: media),
-                      width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return AppPage(
-                          body: PlaceHolderScreen(
-                            title: context.l10n.unable_to_load_media_error,
-                            message: context.l10n.unable_to_load_media_message,
-                          ),
-                        );
-                      },
-                      frameBuilder:
-                          (context, child, frame, wasSynchronouslyLoaded) {
-                        if (wasSynchronouslyLoaded) {
-                          return child;
-                        } else {
-                          final width = context.mediaQuerySize.width;
-                          double multiplier = 1;
-                          if (media.displayWidth != null &&
-                              media.displayWidth! > 0) {
-                            multiplier = width / media.displayWidth!;
-                          }
-                          return SizedBox(
-                            width: width,
-                            height: media.displayHeight != null &&
-                                    media.displayHeight! > 0
-                                ? media.displayHeight! * multiplier
-                                : width,
-                            child: child,
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  AppCircularProgressIndicator(
-                    color: context.colorScheme.onPrimary,
-                  ),
-                ],
               );
-            }
-            return Hero(
-              tag: media,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  AspectRatio(
-                    aspectRatio: _videoPlayerController!.value.aspectRatio,
-                    child: VideoPlayer(_videoPlayerController!),
-                  ),
-                  if (state.buffring)
+
+              if (!state.initialized) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Hero(
+                      tag: media,
+                      child: Image(
+                        image: AppMediaImageProvider(media: media),
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return AppPage(
+                            body: PlaceHolderScreen(
+                              title: context.l10n.unable_to_load_media_error,
+                              message:
+                                  context.l10n.unable_to_load_media_message,
+                            ),
+                          );
+                        },
+                        frameBuilder:
+                            (context, child, frame, wasSynchronouslyLoaded) {
+                          if (wasSynchronouslyLoaded) {
+                            return child;
+                          } else {
+                            final width = context.mediaQuerySize.width;
+                            double multiplier = 1;
+                            if (media.displayWidth != null &&
+                                media.displayWidth! > 0) {
+                              multiplier = width / media.displayWidth!;
+                            }
+                            return SizedBox(
+                              width: width,
+                              height: media.displayHeight != null &&
+                                      media.displayHeight! > 0
+                                  ? media.displayHeight! * multiplier
+                                  : width,
+                              child: child,
+                            );
+                          }
+                        },
+                      ),
+                    ),
                     AppCircularProgressIndicator(
                       color: context.colorScheme.onPrimary,
                     ),
-                ],
-              ),
-            );
-          },
+                  ],
+                );
+              }
+              return Hero(
+                tag: media,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: _videoPlayerController!.value.aspectRatio,
+                      child: VideoPlayer(_videoPlayerController!),
+                    ),
+                    if (state.buffring)
+                      AppCircularProgressIndicator(
+                        color: context.colorScheme.onPrimary,
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       );
     } else if (media.type.isVideo &&
         (media.isGoogleDriveStored || media.isDropboxStored)) {
-      return _cloudVideoView(context: context, media: media);
+      return DismissiblePage(
+        enableScale: false,
+        backgroundColor: context.colorScheme.surface,
+        onDismiss: context.pop,
+        onDragDown: (displacement) {
+          _notifier.updateDisplacement(displacement != 0);
+        },
+        child: _cloudVideoView(context: context, media: media),
+      );
     } else if (media.type.isImage &&
         media.sources.contains(AppMediaSource.local)) {
-      return LocalMediaImagePreview(
-        media: media,
-        onScale: (scale) {
-          _notifier.updateZoomed(scale > 1);
+      return DismissiblePage(
+        backgroundColor: context.colorScheme.surface,
+        onScaleChange: (scale) {
+          _notifier.updateIsImageZoomed(scale > 1);
         },
+        onDismiss: context.pop,
+        onDragDown: (displacement) {
+          _notifier.updateDisplacement(displacement != 0);
+        },
+        child: LocalMediaImagePreview(media: media),
       );
     } else if (media.type.isImage &&
         (media.isGoogleDriveStored || media.isDropboxStored)) {
-      return NetworkImagePreview(
-        media: media,
-        onScale: (scale) {
-          _notifier.updateZoomed(scale > 1);
+      return DismissiblePage(
+        backgroundColor: context.colorScheme.surface,
+        onScaleChange: (scale) {
+          _notifier.updateIsImageZoomed(scale > 1);
         },
+        onDismiss: context.pop,
+        onDragDown: (displacement) {
+          _notifier.updateDisplacement(displacement != 0);
+        },
+        child: NetworkImagePreview(media: media),
       );
     } else {
       return PlaceHolderScreen(
@@ -341,7 +388,11 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             _provider.select(
               (state) => (
                 showActions: state.showActions &&
-                    state.medias[state.currentIndex].type.isVideo &&
+                    state.medias
+                            .elementAtOrNull(state.currentIndex)
+                            ?.type
+                            .isVideo ==
+                        true &&
                     state.isVideoInitialized,
                 isPlaying: state.isVideoPlaying,
                 position: state.videoPosition,
@@ -381,7 +432,11 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             _provider.select(
               (state) => (
                 showDurationSlider: state.showActions &&
-                    state.medias[state.currentIndex].type.isVideo &&
+                    state.medias
+                            .elementAtOrNull(state.currentIndex)
+                            ?.type
+                            .isVideo ==
+                        true &&
                     state.isVideoInitialized,
                 duration: state.videoMaxDuration,
                 position: state.videoPosition

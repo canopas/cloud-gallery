@@ -167,10 +167,18 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   void _mediaProcessObserve() {
     state = state.copyWith(
       uploadMediaProcesses: Map.fromEntries(
-        _mediaProcessRepo.uploadQueue.map((e) => MapEntry(e.media_id, e)),
+        _mediaProcessRepo.uploadQueue
+            .where(
+              (element) => element.status.isRunning,
+            )
+            .map((e) => MapEntry(e.media_id, e)),
       ),
       downloadMediaProcesses: Map.fromEntries(
-        _mediaProcessRepo.downloadQueue.map((e) => MapEntry(e.media_id, e)),
+        _mediaProcessRepo.downloadQueue
+            .where(
+              (element) => element.status.isRunning,
+            )
+            .map((e) => MapEntry(e.media_id, e)),
       ),
       medias: mediaMapUpdate(
         update: (media) {

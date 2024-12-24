@@ -32,6 +32,7 @@ class DownloadRequireView extends StatelessWidget {
           Hero(
             tag: media,
             child: Image(
+              gaplessPlayback: true,
               image: AppMediaImageProvider(
                 media: media,
                 dropboxAccessToken: dropboxAccessToken,

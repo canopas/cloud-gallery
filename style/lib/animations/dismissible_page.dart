@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
 class DismissiblePage extends StatefulWidget {
-  final Widget Function(double progress) child;
+  final Widget child;
   final double threshold;
+  final bool enableScale;
   final Color backgroundColor;
-  final bool enable;
-  final void Function(double progress)? onProgress;
+  final void Function(double scale)? onScaleChange;
+  final void Function(double displacement)? onDragDown;
   final void Function()? onDismiss;
   final double scaleDownPercentage;
 
@@ -13,11 +14,12 @@ class DismissiblePage extends StatefulWidget {
     Key? key,
     required this.child,
     this.threshold = 100,
-    this.onProgress,
-    this.enable = true,
+    this.enableScale = true,
+    this.onScaleChange,
+    this.onDragDown,
+    required this.backgroundColor,
     this.onDismiss,
     this.scaleDownPercentage = 0.25,
-    this.backgroundColor = const Color(0xff000000),
   }) : super(key: key);
 
   @override
@@ -26,53 +28,56 @@ class DismissiblePage extends StatefulWidget {
 
 class _DismissiblePageState extends State<DismissiblePage> {
   double _startY = 0.0;
-  double displacement = 0.0;
-  double percentage = 0.0;
+  double _displacement = 0.0;
+  double _percentage = 0.0;
+  bool _isZoomed = false;
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.enable) {
-      return widget.child(0);
-    }
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onVerticalDragStart: (DragStartDetails details) {
-        _startY = details.globalPosition.dy;
+    return InteractiveViewer(
+      maxScale: 100,
+      scaleEnabled: widget.enableScale,
+      onInteractionStart: (details) {
+        _startY = details.localFocalPoint.dy;
       },
-      onVerticalDragUpdate: (DragUpdateDetails details) {
-        if ((details.globalPosition.dy - _startY) > 0) {
+      onInteractionUpdate: (details) {
+        if ((details.localFocalPoint.dy - _startY) > 0 &&
+            details.pointerCount == 1 &&
+            !_isZoomed) {
           setState(() {
-            displacement = details.globalPosition.dy - _startY;
-            percentage = (displacement / widget.threshold).clamp(0, 1);
+            _displacement = details.localFocalPoint.dy - _startY;
+            _percentage = (_displacement / widget.threshold).clamp(0, 1);
+            widget.onDragDown?.call(_displacement);
           });
-          widget.onProgress?.call(percentage);
+        } else {
+          if (details.pointerCount == 2) {
+            _isZoomed = details.scale > 1;
+            widget.onScaleChange?.call(details.scale);
+          }
+          setState(() {
+            _displacement = 0.0;
+            _percentage = (_displacement / widget.threshold).clamp(0, 1);
+            widget.onDragDown?.call(_displacement);
+          });
         }
       },
-      onVerticalDragEnd: (DragEndDetails details) {
-        if (displacement > widget.threshold) {
+      onInteractionEnd: (details) {
+        if (_displacement > widget.threshold) {
           widget.onDismiss?.call();
         } else {
           setState(() {
-            displacement = 0.0;
-            percentage = 0.0;
+            _displacement = 0.0;
+            _percentage = (_displacement / widget.threshold).clamp(0, 1);
+            widget.onDragDown?.call(_displacement);
           });
         }
       },
-      child: Stack(
-        children: [
-          Container(
-            color: widget.backgroundColor.withValues(alpha: 1 - percentage),
-            height: double.infinity,
-            width: double.infinity,
-          ),
-          Transform.translate(
-            offset: Offset(0, displacement),
-            child: Transform.scale(
-              scale: 1 - (percentage * widget.scaleDownPercentage),
-              child: widget.child(percentage),
-            ),
-          ),
-        ],
+      child: Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.identity()
+          ..translate(0.0, _displacement)
+          ..scale(1 - (_percentage * widget.scaleDownPercentage)),
+        child: widget.child,
       ),
     );
   }
