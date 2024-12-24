@@ -409,8 +409,10 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     state = state.copyWith(isImageZoomed: isImageZoomed);
   }
 
-  void updateDisplacement(bool displacement) {
-    state = state.copyWith(displacement: displacement);
+  void updateSwipeDownPercentage(double displacement) {
+    state = state.copyWith(
+      swipeDownPercentage: (displacement.toInt() / 100.0).clamp(0, 1),
+    );
   }
 
   // Video Player Actions ------------------------------------------------------
@@ -465,7 +467,7 @@ class MediaPreviewState with _$MediaPreviewState {
     @Default(false) bool isVideoInitialized,
     @Default(false) bool isVideoBuffering,
     @Default(false) bool isImageZoomed,
-    @Default(false) bool displacement,
+    @Default(0.0) double swipeDownPercentage,
     @Default(Duration.zero) Duration videoPosition,
     @Default(Duration.zero) Duration videoMaxDuration,
     @Default(false) bool isVideoPlaying,

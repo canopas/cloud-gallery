@@ -161,12 +161,15 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           medias: state.medias,
           showActions: state.showActions,
           isImageZoomed: state.isImageZoomed,
-          displacement: state.displacement,
+          swipeDownPercentage: state.swipeDownPercentage,
         ),
       ),
     );
+    print(state.swipeDownPercentage);
     return AppPage(
-      backgroundColor: state.displacement ? Colors.transparent : null,
+      backgroundColor: context.colorScheme.surface.withValues(
+        alpha: 1 - state.swipeDownPercentage,
+      ),
       body: Stack(
         children: [
           GestureDetector(
@@ -195,7 +198,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
                     ),
                   ),
           ),
-          if (!state.displacement) ...[
+          if (state.swipeDownPercentage == 0) ...[
             PreviewTopBar(
               provider: _provider,
               onAction: () {
@@ -223,9 +226,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         backgroundColor: context.colorScheme.surface,
         enableScale: false,
         onDismiss: context.pop,
-        onDragDown: (displacement) {
-          _notifier.updateDisplacement(displacement != 0);
-        },
+        onDragDown: _notifier.updateSwipeDownPercentage,
         child: Center(
           child: Consumer(
             builder: (context, ref, child) {
@@ -312,9 +313,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         enableScale: false,
         backgroundColor: context.colorScheme.surface,
         onDismiss: context.pop,
-        onDragDown: (displacement) {
-          _notifier.updateDisplacement(displacement != 0);
-        },
+        onDragDown: _notifier.updateSwipeDownPercentage,
         child: _cloudVideoView(context: context, media: media),
       );
     } else if (media.type.isImage &&
@@ -325,9 +324,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           _notifier.updateIsImageZoomed(scale > 1);
         },
         onDismiss: context.pop,
-        onDragDown: (displacement) {
-          _notifier.updateDisplacement(displacement != 0);
-        },
+        onDragDown: _notifier.updateSwipeDownPercentage,
         child: LocalMediaImagePreview(media: media),
       );
     } else if (media.type.isImage &&
@@ -338,9 +335,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           _notifier.updateIsImageZoomed(scale > 1);
         },
         onDismiss: context.pop,
-        onDragDown: (displacement) {
-          _notifier.updateDisplacement(displacement != 0);
-        },
+        onDragDown: _notifier.updateSwipeDownPercentage,
         child: NetworkImagePreview(media: media),
       );
     } else {
