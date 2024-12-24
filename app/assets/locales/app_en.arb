@@ -113,6 +113,9 @@
   "download_require_text": "Download required",
   "download_require_message": "To watch the video, simply download it first. Tap the download button to begin downloading the video.",
   "download_in_progress_text": "Download in progress",
+  "empty_media_title": "Oh Snap! No Media Found!",
+  "empty_media_message": "Looks like your gallery is taking a little break.",
+
 
   "@_MEDIA_INFO":{},
   "name_text": "Name",

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/animations/dismissible_page.dart';
 import '../../../components/app_page.dart';
@@ -9,6 +10,7 @@ import '../../../components/snack_bar.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../domain/extensions/widget_extensions.dart';
 import '../../../domain/image_providers/app_media_image_provider.dart';
+import '../../../gen/assets.gen.dart';
 import 'components/download_require_view.dart';
 import 'components/local_media_image_preview.dart';
 import 'components/network_image_preview/network_image_preview.dart';
@@ -172,8 +174,12 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             onTap: _notifier.toggleActionVisibility,
             child: state.medias.isEmpty
                 ? PlaceHolderScreen(
-                    title: "No media found",
-                    message: "No media found",
+                    icon: SvgPicture.asset(
+                      Assets.images.ilNoMediaFound,
+                      width: 100,
+                    ),
+                    title: context.l10n.empty_media_title,
+                    message: context.l10n.empty_media_message,
                   )
                 : PageView.builder(
                     physics: state.isImageZoomed
