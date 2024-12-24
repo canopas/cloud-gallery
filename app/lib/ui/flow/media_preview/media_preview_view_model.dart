@@ -441,6 +441,10 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     state = state.copyWith(isVideoInitialized: isInitialized);
   }
 
+  void updateInitializedVideoPath(String? path) {
+    state = state.copyWith(initializedVideoPath: path);
+  }
+
   void updateVideoMaxDuration(Duration maxDuration) {
     if (state.videoMaxDuration == maxDuration) return;
     state = state.copyWith(videoMaxDuration: maxDuration);
@@ -470,6 +474,7 @@ class MediaPreviewState with _$MediaPreviewState {
     @Default(0.0) double swipeDownPercentage,
     @Default(Duration.zero) Duration videoPosition,
     @Default(Duration.zero) Duration videoMaxDuration,
+    String? initializedVideoPath,
     @Default(false) bool isVideoPlaying,
     @Default({}) Map<String, UploadMediaProcess> uploadMediaProcesses,
     @Default({}) Map<String, DownloadMediaProcess> downloadMediaProcesses,
