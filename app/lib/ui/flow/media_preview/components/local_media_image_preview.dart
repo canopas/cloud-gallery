@@ -9,72 +9,63 @@ import '../../../../domain/image_providers/app_media_image_provider.dart';
 
 class LocalMediaImagePreview extends StatelessWidget {
   final AppMedia media;
-  final void Function(double scale)? onScale;
 
   const LocalMediaImagePreview({
     super.key,
     required this.media,
-    this.onScale,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InteractiveViewer(
-      onInteractionUpdate: (details) {
-        if (details.pointerCount == 2) {
-          onScale?.call(details.scale);
-        }
-      },
-      maxScale: 100,
-      child: Center(
-        child: Hero(
-          tag: media,
-          child: Image.file(
-            width: double.infinity,
-            File(media.path),
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              return AppPage(
-                body: PlaceHolderScreen(
-                  title: context.l10n.unable_to_load_media_error,
-                  message: context.l10n.unable_to_load_media_message,
-                ),
-              );
-            },
-            frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-              if (wasSynchronouslyLoaded) {
-                return child;
-              }
-              if (frame == null) {
-                return Image(
-                  image: AppMediaImageProvider(media: media),
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return AppPage(
-                      body: PlaceHolderScreen(
-                        title: context.l10n.unable_to_load_media_error,
-                        message: context.l10n.unable_to_load_media_message,
-                      ),
-                    );
-                  },
-                );
-              }
-              final width = context.mediaQuerySize.width;
-              double multiplier = 1;
-              if (media.displayWidth != null && media.displayWidth! > 0) {
-                multiplier = width / media.displayWidth!;
-              }
-              return SizedBox(
+    final width = context.mediaQuerySize.width;
+    double multiplier = 1;
+    if (media.displayWidth != null && media.displayWidth! > 0) {
+      multiplier = width / media.displayWidth!;
+    }
+    final height = media.displayHeight != null && media.displayHeight! > 0
+        ? media.displayHeight! * multiplier
+        : width;
+    return Center(
+      child: Hero(
+        tag: media,
+        child: Image.file(
+          width: width,
+          height: height,
+          alignment: Alignment.center,
+          gaplessPlayback: true,
+          File(media.path),
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return AppPage(
+              body: PlaceHolderScreen(
+                title: context.l10n.unable_to_load_media_error,
+                message: context.l10n.unable_to_load_media_message,
+              ),
+            );
+          },
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded) {
+              return child;
+            }
+            if (frame == null) {
+              return Image(
+                image: AppMediaImageProvider(media: media),
                 width: width,
-                height: media.displayHeight != null && media.displayHeight! > 0
-                    ? media.displayHeight! * multiplier
-                    : width,
-                child: child,
+                height: height,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return AppPage(
+                    body: PlaceHolderScreen(
+                      title: context.l10n.unable_to_load_media_error,
+                      message: context.l10n.unable_to_load_media_message,
+                    ),
+                  );
+                },
               );
-            },
-          ),
+            }
+
+            return SizedBox(width: width, height: height, child: child);
+          },
         ),
       ),
     );

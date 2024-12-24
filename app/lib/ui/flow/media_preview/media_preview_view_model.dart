@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
+import '../home/home_screen_view_model.dart';
 
 part 'media_preview_view_model.freezed.dart';
 
@@ -35,6 +36,15 @@ final mediaPreviewStateNotifierProvider =
     ref.read(authServiceProvider),
     ref.read(connectivityHandlerProvider),
     ref.read(loggerProvider),
+    ref.read(homeViewStateNotifier.notifier),
+    () {
+      return ref.read(
+        homeViewStateNotifier.select(
+          (value) =>
+              value.medias.values.expand((element) => element.values).toList(),
+        ),
+      );
+    },
     state.medias,
     state.startIndex,
     ref.read(AppPreferences.dropboxCurrentUserAccount),
@@ -53,6 +63,8 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   final ConnectivityHandler _connectivityHandler;
   final AuthService _authService;
   final Logger _logger;
+  final HomeViewStateNotifier _homeNotifier;
+  final List<AppMedia> Function() _getUpdatedMedias;
 
   StreamSubscription? _googleAccountSubscription;
   String? _backUpFolderId;
@@ -65,6 +77,8 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     this._authService,
     this._connectivityHandler,
     this._logger,
+    this._homeNotifier,
+    this._getUpdatedMedias,
     List<AppMedia> medias,
     int startIndex,
     DropboxAccount? dropboxAccount,
@@ -120,10 +134,18 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   void _mediaProcessObserve() {
     state = state.copyWith(
       uploadMediaProcesses: Map.fromEntries(
-        _mediaProcessRepo.uploadQueue.map((e) => MapEntry(e.media_id, e)),
+        _mediaProcessRepo.uploadQueue
+            .where(
+              (element) => element.status.isRunning,
+            )
+            .map((e) => MapEntry(e.media_id, e)),
       ),
       downloadMediaProcesses: Map.fromEntries(
-        _mediaProcessRepo.downloadQueue.map((e) => MapEntry(e.media_id, e)),
+        _mediaProcessRepo.downloadQueue
+            .where(
+              (element) => element.status.isRunning,
+            )
+            .map((e) => MapEntry(e.media_id, e)),
       ),
       medias: state.medias
           .map(
@@ -159,6 +181,14 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
           )
           .nonNulls
           .toList(),
+    );
+
+    // Update current index if it is out of bound
+    state = state.copyWith(
+      currentIndex:
+          state.medias.isNotEmpty && state.currentIndex >= state.medias.length
+              ? state.medias.length - 1
+              : state.currentIndex,
     );
 
     for (final process in _mediaProcessRepo.uploadQueue) {
@@ -366,13 +396,21 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
 
   // Preview Actions -----------------------------------------------------------
 
-  void changeVisibleMediaIndex(int index) {
-    ///TODO: return user back if there is no media to preview
+  Future<void> changeVisibleMediaIndex(int index) async {
     state = state.copyWith(currentIndex: index);
+
+    if (index == state.medias.length - 1) {
+      await _homeNotifier.loadMedias();
+      state = state.copyWith(medias: _getUpdatedMedias());
+    }
   }
 
-  void updateZoomed(bool zoomed) {
-    state = state.copyWith(zoomed: zoomed);
+  void updateIsImageZoomed(bool isImageZoomed) {
+    state = state.copyWith(isImageZoomed: isImageZoomed);
+  }
+
+  void updateDisplacement(bool displacement) {
+    state = state.copyWith(displacement: displacement);
   }
 
   // Video Player Actions ------------------------------------------------------
@@ -423,10 +461,11 @@ class MediaPreviewState with _$MediaPreviewState {
     Object? actionError,
     @Default([]) List<AppMedia> medias,
     @Default(0) int currentIndex,
-    @Default(false) bool zoomed,
     @Default(true) bool showActions,
     @Default(false) bool isVideoInitialized,
     @Default(false) bool isVideoBuffering,
+    @Default(false) bool isImageZoomed,
+    @Default(false) bool displacement,
     @Default(Duration.zero) Duration videoPosition,
     @Default(Duration.zero) Duration videoMaxDuration,
     @Default(false) bool isVideoPlaying,

@@ -25,33 +25,37 @@ class AppMediaImage extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
-      child: Hero(
-        tag: heroTag ?? '',
-        child: Image(
-          image: AppMediaImageProvider(
-            media: media,
-            dropboxAccessToken:
-                ref.read(AppPreferences.dropboxToken)?.access_token,
-            thumbnailSize: size * 2,
+      child: Container(
+        color: context.colorScheme.containerNormalOnSurface,
+        child: Hero(
+          tag: heroTag ?? '',
+          child: Image(
+            gaplessPlayback: true,
+            image: AppMediaImageProvider(
+              media: media,
+              dropboxAccessToken:
+                  ref.read(AppPreferences.dropboxToken)?.access_token,
+              thumbnailSize: size * 2,
+            ),
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress != null) {
+                return AppMediaPlaceHolder(
+                  size: size,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                );
+              }
+              return child;
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return AppMediaErrorPlaceHolder(size: size);
+            },
+            height: size.height,
+            width: size.width,
+            fit: BoxFit.cover,
           ),
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress != null) {
-              return AppMediaPlaceHolder(
-                size: size,
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                    : null,
-              );
-            }
-            return child;
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return AppMediaErrorPlaceHolder(size: size);
-          },
-          height: size.height,
-          width: size.width,
-          fit: BoxFit.cover,
         ),
       ),
     );

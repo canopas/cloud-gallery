@@ -58,7 +58,7 @@ class OnBoardScreen extends ConsumerWidget {
   }
 
   Widget _appLogo(BuildContext context) => Image.asset(
-        Assets.images.appLogo.path,
+        Assets.images.appIcon.path,
         width: 250,
       );
 

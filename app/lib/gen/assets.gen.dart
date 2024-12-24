@@ -12,27 +12,18 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// File path: assets/images/app_logo.png
-  AssetGenImage get appLogo =>
-      const AssetGenImage('assets/images/app_logo.png');
-
-  /// File path: assets/images/ic_download.svg
-  String get icDownload => 'assets/images/ic_download.svg';
+  /// File path: assets/images/app_icon.png
+  AssetGenImage get appIcon =>
+      const AssetGenImage('assets/images/app_icon.png');
 
   /// File path: assets/images/ic_dropbox.svg
   String get icDropbox => 'assets/images/ic_dropbox.svg';
-
-  /// File path: assets/images/ic_error.svg
-  String get icError => 'assets/images/ic_error.svg';
 
   /// File path: assets/images/ic_google_drive.svg
   String get icGoogleDrive => 'assets/images/ic_google_drive.svg';
 
   /// File path: assets/images/ic_logout.svg
   String get icLogout => 'assets/images/ic_logout.svg';
-
-  /// File path: assets/images/ic_no_internet.svg
-  String get icNoInternet => 'assets/images/ic_no_internet.svg';
 
   /// File path: assets/images/ic_notification.svg
   String get icNotification => 'assets/images/ic_notification.svg';
@@ -46,23 +37,36 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_term_of_service.svg
   String get icTermOfService => 'assets/images/ic_term_of_service.svg';
 
-  /// File path: assets/images/ic_upload.svg
-  String get icUpload => 'assets/images/ic_upload.svg';
+  /// File path: assets/images/il_download.svg
+  String get ilDownload => 'assets/images/il_download.svg';
+
+  /// File path: assets/images/il_error.svg
+  String get ilError => 'assets/images/il_error.svg';
+
+  /// File path: assets/images/il_no_internet.svg
+  String get ilNoInternet => 'assets/images/il_no_internet.svg';
+
+  /// File path: assets/images/il_no_media_found.svg
+  String get ilNoMediaFound => 'assets/images/il_no_media_found.svg';
+
+  /// File path: assets/images/il_upload.svg
+  String get ilUpload => 'assets/images/il_upload.svg';
 
   /// List of all assets
   List<dynamic> get values => [
-        appLogo,
-        icDownload,
+        appIcon,
         icDropbox,
-        icError,
         icGoogleDrive,
         icLogout,
-        icNoInternet,
         icNotification,
         icPrivacyPolicy,
         icRateUs,
         icTermOfService,
-        icUpload
+        ilDownload,
+        ilError,
+        ilNoInternet,
+        ilNoMediaFound,
+        ilUpload
       ];
 }
 

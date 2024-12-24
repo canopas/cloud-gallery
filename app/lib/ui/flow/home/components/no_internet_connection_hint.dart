@@ -38,7 +38,7 @@ class NoInternetConnectionHint extends ConsumerWidget {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        Assets.images.icNoInternet,
+                        Assets.images.ilNoInternet,
                         height: 50,
                         width: 50,
                       ),

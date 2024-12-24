@@ -23,7 +23,7 @@ class ErrorScreen extends StatelessWidget {
 
   Widget _noInternetConnectionScreen(BuildContext context) => PlaceHolderScreen(
         icon: SvgPicture.asset(
-          Assets.images.icNoInternet,
+          Assets.images.ilNoInternet,
           height: 120,
           width: 120,
         ),
@@ -37,7 +37,7 @@ class ErrorScreen extends StatelessWidget {
 
   Widget _errorScreen(BuildContext context) => PlaceHolderScreen(
         icon: SvgPicture.asset(
-          Assets.images.icError,
+          Assets.images.ilError,
           height: 120,
           width: 120,
         ),

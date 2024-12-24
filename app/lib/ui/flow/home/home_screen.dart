@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../components/app_page.dart';
 import '../../../components/error_screen.dart';
+import '../../../components/place_holder_screen.dart';
 import '../../../domain/extensions/widget_extensions.dart';
 import '../../../domain/formatter/date_formatter.dart';
 import '../../../domain/extensions/context_extensions.dart';
@@ -131,6 +133,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               const HomeScreenHints(),
               const NoInternetConnectionHint(),
+              if (state.medias.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 40),
+                  child: PlaceHolderScreen(
+                    icon: SvgPicture.asset(
+                      Assets.images.ilNoMediaFound,
+                      width: 150,
+                    ),
+                    title: context.l10n.empty_media_title,
+                    message: context.l10n.empty_media_message,
+                  ),
+                ),
             ],
           );
         } else if (index == state.medias.length + 1) {
@@ -232,7 +246,7 @@ class HomeAppTitle extends StatelessWidget {
       children: [
         if (Platform.isIOS) const SizedBox(width: 10),
         Image.asset(
-          Assets.images.appLogo.path,
+          Assets.images.appIcon.path,
           width: 28,
         ),
         const SizedBox(width: 10),

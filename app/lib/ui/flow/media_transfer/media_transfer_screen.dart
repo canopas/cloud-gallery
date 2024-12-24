@@ -106,7 +106,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
             title: context.l10n.empty_upload_title,
             message: context.l10n.empty_upload_message,
             icon: SvgPicture.asset(
-              Assets.images.icUpload,
+              Assets.images.ilUpload,
               height: 200,
               width: 200,
             ),
@@ -147,7 +147,7 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
             title: context.l10n.empty_download_title,
             message: context.l10n.empty_download_message,
             icon: SvgPicture.asset(
-              Assets.images.icDownload,
+              Assets.images.ilDownload,
               height: 200,
               width: 200,
             ),
