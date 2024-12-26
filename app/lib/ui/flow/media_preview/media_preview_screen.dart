@@ -63,11 +63,12 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
     if (widget.medias[currentIndex].type.isVideo &&
         widget.medias[currentIndex].sources.contains(AppMediaSource.local)) {
-      runPostFrame(
-        () => _initializeVideoControllerWithListener(
+      runPostFrame(() {
+        _initializeVideoControllerWithListener(
           path: widget.medias[currentIndex].path,
-        ),
-      );
+        );
+        _notifier.updateInitializedVideoPath(widget.medias[currentIndex].path);
+      });
     }
   }
 
@@ -130,6 +131,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       if (_videoPlayerController != null) {
         _videoPlayerController?.removeListener(_observeVideoController);
         _notifier.updateVideoInitialized(false);
+        _notifier.updateInitializedVideoPath(null);
         _videoPlayerController?.dispose();
         _videoPlayerController = null;
       }
@@ -137,6 +139,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           next.type.isVideo &&
           next.sources.contains(AppMediaSource.local)) {
         _initializeVideoControllerWithListener(path: next.path);
+        _notifier.updateInitializedVideoPath(next.path);
       }
     });
   }
@@ -233,18 +236,26 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
                 _provider.select(
                   (state) => (
                     initialized: state.isVideoInitialized,
-                    buffring: state.isVideoBuffering
+                    buffring: state.isVideoBuffering,
+                    initializedVideoPath: state.initializedVideoPath,
                   ),
                 ),
               );
 
-              if (!state.initialized) {
-                return Stack(
+              return Hero(
+                tag: media,
+                child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Hero(
-                      tag: media,
-                      child: Image(
+                    if (state.initialized &&
+                        media.path == state.initializedVideoPath)
+                      AspectRatio(
+                        aspectRatio: _videoPlayerController!.value.aspectRatio,
+                        child: VideoPlayer(_videoPlayerController!),
+                      ),
+                    if (!state.initialized ||
+                        media.path != state.initializedVideoPath)
+                      Image(
                         image: AppMediaImageProvider(media: media),
                         width: double.infinity,
                         fit: BoxFit.contain,
@@ -279,23 +290,9 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
                           }
                         },
                       ),
-                    ),
-                    AppCircularProgressIndicator(
-                      color: context.colorScheme.onPrimary,
-                    ),
-                  ],
-                );
-              }
-              return Hero(
-                tag: media,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: _videoPlayerController!.value.aspectRatio,
-                      child: VideoPlayer(_videoPlayerController!),
-                    ),
-                    if (state.buffring)
+                    if (state.buffring ||
+                        !state.initialized &&
+                            media.path == state.initializedVideoPath)
                       AppCircularProgressIndicator(
                         color: context.colorScheme.onPrimary,
                       ),
@@ -380,11 +377,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
   Widget _videoActions(BuildContext context) => Consumer(
         builder: (context, ref, child) {
-          final ({
-            bool showActions,
-            bool isPlaying,
-            Duration position,
-          }) state = ref.watch(
+          final state = ref.watch(
             _provider.select(
               (state) => (
                 showActions: state.showActions &&
@@ -395,6 +388,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
                         true &&
                     state.isVideoInitialized,
                 isPlaying: state.isVideoPlaying,
+                isInitialized: state.isVideoInitialized,
                 position: state.videoPosition,
               ),
             ),
@@ -402,7 +396,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
 
           return VideoActions(
             showActions: state.showActions,
-            isPlaying: state.isPlaying,
+            isPlaying: state.isPlaying || !state.isInitialized,
             onBackward: () {
               _videoPlayerController
                   ?.seekTo(state.position - const Duration(seconds: 10));
@@ -436,8 +430,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
                             .elementAtOrNull(state.currentIndex)
                             ?.type
                             .isVideo ==
-                        true &&
-                    state.isVideoInitialized,
+                        true,
                 duration: state.videoMaxDuration,
                 position: state.videoPosition
               ),

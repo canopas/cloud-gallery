@@ -29,6 +29,7 @@ mixin _$MediaPreviewState {
   double get swipeDownPercentage => throw _privateConstructorUsedError;
   Duration get videoPosition => throw _privateConstructorUsedError;
   Duration get videoMaxDuration => throw _privateConstructorUsedError;
+  String? get initializedVideoPath => throw _privateConstructorUsedError;
   bool get isVideoPlaying => throw _privateConstructorUsedError;
   Map<String, UploadMediaProcess> get uploadMediaProcesses =>
       throw _privateConstructorUsedError;
@@ -62,6 +63,7 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       double swipeDownPercentage,
       Duration videoPosition,
       Duration videoMaxDuration,
+      String? initializedVideoPath,
       bool isVideoPlaying,
       Map<String, UploadMediaProcess> uploadMediaProcesses,
       Map<String, DownloadMediaProcess> downloadMediaProcesses});
@@ -97,6 +99,7 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
     Object? swipeDownPercentage = null,
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
+    Object? initializedVideoPath = freezed,
     Object? isVideoPlaying = null,
     Object? uploadMediaProcesses = null,
     Object? downloadMediaProcesses = null,
@@ -148,6 +151,10 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
           ? _value.videoMaxDuration
           : videoMaxDuration // ignore: cast_nullable_to_non_nullable
               as Duration,
+      initializedVideoPath: freezed == initializedVideoPath
+          ? _value.initializedVideoPath
+          : initializedVideoPath // ignore: cast_nullable_to_non_nullable
+              as String?,
       isVideoPlaying: null == isVideoPlaying
           ? _value.isVideoPlaying
           : isVideoPlaying // ignore: cast_nullable_to_non_nullable
@@ -200,6 +207,7 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       double swipeDownPercentage,
       Duration videoPosition,
       Duration videoMaxDuration,
+      String? initializedVideoPath,
       bool isVideoPlaying,
       Map<String, UploadMediaProcess> uploadMediaProcesses,
       Map<String, DownloadMediaProcess> downloadMediaProcesses});
@@ -234,6 +242,7 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
     Object? swipeDownPercentage = null,
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
+    Object? initializedVideoPath = freezed,
     Object? isVideoPlaying = null,
     Object? uploadMediaProcesses = null,
     Object? downloadMediaProcesses = null,
@@ -285,6 +294,10 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
           ? _value.videoMaxDuration
           : videoMaxDuration // ignore: cast_nullable_to_non_nullable
               as Duration,
+      initializedVideoPath: freezed == initializedVideoPath
+          ? _value.initializedVideoPath
+          : initializedVideoPath // ignore: cast_nullable_to_non_nullable
+              as String?,
       isVideoPlaying: null == isVideoPlaying
           ? _value.isVideoPlaying
           : isVideoPlaying // ignore: cast_nullable_to_non_nullable
@@ -318,6 +331,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       this.swipeDownPercentage = 0.0,
       this.videoPosition = Duration.zero,
       this.videoMaxDuration = Duration.zero,
+      this.initializedVideoPath,
       this.isVideoPlaying = false,
       final Map<String, UploadMediaProcess> uploadMediaProcesses = const {},
       final Map<String, DownloadMediaProcess> downloadMediaProcesses =
@@ -368,6 +382,8 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   @JsonKey()
   final Duration videoMaxDuration;
   @override
+  final String? initializedVideoPath;
+  @override
   @JsonKey()
   final bool isVideoPlaying;
   final Map<String, UploadMediaProcess> _uploadMediaProcesses;
@@ -392,7 +408,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
   @override
   String toString() {
-    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, isImageZoomed: $isImageZoomed, swipeDownPercentage: $swipeDownPercentage, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
+    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, isImageZoomed: $isImageZoomed, swipeDownPercentage: $swipeDownPercentage, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, initializedVideoPath: $initializedVideoPath, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
   }
 
   @override
@@ -424,6 +440,8 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
                 other.videoPosition == videoPosition) &&
             (identical(other.videoMaxDuration, videoMaxDuration) ||
                 other.videoMaxDuration == videoMaxDuration) &&
+            (identical(other.initializedVideoPath, initializedVideoPath) ||
+                other.initializedVideoPath == initializedVideoPath) &&
             (identical(other.isVideoPlaying, isVideoPlaying) ||
                 other.isVideoPlaying == isVideoPlaying) &&
             const DeepCollectionEquality()
@@ -448,6 +466,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       swipeDownPercentage,
       videoPosition,
       videoMaxDuration,
+      initializedVideoPath,
       isVideoPlaying,
       const DeepCollectionEquality().hash(_uploadMediaProcesses),
       const DeepCollectionEquality().hash(_downloadMediaProcesses));
@@ -477,6 +496,7 @@ abstract class _MediaPreviewState implements MediaPreviewState {
           final double swipeDownPercentage,
           final Duration videoPosition,
           final Duration videoMaxDuration,
+          final String? initializedVideoPath,
           final bool isVideoPlaying,
           final Map<String, UploadMediaProcess> uploadMediaProcesses,
           final Map<String, DownloadMediaProcess> downloadMediaProcesses}) =
@@ -508,6 +528,8 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   Duration get videoPosition;
   @override
   Duration get videoMaxDuration;
+  @override
+  String? get initializedVideoPath;
   @override
   bool get isVideoPlaying;
   @override
