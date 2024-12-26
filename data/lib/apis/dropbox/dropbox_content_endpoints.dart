@@ -25,7 +25,7 @@ class DropboxCreateFolderEndpoint extends Endpoint {
 
 class DropboxListFolderEndpoint extends Endpoint {
   final bool includeDeleted;
-  final String appPropertyTemplateId;
+  final String? appPropertyTemplateId;
   final bool includeHasExplicitSharedMembers;
   final int limit;
   final bool includeMountedFolders;
@@ -41,7 +41,7 @@ class DropboxListFolderEndpoint extends Endpoint {
     this.includeNonDownloadableFiles = false,
     this.recursive = false,
     required this.folderPath,
-    required this.appPropertyTemplateId,
+    this.appPropertyTemplateId,
   });
 
   @override
@@ -58,10 +58,11 @@ class DropboxListFolderEndpoint extends Endpoint {
         "include_deleted": includeDeleted,
         "include_has_explicit_shared_members": includeHasExplicitSharedMembers,
         "limit": limit,
-        'include_property_groups': {
-          ".tag": "filter_some",
-          "filter_some": [appPropertyTemplateId],
-        },
+        if (appPropertyTemplateId != null)
+          'include_property_groups': {
+            ".tag": "filter_some",
+            "filter_some": [appPropertyTemplateId],
+          },
         "include_mounted_folders": includeMountedFolders,
         "include_non_downloadable_files": includeNonDownloadableFiles,
         "path": folderPath,
@@ -92,7 +93,7 @@ class DropboxListFolderContinueEndpoint extends Endpoint {
 }
 
 class DropboxUploadEndpoint extends Endpoint {
-  final String appPropertyTemplateId;
+  final String? appPropertyTemplateId;
   final String filePath;
   final String? localRefId;
   final String mode;
@@ -104,7 +105,7 @@ class DropboxUploadEndpoint extends Endpoint {
   final CancelToken? cancellationToken;
 
   const DropboxUploadEndpoint({
-    required this.appPropertyTemplateId,
+    this.appPropertyTemplateId,
     required this.filePath,
     this.mode = 'add',
     this.autoRename = true,
@@ -133,17 +134,18 @@ class DropboxUploadEndpoint extends Endpoint {
           'autorename': autoRename,
           'mute': mute,
           'strict_conflict': strictConflict,
-          'property_groups': [
-            {
-              "fields": [
-                {
-                  "name": ProviderConstants.localRefIdKey,
-                  "value": localRefId ?? '',
-                },
-              ],
-              "template_id": appPropertyTemplateId,
-            }
-          ],
+          if (appPropertyTemplateId != null && localRefId != null)
+            'property_groups': [
+              {
+                "fields": [
+                  {
+                    "name": ProviderConstants.localRefIdKey,
+                    "value": localRefId ?? '',
+                  },
+                ],
+                "template_id": appPropertyTemplateId,
+              }
+            ],
         }),
         'Content-Type': content.contentType,
         'Content-Length': content.length,
@@ -161,13 +163,13 @@ class DropboxUploadEndpoint extends Endpoint {
 
 class DropboxDownloadEndpoint extends DownloadEndpoint {
   final String filePath;
-  final String storagePath;
+  final String? storagePath;
   final void Function(int chunk, int length)? onProgress;
   final CancelToken? cancellationToken;
 
   const DropboxDownloadEndpoint({
     required this.filePath,
-    required this.storagePath,
+    this.storagePath,
     this.cancellationToken,
     this.onProgress,
   });

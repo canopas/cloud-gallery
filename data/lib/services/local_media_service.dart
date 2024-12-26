@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:sqflite/sqflite.dart';
+import '../domain/config.dart';
+import '../domain/json_converters/date_time_json_converter.dart';
+import '../models/album/album.dart';
 import '../models/media/media.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -10,6 +14,8 @@ final localMediaServiceProvider = Provider<LocalMediaService>(
 
 class LocalMediaService {
   const LocalMediaService();
+
+  // MEDIA ---------------------------------------------------------------------
 
   Future<bool> isLocalFileExist({
     required AppMediaType type,
@@ -89,5 +95,86 @@ class LocalMediaService {
       );
     }
     return asset != null ? AppMedia.fromAssetEntity(asset) : null;
+  }
+
+  // ALBUM ---------------------------------------------------------------------
+
+  Future<Database> openAlbumDatabase() async {
+    return await openDatabase(
+      LocalDatabaseConstants.databaseName,
+      version: 1,
+      onCreate: (Database db, int version) async {
+        await db.execute(
+          'CREATE TABLE ${LocalDatabaseConstants.albumsTable} ('
+          'id TEXT PRIMARY KEY, '
+          'name TEXT NOT NULL, '
+          'source TEXT NOT NULL, '
+          'created_at TEXT NOT NULL, '
+          'medias TEXT NOT NULL, '
+          ')',
+        );
+      },
+    );
+  }
+
+  Future<void> createAlbum(Album album) async {
+    final db = await openAlbumDatabase();
+    await db.insert(
+      LocalDatabaseConstants.albumsTable,
+      {
+        'id': album.id,
+        'name': album.name,
+        'source': album.source.value,
+        'created_at': DateTimeJsonConverter().toJson(album.created_at),
+        'medias': album.medias.join(','),
+      },
+    );
+    await db.close();
+  }
+
+  Future<void> updateAlbum(Album album) async {
+    final db = await openAlbumDatabase();
+    await db.update(
+      LocalDatabaseConstants.albumsTable,
+      {
+        'name': album.name,
+        'source': album.source.value,
+        'created_at': DateTimeJsonConverter().toJson(album.created_at),
+        'medias': album.medias.join(','),
+      },
+      where: 'id = ?',
+      whereArgs: [album.id],
+    );
+    await db.close();
+  }
+
+  Future<void> deleteAlbum(String id) async {
+    final db = await openAlbumDatabase();
+    await db.delete(
+      LocalDatabaseConstants.albumsTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    await db.close();
+  }
+
+  Future<List<Album>> getAllAlbums() async {
+    final db = await openAlbumDatabase();
+    final albums = await db.query(LocalDatabaseConstants.albumsTable);
+    await db.close();
+    return albums
+        .map(
+          (album) => Album(
+            id: album['id'] as String,
+            name: album['name'] as String,
+            source: AppMediaSource.values.firstWhere(
+              (source) => source.value == album['source'],
+            ),
+            created_at:
+                DateTimeJsonConverter().fromJson(album['created_at'] as String),
+            medias: (album['medias'] as String).split(','),
+          ),
+        )
+        .toList();
   }
 }

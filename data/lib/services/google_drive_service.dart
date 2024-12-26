@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import '../apis/google_drive/google_drive_endpoint.dart';
 import '../apis/network/client.dart';
 import '../domain/config.dart';
+import '../models/album/album.dart';
 import '../models/media/media.dart';
 import '../models/media_content/media_content.dart';
 import 'package:dio/dio.dart';
@@ -22,93 +25,7 @@ class GoogleDriveService extends CloudProviderService {
 
   GoogleDriveService(this._client);
 
-  @override
-  Future<List<AppMedia>> getAllMedias({
-    required String folder,
-  }) async {
-    bool hasMore = true;
-    String? pageToken;
-    final List<AppMedia> medias = [];
-
-    while (hasMore) {
-      final res = await _client.req(
-        GoogleDriveListEndpoint(
-          q: "'$folder' in parents and trashed=false",
-          pageSize: 1000,
-          pageToken: pageToken,
-        ),
-      );
-
-      if (res.statusCode == 200) {
-        final body = drive.FileList.fromJson(res.data);
-        hasMore = body.nextPageToken != null;
-        pageToken = body.nextPageToken;
-        medias.addAll(
-          body.files
-                  ?.map(
-                    (e) => AppMedia.fromGoogleDriveFile(e),
-                  )
-                  .toList() ??
-              <AppMedia>[],
-        );
-      } else {
-        throw SomethingWentWrongError(
-          statusCode: res.statusCode,
-          message: res.statusMessage,
-        );
-      }
-    }
-
-    return medias;
-  }
-
-  @override
-  Future<GetPaginatedMediasResponse> getPaginatedMedias({
-    required String folder,
-    String? nextPageToken,
-    int pageSize = 30,
-  }) async {
-    final res = await _client.req(
-      GoogleDriveListEndpoint(
-        q: "'$folder' in parents and trashed=false",
-        pageSize: pageSize,
-        pageToken: nextPageToken,
-      ),
-    );
-
-    if (res.statusCode == 200) {
-      final body = drive.FileList.fromJson(res.data);
-      return GetPaginatedMediasResponse(
-        nextPageToken: body.nextPageToken,
-        medias: body.files
-                ?.map(
-                  (e) => AppMedia.fromGoogleDriveFile(e),
-                )
-                .toList() ??
-            <AppMedia>[],
-      );
-    }
-
-    throw SomethingWentWrongError(
-      statusCode: res.statusCode,
-      message: res.statusMessage,
-    );
-  }
-
-  @override
-  Future<void> deleteMedia({
-    required String id,
-    CancelToken? cancelToken,
-  }) async {
-    final res = await _client.req(GoogleDriveDeleteEndpoint(id: id));
-
-    if (res.statusCode == 200 || res.statusCode == 204) return;
-
-    throw SomethingWentWrongError(
-      statusCode: res.statusCode,
-      message: res.statusMessage,
-    );
-  }
+  //FOLDERS --------------------------------------------------------------------
 
   Future<String?> getBackUpFolderId() async {
     final res = await _client.req(
@@ -155,6 +72,96 @@ class GoogleDriveService extends CloudProviderService {
     if (res.statusCode == 200) {
       return drive.File.fromJson(res.data).id;
     }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  //MEDIA ----------------------------------------------------------------------
+
+  @override
+  Future<List<AppMedia>> getAllMedias({
+    required String folder,
+  }) async {
+    bool hasMore = true;
+    String? pageToken;
+    final List<AppMedia> medias = [];
+
+    while (hasMore) {
+      final res = await _client.req(
+        GoogleDriveListEndpoint(
+          q: "'$folder' in parents and trashed=false and name!='${ProviderConstants.albumFileName}",
+          pageSize: 1000,
+          pageToken: pageToken,
+        ),
+      );
+
+      if (res.statusCode == 200) {
+        final body = drive.FileList.fromJson(res.data);
+        hasMore = body.nextPageToken != null;
+        pageToken = body.nextPageToken;
+        medias.addAll(
+          body.files
+                  ?.map(
+                    (e) => AppMedia.fromGoogleDriveFile(e),
+                  )
+                  .toList() ??
+              <AppMedia>[],
+        );
+      } else {
+        throw SomethingWentWrongError(
+          statusCode: res.statusCode,
+          message: res.statusMessage,
+        );
+      }
+    }
+
+    return medias;
+  }
+
+  @override
+  Future<GetPaginatedMediasResponse> getPaginatedMedias({
+    required String folder,
+    String? nextPageToken,
+    int pageSize = 30,
+  }) async {
+    final res = await _client.req(
+      GoogleDriveListEndpoint(
+        q: "'$folder' in parents and trashed=false and name!='${ProviderConstants.albumFileName}'",
+        pageSize: pageSize,
+        pageToken: nextPageToken,
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      final body = drive.FileList.fromJson(res.data);
+      return GetPaginatedMediasResponse(
+        nextPageToken: body.nextPageToken,
+        medias: body.files
+                ?.map(
+                  (e) => AppMedia.fromGoogleDriveFile(e),
+                )
+                .toList() ??
+            <AppMedia>[],
+      );
+    }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  @override
+  Future<void> deleteMedia({
+    required String id,
+    CancelToken? cancelToken,
+  }) async {
+    final res = await _client.req(GoogleDriveDeleteEndpoint(id: id));
+
+    if (res.statusCode == 200 || res.statusCode == 204) return;
 
     throw SomethingWentWrongError(
       statusCode: res.statusCode,
@@ -245,6 +252,299 @@ class GoogleDriveService extends CloudProviderService {
     throw SomethingWentWrongError(
       statusCode: res.statusCode,
       message: res.statusMessage,
+    );
+  }
+
+  //ALBUMS ---------------------------------------------------------------------
+
+  Future<List<Album>> getAlbums({required String folderId}) async {
+    final res = await _client.req(
+      GoogleDriveListEndpoint(
+        q: "'$folderId' in parents and trashed=false and name='${ProviderConstants.albumFileName}'",
+        pageSize: 1,
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      final body = drive.FileList.fromJson(res.data);
+      if ((body.files ?? []).isNotEmpty) {
+        final res = await _client.req(
+          GoogleDriveDownloadEndpoint(id: body.files!.first.id!),
+        );
+        if (res.statusCode == 200) {
+          final List<int> bytes = [];
+          await for (final chunk in (res.data as ResponseBody).stream) {
+            bytes.addAll(chunk);
+          }
+          final json = jsonDecode(utf8.decode(bytes));
+          return json is! List
+              ? <Album>[]
+              : json.map((e) => Album.fromJson(e)).toList();
+        }
+
+        throw SomethingWentWrongError(
+          statusCode: res.statusCode,
+          message: res.statusMessage,
+        );
+      }
+      return <Album>[];
+    }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<void> createAlbum({
+    required String folderId,
+    required Album newAlbum,
+  }) async {
+    // Fetch the album file
+    final listRes = await _client.req(
+      GoogleDriveListEndpoint(
+        q: "'$folderId' in parents and trashed=false and name='${ProviderConstants.albumFileName}'",
+        pageSize: 1,
+      ),
+    );
+
+    if (listRes.statusCode != 200) {
+      throw SomethingWentWrongError(
+        statusCode: listRes.statusCode,
+        message: listRes.statusMessage,
+      );
+    }
+
+    final body = drive.FileList.fromJson(listRes.data);
+
+    if ((body.files ?? []).isNotEmpty) {
+      // Download the album file if it exists
+      final res = await _client.req(
+        GoogleDriveDownloadEndpoint(id: body.files!.first.id!),
+      );
+
+      if (res.statusCode != 200) {
+        throw SomethingWentWrongError(
+          statusCode: res.statusCode,
+          message: res.statusMessage,
+        );
+      }
+
+      // Convert the downloaded album file to a list of albums
+      final List<int> bytes = [];
+      await for (final chunk in (res.data as ResponseBody).stream) {
+        bytes.addAll(chunk);
+      }
+      final json = jsonDecode(utf8.decode(bytes));
+      final albums = json is! List
+          ? <Album>[]
+          : json.map((e) => Album.fromJson(e)).toList();
+
+      // Attach the new album to the list of albums
+      albums.add(newAlbum);
+      albums.sort((a, b) => a.created_at.compareTo(b.created_at));
+
+      // Update the album file with the new list of albums
+      final updateRes = await _client.req(
+        GoogleDriveContentUpdateEndpoint(
+          id: body.files!.first.id!,
+          content: AppMediaContent(
+            stream: Stream.value(
+              Uint8List.fromList(utf8.encode(jsonEncode(albums))),
+            ),
+            length: utf8.encode(jsonEncode(albums)).length,
+            contentType: 'application/json',
+          ),
+        ),
+      );
+
+      if (updateRes.statusCode == 200) return;
+
+      throw SomethingWentWrongError(
+        statusCode: updateRes.statusCode,
+        message: updateRes.statusMessage,
+      );
+    }
+
+    // Create a new album file if it doesn't exist
+    final res = await _client.req(
+      GoogleDriveUploadEndpoint(
+        request: drive.File(
+          name: ProviderConstants.albumFileName,
+          mimeType: 'application/json',
+          parents: [folderId],
+        ),
+        content: AppMediaContent(
+          stream: Stream.value(
+            Uint8List.fromList(utf8.encode(jsonEncode([newAlbum.toJson()]))),
+          ),
+          length: utf8.encode(jsonEncode([newAlbum.toJson()])).length,
+          contentType: 'application/json',
+        ),
+      ),
+    );
+
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<void> updateAlbum({
+    required String folderId,
+    required Album album,
+  }) async {
+    // Fetch the album file
+    final listRes = await _client.req(
+      GoogleDriveListEndpoint(
+        q: "'$folderId' in parents and trashed=false and name='${ProviderConstants.albumFileName}'",
+        pageSize: 1,
+      ),
+    );
+
+    if (listRes.statusCode != 200) {
+      throw SomethingWentWrongError(
+        statusCode: listRes.statusCode,
+        message: listRes.statusMessage,
+      );
+    }
+
+    final body = drive.FileList.fromJson(listRes.data);
+
+    if ((body.files ?? []).isNotEmpty) {
+      // Download the album file if it exists
+      final res = await _client.req(
+        GoogleDriveDownloadEndpoint(id: body.files!.first.id!),
+      );
+
+      if (res.statusCode != 200) {
+        throw SomethingWentWrongError(
+          statusCode: res.statusCode,
+          message: res.statusMessage,
+        );
+      }
+
+      // Convert the downloaded album file to a list of albums
+      final List<int> bytes = [];
+      await for (final chunk in (res.data as ResponseBody).stream) {
+        bytes.addAll(chunk);
+      }
+      final json = jsonDecode(utf8.decode(bytes));
+      final albums = json is! List
+          ? <Album>[]
+          : json.map((e) => Album.fromJson(e)).toList();
+
+      // Attach the new album to the list of albums
+      if (albums.where((element) => element.id == album.id).isEmpty) {
+        throw SomethingWentWrongError(
+          message: 'Album not found',
+        );
+      }
+
+      albums.removeWhere((element) => element.id == album.id);
+      albums.add(album);
+      albums.sort((a, b) => a.created_at.compareTo(b.created_at));
+
+      // Update the album file with the new list of albums
+      final updateRes = await _client.req(
+        GoogleDriveContentUpdateEndpoint(
+          id: body.files!.first.id!,
+          content: AppMediaContent(
+            stream: Stream.value(
+              Uint8List.fromList(utf8.encode(jsonEncode(albums))),
+            ),
+            length: utf8.encode(jsonEncode(albums)).length,
+            contentType: 'application/json',
+          ),
+        ),
+      );
+
+      if (updateRes.statusCode == 200) return;
+
+      throw SomethingWentWrongError(
+        statusCode: updateRes.statusCode,
+        message: updateRes.statusMessage,
+      );
+    }
+
+    throw SomethingWentWrongError(
+      message: 'Album file not found',
+    );
+  }
+
+  Future<void> removeAlbum({
+    required String folderId,
+    required String id,
+  }) async {
+    // Fetch the album file
+    final listRes = await _client.req(
+      GoogleDriveListEndpoint(
+        q: "'$folderId' in parents and trashed=false and name='${ProviderConstants.albumFileName}'",
+        pageSize: 1,
+      ),
+    );
+
+    if (listRes.statusCode != 200) {
+      throw SomethingWentWrongError(
+        statusCode: listRes.statusCode,
+        message: listRes.statusMessage,
+      );
+    }
+
+    final body = drive.FileList.fromJson(listRes.data);
+
+    if ((body.files ?? []).isNotEmpty) {
+      // Download the album file if it exists
+      final res = await _client.req(
+        GoogleDriveDownloadEndpoint(id: body.files!.first.id!),
+      );
+
+      if (res.statusCode != 200) {
+        throw SomethingWentWrongError(
+          statusCode: res.statusCode,
+          message: res.statusMessage,
+        );
+      }
+
+      // Convert the downloaded album file to a list of albums
+      final List<int> bytes = [];
+      await for (final chunk in (res.data as ResponseBody).stream) {
+        bytes.addAll(chunk);
+      }
+      final json = jsonDecode(utf8.decode(bytes));
+      final albums = json is! List
+          ? <Album>[]
+          : json.map((e) => Album.fromJson(e)).toList();
+
+      // Attach the new album to the list of albums
+      albums.removeWhere((element) => element.id == id);
+
+      // Update the album file with the new list of albums
+      final updateRes = await _client.req(
+        GoogleDriveContentUpdateEndpoint(
+          id: body.files!.first.id!,
+          content: AppMediaContent(
+            stream: Stream.value(
+              Uint8List.fromList(utf8.encode(jsonEncode(albums))),
+            ),
+            length: utf8.encode(jsonEncode(albums)).length,
+            contentType: 'application/json',
+          ),
+        ),
+      );
+
+      if (updateRes.statusCode == 200) return;
+
+      throw SomethingWentWrongError(
+        statusCode: updateRes.statusCode,
+        message: updateRes.statusMessage,
+      );
+    }
+
+    throw SomethingWentWrongError(
+      message: 'Album file not found',
     );
   }
 }
