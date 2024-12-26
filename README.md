@@ -117,6 +117,40 @@ It’s the simplest way to keep your memories safe and accessible.
 
 <br/>
 
+## Requirements & Project Setup  🛠️  
+Ensure you have the latest stable versions of Flutter and Android Studio installed, along with the Flutter and Dart plugins.
+After that, you can either clone this repository or import the project directly into Android Studio by following the steps outlined in the [documentation](https://developer.android.com/jetpack/compose/setup#sample).
+
+<details>
+     <summary> Click to expand </summary>
+
+### Firebase Setup  
+1. **Create a Firebase App**  
+   - Go to the [Firebase Console](https://console.firebase.google.com/), create a new project, and configure it as needed.  
+
+2. **Set up Firebase in your project**  
+   - Follow the instructions in the official Firebase setup documentation for Flutter:  
+     [Firebase Setup for Flutter](https://firebase.google.com/docs/flutter/setup)  
+
+> **Note:** Cloud Gallery uses the following Firebase services:  
+> - **Analytics**: This tracks user interactions and events in the app.  
+> - **Crashlytics**: This monitors crashes and errors to improve app stability.  
+
+### Dropbox Setup  
+1. Create a Dropbox App with scoped access and full Dropbox access type in the [Dropbox App Console](https://www.dropbox.com/developers/apps).  
+2. Obtain your **App Key** and **App Secret**.  
+
+### Secrets Configuration  
+Create a `secrets.dart` file at the following path inside the `data/apis/network` directory. This file will store your app secrets. Add the following class to manage them:  
+  ```dart  
+  class AppSecrets {  
+    static const dropBoxAppKey = 'YOUR DROPBOX APP KEY';  
+    static const dropBoxAppSecret = 'YOUR DROPBOX APP SECRET';  
+  }  
+```
+</details>
+<br/>
+
 ## Technologies Stack 🖥️
 
 Cloud Gallery utilizes the latest Flutter app development technologies and adheres to industry best
