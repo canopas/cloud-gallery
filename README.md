@@ -172,7 +172,7 @@ for future improvements.
 
 Cloud Gallery is owned and maintained by the [Canopas team](https://canopas.com/).
 
-You can follow them on X at [@canopas_eng](https://x.com/canopas_eng) for
+You can follow them on X at [@canopassoftware](https://x.com/canopassoftware) for
 project updates and releases. If you are interested in building apps or designing products, please
 let us know. We'd love to hear from you!
 
