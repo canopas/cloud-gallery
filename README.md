@@ -148,6 +148,12 @@ Create a `secrets.dart` file at the following path inside the `data/apis/network
     static const dropBoxAppSecret = 'YOUR DROPBOX APP SECRET';  
   }  
 ```
+### Get Dependencies
+1. Run `flutter pub get` in the `app`, `data`, and `style` modules to fetch all required dependencies.
+2. Run `./build_watch` in the base directory in a new terminal window to generate the necessary files.
+
+### Setup Complete! 🎉
+You have successfully set up the project. Now, you can start developing and customizing the app. If you encounter any issues or need further assistance, refer to the documentations or use the discussion to reach out to us for help.
 </details>
 <br/>
 
