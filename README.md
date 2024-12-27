@@ -101,60 +101,14 @@ It’s the simplest way to keep your memories safe and accessible.
 
 <br/>
 
-## What's Coming Next? 🚀
-
-- **Sharing Between Clouds**: Easily share your media files between Google Drive and Dropbox, making
-  it convenient to access and manage your files across multiple cloud providers.
-
-- **Custom Folders & Albums**: Create custom folders and albums to organize your media files, making
-  it easy to categorize and manage your photos and videos.
-
-- **Enhanced Search & Filter**: Quickly find and filter your media files with advanced search and
-  filter options, making it easy to locate specific photos
-
-- **Improve User Experience**: We're continuously working on improving the user experience, with
-  plans to incorporate additional features and enhancements shortly.
+### What’s Coming Next? 🚀
+Excited for the future of Cloud Gallery? Explore our [Feature Queue](https://github.com/canopas/cloud-gallery/wiki/Feature-Queue) to see the upcoming features and enhancements we’re working on. We’re grateful for your support and can’t wait to share what’s next!
 
 <br/>
 
 ## Requirements & Project Setup  🛠️  
-Ensure you have the latest stable versions of Flutter and Android Studio installed, along with the Flutter and Dart plugins.
-After that, you can either clone this repository or import the project directly into Android Studio by following the steps outlined in the [documentation](https://developer.android.com/jetpack/compose/setup#sample).
+For detailed instructions on setting up the Cloud Gallery app in your local development environment, please refer to the [Project Setup](https://github.com/canopas/cloud-gallery/wiki/Project-Setup).
 
-<details>
-     <summary> Click to expand </summary>
-
-### Firebase Setup  
-1. **Create a Firebase App**  
-   - Go to the [Firebase Console](https://console.firebase.google.com/), create a new project, and configure it as needed.  
-
-2. **Set up Firebase in your project**  
-   - Follow the instructions in the official Firebase setup documentation for Flutter:  
-     [Firebase Setup for Flutter](https://firebase.google.com/docs/flutter/setup)  
-
-> **Note:** Cloud Gallery uses the following Firebase services:  
-> - **Analytics**: This tracks user interactions and events in the app.  
-> - **Crashlytics**: This monitors crashes and errors to improve app stability.  
-
-### Dropbox Setup  
-1. Create a Dropbox App with scoped access and full Dropbox access type in the [Dropbox App Console](https://www.dropbox.com/developers/apps).  
-2. Obtain your **App Key** and **App Secret**.  
-
-### Secrets Configuration  
-Create a `secrets.dart` file at the following path inside the `data/apis/network` directory. This file will store your app secrets. Add the following class to manage them:  
-  ```dart  
-  class AppSecrets {  
-    static const dropBoxAppKey = 'YOUR DROPBOX APP KEY';  
-    static const dropBoxAppSecret = 'YOUR DROPBOX APP SECRET';  
-  }  
-```
-### Get Dependencies
-1. Run `flutter pub get` in the `app`, `data`, and `style` modules to fetch all required dependencies.
-2. Run `./build_watch` in the base directory in a new terminal window to generate the necessary files.
-
-### Setup Complete! 🎉
-You have successfully set up the project. Now, you can start developing and customizing the app. If you encounter any issues or need further assistance, refer to the documentations or use the discussion to reach out to us for help.
-</details>
 <br/>
 
 ## Technologies Stack 🖥️
@@ -166,10 +120,9 @@ practices. Below is the current technologies stack used in the development proce
 - [Flutter](https://flutter.dev/)
 - Navigation 2.0 With [Go Router](https://pub.dev/packages/go_router) & [Go Router Builder](https://pub.dev/packages/go_router_builder)
 - [Google Drive API](https://developers.google.com/drive/api/guides/about-sdk)
-- [googleapis SDK](https://pub.dev/packages/googleapis)
 - [Dropbox API](https://www.dropbox.com/developers)
-- [Firebase](https://firebase.google.com/)
 - [Crashlytics](https://firebase.google.com/docs/crashlytics)
+- [Analytics](https://firebase.google.com/docs/analytics)
 - [Riverpod](https://riverpod.dev/)
 - [Dio](https://pub.dev/packages/dio)
 - [Photo manager](https://pub.dev/packages/photo_manager)
@@ -201,10 +154,7 @@ If you have any ideas or suggestions, please let us know. We'd love to hear from
 <br/>
 
 ## Contributions 🤝
-
-We are not currently accepting contributions. However, we appreciate
-community [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions)
-for future improvements.
+The Canopas team enthusiastically welcomes contributions and project participation! There are a bunch of things you can do if you want to contribute! The [Contributor Guide](https://github.com/canopas/cloud-gallery/blob/main/CONTRIBUTING.md) has all the information you need for everything from reporting bugs to contributing entire new features. Please don't hesitate to jump in if you'd like to, or even ask us questions if something isn't clear.
 
 <br/>
 
