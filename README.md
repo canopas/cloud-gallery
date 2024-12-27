@@ -101,19 +101,13 @@ It’s the simplest way to keep your memories safe and accessible.
 
 <br/>
 
-## What's Coming Next? 🚀
+### What’s Coming Next? 🚀
+Excited for the future of Cloud Gallery? Explore our [Feature Queue](https://github.com/canopas/cloud-gallery/wiki/Feature-Queue) to see the upcoming features and enhancements we’re working on. We’re grateful for your support and can’t wait to share what’s next!
 
-- **Sharing Between Clouds**: Easily share your media files between Google Drive and Dropbox, making
-  it convenient to access and manage your files across multiple cloud providers.
+<br/>
 
-- **Custom Folders & Albums**: Create custom folders and albums to organize your media files, making
-  it easy to categorize and manage your photos and videos.
-
-- **Enhanced Search & Filter**: Quickly find and filter your media files with advanced search and
-  filter options, making it easy to locate specific photos
-
-- **Improve User Experience**: We're continuously working on improving the user experience, with
-  plans to incorporate additional features and enhancements shortly.
+## Requirements & Project Setup  🛠️  
+For detailed instructions on setting up the Cloud Gallery app in your local development environment, please refer to the [Project Setup](https://github.com/canopas/cloud-gallery/wiki/Project-Setup).
 
 <br/>
 
@@ -126,10 +120,9 @@ practices. Below is the current technologies stack used in the development proce
 - [Flutter](https://flutter.dev/)
 - Navigation 2.0 With [Go Router](https://pub.dev/packages/go_router) & [Go Router Builder](https://pub.dev/packages/go_router_builder)
 - [Google Drive API](https://developers.google.com/drive/api/guides/about-sdk)
-- [googleapis SDK](https://pub.dev/packages/googleapis)
 - [Dropbox API](https://www.dropbox.com/developers)
-- [Firebase](https://firebase.google.com/)
 - [Crashlytics](https://firebase.google.com/docs/crashlytics)
+- [Analytics](https://firebase.google.com/docs/analytics)
 - [Riverpod](https://riverpod.dev/)
 - [Dio](https://pub.dev/packages/dio)
 - [Photo manager](https://pub.dev/packages/photo_manager)
@@ -161,10 +154,7 @@ If you have any ideas or suggestions, please let us know. We'd love to hear from
 <br/>
 
 ## Contributions 🤝
-
-We are not currently accepting contributions. However, we appreciate
-community [feedback and suggestions](https://github.com/canopas/cloud-gallery/discussions/categories/feedback-suggestions)
-for future improvements.
+The Canopas team enthusiastically welcomes contributions and project participation! There are a bunch of things you can do if you want to contribute! The [Contributor Guide](https://github.com/canopas/cloud-gallery/blob/main/CONTRIBUTING.md) has all the information you need for everything from reporting bugs to contributing entire new features. Please don't hesitate to jump in if you'd like to, or even ask us questions if something isn't clear.
 
 <br/>
 
