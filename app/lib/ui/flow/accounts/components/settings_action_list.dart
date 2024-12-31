@@ -178,7 +178,7 @@ class SettingsActionList extends ConsumerWidget {
           final colors = _getWebPageColors(context, ref);
           showWebView(
             context,
-            "https://canopas.github.io/cloud-gallery/terms-and-conditions?bgColor=${colors.background}&textColor=${colors.text}",
+            "https://cloud-gallery.canopas.com/terms-and-conditions?bgColor=${colors.background}&textColor=${colors.text}",
           );
         },
       );
@@ -199,7 +199,7 @@ class SettingsActionList extends ConsumerWidget {
           final colors = _getWebPageColors(context, ref);
           showWebView(
             context,
-            "https://canopas.github.io/cloud-gallery/privacy-policy?bgColor=${colors.background}&textColor=${colors.text}",
+            "https://cloud-gallery.canopas.com/privacy-policy?bgColor=${colors.background}&textColor=${colors.text}",
           );
         },
       );
