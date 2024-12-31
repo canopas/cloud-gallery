@@ -384,9 +384,7 @@ class DropboxService extends CloudProviderService {
           ? <Album>[]
           : json.map((e) => Album.fromJson(e)).toList();
     } catch (e) {
-      if (e is DioException &&
-          e.response?.statusCode == 409 &&
-          e.response?.data?['error']?['path']?['.tag'] == 'not_found') {
+      if (e is DioException && e.response?.statusCode == 409) {
         return <Album>[];
       }
       rethrow;
@@ -405,7 +403,7 @@ class DropboxService extends CloudProviderService {
         content: AppMediaContent(
           stream: Stream.value(utf8.encode(jsonEncode(album))),
           length: utf8.encode(jsonEncode(album)).length,
-          contentType: 'application/json',
+          contentType: 'application/octet-stream',
         ),
         filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
       ),

@@ -1,4 +1,6 @@
 import '../flow/accounts/accounts_screen.dart';
+import '../flow/albums/albums_screen.dart';
+import '../flow/main/main_screen.dart';
 import '../flow/media_transfer/media_transfer_screen.dart';
 import '../flow/onboard/onboard_screen.dart';
 import 'package:data/models/media/media.dart';
@@ -12,19 +14,12 @@ part 'app_route.g.dart';
 
 class AppRoutePath {
   static const home = '/';
+  static const albums = '/albums';
   static const onBoard = '/on-board';
   static const accounts = '/accounts';
   static const preview = '/preview';
   static const transfer = '/transfer';
   static const metaDataDetails = '/metadata-details';
-}
-
-@TypedGoRoute<HomeRoute>(path: AppRoutePath.home)
-class HomeRoute extends GoRouteData {
-  const HomeRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
 @TypedGoRoute<OnBoardRoute>(path: AppRoutePath.onBoard)
@@ -36,22 +31,79 @@ class OnBoardRoute extends GoRouteData {
       const OnBoardScreen();
 }
 
-@TypedGoRoute<AccountRoute>(path: AppRoutePath.accounts)
-class AccountRoute extends GoRouteData {
-  const AccountRoute();
+@TypedStatefulShellRoute<MainShellRoute>(
+  branches: [
+    TypedStatefulShellBranch<HomeShellBranch>(
+      routes: [
+        TypedGoRoute<HomeRoute>(path: AppRoutePath.home),
+      ],
+    ),
+    TypedStatefulShellBranch<AlbumsShellBranch>(
+      routes: [
+        TypedGoRoute<AlbumsRoute>(path: AppRoutePath.albums),
+      ],
+    ),
+    TypedStatefulShellBranch<TransferShellBranch>(
+      routes: [
+        TypedGoRoute<TransferRoute>(path: AppRoutePath.transfer),
+      ],
+    ),
+    TypedStatefulShellBranch<AccountsShellBranch>(
+      routes: [
+        TypedGoRoute<AccountRoute>(path: AppRoutePath.accounts),
+      ],
+    ),
+  ],
+)
+class MainShellRoute extends StatefulShellRouteData {
+  const MainShellRoute();
+
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) =>
+      MainScreen(navigationShell: navigationShell);
+}
+
+class HomeShellBranch extends StatefulShellBranchData {}
+
+class AlbumsShellBranch extends StatefulShellBranchData {}
+
+class TransferShellBranch extends StatefulShellBranchData {}
+
+class AccountsShellBranch extends StatefulShellBranchData {}
+
+class HomeRoute extends GoRouteData {
+  const HomeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
+}
+
+class AlbumsRoute extends GoRouteData {
+  const AlbumsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const AccountsScreen();
+      const AlbumsScreen();
 }
 
-@TypedGoRoute<TransferRoute>(path: AppRoutePath.transfer)
 class TransferRoute extends GoRouteData {
   const TransferRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const MediaTransferScreen();
+}
+
+class AccountRoute extends GoRouteData {
+  const AccountRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const AccountsScreen();
 }
 
 class MediaPreviewRouteData {

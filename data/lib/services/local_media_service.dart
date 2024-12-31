@@ -74,6 +74,12 @@ class LocalMediaService {
     return files.nonNulls.toList();
   }
 
+  Future<AppMedia?> getMedia({required String id}) async {
+    final asset = await AssetEntity.fromId(id);
+    if (asset == null) return null;
+    return AppMedia.fromAssetEntity(asset);
+  }
+
   Future<List<String>> deleteMedias(List<String> medias) async {
     return await PhotoManager.editor.deleteWithIds(medias);
   }
@@ -101,7 +107,7 @@ class LocalMediaService {
 
   Future<Database> openAlbumDatabase() async {
     return await openDatabase(
-      LocalDatabaseConstants.databaseName,
+      LocalDatabaseConstants.albumDatabaseName,
       version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
@@ -110,7 +116,7 @@ class LocalMediaService {
           'name TEXT NOT NULL, '
           'source TEXT NOT NULL, '
           'created_at TEXT NOT NULL, '
-          'medias TEXT NOT NULL, '
+          'medias TEXT NOT NULL '
           ')',
         );
       },
@@ -158,7 +164,7 @@ class LocalMediaService {
     await db.close();
   }
 
-  Future<List<Album>> getAllAlbums() async {
+  Future<List<Album>> getAlbums() async {
     final db = await openAlbumDatabase();
     final albums = await db.query(LocalDatabaseConstants.albumsTable);
     await db.close();

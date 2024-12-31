@@ -64,11 +64,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _errorObserver();
     return AppPage(
       titleWidget: const HomeAppTitle(),
-      actions: const [
-        HomeTransferButton(),
-        SizedBox(width: 8),
-        HomeAccountButton(),
-      ],
       body: FadeInSwitcher(child: _body(context: context)),
     );
   }

@@ -89,6 +89,7 @@ class AppPage extends StatelessWidget {
                 leading == null
             ? null
             : AppBar(
+                centerTitle: true,
                 backgroundColor: barBackgroundColor,
                 title: titleWidget ?? _title(context),
                 actions: [...?actions, const SizedBox(width: 16)],
@@ -150,6 +151,7 @@ class AdaptiveAppBar extends StatelessWidget {
         : Column(
             children: [
               AppBar(
+                centerTitle: true,
                 backgroundColor: context.colorScheme.barColor,
                 leading: leading,
                 actions: actions,

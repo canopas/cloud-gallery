@@ -9,6 +9,7 @@ class ProviderConstants {
 
 class LocalDatabaseConstants {
   static const String databaseName = 'cloud-gallery.db';
+  static const String albumDatabaseName = 'cloud-gallery-album.db';
   static const String uploadQueueTable = 'UploadQueue';
   static const String downloadQueueTable = 'DownloadQueue';
   static const String albumsTable = 'Albums';

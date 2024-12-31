@@ -25,7 +25,7 @@ class GoogleDriveService extends CloudProviderService {
 
   GoogleDriveService(this._client);
 
-  //FOLDERS --------------------------------------------------------------------
+  // FOLDERS -------------------------------------------------------------------
 
   Future<String?> getBackUpFolderId() async {
     final res = await _client.req(
@@ -79,7 +79,7 @@ class GoogleDriveService extends CloudProviderService {
     );
   }
 
-  //MEDIA ----------------------------------------------------------------------
+  // MEDIA ---------------------------------------------------------------------
 
   @override
   Future<List<AppMedia>> getAllMedias({
