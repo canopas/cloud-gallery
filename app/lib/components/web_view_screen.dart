@@ -37,9 +37,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
-            if (request.url
-                    .startsWith("https://canopas.github.io/cloud-gallery/") &&
-                request.url != "https://canopas.github.io/cloud-gallery/") {
+            if (request.url.startsWith("https://cloud-gallery.canopas.com/") &&
+                request.url != "https://cloud-gallery.canopas.com/") {
               return NavigationDecision.navigate;
             }
             return NavigationDecision.prevent;
