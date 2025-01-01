@@ -6,6 +6,6 @@ class ProviderConstants {
       'Cloud Gallery Local File Information';
 }
 
-class FeatureFlag{
-   static final googleDriveSupport = false;
+class FeatureFlag {
+  static final googleDriveSupport = false;
 }
