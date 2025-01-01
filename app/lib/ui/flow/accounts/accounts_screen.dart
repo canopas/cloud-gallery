@@ -1,3 +1,4 @@
+import 'package:data/domain/config.dart';
 import '../../../components/app_page.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../gen/assets.gen.dart';
@@ -83,7 +84,8 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
           padding: context.systemPadding +
               const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           children: [
-            _googleAccount(context: context),
+            if (FeatureFlag.googleDriveSupport)
+              _googleAccount(context: context),
             const SizedBox(height: 8),
             _dropboxAccount(context: context),
             const SizedBox(height: 8),
