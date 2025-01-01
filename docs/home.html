@@ -41,11 +41,17 @@
             font-size: 16px;
             margin-bottom: 20px;
         }
+        .app-details img {
+           transition: transform 0.3s;
+        }
+        .app-details img:hover {
+            transform: scale(1.05);
+        }
         .app-details .screenshots img {
-            width: 300px;
+            width: 500px;
             height: auto;
             border-radius: 10px;
-            margin: 0 10px; 
+            margin: 0 10px;
             transition: transform 0.3s;
         }
         .app-details .screenshots img:hover {
@@ -126,6 +132,9 @@
             footer .footer-section {
                 align-items: center;
             }
+             .app-details .screenshots img {
+              width: 100%;
+            }
         }
         @media (max-width: 480px) {
             .features .feature-list .feature {
@@ -154,7 +163,7 @@
             </div>
         </div>
         <div class="screenshots">
-            <img src="https://github.com/canopas/cloud-gallery/raw/main/screenshots/home-light.png"
+            <img src="https://github.com/canopas/cloud-gallery/raw/main/screenshots/app-preview.png"
                  alt="Screenshot">
 
         </div>
@@ -165,25 +174,29 @@
             <div class="feature">
                 <h3>Sync with Cloud Providers</h3>
                 <p>Easily access and manage your photos and videos stored on both your
-                    device and cloud accounts like Google Drive and Dropbox, all in one place. Enjoy the convenience
+                    device and cloud accounts like Google Drive and Dropbox, all in one place. Enjoy
+                    the convenience
                     of having your memories at your fingertips, wherever you go.</p>
             </div>
             <div class="feature">
                 <h3>Auto Backup to Cloud</h3>
                 <p>Never worry about losing your cherished memories again! Cloud
-                    Gallery’s auto backup feature ensures your local photos and videos are automatically backed up to
+                    Gallery’s auto backup feature ensures your local photos and videos are
+                    automatically backed up to
                     either Google Drive or Dropbox, keeping them safe and secure.</p>
             </div>
             <div class="feature">
                 <h3>Effortless Uploads & Downloads</h3>
                 <p>Upload photos and videos from your device’s local storage to
-                    your cloud account, and easily download files from Google Drive or Dropbox to your device with
+                    your cloud account, and easily download files from Google Drive or Dropbox to
+                    your device with
                     just a tap.</p>
             </div>
             <div class="feature">
                 <h3>Access Media on Multiple Devices</h3>
                 <p>With the cloud feature, access your media seamlessly across
-                    multiple devices, ensuring your content is always at your fingertips, no matter where you are.</p>
+                    multiple devices, ensuring your content is always at your fingertips, no matter
+                    where you are.</p>
             </div>
             <div class="feature">
                 <h3>Stay Organized</h3>
@@ -231,5 +244,8 @@
         </a>
     </div>
 </footer>
+<div style="text-align:center;">
+    <p style="font-size: 14px; color: #6c757d;">© 2025 Cloud Gallery | Built with ❤️ In India </p>
+</div>
 </body>
 </html>
