@@ -5,3 +5,7 @@ class ProviderConstants {
   static const String dropboxAppTemplateName =
       'Cloud Gallery Local File Information';
 }
+
+class FeatureFlag{
+   static final googleDriveSupport = false;
+}
