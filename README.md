@@ -1,5 +1,4 @@
 <p align="center"> <a href="https://canopas.com/contact"><img src="./cta/cta-banner.png"></a></p>
-
 <br/>
 
 # Cloud Gallery: All Your Memories in One Spot

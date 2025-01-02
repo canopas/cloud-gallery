@@ -41,6 +41,12 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
     _router = GoRouter(
       initialLocation: _configureInitialRoute(),
       routes: $appRoutes,
+      redirect: (context, state) {
+        if (state.uri.path.contains('/auth')) {
+          return '/';
+        }
+        return null;
+      },
     );
     super.initState();
   }

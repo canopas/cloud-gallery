@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="Cloud Gallery: Manage photos and videos from Google Drive, Dropbox, and your device in one place.">
+    <meta name="keywords"
+          content="Cloud Gallery, Photos, Videos, Google Drive, Dropbox, Media, Backup">
+    <meta name="author" content="Cloud Gallery Team">
+    <title>Cloud Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            color: black;
+        }
+        a {
+          text-decoration: none;
+        }
+       header {
+            position: fixed;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.6);
+            z-index: 1000;
+        }
+        header img {
+            height: 24px;
+            margin-right: 10px;
+        }
+        header .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+            text-decoration: none;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .app-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            padding-top: 80px;
+        }
+        .app-details .content {
+            max-width: 50%;
+        }
+        .app-details h2 {
+            color: black;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .app-details p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .app-details img {
+           transition: transform 0.3s;
+        }
+        .app-details img:hover {
+            transform: scale(1.05);
+        }
+        .app-details .screenshots img {
+            width: 500px;
+            height: auto;
+            border-radius: 10px;
+            margin: 0 10px;
+            transition: transform 0.3s;
+        }
+        .app-details .screenshots img:hover {
+            transform: scale(1.05);
+        }
+        .features {
+            padding: 40px 20px;
+        }
+        .features h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .features .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .feature {
+            padding: 20px;
+            width: 28%;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+        .feature:hover {
+            transform: translateY(-5px);
+            background-color: rgba(204, 49, 61, 0.1);
+        }
+        .feature h3 {
+            margin-bottom: 10px;
+        }
+        footer {
+            display: flex;
+           justify-content: space-around;
+            padding: 40px 20px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+        footer .footer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        footer a {
+            text-decoration: none;
+            color: black;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        footer a:hover {
+            color: #CC313D;
+        }
+        footer img {
+            width: 150px;
+            transition: transform 0.3s;
+        }
+        footer img:hover {
+            transform: scale(1.05);
+        }
+        @media (max-width: 768px) {
+            .app-details {
+                flex-direction: column;
+                text-align: center;
+            }
+            .app-details .content {
+                max-width: 100%;
+                margin-bottom: 40px;
+            }
+            .features .feature-list .feature {
+                width: 95%;
+            }
+            footer {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            footer .footer-section {
+                align-items: center;
+            }
+             .app-details .screenshots img {
+              width: 100%;
+            }
+        }
+        @media (max-width: 480px) {
+            .features .feature-list .feature {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <img src="https://github.com/canopas/cloud-gallery/raw/main/app/assets/images/app_icon.png"
+         alt="Cloud Gallery Logo">
+    <p class="logo">Cloud Gallery</p>
+</header>
+<div class="container">
+    <section class="app-details">
+        <div class="content">
+            <h2>Cloud Gallery: All Your Memories in One Spot</h2>
+            <p>Easily view and manage photos, videos from Google
+                Drive, Dropbox, and your device, all in a simple, user-friendly interface.</p>
+            <div>
+                <a href="https://play.google.com/store/apps/details?id=com.canopas.cloud_gallery">
+                    <img src="https://github.com/canopas/cloud-gallery/raw/main/cta/google-play.png"
+                         width="200" alt="Download on Google Play">
+                </a>
+                <a href="https://apps.apple.com/in/app/cloud-gallery/id6480052005?platform=iphone">
+                    <img src="https://github.com/canopas/cloud-gallery/raw/main/cta/app-store.png"
+                         width="200" alt="Download on App Store">
+                </a>
+            </div>
+        </div>
+        <div class="screenshots">
+            <img src="https://github.com/canopas/cloud-gallery/raw/main/screenshots/app-preview.png"
+                 alt="Screenshot">
+
+        </div>
+    </section>
+    <section class="features">
+        <h1>Features</h1>
+        <div class="feature-list">
+            <div class="feature">
+                <h3>Sync with Cloud Providers</h3>
+                <p>Easily access and manage your photos and videos stored on both your
+                    device and cloud accounts like Google Drive and Dropbox, all in one place. Enjoy
+                    the convenience
+                    of having your memories at your fingertips, wherever you go.</p>
+            </div>
+            <div class="feature">
+                <h3>Auto Backup to Cloud</h3>
+                <p>Never worry about losing your cherished memories again! Cloud
+                    Gallery’s auto backup feature ensures your local photos and videos are
+                    automatically backed up to
+                    either Google Drive or Dropbox, keeping them safe and secure.</p>
+            </div>
+            <div class="feature">
+                <h3>Effortless Uploads & Downloads</h3>
+                <p>Upload photos and videos from your device’s local storage to
+                    your cloud account, and easily download files from Google Drive or Dropbox to
+                    your device with
+                    just a tap.</p>
+            </div>
+            <div class="feature">
+                <h3>Access Media on Multiple Devices</h3>
+                <p>With the cloud feature, access your media seamlessly across
+                    multiple devices, ensuring your content is always at your fingertips, no matter
+                    where you are.</p>
+            </div>
+            <div class="feature">
+                <h3>Stay Organized</h3>
+                <p>Organize and categorize your photos and videos in Google Drive or Dropbox,
+                    making it easy to find and manage your media files.</p>
+            </div>
+            <div class="feature">
+                <h3>Secure User Data</h3>
+                <p>With an intuitive and user-friendly interface, Cloud Gallery makes it easy
+                    to manage your media files, ensuring a hassle-free experience.</p>
+            </div>
+            <div class="feature">
+                <h3>Cross-Platform Compatibility</h3>
+                <p>Whether you're using an Android or iOS device, Cloud Gallery
+                    offers seamless compatibility across platforms.</p>
+            </div>
+            <div class="feature">
+                <h3>User-Friendly Interface</h3>
+                <p>With an intuitive and user-friendly interface, Cloud Gallery makes it
+                    easy to manage your media files, ensuring a hassle-free experience.</p>
+            </div>
+        </div>
+    </section>
+</div>
+<footer>
+    <div class="footer-section">
+        <a href="https://cloud-gallery.canopas.com/terms-and-conditions">Terms and Conditions</a>
+        <a href="https://cloud-gallery.canopas.com/privacy-policy">Privacy Policy</a>
+        <a href="https://github.com/canopas/cloud-gallery/wiki">Wiki</a>
+    </div>
+    <div class="footer-section">
+        <a href="https://github.com/canopas/cloud-gallery/issues">Report an Issue</a>
+        <a href="https://github.com/canopas/cloud-gallery/discussions">Discussions</a>
+        <a href="https://github.com/canopas/cloud-gallery">Github</a>
+        <a href="https://canopas.com">Developer</a>
+    </div>
+    <div class="footer-section">
+        <a href="https://play.google.com/store/apps/details?id=com.canopas.cloud_gallery">
+            <img src="https://github.com/canopas/cloud-gallery/raw/main/cta/google-play.png"
+                 alt="Download from Google Play">
+        </a>
+        <a href="https://apps.apple.com/in/app/cloud-gallery/id6480052005?platform=iphone">
+            <img src="https://github.com/canopas/cloud-gallery/raw/main/cta/app-store.png"
+                 alt="Download on App Store">
+        </a>
+    </div>
+</footer>
+<div style="text-align:center;">
+    <p style="font-size: 14px; color: #6c757d;">© 2025 Cloud Gallery | Built with ❤️ In India </p>
+</div>
+</body>
+</html>

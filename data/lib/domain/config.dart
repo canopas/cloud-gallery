@@ -14,3 +14,7 @@ class LocalDatabaseConstants {
   static const String downloadQueueTable = 'DownloadQueue';
   static const String albumsTable = 'Albums';
 }
+
+class FeatureFlag {
+  static final googleDriveSupport = false;
+}
