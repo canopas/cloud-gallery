@@ -39,12 +39,6 @@ final mediaProcessRepoProvider = Provider<MediaProcessRepo>((ref) {
   return repo;
 });
 
-class LocalDatabaseConstants {
-  static const String databaseName = 'cloud-gallery.db';
-  static const String uploadQueueTable = 'UploadQueue';
-  static const String downloadQueueTable = 'DownloadQueue';
-}
-
 class ProcessNotificationConstants {
   static const String uploadProcessGroupIdentifier =
       'cloud_gallery_upload_process';

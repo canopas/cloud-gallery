@@ -20,9 +20,6 @@ class AppColors {
   static const surfaceLightColor = Color(0xFFFFFFFF);
   static const surfaceDarkColor = Color(0xFF000000);
 
-  static const barLightColor = Color(0xCCFFFFFF);
-  static const barDarkColor = Color(0xCC000000);
-
   static const textPrimaryLightColor = Color(0xDE000000);
   static const textSecondaryLightColor = Color(0x99000000);
   static const textDisabledLightColor = Color(0x66000000);

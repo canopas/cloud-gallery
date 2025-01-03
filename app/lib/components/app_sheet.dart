@@ -6,6 +6,7 @@ Future<T?> showAppSheet<T>({
   required Widget child,
 }) {
   return showModalBottomSheet(
+    useRootNavigator: true,
     backgroundColor: context.colorScheme.containerNormalOnSurface,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(22),

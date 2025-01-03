@@ -15,6 +15,7 @@
   "common_info":"Info",
   "common_upload": "Upload",
   "common_download": "Download",
+  "common_edit": "Edit",
   "common_delete": "Delete",
   "common_share": "Share",
   "common_cancel": "Cancel",
@@ -115,6 +116,27 @@
   "download_in_progress_text": "Download in progress",
   "empty_media_title": "Oh Snap! No Media Found!",
   "empty_media_message": "Looks like your gallery is taking a little break.",
+
+  "@_ALBUM":{},
+  "album_screen_title": "Albums",
+  "empty_album_title": "Oops! No Albums Here!",
+  "empty_album_message": "It seems like there are no albums to show right now. You can create a new one. We've got you covered!",
+
+  "@_ADD_ALBUM":{},
+  "add_album_screen_title": "Album",
+  "album_tame_field_title": "Album Name",
+  "store_in_title": "Store In",
+  "store_in_device_title": "Device",
+
+  "@_ALBUM_MEDIA_LIST":{},
+  "add_media_title": "Add Media",
+
+  "@_MEDIA_SELECTION":{},
+  "select_from_device_title": "Select from Device",
+  "select_from_google_drive_title": "Select from Google Drive",
+  "select_from_dropbox_title": "Select from Dropbox",
+  "no_media_access_title": "No cloud media access",
+  "no_cloud_media_access_message": "You don't have access to view media files, check you sign in with the cloud!",
 
 
   "@_MEDIA_INFO":{},

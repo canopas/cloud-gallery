@@ -32,7 +32,6 @@ class AppColorScheme {
   final Color outline;
   final Color textPrimary;
   final Color textSecondary;
-  final Color barColor;
   final Color textDisabled;
   final Color outlineInverse;
   final Color textInversePrimary;
@@ -66,7 +65,6 @@ class AppColorScheme {
     required this.textDisabled,
     required this.outlineInverse,
     required this.textInversePrimary,
-    required this.barColor,
     required this.textInverseSecondary,
     required this.textInverseDisabled,
     required this.containerNormalInverse,
@@ -120,7 +118,6 @@ final appColorSchemeLight = AppColorScheme(
   onPrimary: AppColors.textPrimaryDarkColor,
   onSecondary: AppColors.textSecondaryDarkColor,
   onDisabled: AppColors.textDisabledLightColor,
-  barColor: AppColors.barLightColor,
   brightness: Brightness.light,
 );
 
@@ -152,6 +149,5 @@ final appColorSchemeDark = AppColorScheme(
   onPrimary: AppColors.textPrimaryDarkColor,
   onSecondary: AppColors.textSecondaryDarkColor,
   onDisabled: AppColors.textDisabledDarkColor,
-  barColor: AppColors.barDarkColor,
   brightness: Brightness.dark,
 );

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../indicators/circular_progress_indicator.dart';
 
 class ActionButton extends StatelessWidget {
-  final void Function() onPressed;
+  final void Function()? onPressed;
   final Widget icon;
   final bool progress;
   final MaterialTapTargetSize tapTargetSize;
@@ -14,7 +14,7 @@ class ActionButton extends StatelessWidget {
 
   const ActionButton({
     super.key,
-    required this.onPressed,
+    this.onPressed,
     required this.icon,
     this.size = 40,
     this.tapTargetSize = MaterialTapTargetSize.padded,
