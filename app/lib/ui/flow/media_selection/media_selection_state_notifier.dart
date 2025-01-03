@@ -181,12 +181,14 @@ class MediaSelectionStateNotifier extends StateNotifier<MediaSelectionState> {
   }
 
   void toggleMediaSelection(AppMedia media) {
-    String id = media.id;
+    String id;
 
     if (_source == AppMediaSource.googleDrive) {
       id = media.driveMediaRefId!;
     } else if (_source == AppMediaSource.dropbox) {
       id = media.dropboxMediaRefId!;
+    } else {
+      id = media.id;
     }
 
     if (state.selectedMedias.contains(id)) {
@@ -199,7 +201,7 @@ class MediaSelectionStateNotifier extends StateNotifier<MediaSelectionState> {
       state = state.copyWith(
         selectedMedias: [
           ...state.selectedMedias,
-          media.id,
+          id,
         ],
       );
     }

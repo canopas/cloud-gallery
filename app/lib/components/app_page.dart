@@ -92,6 +92,8 @@ class AppPage extends StatelessWidget {
             : AppBar(
                 centerTitle: true,
                 backgroundColor: barBackgroundColor,
+                scrolledUnderElevation: 0.5,
+                shadowColor: context.colorScheme.textDisabled,
                 title: titleWidget ?? _title(context),
                 actions: [...?actions, const SizedBox(width: 16)],
                 leading: leading,

@@ -48,7 +48,12 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
     this._logger,
     GoogleSignInAccount? googleAccount,
     DropboxAccount? dropboxAccount,
-  ) : super(const AlbumsState()) {
+  ) : super(
+          AlbumsState(
+            googleAccount: googleAccount,
+            dropboxAccount: dropboxAccount,
+          ),
+        ) {
     loadAlbums();
   }
 

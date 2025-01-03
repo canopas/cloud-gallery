@@ -44,7 +44,7 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
       routes: $appRoutes,
       redirect: (context, state) {
         if (state.uri.path.contains('/auth')) {
-          return '/';
+          return AppRoutePath.accounts;
         }
         return null;
       },

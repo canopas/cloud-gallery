@@ -63,6 +63,8 @@ class AddAlbumStateNotifier extends StateNotifier<AddAlbumsState> {
           AddAlbumsState(
             albumNameController: TextEditingController(text: editAlbum?.name),
             mediaSource: editAlbum?.source ?? AppMediaSource.local,
+            googleAccount: googleAccount,
+            dropboxAccount: dropboxAccount,
           ),
         );
 

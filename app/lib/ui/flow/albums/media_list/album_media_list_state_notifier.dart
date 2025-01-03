@@ -112,16 +112,16 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
     }
   }
 
-  Future<void> addMedias(List<String> medias) async {
+  Future<void> updateAlbumMedias({
+    required List<String> medias,
+    bool append = true,
+  }) async {
     try {
       state = state.copyWith(actionError: null);
       if (state.album.source == AppMediaSource.local) {
         await _localMediaService.updateAlbum(
           state.album.copyWith(
-            medias: [
-              ...state.album.medias,
-              ...medias,
-            ],
+            medias: append ? [...state.album.medias, ...medias] : medias,
           ),
         );
       } else if (state.album.source == AppMediaSource.googleDrive) {
@@ -132,19 +132,13 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
         await _googleDriveService.updateAlbum(
           folderId: _backupFolderId!,
           album: state.album.copyWith(
-            medias: [
-              ...state.album.medias,
-              ...medias,
-            ],
+            medias: append ? [...state.album.medias, ...medias] : medias,
           ),
         );
       } else if (state.album.source == AppMediaSource.dropbox) {
         await _dropboxService.updateAlbum(
           state.album.copyWith(
-            medias: [
-              ...state.album.medias,
-              ...medias,
-            ],
+            medias: append ? [...state.album.medias, ...medias] : medias,
           ),
         );
       }
@@ -160,6 +154,7 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
   }
 
   Future<void> loadMedia({bool reload = false}) async {
+    ///TODO: remove deleted media
     try {
       if (state.loading) return;
 
@@ -175,14 +170,13 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
         final loadedMediaIds = state.medias.map((e) => e.id).toList();
         final moreMediaIds = state.album.medias
             .where((element) => !loadedMediaIds.contains(element))
+            .take(30)
             .toList();
 
         medias = await Future.wait(
-          moreMediaIds
-              .take(moreMediaIds.length > 30 ? 30 : moreMediaIds.length)
-              .map(
-                (id) => _localMediaService.getMedia(id: id),
-              ),
+          moreMediaIds.map(
+            (id) => _localMediaService.getMedia(id: id),
+          ),
         ).then(
           (value) => value.nonNulls.toList(),
         );
@@ -191,13 +185,12 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
             state.medias.map((e) => e.driveMediaRefId).nonNulls.toList();
         final moreMediaIds = state.album.medias
             .where((element) => !loadedMediaIds.contains(element))
+            .take(30)
             .toList();
         medias = await Future.wait(
-          moreMediaIds
-              .take(moreMediaIds.length > 30 ? 30 : moreMediaIds.length)
-              .map(
-                (id) => _googleDriveService.getMedia(id: id),
-              ),
+          moreMediaIds.map(
+            (id) => _googleDriveService.getMedia(id: id),
+          ),
         ).then(
           (value) => value.nonNulls.toList(),
         );
@@ -206,13 +199,12 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
             state.medias.map((e) => e.dropboxMediaRefId).nonNulls.toList();
         final moreMediaIds = state.album.medias
             .where((element) => !loadedMediaIds.contains(element))
+            .take(30)
             .toList();
         medias = await Future.wait(
-          moreMediaIds
-              .take(moreMediaIds.length > 30 ? 30 : moreMediaIds.length)
-              .map(
-                (id) => _dropboxService.getMedia(id: id),
-              ),
+          moreMediaIds.map(
+            (id) => _dropboxService.getMedia(id: id),
+          ),
         ).then(
           (value) => value.nonNulls.toList(),
         );

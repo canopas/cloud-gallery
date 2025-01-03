@@ -131,7 +131,11 @@ class DropboxService extends CloudProviderService {
           nextPageToken = response.data['cursor'];
           medias.addAll(
             (response.data['entries'] as List)
-                .where((element) => element['.tag'] == 'file')
+                .where(
+                  (element) =>
+                      element['.tag'] == 'file' &&
+                      element['name'] != 'Albums.json',
+                )
                 .map((e) => AppMedia.fromDropboxJson(json: e))
                 .toList(),
           );
@@ -177,7 +181,8 @@ class DropboxService extends CloudProviderService {
       );
       if (response.statusCode == 200) {
         final files = (response.data['entries'] as List).where(
-          (element) => element['.tag'] == 'file',
+          (element) =>
+              element['.tag'] == 'file' && element['name'] != 'Albums.json',
         );
 
         final metadataResponses = await Future.wait(
@@ -378,6 +383,8 @@ class DropboxService extends CloudProviderService {
     );
   }
 
+  // ALBUM ---------------------------------------------------------------------
+
   Future<List<Album>> getAlbums() async {
     try {
       final res = await _dropboxAuthenticatedDio.req(
@@ -417,8 +424,8 @@ class DropboxService extends CloudProviderService {
         mode: 'overwrite',
         autoRename: false,
         content: AppMediaContent(
-          stream: Stream.value(utf8.encode(jsonEncode(album))),
-          length: utf8.encode(jsonEncode(album)).length,
+          stream: Stream.value(utf8.encode(jsonEncode(albums))),
+          length: utf8.encode(jsonEncode(albums)).length,
           contentType: 'application/octet-stream',
         ),
         filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
@@ -444,7 +451,7 @@ class DropboxService extends CloudProviderService {
         content: AppMediaContent(
           stream: Stream.value(utf8.encode(jsonEncode(albums))),
           length: utf8.encode(jsonEncode(albums)).length,
-          contentType: 'application/json',
+          contentType: 'application/octet-stream',
         ),
         filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
       ),
@@ -478,7 +485,7 @@ class DropboxService extends CloudProviderService {
         content: AppMediaContent(
           stream: Stream.value(utf8.encode(jsonEncode(albums))),
           length: utf8.encode(jsonEncode(albums)).length,
-          contentType: 'application/json',
+          contentType: 'application/octet-stream',
         ),
         filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
       ),

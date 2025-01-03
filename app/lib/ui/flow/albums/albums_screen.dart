@@ -3,6 +3,7 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/animations/fade_in_switcher.dart';
 import 'package:style/animations/on_tap_scale.dart';
@@ -18,6 +19,7 @@ import '../../../components/place_holder_screen.dart';
 import '../../../components/snack_bar.dart';
 import '../../../components/thumbnail_builder.dart';
 import '../../../domain/extensions/context_extensions.dart';
+import '../../../gen/assets.gen.dart';
 import '../../navigation/app_route.dart';
 import 'albums_view_notifier.dart';
 
@@ -74,7 +76,7 @@ class _AlbumsScreenState extends ConsumerState<AlbumsScreen> {
   Widget _body({required BuildContext context}) {
     final state = ref.watch(albumStateNotifierProvider);
 
-    if (state.loading) {
+    if (state.loading && state.albums.isEmpty) {
       return const Center(child: AppCircularProgressIndicator());
     } else if (state.error != null) {
       return ErrorScreen(
@@ -94,21 +96,22 @@ class _AlbumsScreenState extends ConsumerState<AlbumsScreen> {
     }
 
     return GridView(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.9,
-        crossAxisSpacing: 16,
+        crossAxisSpacing: 8,
         mainAxisSpacing: 16,
       ),
       children: state.albums
           .map(
             (album) => AlbumItem(
               album: album,
-              onTap: () {
-                AlbumMediaListRoute(
+              onTap: () async {
+                await AlbumMediaListRoute(
                   $extra: album,
                 ).push(context);
+                _notifier.loadAlbums();
               },
               onLongTap: () {
                 showAppSheet(
@@ -204,10 +207,36 @@ class AlbumItem extends StatelessWidget {
                   ),
           ),
           const SizedBox(height: 10),
-          Text(
-            album.name,
-            style: AppTextStyles.subtitle1.copyWith(
-              color: context.colorScheme.textPrimary,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                if (album.source == AppMediaSource.dropbox) ...[
+                  SvgPicture.asset(
+                    Assets.images.icDropbox,
+                    width: 18,
+                    height: 18,
+                  ),
+                  const SizedBox(width: 4),
+                ],
+                if (album.source == AppMediaSource.googleDrive) ...[
+                  SvgPicture.asset(
+                    Assets.images.icGoogleDrive,
+                    width: 18,
+                    height: 18,
+                  ),
+                  const SizedBox(width: 4),
+                ],
+                Expanded(
+                  child: Text(
+                    album.name,
+                    style: AppTextStyles.subtitle1.copyWith(
+                      color: context.colorScheme.textPrimary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

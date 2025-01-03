@@ -44,60 +44,34 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ];
 
-    return Column(
-      children: [
-        Expanded(child: widget.navigationShell),
-        (!kIsWeb && Platform.isIOS)
-            ? CupertinoTabBar(
-                currentIndex: widget.navigationShell.currentIndex,
-                activeColor: context.colorScheme.primary,
-                inactiveColor: context.colorScheme.textDisabled,
-                onTap: (index) => _goBranch(
-                  index: index,
-                  context: context,
-                ),
-                backgroundColor: context.colorScheme.surface,
-                border: Border(
-                  top: BorderSide(
-                    color: context.colorScheme.outline,
-                    width: 1,
+    return Material(
+      color: context.colorScheme.surface,
+      child: Column(
+        children: [
+          Expanded(child: widget.navigationShell),
+          (!kIsWeb && Platform.isIOS)
+              ? CupertinoTabBar(
+                  currentIndex: widget.navigationShell.currentIndex,
+                  activeColor: context.colorScheme.primary,
+                  inactiveColor: context.colorScheme.textDisabled,
+                  onTap: (index) => _goBranch(
+                    index: index,
+                    context: context,
                   ),
-                ),
-                items: tabs
-                    .map(
-                      (e) => BottomNavigationBarItem(
-                        icon: Icon(
-                          e.icon,
-                          color: context.colorScheme.textDisabled,
-                          size: 22,
-                        ),
-                        label: e.label,
-                        activeIcon: Icon(
-                          e.activeIcon,
-                          color: context.colorScheme.primary,
-                          size: 24,
-                        ),
-                      ),
-                    )
-                    .toList(),
-              )
-            : Container(
-                decoration: BoxDecoration(
+                  backgroundColor: context.colorScheme.surface,
                   border: Border(
                     top: BorderSide(
                       color: context.colorScheme.outline,
                       width: 1,
                     ),
                   ),
-                ),
-                child: BottomNavigationBar(
                   items: tabs
                       .map(
                         (e) => BottomNavigationBarItem(
                           icon: Icon(
                             e.icon,
                             color: context.colorScheme.textDisabled,
-                            size: 24,
+                            size: 22,
                           ),
                           label: e.label,
                           activeIcon: Icon(
@@ -108,21 +82,50 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       )
                       .toList(),
-                  currentIndex: widget.navigationShell.currentIndex,
-                  selectedItemColor: context.colorScheme.primary,
-                  unselectedItemColor: context.colorScheme.textDisabled,
-                  backgroundColor: context.colorScheme.surface,
-                  type: BottomNavigationBarType.fixed,
-                  selectedFontSize: 12,
-                  unselectedFontSize: 12,
-                  elevation: 0,
-                  onTap: (index) => _goBranch(
-                    index: index,
-                    context: context,
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.surface,
+                    border: Border(
+                      top: BorderSide(
+                        color: context.colorScheme.outline,
+                      ),
+                    ),
+                  ),
+                  child: BottomNavigationBar(
+                    items: tabs
+                        .map(
+                          (e) => BottomNavigationBarItem(
+                            icon: Icon(
+                              e.icon,
+                              color: context.colorScheme.textDisabled,
+                              size: 24,
+                            ),
+                            label: e.label,
+                            activeIcon: Icon(
+                              e.activeIcon,
+                              color: context.colorScheme.primary,
+                              size: 24,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    currentIndex: widget.navigationShell.currentIndex,
+                    selectedItemColor: context.colorScheme.primary,
+                    unselectedItemColor: context.colorScheme.textDisabled,
+                    backgroundColor: context.colorScheme.surface,
+                    type: BottomNavigationBarType.fixed,
+                    selectedFontSize: 12,
+                    unselectedFontSize: 12,
+                    elevation: 0,
+                    onTap: (index) => _goBranch(
+                      index: index,
+                      context: context,
+                    ),
                   ),
                 ),
-              ),
-      ],
+        ],
+      ),
     );
   }
 

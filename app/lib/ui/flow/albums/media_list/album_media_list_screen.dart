@@ -63,7 +63,7 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
                               .push(context);
 
                       if (res != null && res is List<String>) {
-                        await _notifier.addMedias(res);
+                        await _notifier.updateAlbumMedias(medias: res);
                       }
                     },
                     icon: Icon(
@@ -76,7 +76,7 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
                     title: context.l10n.common_edit,
                     onPressed: () async {
                       context.pop();
-                      final res = await AddAlbumRoute($extra: widget.album)
+                      final res = await AddAlbumRoute($extra: state.album)
                           .push(context);
                       if (res == true) {
                         await _notifier.reloadAlbum();

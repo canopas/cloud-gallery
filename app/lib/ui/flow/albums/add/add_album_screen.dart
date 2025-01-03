@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/buttons/action_button.dart';
 import 'package:style/extensions/context_extensions.dart';
+import 'package:style/indicators/circular_progress_indicator.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../../components/app_page.dart';
@@ -66,16 +67,22 @@ class _AddAlbumScreenState extends ConsumerState<AddAlbumScreen> {
       title: context.l10n.add_album_screen_title,
       body: _body(context: context, state: state),
       actions: [
-        ActionButton(
-          onPressed: state.allowSave ? _notifier.createAlbum : null,
-          icon: Icon(
-            Icons.check,
-            size: 24,
-            color: state.allowSave
-                ? context.colorScheme.textPrimary
-                : context.colorScheme.textDisabled,
-          ),
-        ),
+        state.loading
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: AppCircularProgressIndicator(),
+              )
+            : ActionButton(
+                onPressed: state.allowSave ? _notifier.createAlbum : null,
+                icon: Icon(
+                  Icons.check,
+                  size: 24,
+                  color: state.allowSave
+                      ? context.colorScheme.textPrimary
+                      : context.colorScheme.textDisabled,
+                ),
+              ),
       ],
     );
   }
