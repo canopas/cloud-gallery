@@ -25,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
       (
         icon: CupertinoIcons.house_fill,
         label: "Home",
-      activeIcon: CupertinoIcons.house_fill,
+        activeIcon: CupertinoIcons.house_fill,
       ),
       (
         icon: CupertinoIcons.folder,
@@ -44,91 +44,86 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ];
 
-    if (!kIsWeb && Platform.isIOS) {
-      return CupertinoTabScaffold(
-        key: ValueKey(widget.navigationShell.currentIndex),
-        tabBar: CupertinoTabBar(
-          currentIndex: widget.navigationShell.currentIndex,
-          activeColor: context.colorScheme.primary,
-          inactiveColor: context.colorScheme.textDisabled,
-          onTap: (index) => _goBranch(
-            index: index,
-            context: context,
-          ),
-          border: Border(
-            top: BorderSide(
-              color: context.colorScheme.outline,
-              width: 1,
-            ),
-          ),
-          items: tabs
-              .map(
-                (e) => BottomNavigationBarItem(
-                  icon: Icon(
-                    e.icon,
-                    color: context.colorScheme.textDisabled,
-                    size: 22,
-                  ),
-                  label: e.label,
-                  activeIcon: Icon(
-                    e.activeIcon,
-                    color: context.colorScheme.primary,
-                    size: 24,
+    return Column(
+      children: [
+        Expanded(child: widget.navigationShell),
+        (!kIsWeb && Platform.isIOS)
+            ? CupertinoTabBar(
+                currentIndex: widget.navigationShell.currentIndex,
+                activeColor: context.colorScheme.primary,
+                inactiveColor: context.colorScheme.textDisabled,
+                onTap: (index) => _goBranch(
+                  index: index,
+                  context: context,
+                ),
+                backgroundColor: context.colorScheme.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: context.colorScheme.outline,
+                    width: 1,
                   ),
                 ),
+                items: tabs
+                    .map(
+                      (e) => BottomNavigationBarItem(
+                        icon: Icon(
+                          e.icon,
+                          color: context.colorScheme.textDisabled,
+                          size: 22,
+                        ),
+                        label: e.label,
+                        activeIcon: Icon(
+                          e.activeIcon,
+                          color: context.colorScheme.primary,
+                          size: 24,
+                        ),
+                      ),
+                    )
+                    .toList(),
               )
-              .toList(),
-        ),
-        tabBuilder: (context, index) {
-          return widget.navigationShell;
-        },
-      );
-    } else {
-      return Scaffold(
-        body: widget.navigationShell,
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: context.colorScheme.outline,
-                width: 1,
-              ),
-            ),
-          ),
-          child: BottomNavigationBar(
-            items: tabs
-                .map(
-                  (e) => BottomNavigationBarItem(
-                    icon: Icon(
-                      e.icon,
-                      color: context.colorScheme.textDisabled,
-                      size: 24,
-                    ),
-                    label: e.label,
-                    activeIcon: Icon(
-                      e.activeIcon,
-                      color: context.colorScheme.primary,
-                      size: 24,
+            : Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: context.colorScheme.outline,
+                      width: 1,
                     ),
                   ),
-                )
-                .toList(),
-            currentIndex: widget.navigationShell.currentIndex,
-            selectedItemColor: context.colorScheme.primary,
-            unselectedItemColor: context.colorScheme.textDisabled,
-            backgroundColor: context.colorScheme.surface,
-            type: BottomNavigationBarType.fixed,
-            selectedFontSize: 12,
-            unselectedFontSize: 12,
-            elevation: 0,
-            onTap: (index) => _goBranch(
-              index: index,
-              context: context,
-            ),
-          ),
-        ),
-      );
-    }
+                ),
+                child: BottomNavigationBar(
+                  items: tabs
+                      .map(
+                        (e) => BottomNavigationBarItem(
+                          icon: Icon(
+                            e.icon,
+                            color: context.colorScheme.textDisabled,
+                            size: 24,
+                          ),
+                          label: e.label,
+                          activeIcon: Icon(
+                            e.activeIcon,
+                            color: context.colorScheme.primary,
+                            size: 24,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  currentIndex: widget.navigationShell.currentIndex,
+                  selectedItemColor: context.colorScheme.primary,
+                  unselectedItemColor: context.colorScheme.textDisabled,
+                  backgroundColor: context.colorScheme.surface,
+                  type: BottomNavigationBarType.fixed,
+                  selectedFontSize: 12,
+                  unselectedFontSize: 12,
+                  elevation: 0,
+                  onTap: (index) => _goBranch(
+                    index: index,
+                    context: context,
+                  ),
+                ),
+              ),
+      ],
+    );
   }
 
   void _goBranch({

@@ -1,3 +1,4 @@
+import 'package:data/errors/app_error.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/models/album/album.dart';
 import 'package:data/models/dropbox/account/dropbox_account.dart';
@@ -109,16 +110,47 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
       );
     }
   }
+
+  Future<void> deleteAlbum(Album album) async {
+    try {
+      state = state.copyWith(actionError: null);
+      if (album.source == AppMediaSource.local) {
+        await _localMediaService.deleteAlbum(album.id);
+      } else if (album.source == AppMediaSource.googleDrive) {
+        _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
+        if (_backupFolderId == null) {
+          throw BackUpFolderNotFound();
+        }
+        await _googleDriveService.removeAlbum(
+          folderId: _backupFolderId!,
+          id: album.id,
+        );
+      } else if (album.source == AppMediaSource.dropbox) {
+        await _dropboxService.deleteAlbum(album.id);
+      }
+      state = state.copyWith(
+        albums:
+            state.albums.where((element) => element.id != album.id).toList(),
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "AlbumStateNotifier: Error deleting album",
+        error: e,
+        stackTrace: s,
+      );
+    }
+  }
 }
 
 @freezed
 class AlbumsState with _$AlbumsState {
   const factory AlbumsState({
     @Default(false) bool loading,
-    @Default([]) List<AppMedia> medias,
     @Default([]) List<Album> albums,
     GoogleSignInAccount? googleAccount,
     DropboxAccount? dropboxAccount,
     Object? error,
+    Object? actionError,
   }) = _AlbumsState;
 }

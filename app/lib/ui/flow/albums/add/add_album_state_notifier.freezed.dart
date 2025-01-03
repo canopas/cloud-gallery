@@ -17,7 +17,9 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AddAlbumsState {
   bool get loading => throw _privateConstructorUsedError;
-  AppMediaSource? get mediaSource => throw _privateConstructorUsedError;
+  bool get succeed => throw _privateConstructorUsedError;
+  bool get allowSave => throw _privateConstructorUsedError;
+  AppMediaSource get mediaSource => throw _privateConstructorUsedError;
   TextEditingController get albumNameController =>
       throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
@@ -39,7 +41,9 @@ abstract class $AddAlbumsStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
-      AppMediaSource? mediaSource,
+      bool succeed,
+      bool allowSave,
+      AppMediaSource mediaSource,
       TextEditingController albumNameController,
       GoogleSignInAccount? googleAccount,
       DropboxAccount? dropboxAccount,
@@ -64,7 +68,9 @@ class _$AddAlbumsStateCopyWithImpl<$Res, $Val extends AddAlbumsState>
   @override
   $Res call({
     Object? loading = null,
-    Object? mediaSource = freezed,
+    Object? succeed = null,
+    Object? allowSave = null,
+    Object? mediaSource = null,
     Object? albumNameController = null,
     Object? googleAccount = freezed,
     Object? dropboxAccount = freezed,
@@ -75,10 +81,18 @@ class _$AddAlbumsStateCopyWithImpl<$Res, $Val extends AddAlbumsState>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      mediaSource: freezed == mediaSource
+      succeed: null == succeed
+          ? _value.succeed
+          : succeed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      allowSave: null == allowSave
+          ? _value.allowSave
+          : allowSave // ignore: cast_nullable_to_non_nullable
+              as bool,
+      mediaSource: null == mediaSource
           ? _value.mediaSource
           : mediaSource // ignore: cast_nullable_to_non_nullable
-              as AppMediaSource?,
+              as AppMediaSource,
       albumNameController: null == albumNameController
           ? _value.albumNameController
           : albumNameController // ignore: cast_nullable_to_non_nullable
@@ -120,7 +134,9 @@ abstract class _$$AddAlbumsStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
-      AppMediaSource? mediaSource,
+      bool succeed,
+      bool allowSave,
+      AppMediaSource mediaSource,
       TextEditingController albumNameController,
       GoogleSignInAccount? googleAccount,
       DropboxAccount? dropboxAccount,
@@ -144,7 +160,9 @@ class __$$AddAlbumsStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
-    Object? mediaSource = freezed,
+    Object? succeed = null,
+    Object? allowSave = null,
+    Object? mediaSource = null,
     Object? albumNameController = null,
     Object? googleAccount = freezed,
     Object? dropboxAccount = freezed,
@@ -155,10 +173,18 @@ class __$$AddAlbumsStateImplCopyWithImpl<$Res>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      mediaSource: freezed == mediaSource
+      succeed: null == succeed
+          ? _value.succeed
+          : succeed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      allowSave: null == allowSave
+          ? _value.allowSave
+          : allowSave // ignore: cast_nullable_to_non_nullable
+              as bool,
+      mediaSource: null == mediaSource
           ? _value.mediaSource
           : mediaSource // ignore: cast_nullable_to_non_nullable
-              as AppMediaSource?,
+              as AppMediaSource,
       albumNameController: null == albumNameController
           ? _value.albumNameController
           : albumNameController // ignore: cast_nullable_to_non_nullable
@@ -181,7 +207,9 @@ class __$$AddAlbumsStateImplCopyWithImpl<$Res>
 class _$AddAlbumsStateImpl implements _AddAlbumsState {
   const _$AddAlbumsStateImpl(
       {this.loading = false,
-      this.mediaSource,
+      this.succeed = false,
+      this.allowSave = false,
+      this.mediaSource = AppMediaSource.local,
       required this.albumNameController,
       this.googleAccount,
       this.dropboxAccount,
@@ -191,7 +219,14 @@ class _$AddAlbumsStateImpl implements _AddAlbumsState {
   @JsonKey()
   final bool loading;
   @override
-  final AppMediaSource? mediaSource;
+  @JsonKey()
+  final bool succeed;
+  @override
+  @JsonKey()
+  final bool allowSave;
+  @override
+  @JsonKey()
+  final AppMediaSource mediaSource;
   @override
   final TextEditingController albumNameController;
   @override
@@ -203,7 +238,7 @@ class _$AddAlbumsStateImpl implements _AddAlbumsState {
 
   @override
   String toString() {
-    return 'AddAlbumsState(loading: $loading, mediaSource: $mediaSource, albumNameController: $albumNameController, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error)';
+    return 'AddAlbumsState(loading: $loading, succeed: $succeed, allowSave: $allowSave, mediaSource: $mediaSource, albumNameController: $albumNameController, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error)';
   }
 
   @override
@@ -212,6 +247,9 @@ class _$AddAlbumsStateImpl implements _AddAlbumsState {
         (other.runtimeType == runtimeType &&
             other is _$AddAlbumsStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.succeed, succeed) || other.succeed == succeed) &&
+            (identical(other.allowSave, allowSave) ||
+                other.allowSave == allowSave) &&
             (identical(other.mediaSource, mediaSource) ||
                 other.mediaSource == mediaSource) &&
             (identical(other.albumNameController, albumNameController) ||
@@ -227,6 +265,8 @@ class _$AddAlbumsStateImpl implements _AddAlbumsState {
   int get hashCode => Object.hash(
       runtimeType,
       loading,
+      succeed,
+      allowSave,
       mediaSource,
       albumNameController,
       googleAccount,
@@ -246,7 +286,9 @@ class _$AddAlbumsStateImpl implements _AddAlbumsState {
 abstract class _AddAlbumsState implements AddAlbumsState {
   const factory _AddAlbumsState(
       {final bool loading,
-      final AppMediaSource? mediaSource,
+      final bool succeed,
+      final bool allowSave,
+      final AppMediaSource mediaSource,
       required final TextEditingController albumNameController,
       final GoogleSignInAccount? googleAccount,
       final DropboxAccount? dropboxAccount,
@@ -255,7 +297,11 @@ abstract class _AddAlbumsState implements AddAlbumsState {
   @override
   bool get loading;
   @override
-  AppMediaSource? get mediaSource;
+  bool get succeed;
+  @override
+  bool get allowSave;
+  @override
+  AppMediaSource get mediaSource;
   @override
   TextEditingController get albumNameController;
   @override

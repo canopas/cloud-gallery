@@ -225,6 +225,22 @@ class DropboxService extends CloudProviderService {
     }
   }
 
+  Future<AppMedia> getMedia({
+    required String id,
+  }) async {
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxGetFileMetadata(id: id),
+    );
+
+    if (res.statusCode == 200) {
+      return AppMedia.fromDropboxJson(json: res.data, metadataJson: res.data);
+    }
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage ?? '',
+    );
+  }
+
   @override
   Future<String> createFolder(String folderName) async {
     final response = await _dropboxAuthenticatedDio.req(
@@ -417,9 +433,9 @@ class DropboxService extends CloudProviderService {
     );
   }
 
-  Future<void> deleteAlbum(Album album) async {
+  Future<void> deleteAlbum(String id) async {
     final albums = await getAlbums();
-    albums.removeWhere((a) => a.id == album.id);
+    albums.removeWhere((a) => a.id == id);
 
     final res = await _dropboxAuthenticatedDio.req(
       DropboxUploadEndpoint(

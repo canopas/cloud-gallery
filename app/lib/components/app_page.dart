@@ -12,7 +12,7 @@ class AppPage extends StatelessWidget {
   final Widget? body;
   final Widget Function(BuildContext context)? bodyBuilder;
   final bool automaticallyImplyLeading;
-  final bool? resizeToAvoidBottomInset;
+  final bool resizeToAvoidBottomInset;
   final Color? backgroundColor;
   final Color? barBackgroundColor;
 
@@ -24,7 +24,7 @@ class AppPage extends StatelessWidget {
     this.leading,
     this.body,
     this.floatingActionButton,
-    this.resizeToAvoidBottomInset,
+    this.resizeToAvoidBottomInset = true,
     this.bodyBuilder,
     this.automaticallyImplyLeading = true,
     this.barBackgroundColor,
@@ -50,6 +50,7 @@ class AppPage extends StatelessWidget {
                 leading: leading,
                 middle: titleWidget ?? _title(context),
                 border: null,
+                enableBackgroundFilterBlur: false,
                 trailing: actions == null
                     ? null
                     : actions!.length == 1
@@ -63,7 +64,7 @@ class AppPage extends StatelessWidget {
                     ? MaterialLocalizations.of(context).backButtonTooltip
                     : null,
               ),
-        resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? true,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         backgroundColor: backgroundColor,
         child: Stack(
           alignment: Alignment.bottomRight,
@@ -152,7 +153,7 @@ class AdaptiveAppBar extends StatelessWidget {
             children: [
               AppBar(
                 centerTitle: true,
-                backgroundColor: context.colorScheme.barColor,
+                backgroundColor: context.colorScheme.surface,
                 leading: leading,
                 actions: actions,
                 automaticallyImplyLeading: automaticallyImplyLeading,

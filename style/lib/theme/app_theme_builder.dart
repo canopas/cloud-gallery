@@ -29,6 +29,7 @@ class AppThemeBuilder {
       scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
+        centerTitle: true,
         surfaceTintColor: colorScheme.surface,
         foregroundColor: colorScheme.textPrimary,
         scrolledUnderElevation: 3,
@@ -43,7 +44,7 @@ class AppThemeBuilder {
       brightness: colorScheme.brightness,
       primaryColor: colorScheme.primary,
       primaryContrastingColor: colorScheme.onPrimary,
-      barBackgroundColor: colorScheme.barColor,
+      barBackgroundColor: colorScheme.surface,
       scaffoldBackgroundColor: colorScheme.surface,
       textTheme: CupertinoTextThemeData(
         primaryColor: colorScheme.textPrimary,

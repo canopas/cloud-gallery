@@ -121,7 +121,8 @@ class GoogleDriveContentUpdateEndpoint extends Endpoint {
   @override
   Map<String, dynamic>? get queryParameters => {
         'uploadType': 'media',
-        'fields': 'id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties',
+        'fields':
+            'id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties',
       };
 
   @override
@@ -211,6 +212,31 @@ class GoogleDriveListEndpoint extends Endpoint {
         if (pageSize != null) 'pageSize': pageSize,
         if (pageToken != null) 'pageToken': pageToken,
         if (q != null) 'q': q,
+        'fields': fields,
+      };
+}
+
+class GoogleDriveGetEndpoint extends Endpoint {
+  final String fields;
+  final String id;
+
+  const GoogleDriveGetEndpoint({
+    required this.id,
+    this.fields =
+        'nextPageToken, files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties)',
+  });
+
+  @override
+  String get baseUrl => BaseURL.googleDriveV3;
+
+  @override
+  String get path => '/files/$id';
+
+  @override
+  HttpMethod get method => HttpMethod.get;
+
+  @override
+  Map<String, dynamic>? get queryParameters => {
         'fields': fields,
       };
 }

@@ -154,6 +154,21 @@ class GoogleDriveService extends CloudProviderService {
     );
   }
 
+  Future<AppMedia> getMedia({
+    required String id,
+  }) async {
+    final res = await _client.req(GoogleDriveGetEndpoint(id: id));
+
+    if (res.statusCode == 200) {
+      return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
+    }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
   @override
   Future<void> deleteMedia({
     required String id,

@@ -123,16 +123,16 @@ class LocalMediaService {
     );
   }
 
-  Future<void> createAlbum(Album album) async {
+  Future<void> createAlbum({required String id, required String name}) async {
     final db = await openAlbumDatabase();
     await db.insert(
       LocalDatabaseConstants.albumsTable,
       {
-        'id': album.id,
-        'name': album.name,
-        'source': album.source.value,
-        'created_at': DateTimeJsonConverter().toJson(album.created_at),
-        'medias': album.medias.join(','),
+        'id': id,
+        'name': name,
+        'source': AppMediaSource.local.value,
+        'created_at': DateTimeJsonConverter().toJson(DateTime.now()),
+        'medias': '',
       },
     );
     await db.close();
@@ -140,16 +140,16 @@ class LocalMediaService {
 
   Future<void> updateAlbum(Album album) async {
     final db = await openAlbumDatabase();
-    await db.update(
-      LocalDatabaseConstants.albumsTable,
-      {
-        'name': album.name,
-        'source': album.source.value,
-        'created_at': DateTimeJsonConverter().toJson(album.created_at),
-        'medias': album.medias.join(','),
-      },
-      where: 'id = ?',
-      whereArgs: [album.id],
+    await db.rawUpdate(
+      'UPDATE ${LocalDatabaseConstants.albumsTable} SET '
+      'name = ?, '
+      'medias = ? '
+      'WHERE id = ?',
+      [
+        album.name,
+        album.medias.join(','),
+        album.id,
+      ],
     );
     await db.close();
   }
@@ -178,7 +178,9 @@ class LocalMediaService {
             ),
             created_at:
                 DateTimeJsonConverter().fromJson(album['created_at'] as String),
-            medias: (album['medias'] as String).split(','),
+            medias: (album['medias'] as String).trim().isEmpty
+                ? []
+                : (album['medias'] as String).trim().split(','),
           ),
         )
         .toList();
