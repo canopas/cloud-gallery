@@ -223,7 +223,7 @@ class GoogleDriveGetEndpoint extends Endpoint {
   const GoogleDriveGetEndpoint({
     required this.id,
     this.fields =
-        'nextPageToken, files(id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties)',
+        'id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties',
   });
 
   @override
