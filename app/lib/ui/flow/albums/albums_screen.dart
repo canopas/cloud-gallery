@@ -107,6 +107,7 @@ class _AlbumsScreenState extends ConsumerState<AlbumsScreen> {
           .map(
             (album) => AlbumItem(
               album: album,
+              media: state.medias[album.id],
               onTap: () async {
                 await AlbumMediaListRoute(
                   $extra: album,
@@ -161,12 +162,14 @@ class _AlbumsScreenState extends ConsumerState<AlbumsScreen> {
 
 class AlbumItem extends StatelessWidget {
   final Album album;
+  final AppMedia? media;
   final void Function() onTap;
   final void Function() onLongTap;
 
   const AlbumItem({
     super.key,
     required this.album,
+    required this.media,
     required this.onTap,
     required this.onLongTap,
   });
@@ -180,7 +183,7 @@ class AlbumItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: album.medias.isEmpty
+            child: media == null
                 ? Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -197,12 +200,7 @@ class AlbumItem extends StatelessWidget {
                     ),
                   )
                 : AppMediaImage(
-                    media: AppMedia(
-                      id: album.medias.first,
-                      path: '',
-                      type: AppMediaType.image,
-                      sources: [album.source],
-                    ),
+                    media: media!,
                     size: Size(300, 300),
                   ),
           ),

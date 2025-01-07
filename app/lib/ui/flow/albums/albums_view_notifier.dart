@@ -87,11 +87,28 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
     }
   }
 
+  /// Lookups for the first media in the album that is available
+  Future<({String id, AppMedia media})?> _getThumbnailMedia({
+    required Album album,
+    required Future<AppMedia?> Function(String id) fetchMedia,
+  }) async {
+    if (album.medias.isEmpty) return null;
+
+    for (final id in album.medias) {
+      final media = await fetchMedia.call(id);
+      if (media != null) {
+        return (id: album.id, media: media);
+      }
+    }
+    return null;
+  }
+
   Future<void> loadAlbums() async {
     if (state.loading) return;
 
     state = state.copyWith(loading: true, error: null);
     try {
+      _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
       final res = await Future.wait([
         _localMediaService.getAlbums(),
         (state.googleAccount != null && _backupFolderId != null)
@@ -102,8 +119,32 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
             : Future.value([]),
       ]);
 
+      final medias = await Future.wait([
+        for (Album album in res[0])
+          _getThumbnailMedia(
+            album: album,
+            fetchMedia: (id) => _localMediaService.getMedia(id: id),
+          ),
+        for (final album in res[1])
+          _getThumbnailMedia(
+            album: album,
+            fetchMedia: (id) => _googleDriveService.getMedia(id: id),
+          ),
+        for (final album in res[2])
+          _getThumbnailMedia(
+            album: album,
+            fetchMedia: (id) => _dropboxService.getMedia(id: id),
+          ),
+      ]).then(
+        (value) => {
+          for (final item in value)
+            if (item != null) item.id: item.media,
+        },
+      );
+
       state = state.copyWith(
         albums: [...res[0], ...res[1], ...res[2]],
+        medias: medias,
         loading: false,
       );
     } catch (e, s) {
@@ -153,6 +194,7 @@ class AlbumsState with _$AlbumsState {
   const factory AlbumsState({
     @Default(false) bool loading,
     @Default([]) List<Album> albums,
+    @Default({}) Map<String, AppMedia> medias,
     GoogleSignInAccount? googleAccount,
     DropboxAccount? dropboxAccount,
     Object? error,

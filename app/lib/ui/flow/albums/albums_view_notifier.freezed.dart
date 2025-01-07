@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AlbumsState {
   bool get loading => throw _privateConstructorUsedError;
   List<Album> get albums => throw _privateConstructorUsedError;
+  Map<String, AppMedia> get medias => throw _privateConstructorUsedError;
   GoogleSignInAccount? get googleAccount => throw _privateConstructorUsedError;
   DropboxAccount? get dropboxAccount => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
@@ -39,6 +40,7 @@ abstract class $AlbumsStateCopyWith<$Res> {
   $Res call(
       {bool loading,
       List<Album> albums,
+      Map<String, AppMedia> medias,
       GoogleSignInAccount? googleAccount,
       DropboxAccount? dropboxAccount,
       Object? error,
@@ -64,6 +66,7 @@ class _$AlbumsStateCopyWithImpl<$Res, $Val extends AlbumsState>
   $Res call({
     Object? loading = null,
     Object? albums = null,
+    Object? medias = null,
     Object? googleAccount = freezed,
     Object? dropboxAccount = freezed,
     Object? error = freezed,
@@ -78,6 +81,10 @@ class _$AlbumsStateCopyWithImpl<$Res, $Val extends AlbumsState>
           ? _value.albums
           : albums // ignore: cast_nullable_to_non_nullable
               as List<Album>,
+      medias: null == medias
+          ? _value.medias
+          : medias // ignore: cast_nullable_to_non_nullable
+              as Map<String, AppMedia>,
       googleAccount: freezed == googleAccount
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
@@ -117,6 +124,7 @@ abstract class _$$AlbumsStateImplCopyWith<$Res>
   $Res call(
       {bool loading,
       List<Album> albums,
+      Map<String, AppMedia> medias,
       GoogleSignInAccount? googleAccount,
       DropboxAccount? dropboxAccount,
       Object? error,
@@ -141,6 +149,7 @@ class __$$AlbumsStateImplCopyWithImpl<$Res>
   $Res call({
     Object? loading = null,
     Object? albums = null,
+    Object? medias = null,
     Object? googleAccount = freezed,
     Object? dropboxAccount = freezed,
     Object? error = freezed,
@@ -155,6 +164,10 @@ class __$$AlbumsStateImplCopyWithImpl<$Res>
           ? _value._albums
           : albums // ignore: cast_nullable_to_non_nullable
               as List<Album>,
+      medias: null == medias
+          ? _value._medias
+          : medias // ignore: cast_nullable_to_non_nullable
+              as Map<String, AppMedia>,
       googleAccount: freezed == googleAccount
           ? _value.googleAccount
           : googleAccount // ignore: cast_nullable_to_non_nullable
@@ -175,11 +188,13 @@ class _$AlbumsStateImpl implements _AlbumsState {
   const _$AlbumsStateImpl(
       {this.loading = false,
       final List<Album> albums = const [],
+      final Map<String, AppMedia> medias = const {},
       this.googleAccount,
       this.dropboxAccount,
       this.error,
       this.actionError})
-      : _albums = albums;
+      : _albums = albums,
+        _medias = medias;
 
   @override
   @JsonKey()
@@ -193,6 +208,15 @@ class _$AlbumsStateImpl implements _AlbumsState {
     return EqualUnmodifiableListView(_albums);
   }
 
+  final Map<String, AppMedia> _medias;
+  @override
+  @JsonKey()
+  Map<String, AppMedia> get medias {
+    if (_medias is EqualUnmodifiableMapView) return _medias;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_medias);
+  }
+
   @override
   final GoogleSignInAccount? googleAccount;
   @override
@@ -204,7 +228,7 @@ class _$AlbumsStateImpl implements _AlbumsState {
 
   @override
   String toString() {
-    return 'AlbumsState(loading: $loading, albums: $albums, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError)';
+    return 'AlbumsState(loading: $loading, albums: $albums, medias: $medias, googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError)';
   }
 
   @override
@@ -214,6 +238,7 @@ class _$AlbumsStateImpl implements _AlbumsState {
             other is _$AlbumsStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
             const DeepCollectionEquality().equals(other._albums, _albums) &&
+            const DeepCollectionEquality().equals(other._medias, _medias) &&
             (identical(other.googleAccount, googleAccount) ||
                 other.googleAccount == googleAccount) &&
             (identical(other.dropboxAccount, dropboxAccount) ||
@@ -228,6 +253,7 @@ class _$AlbumsStateImpl implements _AlbumsState {
       runtimeType,
       loading,
       const DeepCollectionEquality().hash(_albums),
+      const DeepCollectionEquality().hash(_medias),
       googleAccount,
       dropboxAccount,
       const DeepCollectionEquality().hash(error),
@@ -246,6 +272,7 @@ abstract class _AlbumsState implements AlbumsState {
   const factory _AlbumsState(
       {final bool loading,
       final List<Album> albums,
+      final Map<String, AppMedia> medias,
       final GoogleSignInAccount? googleAccount,
       final DropboxAccount? dropboxAccount,
       final Object? error,
@@ -255,6 +282,8 @@ abstract class _AlbumsState implements AlbumsState {
   bool get loading;
   @override
   List<Album> get albums;
+  @override
+  Map<String, AppMedia> get medias;
   @override
   GoogleSignInAccount? get googleAccount;
   @override
