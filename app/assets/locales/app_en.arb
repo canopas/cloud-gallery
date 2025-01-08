@@ -134,6 +134,8 @@
   "edit_album_action_title": "Edit Album",
   "delete_album_action_title": "Delete Album",
   "remove_item_action_title": "Remove Items",
+  "empty_album_media_list_title": "A Quiet Album",
+  "empty_album_media_list_message": "It looks like you don't have any media in this album just yet. Go ahead, add some photos or videos, and let's make this place sparkle!",
 
   "@_MEDIA_SELECTION":{},
   "select_from_device_title": "Select from Device",

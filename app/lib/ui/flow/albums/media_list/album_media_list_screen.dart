@@ -133,8 +133,8 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
           Assets.images.ilNoMediaFound,
           width: 150,
         ),
-        title: context.l10n.empty_media_title,
-        message: context.l10n.empty_media_message,
+        title: context.l10n.empty_album_media_list_title,
+        message: context.l10n.empty_album_media_list_message,
       );
     }
     return Column(
