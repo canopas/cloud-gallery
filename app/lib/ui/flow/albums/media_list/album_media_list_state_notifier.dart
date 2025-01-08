@@ -153,10 +153,61 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
     }
   }
 
-  Future<void> loadMedia({bool reload = false}) async {
+  Future<void> removeMediaFromAlbum(AppMedia media) async {
+    try {
+      state = state.copyWith(actionError: null);
+      if (state.album.source == AppMediaSource.local) {
+        await _localMediaService.updateAlbum(
+          state.album.copyWith(
+            medias: state.album.medias
+                .where((element) => element != media.id)
+                .toList(),
+          ),
+        );
+      } else if (state.album.source == AppMediaSource.googleDrive) {
+        _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
+        if (_backupFolderId == null) {
+          throw BackUpFolderNotFound();
+        }
+        await _googleDriveService.updateAlbum(
+          folderId: _backupFolderId!,
+          album: state.album.copyWith(
+            medias: state.album.medias
+                .where((element) => element != media.driveMediaRefId!)
+                .toList(),
+          ),
+        );
+      } else if (state.album.source == AppMediaSource.dropbox) {
+        await _dropboxService.updateAlbum(
+          state.album.copyWith(
+            medias: state.album.medias
+                .where((element) => element != media.dropboxMediaRefId!)
+                .toList(),
+          ),
+        );
+      }
+      state = state.copyWith(
+        medias: state.medias.where((element) => element != media).toList(),
+        album: state.album.copyWith(
+          medias: state.album.medias
+              .where((element) => element != media.id)
+              .toList(),
+        ),
+      );
+    } catch (e, s) {
+      state = state.copyWith(actionError: e);
+      _logger.e(
+        "AlbumMediaListStateNotifier: Error deleting album",
+        error: e,
+        stackTrace: s,
+      );
+    }
+  }
+
+  Future<List<AppMedia>> loadMedia({bool reload = false}) async {
     ///TODO: remove deleted media
     try {
-      if (state.loading) return;
+      if (state.loading) state.medias;
 
       if (reload) {
         state = state.copyWith(medias: []);
@@ -212,6 +263,7 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
 
       state =
           state.copyWith(medias: [...state.medias, ...medias], loading: false);
+      return [...state.medias, ...medias];
     } catch (e, s) {
       state = state.copyWith(
         loading: false,
@@ -223,6 +275,7 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
         error: e,
         stackTrace: s,
       );
+      return state.medias;
     }
   }
 }

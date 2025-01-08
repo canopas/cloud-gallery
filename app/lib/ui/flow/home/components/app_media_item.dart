@@ -13,6 +13,7 @@ import '../../../../gen/assets.gen.dart';
 
 class AppMediaItem extends StatelessWidget {
   final AppMedia media;
+  final String heroTag;
   final void Function()? onTap;
   final void Function()? onLongTap;
   final bool isSelected;
@@ -22,6 +23,7 @@ class AppMediaItem extends StatelessWidget {
   const AppMediaItem({
     super.key,
     required this.media,
+    required this.heroTag,
     this.onTap,
     this.onLongTap,
     this.isSelected = false,
@@ -46,7 +48,7 @@ class AppMediaItem extends StatelessWidget {
                 radius: isSelected ? 4 : 0,
                 size: constraints.biggest,
                 media: media,
-                heroTag: media,
+                heroTag: heroTag,
               ),
             ),
             if (media.type.isVideo) _videoDuration(context),

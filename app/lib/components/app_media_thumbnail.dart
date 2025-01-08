@@ -39,7 +39,7 @@ class AppMediaThumbnail extends StatelessWidget {
                 radius: selected ? 4 : 0,
                 size: constraints.biggest,
                 media: media,
-                heroTag: "$heroTag${media.toString()}",
+                heroTag: heroTag,
               ),
             ),
             if (media.type.isVideo) _videoDuration(context),

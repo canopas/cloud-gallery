@@ -269,8 +269,13 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
   /// Loads medias from local, google drive and dropbox.
   /// it append the medias to the existing medias if reload is false.
   /// force will load media event its already loading
-  Future<void> loadMedias({bool reload = false, bool force = false}) async {
-    if (state.cloudLoading && !force) return;
+  Future<List<AppMedia>> loadMedias({
+    bool reload = false,
+    bool force = false,
+  }) async {
+    if (state.cloudLoading && !force) {
+      return state.medias.values.expand((element) => element.values).toList();
+    }
     state = state.copyWith(loading: true, cloudLoading: true, error: null);
     try {
       // Reset all the variables if reload is true
@@ -449,6 +454,7 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
         stackTrace: s,
       );
     }
+    return state.medias.values.expand((element) => element.values).toList();
   }
 
   Future<({List<AppMedia> onlyCloudBasedMedias, List<AppMedia> localRefMedias})>

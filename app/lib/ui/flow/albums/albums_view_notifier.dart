@@ -108,7 +108,9 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
 
     state = state.copyWith(loading: true, error: null);
     try {
-      _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
+      if(state.googleAccount != null) {
+        _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
+      }
       final res = await Future.wait([
         _localMediaService.getAlbums(),
         (state.googleAccount != null && _backupFolderId != null)
@@ -118,6 +120,11 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
             ? _dropboxService.getAlbums()
             : Future.value([]),
       ]);
+
+      state = state.copyWith(
+        albums: [...res[0], ...res[1], ...res[2]],
+        loading: false,
+      );
 
       final medias = await Future.wait([
         for (Album album in res[0])
@@ -142,11 +149,7 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
         },
       );
 
-      state = state.copyWith(
-        albums: [...res[0], ...res[1], ...res[2]],
-        medias: medias,
-        loading: false,
-      );
+      state = state.copyWith(medias: medias);
     } catch (e, s) {
       state = state.copyWith(loading: false, error: e);
       _logger.e(

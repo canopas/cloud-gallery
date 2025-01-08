@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:data/models/media/media.dart';
+import 'package:data/models/media/media_extension.dart';
 import 'package:data/services/dropbox_services.dart';
 import 'package:data/services/google_drive_service.dart';
 import 'package:dio/dio.dart' show CancelToken;
@@ -9,12 +11,13 @@ import 'package:path_provider/path_provider.dart';
 
 part 'network_image_preview_view_model.freezed.dart';
 
-final networkImagePreviewStateNotifierProvider =
-    StateNotifierProvider.autoDispose<NetworkImagePreviewStateNotifier,
-        NetworkImagePreviewState>((ref) {
+final networkImagePreviewStateNotifierProvider = StateNotifierProvider.family
+    .autoDispose<NetworkImagePreviewStateNotifier, NetworkImagePreviewState,
+        AppMedia>((ref, media) {
   return NetworkImagePreviewStateNotifier(
     ref.read(googleDriveServiceProvider),
     ref.read(dropboxServiceProvider),
+    media,
   );
 });
 
@@ -26,7 +29,20 @@ class NetworkImagePreviewStateNotifier
   NetworkImagePreviewStateNotifier(
     this._googleDriveServices,
     this._dropboxService,
-  ) : super(const NetworkImagePreviewState());
+    AppMedia media,
+  ) : super(NetworkImagePreviewState(media: media)) {
+    if (media.driveMediaRefId != null) {
+      loadImageFromGoogleDrive(
+        id: media.driveMediaRefId!,
+        extension: media.extension,
+      );
+    } else if (media.dropboxMediaRefId != null) {
+      loadImageFromDropbox(
+        id: media.dropboxMediaRefId!,
+        extension: media.extension,
+      );
+    }
+  }
 
   File? tempFile;
   CancelToken? cancelToken;
@@ -102,6 +118,7 @@ class NetworkImagePreviewStateNotifier
 @freezed
 class NetworkImagePreviewState with _$NetworkImagePreviewState {
   const factory NetworkImagePreviewState({
+    required AppMedia media,
     @Default(false) bool loading,
     double? progress,
     String? filePath,

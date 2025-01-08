@@ -179,9 +179,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: context.mediaQuerySize.width > 600
-                      ? context.mediaQuerySize.width ~/ 180
-                      : context.mediaQuerySize.width ~/ 100,
+                  crossAxisCount: (context.mediaQuerySize.width > 600
+                          ? context.mediaQuerySize.width ~/ 180
+                          : context.mediaQuerySize.width ~/ 100)
+                      .clamp(1, 6),
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,
                 ),
@@ -194,9 +195,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       _notifier.loadMedias();
                     });
                   }
-
                   return AppMediaItem(
-                    key: ValueKey(media.id),
+                    media: media,
+                    heroTag: "home${media.toString()}",
                     onTap: () async {
                       if (state.selectedMedias.isNotEmpty) {
                         _notifier.toggleMediaSelection(media);
@@ -204,6 +205,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       } else {
                         await MediaPreviewRoute(
                           $extra: MediaPreviewRouteData(
+                            onLoadMore: _notifier.loadMedias,
+                            heroTag: "home",
                             medias: state.medias.values
                                 .expand((element) => element.values)
                                 .toList(),
@@ -220,7 +223,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     uploadMediaProcess: state.uploadMediaProcesses[media.id],
                     downloadMediaProcess:
                         state.downloadMediaProcesses[media.id],
-                    media: media,
+
                   );
                 },
               ),

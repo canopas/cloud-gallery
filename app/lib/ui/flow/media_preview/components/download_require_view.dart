@@ -11,6 +11,7 @@ import '../../../../domain/image_providers/app_media_image_provider.dart';
 
 class DownloadRequireView extends StatelessWidget {
   final AppMedia media;
+  final String heroTag;
   final String? dropboxAccessToken;
   final DownloadMediaProcess? downloadProcess;
   final void Function() onDownload;
@@ -18,6 +19,7 @@ class DownloadRequireView extends StatelessWidget {
   const DownloadRequireView({
     super.key,
     required this.media,
+    required this.heroTag,
     this.downloadProcess,
     required this.onDownload,
     this.dropboxAccessToken,
@@ -30,7 +32,7 @@ class DownloadRequireView extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           Hero(
-            tag: media,
+            tag: "$heroTag${media.toString()}",
             child: Image(
               gaplessPlayback: true,
               image: AppMediaImageProvider(

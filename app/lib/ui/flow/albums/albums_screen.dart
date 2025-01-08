@@ -1,27 +1,21 @@
-import 'package:data/models/album/album.dart';
-import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/animations/fade_in_switcher.dart';
-import 'package:style/animations/on_tap_scale.dart';
 import 'package:style/buttons/action_button.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/indicators/circular_progress_indicator.dart';
-import 'package:style/text/app_text_style.dart';
 import '../../../components/action_sheet.dart';
 import '../../../components/app_page.dart';
 import '../../../components/app_sheet.dart';
 import '../../../components/error_screen.dart';
 import '../../../components/place_holder_screen.dart';
 import '../../../components/snack_bar.dart';
-import '../../../components/thumbnail_builder.dart';
 import '../../../domain/extensions/context_extensions.dart';
-import '../../../gen/assets.gen.dart';
 import '../../navigation/app_route.dart';
 import 'albums_view_notifier.dart';
+import 'component/album_item.dart';
 
 class AlbumsScreen extends ConsumerStatefulWidget {
   const AlbumsScreen({super.key});
@@ -156,89 +150,6 @@ class _AlbumsScreenState extends ConsumerState<AlbumsScreen> {
             ),
           )
           .toList(),
-    );
-  }
-}
-
-class AlbumItem extends StatelessWidget {
-  final Album album;
-  final AppMedia? media;
-  final void Function() onTap;
-  final void Function() onLongTap;
-
-  const AlbumItem({
-    super.key,
-    required this.album,
-    required this.media,
-    required this.onTap,
-    required this.onLongTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return OnTapScale(
-      onTap: onTap,
-      onLongTap: onLongTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: media == null
-                ? Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.containerLowOnSurface,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: context.colorScheme.outline,
-                      ),
-                    ),
-                    child: Icon(
-                      CupertinoIcons.folder,
-                      size: 80,
-                      color: context.colorScheme.containerHighOnSurface,
-                    ),
-                  )
-                : AppMediaImage(
-                    media: media!,
-                    size: Size(300, 300),
-                  ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              children: [
-                if (album.source == AppMediaSource.dropbox) ...[
-                  SvgPicture.asset(
-                    Assets.images.icDropbox,
-                    width: 18,
-                    height: 18,
-                  ),
-                  const SizedBox(width: 4),
-                ],
-                if (album.source == AppMediaSource.googleDrive) ...[
-                  SvgPicture.asset(
-                    Assets.images.icGoogleDrive,
-                    width: 18,
-                    height: 18,
-                  ),
-                  const SizedBox(width: 4),
-                ],
-                Expanded(
-                  child: Text(
-                    album.name,
-                    style: AppTextStyles.subtitle1.copyWith(
-                      color: context.colorScheme.textPrimary,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

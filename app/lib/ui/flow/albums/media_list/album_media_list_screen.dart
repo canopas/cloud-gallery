@@ -146,7 +146,39 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
       ),
       itemCount: state.medias.length,
       itemBuilder: (context, index) => AppMediaThumbnail(
-        heroTag: "album_media_list",
+        onTap: () async {
+          await MediaPreviewRoute(
+            $extra: MediaPreviewRouteData(
+              onLoadMore: _notifier.loadMedia,
+              heroTag: "album_media_list",
+              medias: state.medias,
+              startFrom: state.medias[index].id,
+            ),
+          ).push(context);
+        },
+        onLongTap: () {
+          showAppSheet(
+            context: context,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppSheetAction(
+                  title: context.l10n.common_remove,
+                  onPressed: () async {
+                    context.pop();
+                    await _notifier.removeMediaFromAlbum(state.medias[index]);
+                  },
+                  icon: Icon(
+                    CupertinoIcons.delete,
+                    size: 24,
+                    color: context.colorScheme.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        heroTag: "album_media_list${state.medias[index].toString()}",
         media: state.medias[index],
       ),
     );

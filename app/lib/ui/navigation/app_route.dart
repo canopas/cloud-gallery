@@ -147,9 +147,16 @@ class AccountRoute extends GoRouteData {
 
 class MediaPreviewRouteData {
   final List<AppMedia> medias;
+  final String heroTag;
+  final Future<List<AppMedia>> Function() onLoadMore;
   final String startFrom;
 
-  const MediaPreviewRouteData({required this.medias, required this.startFrom});
+  const MediaPreviewRouteData({
+    required this.medias,
+    required this.startFrom,
+    required this.onLoadMore,
+    required this.heroTag,
+  });
 }
 
 @TypedGoRoute<MediaPreviewRoute>(path: AppRoutePath.preview)
@@ -163,7 +170,12 @@ class MediaPreviewRoute extends GoRouteData {
     return CustomTransitionPage(
       opaque: false,
       key: state.pageKey,
-      child: MediaPreview(medias: $extra.medias, startFrom: $extra.startFrom),
+      child: MediaPreview(
+        medias: $extra.medias,
+        startFrom: $extra.startFrom,
+        onLoadMore: $extra.onLoadMore,
+        heroTag: $extra.heroTag,
+      ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(opacity: animation, child: child);
       },
