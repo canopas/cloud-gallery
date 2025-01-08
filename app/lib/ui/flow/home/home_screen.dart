@@ -223,7 +223,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     uploadMediaProcess: state.uploadMediaProcesses[media.id],
                     downloadMediaProcess:
                         state.downloadMediaProcesses[media.id],
-
                   );
                 },
               ),

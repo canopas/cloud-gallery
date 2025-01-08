@@ -108,7 +108,7 @@ class AlbumStateNotifier extends StateNotifier<AlbumsState> {
 
     state = state.copyWith(loading: true, error: null);
     try {
-      if(state.googleAccount != null) {
+      if (state.googleAccount != null) {
         _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
       }
       final res = await Future.wait([
