@@ -47,7 +47,11 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
   Future<List<AppMedia>> loadMedia({bool reload = false}) async {
     ///TODO: remove media-ids which is deleted from source
     try {
-      if (state.loading || state.loadingMore) state.medias;
+      if (state.loading ||
+          state.loadingMore ||
+          (!reload && state.album.medias.length <= _loadedMediaCount)) {
+        return state.medias.values.toList();
+      }
 
       state = state.copyWith(
         loading: state.medias.isEmpty,
@@ -194,13 +198,13 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
   }) async {
     try {
       state = state.copyWith(actionError: null);
+      final updatedMedias =
+          (append ? [...state.album.medias, ...medias] : medias)
+              .toSet()
+              .toList();
       if (state.album.source == AppMediaSource.local) {
         await _localMediaService.updateAlbum(
-          state.album.copyWith(
-            medias: (append ? [...state.album.medias, ...medias] : medias)
-                .toSet()
-                .toList(),
-          ),
+          state.album.copyWith(medias: updatedMedias),
         );
       } else if (state.album.source == AppMediaSource.googleDrive) {
         _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
@@ -209,15 +213,11 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
         }
         await _googleDriveService.updateAlbum(
           folderId: _backupFolderId!,
-          album: state.album.copyWith(
-            medias: append ? [...state.album.medias, ...medias] : medias,
-          ),
+          album: state.album.copyWith(medias: updatedMedias),
         );
       } else if (state.album.source == AppMediaSource.dropbox) {
         await _dropboxService.updateAlbum(
-          state.album.copyWith(
-            medias: append ? [...state.album.medias, ...medias] : medias,
-          ),
+          state.album.copyWith(medias: updatedMedias),
         );
       }
       loadAlbum();
