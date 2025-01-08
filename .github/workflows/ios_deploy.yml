@@ -1,5 +1,6 @@
 name: Publish to App Store Connect
 
+on: push
 
 jobs:
   ios_deploy:
