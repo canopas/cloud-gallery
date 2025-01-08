@@ -51,6 +51,7 @@ class AlbumItem extends StatelessWidget {
                       ),
                     )
                   : AppMediaImage(
+                      heroTag: "album${media.toString()}",
                       radius: 8,
                       media: media!,
                       size: Size(double.infinity, double.infinity),

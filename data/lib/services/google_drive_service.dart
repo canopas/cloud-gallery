@@ -154,19 +154,27 @@ class GoogleDriveService extends CloudProviderService {
     );
   }
 
-  Future<AppMedia> getMedia({
+  Future<AppMedia?> getMedia({
     required String id,
   }) async {
-    final res = await _client.req(GoogleDriveGetEndpoint(id: id));
+    try {
+      final res = await _client.req(GoogleDriveGetEndpoint(id: id));
 
-    if (res.statusCode == 200) {
-      return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
+      if (res.statusCode == 200) {
+        return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
+      }
+
+      throw SomethingWentWrongError(
+        statusCode: res.statusCode,
+        message: res.statusMessage,
+      );
+    } catch (e) {
+      if (e is DioException &&
+          (e.response?.statusCode == 404 || e.response?.statusCode == 409)) {
+        return null;
+      }
+      rethrow;
     }
-
-    throw SomethingWentWrongError(
-      statusCode: res.statusCode,
-      message: res.statusMessage,
-    );
   }
 
   @override

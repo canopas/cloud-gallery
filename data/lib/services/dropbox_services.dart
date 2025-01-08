@@ -230,20 +230,28 @@ class DropboxService extends CloudProviderService {
     }
   }
 
-  Future<AppMedia> getMedia({
+  Future<AppMedia?> getMedia({
     required String id,
   }) async {
-    final res = await _dropboxAuthenticatedDio.req(
-      DropboxGetFileMetadata(id: id),
-    );
+    try {
+      final res = await _dropboxAuthenticatedDio.req(
+        DropboxGetFileMetadata(id: id),
+      );
 
-    if (res.statusCode == 200) {
-      return AppMedia.fromDropboxJson(json: res.data, metadataJson: res.data);
+      if (res.statusCode == 200) {
+        return AppMedia.fromDropboxJson(json: res.data, metadataJson: res.data);
+      }
+      throw SomethingWentWrongError(
+        statusCode: res.statusCode,
+        message: res.statusMessage ?? '',
+      );
+    } catch (e) {
+      if (e is DioException &&
+          (e.response?.statusCode == 409 || e.response?.statusCode == 404)) {
+        return null;
+      }
+      rethrow;
     }
-    throw SomethingWentWrongError(
-      statusCode: res.statusCode,
-      message: res.statusMessage ?? '',
-    );
   }
 
   @override

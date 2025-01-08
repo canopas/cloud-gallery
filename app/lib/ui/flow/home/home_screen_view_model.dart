@@ -487,6 +487,10 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
     state = state.copyWith(selectedMedias: selectedMedias);
   }
 
+  void clearSelection() {
+    state = state.copyWith(selectedMedias: {});
+  }
+
   Future<void> uploadToGoogleDrive() async {
     try {
       if (state.googleAccount == null) return;

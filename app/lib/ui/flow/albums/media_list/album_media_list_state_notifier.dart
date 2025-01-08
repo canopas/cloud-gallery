@@ -29,6 +29,9 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
   final DropboxService _dropboxService;
   final Logger _logger;
 
+  int _loadedMediaCount = 0;
+  String? _backupFolderId;
+
   AlbumMediaListStateNotifier(
     Album album,
     this._localMediaService,
@@ -41,11 +44,88 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
     loadMedia();
   }
 
-  String? _backupFolderId;
+  Future<List<AppMedia>> loadMedia({bool reload = false}) async {
+    ///TODO: remove media-ids which is deleted from source
+    try {
+      if (state.loading || state.loadingMore) state.medias;
+
+      state = state.copyWith(
+        loading: state.medias.isEmpty,
+        loadingMore: state.medias.isNotEmpty && !reload,
+        error: null,
+        actionError: null,
+      );
+
+      final moreMediaIds = state.album.medias
+          .sublist(
+            (reload ? 0 : _loadedMediaCount),
+          )
+          .take(_loadedMediaCount + (reload ? _loadedMediaCount : 30))
+          .toList();
+
+      Map<String, AppMedia> medias = {};
+
+      if (state.album.source == AppMediaSource.local) {
+        final res = await Future.wait(
+          moreMediaIds.map((id) => _localMediaService.getMedia(id: id)),
+        ).then((value) => value.nonNulls.toList());
+        medias = {for (final item in res) item.id: item};
+      } else if (state.album.source == AppMediaSource.googleDrive) {
+        final res = await Future.wait(
+          moreMediaIds.map((id) => _googleDriveService.getMedia(id: id)),
+        ).then((value) => value.nonNulls.toList());
+        medias = {for (final item in res) item.driveMediaRefId!: item};
+      } else if (state.album.source == AppMediaSource.dropbox) {
+        final res = await Future.wait(
+          moreMediaIds.map((id) => _dropboxService.getMedia(id: id)),
+        ).then((value) => value.nonNulls.toList());
+        medias = {for (final item in res) item.dropboxMediaRefId!: item};
+      }
+
+      state = state.copyWith(
+        medias: reload ? medias : {...state.medias, ...medias},
+        loading: false,
+        loadingMore: false,
+      );
+
+      _loadedMediaCount = reload
+          ? moreMediaIds.length
+          : _loadedMediaCount + moreMediaIds.length;
+
+      // remove media-ids from album which is deleted from source
+      final manuallyRemovedMedia = moreMediaIds
+          .where(
+            (element) => !medias.keys.contains(element),
+          )
+          .toList();
+
+      if (manuallyRemovedMedia.isNotEmpty) {
+        updateAlbumMedias(
+          medias: state.album.medias
+              .where(
+                (element) => !manuallyRemovedMedia.contains(element),
+              )
+              .toList(),
+          append: false,
+        );
+      }
+    } catch (e, s) {
+      state = state.copyWith(
+        loading: false,
+        loadingMore: false,
+        error: state.medias.isEmpty ? e : null,
+        actionError: state.medias.isNotEmpty ? e : null,
+      );
+      _logger.e(
+        "AlbumMediaListStateNotifier: Error loading medias",
+        error: e,
+        stackTrace: s,
+      );
+    }
+    return state.medias.values.toList();
+  }
 
   Future<void> loadAlbum() async {
-    //if (state.loading) return;
-
     state = state.copyWith(actionError: null);
     List<Album> albums = [];
     try {
@@ -61,25 +141,21 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
       } else {
         albums = await _localMediaService.getAlbums();
       }
-      final album =
-          albums.firstWhereOrNull((element) => element.id == state.album.id);
 
       state = state.copyWith(
-        album: album ?? state.album,
+        album: albums
+                .firstWhereOrNull((element) => element.id == state.album.id) ??
+            state.album,
       );
+      loadMedia(reload: true);
     } catch (e, s) {
       state = state.copyWith(actionError: e);
       _logger.e(
-        "AlbumMediaListStateNotifier: Error loading albums",
+        "AlbumMediaListStateNotifier: Error loading album",
         error: e,
         stackTrace: s,
       );
     }
-  }
-
-  Future<void> reloadAlbum() async {
-    await loadAlbum();
-    await loadMedia(reload: true);
   }
 
   Future<void> deleteAlbum() async {
@@ -117,44 +193,11 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
     bool append = true,
   }) async {
     try {
-      state = state.copyWith(actionError: null, loading: true);
-      final album = state.album.copyWith(
-        medias: append ? [...state.album.medias, ...medias] : medias,
-      );
-      if (state.album.source == AppMediaSource.local) {
-        await _localMediaService.updateAlbum(album);
-      } else if (state.album.source == AppMediaSource.googleDrive) {
-        _backupFolderId ??= await _googleDriveService.getBackUpFolderId();
-        if (_backupFolderId == null) {
-          throw BackUpFolderNotFound();
-        }
-        await _googleDriveService.updateAlbum(
-          folderId: _backupFolderId!,
-          album: album,
-        );
-      } else if (state.album.source == AppMediaSource.dropbox) {
-        await _dropboxService.updateAlbum(album);
-      }
-      await reloadAlbum();
-    } catch (e, s) {
-      state = state.copyWith(actionError: e, loading: false);
-      _logger.e(
-        "AlbumMediaListStateNotifier: Error adding media",
-        error: e,
-        stackTrace: s,
-      );
-    }
-  }
-
-  Future<void> removeMediaFromAlbum(AppMedia media) async {
-    try {
       state = state.copyWith(actionError: null);
       if (state.album.source == AppMediaSource.local) {
         await _localMediaService.updateAlbum(
           state.album.copyWith(
-            medias: state.album.medias
-                .where((element) => element != media.id)
-                .toList(),
+            medias: append ? [...state.album.medias, ...medias] : medias,
           ),
         );
       } else if (state.album.source == AppMediaSource.googleDrive) {
@@ -165,120 +208,59 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
         await _googleDriveService.updateAlbum(
           folderId: _backupFolderId!,
           album: state.album.copyWith(
-            medias: state.album.medias
-                .where((element) => element != media.driveMediaRefId!)
-                .toList(),
+            medias: append ? [...state.album.medias, ...medias] : medias,
           ),
         );
       } else if (state.album.source == AppMediaSource.dropbox) {
         await _dropboxService.updateAlbum(
           state.album.copyWith(
-            medias: state.album.medias
-                .where((element) => element != media.dropboxMediaRefId!)
-                .toList(),
+            medias: append ? [...state.album.medias, ...medias] : medias,
           ),
         );
       }
-      state = state.copyWith(
-        medias: state.medias.where((element) => element != media).toList(),
-        album: state.album.copyWith(
-          medias: state.album.medias
-              .where((element) => element != media.id)
-              .toList(),
-        ),
-      );
+      loadAlbum();
     } catch (e, s) {
       state = state.copyWith(actionError: e);
       _logger.e(
-        "AlbumMediaListStateNotifier: Error deleting album",
+        "AlbumMediaListStateNotifier: Error adding media",
         error: e,
         stackTrace: s,
       );
     }
   }
 
-  Future<List<AppMedia>> loadMedia({bool reload = false}) async {
-    ///TODO: remove deleted media
-    try {
-      //if (state.loading) state.medias;
+  Future<void> removeMediaFromAlbum() async {
+    final list = state.album.medias.toList();
+    list.removeWhere((element) {
+      return state.selectedMedias.contains(element);
+    });
+    await updateAlbumMedias(medias: list, append: false);
+  }
 
-      if (reload) {
-        state = state.copyWith(medias: []);
-      }
-
-      state = state.copyWith(loading: true, error: null, actionError: null);
-
-      List<AppMedia> medias = [];
-
-      if (state.album.source == AppMediaSource.local) {
-        final loadedMediaIds = state.medias.map((e) => e.id).toList();
-        final moreMediaIds = state.album.medias
-            .where((element) => !loadedMediaIds.contains(element))
-            .take(30)
-            .toList();
-
-        final newMedias = await Future.wait(
-          moreMediaIds.map(
-            (id) => _localMediaService.getMedia(id: id),
-          ),
-        );
-        medias = newMedias.nonNulls.toList();
-      } else if (state.album.source == AppMediaSource.googleDrive) {
-        final loadedMediaIds =
-            state.medias.map((e) => e.driveMediaRefId).nonNulls.toList();
-        final moreMediaIds = state.album.medias
-            .where((element) => !loadedMediaIds.contains(element))
-            .take(30)
-            .toList();
-        medias = await Future.wait(
-          moreMediaIds.map(
-            (id) => _googleDriveService.getMedia(id: id),
-          ),
-        ).then(
-          (value) => value.nonNulls.toList(),
-        );
-      } else if (state.album.source == AppMediaSource.dropbox) {
-        final loadedMediaIds =
-            state.medias.map((e) => e.dropboxMediaRefId).nonNulls.toList();
-        final moreMediaIds = state.album.medias
-            .where((element) => !loadedMediaIds.contains(element))
-            .take(30)
-            .toList();
-        medias = await Future.wait(
-          moreMediaIds.map(
-            (id) => _dropboxService.getMedia(id: id),
-          ),
-        ).then(
-          (value) => value.nonNulls.toList(),
-        );
-      }
-      await Future.delayed(Duration(milliseconds: 300));
-
-      state =
-          state.copyWith(medias: [...state.medias, ...medias], loading: false);
-      return [...state.medias, ...medias];
-    } catch (e, s) {
+  void toggleMediaSelection(String id) {
+    if (state.selectedMedias.contains(id)) {
       state = state.copyWith(
-        loading: false,
-        error: state.medias.isEmpty ? e : null,
-        actionError: state.medias.isNotEmpty ? e : null,
+        selectedMedias:
+            state.selectedMedias.where((element) => element != id).toList(),
       );
-      _logger.e(
-        "AlbumMediaListStateNotifier: Error loading medias",
-        error: e,
-        stackTrace: s,
-      );
-      return state.medias;
+    } else {
+      state = state.copyWith(selectedMedias: [...state.selectedMedias, id]);
     }
+  }
+
+  void clearSelection() {
+    state = state.copyWith(selectedMedias: []);
   }
 }
 
 @freezed
 class AlbumMediaListState with _$AlbumMediaListState {
   const factory AlbumMediaListState({
-    @Default([]) List<AppMedia> medias,
+    @Default({}) Map<String, AppMedia> medias,
+    @Default([]) List<String> selectedMedias,
     required Album album,
     @Default(false) bool loading,
+    @Default(false) bool loadingMore,
     @Default(false) bool deleteAlbumSuccess,
     Object? error,
     Object? actionError,

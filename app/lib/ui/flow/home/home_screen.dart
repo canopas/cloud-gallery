@@ -73,7 +73,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       homeViewStateNotifier.select(
         (value) => (
           hasMedia: value.medias.isNotEmpty,
-          hasSelectedMedia: value.selectedMedias.isNotEmpty,
           isLoading: value.loading,
           hasLocalMediaAccess: value.hasLocalMediaAccess,
           error: value.error,
@@ -92,15 +91,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
     }
 
-    return Stack(
-      alignment: Alignment.bottomRight,
+    return Column(
       children: [
-        _buildMediaList(context: context),
-        if (state.hasSelectedMedia)
-          Padding(
-            padding: context.systemPadding + const EdgeInsets.all(16),
-            child: const MultiSelectionDoneButton(),
-          ),
+        Expanded(child: _buildMediaList(context: context)),
+        const HomeSelectionMenu(),
       ],
     );
   }

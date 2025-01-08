@@ -8,7 +8,7 @@ import 'package:style/indicators/circular_progress_indicator.dart';
 import '../domain/image_providers/app_media_image_provider.dart';
 
 class AppMediaImage extends ConsumerWidget {
-  final String? heroTag;
+  final String heroTag;
   final AppMedia media;
   final Size size;
   final double radius;
@@ -16,7 +16,7 @@ class AppMediaImage extends ConsumerWidget {
   const AppMediaImage({
     super.key,
     required this.size,
-    this.heroTag,
+    required this.heroTag,
     this.radius = 4,
     required this.media,
   });
@@ -28,7 +28,7 @@ class AppMediaImage extends ConsumerWidget {
       child: Container(
         color: context.colorScheme.containerNormalOnSurface,
         child: Hero(
-          tag: heroTag ?? '',
+          tag: heroTag,
           child: Image(
             gaplessPlayback: true,
             image: AppMediaImageProvider(

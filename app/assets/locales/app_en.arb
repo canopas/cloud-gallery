@@ -130,7 +130,10 @@
   "store_in_device_title": "Device",
 
   "@_ALBUM_MEDIA_LIST":{},
-  "add_media_title": "Add Media",
+  "add_items_action_title": "Add Items",
+  "edit_album_action_title": "Edit Album",
+  "delete_album_action_title": "Delete Album",
+  "remove_item_action_title": "Remove Items",
 
   "@_MEDIA_SELECTION":{},
   "select_from_device_title": "Select from Device",
