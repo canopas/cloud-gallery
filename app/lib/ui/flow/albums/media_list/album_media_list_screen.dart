@@ -64,7 +64,7 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
                           await MediaSelectionRoute($extra: widget.album.source)
                               .push(context);
                       if (res != null && res is List<String>) {
-                        await _notifier.updateAlbumMedias(medias: res);
+                        await _notifier.addMediaInAlbum(medias: res);
                       }
                     },
                     icon: Icon(
@@ -127,7 +127,7 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
         error: state.error!,
         onRetryTap: () => _notifier.loadMedia(reload: true),
       );
-    } else if (state.medias.isEmpty) {
+    } else if (state.medias.isEmpty && state.addingMedia.isEmpty) {
       return PlaceHolderScreen(
         icon: SvgPicture.asset(
           Assets.images.ilNoMediaFound,
@@ -150,42 +150,63 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,
                 ),
-                itemCount: state.medias.length,
+                itemCount: (state.medias.length + state.addingMedia.length),
                 itemBuilder: (context, index) {
-                  if (index == state.medias.length - 1) {
+                  if (index >=
+                      (state.medias.length + state.addingMedia.length) - 1) {
                     runPostFrame(() {
                       _notifier.loadMedia();
                     });
                   }
-
-                  return AppMediaThumbnail(
-                    selected: state.selectedMedias
-                        .contains(state.medias.keys.elementAt(index)),
-                    onTap: () async {
-                      if (state.selectedMedias.isNotEmpty) {
-                        _notifier.toggleMediaSelection(
-                          state.medias.keys.elementAt(index),
-                        );
-                        return;
-                      }
-                      await MediaPreviewRoute(
-                        $extra: MediaPreviewRouteData(
-                          onLoadMore: _notifier.loadMedia,
-                          heroTag: "album_media_list",
-                          medias: state.medias.values.toList(),
-                          startFrom: state.medias.values.elementAt(index).id,
-                        ),
-                      ).push(context);
-                      _notifier.loadMedia(reload: true);
-                    },
-                    onLongTap: () {
-                      _notifier.toggleMediaSelection(
+                  if (index < state.medias.length) {
+                    return Opacity(
+                      opacity: state.removingMedia.contains(
                         state.medias.keys.elementAt(index),
-                      );
-                    },
-                    heroTag:
-                        "album_media_list${state.medias.values.elementAt(index).toString()}",
-                    media: state.medias.values.elementAt(index),
+                      )
+                          ? 0.7
+                          : 1,
+                      child: AppMediaThumbnail(
+                        selected: state.selectedMedias
+                            .contains(state.medias.keys.elementAt(index)),
+                        onTap: () async {
+                          if (state.selectedMedias.isNotEmpty) {
+                            _notifier.toggleMediaSelection(
+                              state.medias.keys.elementAt(index),
+                            );
+                            return;
+                          }
+                          await MediaPreviewRoute(
+                            $extra: MediaPreviewRouteData(
+                              onLoadMore: _notifier.loadMedia,
+                              heroTag: "album_media_list",
+                              medias: state.medias.values.toList(),
+                              startFrom:
+                                  state.medias.values.elementAt(index).id,
+                            ),
+                          ).push(context);
+                          _notifier.loadMedia(reload: true);
+                        },
+                        onLongTap: () {
+                          _notifier.toggleMediaSelection(
+                            state.medias.keys.elementAt(index),
+                          );
+                        },
+                        heroTag:
+                            "album_media_list${state.medias.values.elementAt(index).toString()}",
+                        media: state.medias.values.elementAt(index),
+                      ),
+                    );
+                  }
+
+                  return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: context.colorScheme.containerNormalOnSurface,
+                    child: const Center(
+                      child: AppCircularProgressIndicator(
+                        size: 22,
+                      ),
+                    ),
                   );
                 },
               ),

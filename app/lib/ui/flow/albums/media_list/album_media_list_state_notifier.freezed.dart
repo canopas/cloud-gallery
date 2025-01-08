@@ -21,6 +21,8 @@ mixin _$AlbumMediaListState {
   Album get album => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   bool get loadingMore => throw _privateConstructorUsedError;
+  List<String> get addingMedia => throw _privateConstructorUsedError;
+  List<String> get removingMedia => throw _privateConstructorUsedError;
   bool get deleteAlbumSuccess => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   Object? get actionError => throw _privateConstructorUsedError;
@@ -44,6 +46,8 @@ abstract class $AlbumMediaListStateCopyWith<$Res> {
       Album album,
       bool loading,
       bool loadingMore,
+      List<String> addingMedia,
+      List<String> removingMedia,
       bool deleteAlbumSuccess,
       Object? error,
       Object? actionError});
@@ -71,6 +75,8 @@ class _$AlbumMediaListStateCopyWithImpl<$Res, $Val extends AlbumMediaListState>
     Object? album = null,
     Object? loading = null,
     Object? loadingMore = null,
+    Object? addingMedia = null,
+    Object? removingMedia = null,
     Object? deleteAlbumSuccess = null,
     Object? error = freezed,
     Object? actionError = freezed,
@@ -96,6 +102,14 @@ class _$AlbumMediaListStateCopyWithImpl<$Res, $Val extends AlbumMediaListState>
           ? _value.loadingMore
           : loadingMore // ignore: cast_nullable_to_non_nullable
               as bool,
+      addingMedia: null == addingMedia
+          ? _value.addingMedia
+          : addingMedia // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      removingMedia: null == removingMedia
+          ? _value.removingMedia
+          : removingMedia // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       deleteAlbumSuccess: null == deleteAlbumSuccess
           ? _value.deleteAlbumSuccess
           : deleteAlbumSuccess // ignore: cast_nullable_to_non_nullable
@@ -130,6 +144,8 @@ abstract class _$$AlbumMediaListStateImplCopyWith<$Res>
       Album album,
       bool loading,
       bool loadingMore,
+      List<String> addingMedia,
+      List<String> removingMedia,
       bool deleteAlbumSuccess,
       Object? error,
       Object? actionError});
@@ -156,6 +172,8 @@ class __$$AlbumMediaListStateImplCopyWithImpl<$Res>
     Object? album = null,
     Object? loading = null,
     Object? loadingMore = null,
+    Object? addingMedia = null,
+    Object? removingMedia = null,
     Object? deleteAlbumSuccess = null,
     Object? error = freezed,
     Object? actionError = freezed,
@@ -181,6 +199,14 @@ class __$$AlbumMediaListStateImplCopyWithImpl<$Res>
           ? _value.loadingMore
           : loadingMore // ignore: cast_nullable_to_non_nullable
               as bool,
+      addingMedia: null == addingMedia
+          ? _value._addingMedia
+          : addingMedia // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      removingMedia: null == removingMedia
+          ? _value._removingMedia
+          : removingMedia // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       deleteAlbumSuccess: null == deleteAlbumSuccess
           ? _value.deleteAlbumSuccess
           : deleteAlbumSuccess // ignore: cast_nullable_to_non_nullable
@@ -200,11 +226,15 @@ class _$AlbumMediaListStateImpl implements _AlbumMediaListState {
       required this.album,
       this.loading = false,
       this.loadingMore = false,
+      final List<String> addingMedia = const [],
+      final List<String> removingMedia = const [],
       this.deleteAlbumSuccess = false,
       this.error,
       this.actionError})
       : _medias = medias,
-        _selectedMedias = selectedMedias;
+        _selectedMedias = selectedMedias,
+        _addingMedia = addingMedia,
+        _removingMedia = removingMedia;
 
   final Map<String, AppMedia> _medias;
   @override
@@ -232,6 +262,24 @@ class _$AlbumMediaListStateImpl implements _AlbumMediaListState {
   @override
   @JsonKey()
   final bool loadingMore;
+  final List<String> _addingMedia;
+  @override
+  @JsonKey()
+  List<String> get addingMedia {
+    if (_addingMedia is EqualUnmodifiableListView) return _addingMedia;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_addingMedia);
+  }
+
+  final List<String> _removingMedia;
+  @override
+  @JsonKey()
+  List<String> get removingMedia {
+    if (_removingMedia is EqualUnmodifiableListView) return _removingMedia;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_removingMedia);
+  }
+
   @override
   @JsonKey()
   final bool deleteAlbumSuccess;
@@ -242,7 +290,7 @@ class _$AlbumMediaListStateImpl implements _AlbumMediaListState {
 
   @override
   String toString() {
-    return 'AlbumMediaListState(medias: $medias, selectedMedias: $selectedMedias, album: $album, loading: $loading, loadingMore: $loadingMore, deleteAlbumSuccess: $deleteAlbumSuccess, error: $error, actionError: $actionError)';
+    return 'AlbumMediaListState(medias: $medias, selectedMedias: $selectedMedias, album: $album, loading: $loading, loadingMore: $loadingMore, addingMedia: $addingMedia, removingMedia: $removingMedia, deleteAlbumSuccess: $deleteAlbumSuccess, error: $error, actionError: $actionError)';
   }
 
   @override
@@ -257,6 +305,10 @@ class _$AlbumMediaListStateImpl implements _AlbumMediaListState {
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.loadingMore, loadingMore) ||
                 other.loadingMore == loadingMore) &&
+            const DeepCollectionEquality()
+                .equals(other._addingMedia, _addingMedia) &&
+            const DeepCollectionEquality()
+                .equals(other._removingMedia, _removingMedia) &&
             (identical(other.deleteAlbumSuccess, deleteAlbumSuccess) ||
                 other.deleteAlbumSuccess == deleteAlbumSuccess) &&
             const DeepCollectionEquality().equals(other.error, error) &&
@@ -272,6 +324,8 @@ class _$AlbumMediaListStateImpl implements _AlbumMediaListState {
       album,
       loading,
       loadingMore,
+      const DeepCollectionEquality().hash(_addingMedia),
+      const DeepCollectionEquality().hash(_removingMedia),
       deleteAlbumSuccess,
       const DeepCollectionEquality().hash(error),
       const DeepCollectionEquality().hash(actionError));
@@ -293,6 +347,8 @@ abstract class _AlbumMediaListState implements AlbumMediaListState {
       required final Album album,
       final bool loading,
       final bool loadingMore,
+      final List<String> addingMedia,
+      final List<String> removingMedia,
       final bool deleteAlbumSuccess,
       final Object? error,
       final Object? actionError}) = _$AlbumMediaListStateImpl;
@@ -307,6 +363,10 @@ abstract class _AlbumMediaListState implements AlbumMediaListState {
   bool get loading;
   @override
   bool get loadingMore;
+  @override
+  List<String> get addingMedia;
+  @override
+  List<String> get removingMedia;
   @override
   bool get deleteAlbumSuccess;
   @override
