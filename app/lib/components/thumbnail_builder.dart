@@ -8,7 +8,7 @@ import 'package:style/indicators/circular_progress_indicator.dart';
 import '../domain/image_providers/app_media_image_provider.dart';
 
 class AppMediaImage extends ConsumerWidget {
-  final Object? heroTag;
+  final String? heroTag;
   final AppMedia media;
   final Size size;
   final double radius;

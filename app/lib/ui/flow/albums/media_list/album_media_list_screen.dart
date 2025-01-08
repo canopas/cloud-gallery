@@ -61,7 +61,6 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
                       final res =
                           await MediaSelectionRoute($extra: widget.album.source)
                               .push(context);
-
                       if (res != null && res is List<String>) {
                         await _notifier.updateAlbumMedias(medias: res);
                       }
@@ -119,7 +118,7 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
     required BuildContext context,
     required AlbumMediaListState state,
   }) {
-    if (state.loading && state.medias.isEmpty) {
+    if (state.loading) {
       return const Center(child: AppCircularProgressIndicator());
     } else if (state.error != null) {
       return ErrorScreen(
@@ -145,42 +144,45 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
         mainAxisSpacing: 4,
       ),
       itemCount: state.medias.length,
-      itemBuilder: (context, index) => AppMediaThumbnail(
-        onTap: () async {
-          await MediaPreviewRoute(
-            $extra: MediaPreviewRouteData(
-              onLoadMore: _notifier.loadMedia,
-              heroTag: "album_media_list",
-              medias: state.medias,
-              startFrom: state.medias[index].id,
-            ),
-          ).push(context);
-        },
-        onLongTap: () {
-          showAppSheet(
-            context: context,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppSheetAction(
-                  title: context.l10n.common_remove,
-                  onPressed: () async {
-                    context.pop();
-                    await _notifier.removeMediaFromAlbum(state.medias[index]);
-                  },
-                  icon: Icon(
-                    CupertinoIcons.delete,
-                    size: 24,
-                    color: context.colorScheme.textPrimary,
+      itemBuilder: (context, index) {
+        final heroTag = "album_media_list-$index-";
+        return AppMediaThumbnail(
+          onTap: () async {
+            await MediaPreviewRoute(
+              $extra: MediaPreviewRouteData(
+                onLoadMore: _notifier.loadMedia,
+                heroTag: heroTag,
+                medias: state.medias,
+                startFrom: state.medias[index].id,
+              ),
+            ).push(context);
+          },
+          onLongTap: () {
+            showAppSheet(
+              context: context,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppSheetAction(
+                    title: context.l10n.common_remove,
+                    onPressed: () async {
+                      context.pop();
+                      await _notifier.removeMediaFromAlbum(state.medias[index]);
+                    },
+                    icon: Icon(
+                      CupertinoIcons.delete,
+                      size: 24,
+                      color: context.colorScheme.textPrimary,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-        heroTag: "album_media_list${state.medias[index].toString()}",
-        media: state.medias[index],
-      ),
+                ],
+              ),
+            );
+          },
+          heroTag: "$heroTag${state.medias[index].toString()}",
+          media: state.medias[index],
+        );
+      },
     );
   }
 }
