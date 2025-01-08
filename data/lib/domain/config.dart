@@ -16,5 +16,5 @@ class LocalDatabaseConstants {
 }
 
 class FeatureFlag {
-  static final googleDriveSupport = true;
+  static final googleDriveSupport = false;
 }

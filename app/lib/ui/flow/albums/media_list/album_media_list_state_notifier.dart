@@ -197,7 +197,9 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
       if (state.album.source == AppMediaSource.local) {
         await _localMediaService.updateAlbum(
           state.album.copyWith(
-            medias: append ? [...state.album.medias, ...medias] : medias,
+            medias: (append ? [...state.album.medias, ...medias] : medias)
+                .toSet()
+                .toList(),
           ),
         );
       } else if (state.album.source == AppMediaSource.googleDrive) {
