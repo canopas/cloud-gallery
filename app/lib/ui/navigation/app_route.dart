@@ -20,8 +20,8 @@ class AppRoutePath {
   static const onBoard = '/on-board';
   static const home = '/';
   static const albums = '/albums';
-  static const add = 'add';
-  static const mediaList = 'media-list';
+  static const addAlbum = '/add-album';
+  static const albumMediaList = '/albums/:albumId';
   static const transfer = '/transfer';
   static const accounts = '/accounts';
   static const preview = '/preview';
@@ -49,13 +49,7 @@ class OnBoardRoute extends GoRouteData {
     ),
     TypedStatefulShellBranch<AlbumsShellBranch>(
       routes: [
-        TypedGoRoute<AlbumsRoute>(
-          path: AppRoutePath.albums,
-          routes: [
-            TypedGoRoute<AddAlbumRoute>(path: AppRoutePath.add),
-            TypedGoRoute<AlbumMediaListRoute>(path: AppRoutePath.mediaList),
-          ],
-        ),
+        TypedGoRoute<AlbumsRoute>(path: AppRoutePath.albums),
       ],
     ),
     TypedStatefulShellBranch<TransferShellBranch>(
@@ -105,9 +99,8 @@ class AlbumsRoute extends GoRouteData {
       const AlbumsScreen();
 }
 
+@TypedGoRoute<AddAlbumRoute>(path: AppRoutePath.addAlbum)
 class AddAlbumRoute extends GoRouteData {
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
-
   final Album? $extra;
 
   const AddAlbumRoute({this.$extra});
@@ -117,12 +110,12 @@ class AddAlbumRoute extends GoRouteData {
       AddAlbumScreen(editAlbum: $extra);
 }
 
+@TypedGoRoute<AlbumMediaListRoute>(path: AppRoutePath.albumMediaList)
 class AlbumMediaListRoute extends GoRouteData {
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
-
   final Album $extra;
+  final String albumId;
 
-  const AlbumMediaListRoute({required this.$extra});
+  const AlbumMediaListRoute({required this.$extra, required this.albumId});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>

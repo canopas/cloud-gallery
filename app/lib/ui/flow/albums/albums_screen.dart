@@ -104,6 +104,7 @@ class _AlbumsScreenState extends ConsumerState<AlbumsScreen> {
               media: state.medias[album.id],
               onTap: () async {
                 await AlbumMediaListRoute(
+                  albumId: album.id,
                   $extra: album,
                 ).push(context);
                 _notifier.loadAlbums();

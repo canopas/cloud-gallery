@@ -9,6 +9,8 @@ part of 'app_route.dart';
 List<RouteBase> get $appRoutes => [
       $onBoardRoute,
       $mainShellRoute,
+      $addAlbumRoute,
+      $albumMediaListRoute,
       $mediaPreviewRoute,
       $mediaMetadataDetailsRoute,
       $mediaSelectionRoute,
@@ -52,18 +54,6 @@ RouteBase get $mainShellRoute => StatefulShellRouteData.$route(
             GoRouteData.$route(
               path: '/albums',
               factory: $AlbumsRouteExtension._fromState,
-              routes: [
-                GoRouteData.$route(
-                  path: 'add',
-                  parentNavigatorKey: AddAlbumRoute.$parentNavigatorKey,
-                  factory: $AddAlbumRouteExtension._fromState,
-                ),
-                GoRouteData.$route(
-                  path: 'media-list',
-                  parentNavigatorKey: AlbumMediaListRoute.$parentNavigatorKey,
-                  factory: $AlbumMediaListRouteExtension._fromState,
-                ),
-              ],
             ),
           ],
         ),
@@ -125,49 +115,6 @@ extension $AlbumsRouteExtension on AlbumsRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $AddAlbumRouteExtension on AddAlbumRoute {
-  static AddAlbumRoute _fromState(GoRouterState state) => AddAlbumRoute(
-        $extra: state.extra as Album?,
-      );
-
-  String get location => GoRouteData.$location(
-        '/albums/add',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
-}
-
-extension $AlbumMediaListRouteExtension on AlbumMediaListRoute {
-  static AlbumMediaListRoute _fromState(GoRouterState state) =>
-      AlbumMediaListRoute(
-        $extra: state.extra as Album,
-      );
-
-  String get location => GoRouteData.$location(
-        '/albums/media-list',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
-}
-
 extension $TransferRouteExtension on TransferRoute {
   static TransferRoute _fromState(GoRouterState state) => const TransferRoute();
 
@@ -200,6 +147,60 @@ extension $AccountRouteExtension on AccountRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $addAlbumRoute => GoRouteData.$route(
+      path: '/add-album',
+      factory: $AddAlbumRouteExtension._fromState,
+    );
+
+extension $AddAlbumRouteExtension on AddAlbumRoute {
+  static AddAlbumRoute _fromState(GoRouterState state) => AddAlbumRoute(
+        $extra: state.extra as Album?,
+      );
+
+  String get location => GoRouteData.$location(
+        '/add-album',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+RouteBase get $albumMediaListRoute => GoRouteData.$route(
+      path: '/albums/:albumId',
+      factory: $AlbumMediaListRouteExtension._fromState,
+    );
+
+extension $AlbumMediaListRouteExtension on AlbumMediaListRoute {
+  static AlbumMediaListRoute _fromState(GoRouterState state) =>
+      AlbumMediaListRoute(
+        albumId: state.pathParameters['albumId']!,
+        $extra: state.extra as Album,
+      );
+
+  String get location => GoRouteData.$location(
+        '/albums/${Uri.encodeComponent(albumId)}',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $mediaPreviewRoute => GoRouteData.$route(

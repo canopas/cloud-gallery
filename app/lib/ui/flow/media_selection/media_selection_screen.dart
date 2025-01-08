@@ -157,7 +157,7 @@ class _MediaSelectionScreenState extends ConsumerState<MediaSelectionScreen> {
                   ),
                   itemCount: gridEntry.value.length,
                   itemBuilder: (context, index) => AppMediaThumbnail(
-                    heroTag: "selection",
+                    heroTag: "selection${gridEntry.value.elementAt(index)}",
                     onTap: () {
                       _notifier.toggleMediaSelection(
                         gridEntry.value.elementAt(index),
