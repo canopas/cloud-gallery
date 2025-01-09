@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
 import '../apis/dropbox/dropbox_content_endpoints.dart';
 import '../apis/network/client.dart';
 import '../domain/config.dart';
 import '../errors/app_error.dart';
+import '../models/album/album.dart';
 import '../models/dropbox/account/dropbox_account.dart';
 import '../models/media/media.dart';
 import '../models/media_content/media_content.dart';
@@ -46,6 +48,8 @@ class DropboxService extends CloudProviderService {
       );
     }
   }
+
+  //MEDIA ----------------------------------------------------------------------
 
   Future<void> setFileIdAppPropertyTemplate() async {
     // Get all the app property templates
@@ -127,7 +131,11 @@ class DropboxService extends CloudProviderService {
           nextPageToken = response.data['cursor'];
           medias.addAll(
             (response.data['entries'] as List)
-                .where((element) => element['.tag'] == 'file')
+                .where(
+                  (element) =>
+                      element['.tag'] == 'file' &&
+                      element['name'] != 'Albums.json',
+                )
                 .map((e) => AppMedia.fromDropboxJson(json: e))
                 .toList(),
           );
@@ -173,7 +181,8 @@ class DropboxService extends CloudProviderService {
       );
       if (response.statusCode == 200) {
         final files = (response.data['entries'] as List).where(
-          (element) => element['.tag'] == 'file',
+          (element) =>
+              element['.tag'] == 'file' && element['name'] != 'Albums.json',
         );
 
         final metadataResponses = await Future.wait(
@@ -216,6 +225,30 @@ class DropboxService extends CloudProviderService {
           nextPageToken: nextPageToken,
           pageSize: pageSize,
         );
+      }
+      rethrow;
+    }
+  }
+
+  Future<AppMedia?> getMedia({
+    required String id,
+  }) async {
+    try {
+      final res = await _dropboxAuthenticatedDio.req(
+        DropboxGetFileMetadata(id: id),
+      );
+
+      if (res.statusCode == 200) {
+        return AppMedia.fromDropboxJson(json: res.data, metadataJson: res.data);
+      }
+      throw SomethingWentWrongError(
+        statusCode: res.statusCode,
+        message: res.statusMessage ?? '',
+      );
+    } catch (e) {
+      if (e is DioException &&
+          (e.response?.statusCode == 409 || e.response?.statusCode == 404)) {
+        return null;
       }
       rethrow;
     }
@@ -350,6 +383,122 @@ class DropboxService extends CloudProviderService {
         cancellationToken: cancelToken,
       ),
     );
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  // ALBUM ---------------------------------------------------------------------
+
+  Future<List<Album>> getAlbums() async {
+    try {
+      final res = await _dropboxAuthenticatedDio.req(
+        DropboxDownloadEndpoint(
+          filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
+        ),
+      );
+      if (res.statusCode != 200 || res.data is! ResponseBody) {
+        throw SomethingWentWrongError(
+          statusCode: res.statusCode,
+          message: res.statusMessage,
+        );
+      }
+      final List<int> bytes = [];
+      await for (final chunk in (res.data as ResponseBody).stream) {
+        bytes.addAll(chunk);
+      }
+      final json = jsonDecode(utf8.decode(bytes));
+      return json is! List
+          ? <Album>[]
+          : json.map((e) => Album.fromJson(e)).toList();
+    } catch (e) {
+      if (e is DioException && e.response?.statusCode == 409) {
+        return <Album>[];
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> createAlbum(Album album) async {
+    final albums = await getAlbums();
+    albums.add(album);
+    albums.sort((a, b) => b.created_at.compareTo(a.created_at));
+
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxUploadEndpoint(
+        mode: 'overwrite',
+        autoRename: false,
+        content: AppMediaContent(
+          stream: Stream.value(utf8.encode(jsonEncode(albums))),
+          length: utf8.encode(jsonEncode(albums)).length,
+          contentType: 'application/octet-stream',
+        ),
+        filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
+      ),
+    );
+
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<void> deleteAlbum(String id) async {
+    final albums = await getAlbums();
+    albums.removeWhere((a) => a.id == id);
+
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxUploadEndpoint(
+        mode: 'overwrite',
+        autoRename: false,
+        content: AppMediaContent(
+          stream: Stream.value(utf8.encode(jsonEncode(albums))),
+          length: utf8.encode(jsonEncode(albums)).length,
+          contentType: 'application/octet-stream',
+        ),
+        filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
+      ),
+    );
+
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<void> updateAlbum(Album album) async {
+    final albums = await getAlbums();
+    final index = albums.indexWhere((a) => a.id == album.id);
+    if (index == -1) {
+      throw SomethingWentWrongError(
+        statusCode: 404,
+        message: 'Album not found',
+      );
+    }
+
+    albums[index] = album;
+    albums.sort((a, b) => b.created_at.compareTo(a.created_at));
+
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxUploadEndpoint(
+        mode: 'overwrite',
+        autoRename: false,
+        content: AppMediaContent(
+          stream: Stream.value(utf8.encode(jsonEncode(albums))),
+          length: utf8.encode(jsonEncode(albums)).length,
+          contentType: 'application/octet-stream',
+        ),
+        filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
+      ),
+    );
+
     if (res.statusCode == 200) return;
 
     throw SomethingWentWrongError(

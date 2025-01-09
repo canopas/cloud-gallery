@@ -28,11 +28,15 @@ import 'components/video_player_components/video_duration_slider.dart';
 
 class MediaPreview extends ConsumerStatefulWidget {
   final List<AppMedia> medias;
+  final String heroTag;
+  final Future<List<AppMedia>> Function() onLoadMore;
   final String startFrom;
 
   const MediaPreview({
     super.key,
     required this.medias,
+    required this.heroTag,
+    required this.onLoadMore,
     required this.startFrom,
   });
 
@@ -190,7 +194,10 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
                     physics: state.isImageZoomed
                         ? const NeverScrollableScrollPhysics()
                         : null,
-                    onPageChanged: _notifier.changeVisibleMediaIndex,
+                    onPageChanged: (value) => _notifier.changeVisibleMediaIndex(
+                      value,
+                      widget.onLoadMore,
+                    ),
                     controller: _pageController,
                     itemCount: state.medias.length,
                     itemBuilder: (context, index) => _preview(
@@ -243,7 +250,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
               );
 
               return Hero(
-                tag: media,
+                tag: "${widget.heroTag}${media.toString()}",
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -321,7 +328,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         },
         onDismiss: context.pop,
         onDragDown: _notifier.updateSwipeDownPercentage,
-        child: LocalMediaImagePreview(media: media),
+        child: LocalMediaImagePreview(media: media, heroTag: widget.heroTag),
       );
     } else if (media.type.isImage &&
         (media.isGoogleDriveStored || media.isDropboxStored)) {
@@ -332,7 +339,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         },
         onDismiss: context.pop,
         onDragDown: _notifier.updateSwipeDownPercentage,
-        child: NetworkImagePreview(media: media),
+        child: NetworkImagePreview(media: media, heroTag: widget.heroTag),
       );
     } else {
       return PlaceHolderScreen(
@@ -359,6 +366,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           ),
         );
         return DownloadRequireView(
+          heroTag: widget.heroTag,
           dropboxAccessToken:
               ref.read(AppPreferences.dropboxToken)?.access_token,
           media: media,

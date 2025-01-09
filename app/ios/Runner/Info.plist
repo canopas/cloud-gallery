@@ -65,5 +65,7 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>FlutterDeepLinkingEnabled</key>
+    <false/>
 </dict>
 </plist>

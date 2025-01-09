@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$NetworkImagePreviewState {
+  AppMedia get media => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   double? get progress => throw _privateConstructorUsedError;
   String? get filePath => throw _privateConstructorUsedError;
@@ -34,7 +35,14 @@ abstract class $NetworkImagePreviewStateCopyWith<$Res> {
           $Res Function(NetworkImagePreviewState) then) =
       _$NetworkImagePreviewStateCopyWithImpl<$Res, NetworkImagePreviewState>;
   @useResult
-  $Res call({bool loading, double? progress, String? filePath, Object? error});
+  $Res call(
+      {AppMedia media,
+      bool loading,
+      double? progress,
+      String? filePath,
+      Object? error});
+
+  $AppMediaCopyWith<$Res> get media;
 }
 
 /// @nodoc
@@ -53,12 +61,17 @@ class _$NetworkImagePreviewStateCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? media = null,
     Object? loading = null,
     Object? progress = freezed,
     Object? filePath = freezed,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
+      media: null == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as AppMedia,
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -74,6 +87,16 @@ class _$NetworkImagePreviewStateCopyWithImpl<$Res,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
+
+  /// Create a copy of NetworkImagePreviewState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AppMediaCopyWith<$Res> get media {
+    return $AppMediaCopyWith<$Res>(_value.media, (value) {
+      return _then(_value.copyWith(media: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -85,7 +108,15 @@ abstract class _$$NetworkImagePreviewStateImplCopyWith<$Res>
       __$$NetworkImagePreviewStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool loading, double? progress, String? filePath, Object? error});
+  $Res call(
+      {AppMedia media,
+      bool loading,
+      double? progress,
+      String? filePath,
+      Object? error});
+
+  @override
+  $AppMediaCopyWith<$Res> get media;
 }
 
 /// @nodoc
@@ -103,12 +134,17 @@ class __$$NetworkImagePreviewStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? media = null,
     Object? loading = null,
     Object? progress = freezed,
     Object? filePath = freezed,
     Object? error = freezed,
   }) {
     return _then(_$NetworkImagePreviewStateImpl(
+      media: null == media
+          ? _value.media
+          : media // ignore: cast_nullable_to_non_nullable
+              as AppMedia,
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -130,8 +166,14 @@ class __$$NetworkImagePreviewStateImplCopyWithImpl<$Res>
 
 class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
   const _$NetworkImagePreviewStateImpl(
-      {this.loading = false, this.progress, this.filePath, this.error});
+      {required this.media,
+      this.loading = false,
+      this.progress,
+      this.filePath,
+      this.error});
 
+  @override
+  final AppMedia media;
   @override
   @JsonKey()
   final bool loading;
@@ -144,7 +186,7 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
 
   @override
   String toString() {
-    return 'NetworkImagePreviewState(loading: $loading, progress: $progress, filePath: $filePath, error: $error)';
+    return 'NetworkImagePreviewState(media: $media, loading: $loading, progress: $progress, filePath: $filePath, error: $error)';
   }
 
   @override
@@ -152,6 +194,7 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$NetworkImagePreviewStateImpl &&
+            (identical(other.media, media) || other.media == media) &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.progress, progress) ||
                 other.progress == progress) &&
@@ -161,8 +204,8 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, progress, filePath,
-      const DeepCollectionEquality().hash(error));
+  int get hashCode => Object.hash(runtimeType, media, loading, progress,
+      filePath, const DeepCollectionEquality().hash(error));
 
   /// Create a copy of NetworkImagePreviewState
   /// with the given fields replaced by the non-null parameter values.
@@ -176,11 +219,14 @@ class _$NetworkImagePreviewStateImpl implements _NetworkImagePreviewState {
 
 abstract class _NetworkImagePreviewState implements NetworkImagePreviewState {
   const factory _NetworkImagePreviewState(
-      {final bool loading,
+      {required final AppMedia media,
+      final bool loading,
       final double? progress,
       final String? filePath,
       final Object? error}) = _$NetworkImagePreviewStateImpl;
 
+  @override
+  AppMedia get media;
   @override
   bool get loading;
   @override

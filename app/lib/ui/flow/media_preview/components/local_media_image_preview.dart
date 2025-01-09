@@ -9,10 +9,12 @@ import '../../../../domain/image_providers/app_media_image_provider.dart';
 
 class LocalMediaImagePreview extends StatelessWidget {
   final AppMedia media;
+  final String heroTag;
 
   const LocalMediaImagePreview({
     super.key,
     required this.media,
+    required this.heroTag,
   });
 
   @override
@@ -27,7 +29,7 @@ class LocalMediaImagePreview extends StatelessWidget {
         : width;
     return Center(
       child: Hero(
-        tag: media,
+        tag: "$heroTag${media.toString()}",
         child: Image.file(
           width: width,
           height: height,

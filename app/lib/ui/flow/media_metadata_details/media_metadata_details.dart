@@ -31,6 +31,7 @@ class MediaMetadataDetailsScreen extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     AppMediaImage(
+                      heroTag: "media_metadata_details${media.toString()}",
                       size: Size(context.mediaQuerySize.width, 200),
                       media: media,
                       radius: 0,

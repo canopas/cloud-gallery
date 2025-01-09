@@ -39,11 +39,12 @@ class _CloudGalleryAppState extends ConsumerState<CloudGalleryApp> {
     _handleNotification();
 
     _router = GoRouter(
+      navigatorKey: rootNavigatorKey,
       initialLocation: _configureInitialRoute(),
       routes: $appRoutes,
       redirect: (context, state) {
         if (state.uri.path.contains('/auth')) {
-          return '/';
+          return AppRoutePath.accounts;
         }
         return null;
       },

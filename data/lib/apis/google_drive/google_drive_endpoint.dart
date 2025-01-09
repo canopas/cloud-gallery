@@ -84,12 +84,57 @@ class GoogleDriveUploadEndpoint extends Endpoint {
   void Function(int p1, int p2)? get onSendProgress => onProgress;
 }
 
+class GoogleDriveContentUpdateEndpoint extends Endpoint {
+  final AppMediaContent content;
+  final String id;
+  final CancelToken? cancellationToken;
+  final void Function(int chunk, int length)? onProgress;
+
+  const GoogleDriveContentUpdateEndpoint({
+    required this.content,
+    required this.id,
+    this.cancellationToken,
+    this.onProgress,
+  });
+
+  @override
+  String get baseUrl => BaseURL.googleDriveUploadV3;
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  HttpMethod get method => HttpMethod.patch;
+
+  @override
+  Map<String, dynamic> get headers => {
+        'Content-Type': content.contentType,
+        'Content-Length': content.length.toString(),
+      };
+
+  @override
+  Object? get data => content.stream;
+
+  @override
+  String get path => '/files/$id';
+
+  @override
+  Map<String, dynamic>? get queryParameters => {
+        'uploadType': 'media',
+        'fields':
+            'id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties',
+      };
+
+  @override
+  void Function(int p1, int p2)? get onSendProgress => onProgress;
+}
+
 class GoogleDriveDownloadEndpoint extends DownloadEndpoint {
   final String id;
 
   final void Function(int received, int total)? onProgress;
 
-  final String saveLocation;
+  final String? saveLocation;
 
   final CancelToken? cancellationToken;
 
@@ -97,7 +142,7 @@ class GoogleDriveDownloadEndpoint extends DownloadEndpoint {
     required this.id,
     this.cancellationToken,
     this.onProgress,
-    required this.saveLocation,
+    this.saveLocation,
   });
 
   @override
@@ -167,6 +212,31 @@ class GoogleDriveListEndpoint extends Endpoint {
         if (pageSize != null) 'pageSize': pageSize,
         if (pageToken != null) 'pageToken': pageToken,
         if (q != null) 'q': q,
+        'fields': fields,
+      };
+}
+
+class GoogleDriveGetEndpoint extends Endpoint {
+  final String fields;
+  final String id;
+
+  const GoogleDriveGetEndpoint({
+    required this.id,
+    this.fields =
+        'id, name, description, mimeType, thumbnailLink, webContentLink, createdTime, modifiedTime, size, imageMediaMetadata, videoMediaMetadata, appProperties',
+  });
+
+  @override
+  String get baseUrl => BaseURL.googleDriveV3;
+
+  @override
+  String get path => '/files/$id';
+
+  @override
+  HttpMethod get method => HttpMethod.get;
+
+  @override
+  Map<String, dynamic>? get queryParameters => {
         'fields': fields,
       };
 }

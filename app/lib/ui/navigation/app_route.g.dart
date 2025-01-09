@@ -7,35 +7,14 @@ part of 'app_route.dart';
 // **************************************************************************
 
 List<RouteBase> get $appRoutes => [
-      $homeRoute,
       $onBoardRoute,
-      $accountRoute,
-      $transferRoute,
+      $mainShellRoute,
+      $addAlbumRoute,
+      $albumMediaListRoute,
       $mediaPreviewRoute,
       $mediaMetadataDetailsRoute,
+      $mediaSelectionRoute,
     ];
-
-RouteBase get $homeRoute => GoRouteData.$route(
-      path: '/',
-      factory: $HomeRouteExtension._fromState,
-    );
-
-extension $HomeRouteExtension on HomeRoute {
-  static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
-
-  String get location => GoRouteData.$location(
-        '/',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
 
 RouteBase get $onBoardRoute => GoRouteData.$route(
       path: '/on-board',
@@ -59,10 +38,99 @@ extension $OnBoardRouteExtension on OnBoardRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $accountRoute => GoRouteData.$route(
-      path: '/accounts',
-      factory: $AccountRouteExtension._fromState,
+RouteBase get $mainShellRoute => StatefulShellRouteData.$route(
+      factory: $MainShellRouteExtension._fromState,
+      branches: [
+        StatefulShellBranchData.$branch(
+          routes: [
+            GoRouteData.$route(
+              path: '/',
+              factory: $HomeRouteExtension._fromState,
+            ),
+          ],
+        ),
+        StatefulShellBranchData.$branch(
+          routes: [
+            GoRouteData.$route(
+              path: '/albums',
+              factory: $AlbumsRouteExtension._fromState,
+            ),
+          ],
+        ),
+        StatefulShellBranchData.$branch(
+          routes: [
+            GoRouteData.$route(
+              path: '/transfer',
+              factory: $TransferRouteExtension._fromState,
+            ),
+          ],
+        ),
+        StatefulShellBranchData.$branch(
+          routes: [
+            GoRouteData.$route(
+              path: '/accounts',
+              factory: $AccountRouteExtension._fromState,
+            ),
+          ],
+        ),
+      ],
     );
+
+extension $MainShellRouteExtension on MainShellRoute {
+  static MainShellRoute _fromState(GoRouterState state) =>
+      const MainShellRoute();
+}
+
+extension $HomeRouteExtension on HomeRoute {
+  static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
+
+  String get location => GoRouteData.$location(
+        '/',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $AlbumsRouteExtension on AlbumsRoute {
+  static AlbumsRoute _fromState(GoRouterState state) => const AlbumsRoute();
+
+  String get location => GoRouteData.$location(
+        '/albums',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $TransferRouteExtension on TransferRoute {
+  static TransferRoute _fromState(GoRouterState state) => const TransferRoute();
+
+  String get location => GoRouteData.$location(
+        '/transfer',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
 
 extension $AccountRouteExtension on AccountRoute {
   static AccountRoute _fromState(GoRouterState state) => const AccountRoute();
@@ -81,26 +149,58 @@ extension $AccountRouteExtension on AccountRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $transferRoute => GoRouteData.$route(
-      path: '/transfer',
-      factory: $TransferRouteExtension._fromState,
+RouteBase get $addAlbumRoute => GoRouteData.$route(
+      path: '/add-album',
+      factory: $AddAlbumRouteExtension._fromState,
     );
 
-extension $TransferRouteExtension on TransferRoute {
-  static TransferRoute _fromState(GoRouterState state) => const TransferRoute();
-
-  String get location => GoRouteData.$location(
-        '/transfer',
+extension $AddAlbumRouteExtension on AddAlbumRoute {
+  static AddAlbumRoute _fromState(GoRouterState state) => AddAlbumRoute(
+        $extra: state.extra as Album?,
       );
 
-  void go(BuildContext context) => context.go(location);
+  String get location => GoRouteData.$location(
+        '/add-album',
+      );
 
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: $extra);
 
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+RouteBase get $albumMediaListRoute => GoRouteData.$route(
+      path: '/albums/:albumId',
+      factory: $AlbumMediaListRouteExtension._fromState,
+    );
+
+extension $AlbumMediaListRouteExtension on AlbumMediaListRoute {
+  static AlbumMediaListRoute _fromState(GoRouterState state) =>
+      AlbumMediaListRoute(
+        albumId: state.pathParameters['albumId']!,
+        $extra: state.extra as Album,
+      );
+
+  String get location => GoRouteData.$location(
+        '/albums/${Uri.encodeComponent(albumId)}',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 RouteBase get $mediaPreviewRoute => GoRouteData.$route(
@@ -142,6 +242,33 @@ extension $MediaMetadataDetailsRouteExtension on MediaMetadataDetailsRoute {
 
   String get location => GoRouteData.$location(
         '/metadata-details',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+RouteBase get $mediaSelectionRoute => GoRouteData.$route(
+      path: '/select',
+      factory: $MediaSelectionRouteExtension._fromState,
+    );
+
+extension $MediaSelectionRouteExtension on MediaSelectionRoute {
+  static MediaSelectionRoute _fromState(GoRouterState state) =>
+      MediaSelectionRoute(
+        $extra: state.extra as AppMediaSource,
+      );
+
+  String get location => GoRouteData.$location(
+        '/select',
       );
 
   void go(BuildContext context) => context.go(location, extra: $extra);

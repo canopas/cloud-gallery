@@ -16,7 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
-import '../home/home_screen_view_model.dart';
 
 part 'media_preview_view_model.freezed.dart';
 
@@ -36,15 +35,6 @@ final mediaPreviewStateNotifierProvider =
     ref.read(authServiceProvider),
     ref.read(connectivityHandlerProvider),
     ref.read(loggerProvider),
-    ref.read(homeViewStateNotifier.notifier),
-    () {
-      return ref.read(
-        homeViewStateNotifier.select(
-          (value) =>
-              value.medias.values.expand((element) => element.values).toList(),
-        ),
-      );
-    },
     state.medias,
     state.startIndex,
     ref.read(AppPreferences.dropboxCurrentUserAccount),
@@ -63,8 +53,6 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   final ConnectivityHandler _connectivityHandler;
   final AuthService _authService;
   final Logger _logger;
-  final HomeViewStateNotifier _homeNotifier;
-  final List<AppMedia> Function() _getUpdatedMedias;
 
   StreamSubscription? _googleAccountSubscription;
   String? _backUpFolderId;
@@ -77,8 +65,6 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     this._authService,
     this._connectivityHandler,
     this._logger,
-    this._homeNotifier,
-    this._getUpdatedMedias,
     List<AppMedia> medias,
     int startIndex,
     DropboxAccount? dropboxAccount,
@@ -396,12 +382,14 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
 
   // Preview Actions -----------------------------------------------------------
 
-  Future<void> changeVisibleMediaIndex(int index) async {
+  Future<void> changeVisibleMediaIndex(
+    int index,
+    Future<List<AppMedia>> Function() loadMoreMedia,
+  ) async {
     state = state.copyWith(currentIndex: index);
 
     if (index == state.medias.length - 1) {
-      await _homeNotifier.loadMedias();
-      state = state.copyWith(medias: _getUpdatedMedias());
+      state = state.copyWith(medias: await loadMoreMedia());
     }
   }
 
