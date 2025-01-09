@@ -450,13 +450,11 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             duration: state.duration,
             position: state.position,
             onChangeEnd: (duration) {
+              _notifier.pointerOnSlider(false);
               _videoPlayerController?.seekTo(duration);
             },
-            onPointerDownOnSlider: (_) {
+            onChangeStart: (duration) {
               _notifier.pointerOnSlider(true);
-            },
-            onPointerUpOnSlider: (_) {
-              _notifier.pointerOnSlider(false);
             },
             onChanged: (duration) {
               _notifier.updateVideoPosition(position: duration, isManual: true);
