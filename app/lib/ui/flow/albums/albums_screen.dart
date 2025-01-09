@@ -29,8 +29,8 @@ class _AlbumsScreenState extends ConsumerState<AlbumsScreen> {
 
   @override
   void initState() {
-    _notifier = ref.read(albumStateNotifierProvider.notifier);
     super.initState();
+    _notifier = ref.read(albumStateNotifierProvider.notifier);
   }
 
   void _observeError(BuildContext context) {

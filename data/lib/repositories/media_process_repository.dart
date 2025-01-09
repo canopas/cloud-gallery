@@ -28,13 +28,16 @@ final mediaProcessRepoProvider = Provider<MediaProcessRepo>((ref) {
     ref.read(notificationHandlerProvider),
     ref.read(AppPreferences.notifications),
   );
-  ref.onDispose(repo.dispose);
-  ref.listen(
+  final subscription = ref.listen(
     AppPreferences.notifications,
     (previous, next) {
       repo.updateShowNotification(next);
     },
   );
+  ref.onDispose(() {
+    subscription.close();
+    repo.dispose();
+  });
 
   return repo;
 });

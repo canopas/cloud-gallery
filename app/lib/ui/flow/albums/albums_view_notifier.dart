@@ -25,11 +25,18 @@ final albumStateNotifierProvider =
     ref.read(googleUserAccountProvider),
     ref.read(AppPreferences.dropboxCurrentUserAccount),
   );
-  ref.listen(googleUserAccountProvider, (p, c) {
+  final googleDriveAccountSubscription =
+      ref.listen(googleUserAccountProvider, (p, c) {
     notifier.onGoogleDriveAccountChange(c);
   });
-  ref.listen(AppPreferences.dropboxCurrentUserAccount, (p, c) {
+  final dropboxAccountSubscription =
+      ref.listen(AppPreferences.dropboxCurrentUserAccount, (p, c) {
     notifier.onDropboxAccountChange(c);
+  });
+
+  ref.onDispose(() {
+    googleDriveAccountSubscription.close();
+    dropboxAccountSubscription.close();
   });
   return notifier;
 });

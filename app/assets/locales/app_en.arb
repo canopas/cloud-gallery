@@ -125,7 +125,7 @@
 
   "@_ADD_ALBUM":{},
   "add_album_screen_title": "Album",
-  "album_tame_field_title": "Album Name",
+  "album_name_field_title": "Album Name",
   "store_in_title": "Store In",
   "store_in_device_title": "Device",
 

@@ -96,7 +96,7 @@ class _AddAlbumScreenState extends ConsumerState<AddAlbumScreen> {
           child: AppTextField(
             controller: state.albumNameController,
             onChanged: _notifier.validateAlbumName,
-            label: context.l10n.album_tame_field_title,
+            label: context.l10n.album_name_field_title,
           ),
         ),
         if ((state.googleAccount != null || state.dropboxAccount != null) &&

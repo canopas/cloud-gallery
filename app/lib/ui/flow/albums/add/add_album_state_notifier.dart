@@ -29,14 +29,20 @@ final addAlbumStateNotifierProvider = StateNotifierProvider.autoDispose
     ref.read(loggerProvider),
     state,
   );
-  ref.listen(
+  final googleDriveAccountSubscription = ref.listen(
     googleUserAccountProvider,
     (_, googleAccount) => notifier.onGoogleDriveAccountChange(googleAccount),
   );
-  ref.listen(
+  final dropboxAccountSubscription = ref.listen(
     AppPreferences.dropboxCurrentUserAccount,
     (_, dropboxAccount) => notifier.onDropboxAccountChange(dropboxAccount),
   );
+
+  ref.onDispose(() {
+    googleDriveAccountSubscription.close();
+    dropboxAccountSubscription.close();
+  });
+
   return notifier;
 });
 

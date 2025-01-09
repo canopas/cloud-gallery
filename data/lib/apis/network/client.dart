@@ -25,9 +25,13 @@ final dropboxAuthenticatedDioProvider = Provider((ref) {
     rawDio: ref.read(rawDioProvider),
     dropboxToken: ref.read(AppPreferences.dropboxToken),
   );
-  ref.listen(AppPreferences.dropboxToken, (previous, next) {
+  final subscription =
+      ref.listen(AppPreferences.dropboxToken, (previous, next) {
     dropboxInterceptor.updateToken(next);
   });
+
+  ref.onDispose(() => subscription.close());
+
   return Dio()
     ..options.connectTimeout = const Duration(seconds: 60)
     ..options.sendTimeout = const Duration(seconds: 60)
