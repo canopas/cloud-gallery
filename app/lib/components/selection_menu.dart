@@ -31,8 +31,8 @@ class SelectionMenuAction extends StatelessWidget {
               height: 60,
               width: 60,
               decoration: BoxDecoration(
-                color: context.colorScheme.surface,
-                borderRadius: BorderRadius.circular(8),
+                color: context.colorScheme.containerLowOnSurface,
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: context.colorScheme.outline),
               ),
               child: icon,
@@ -40,7 +40,7 @@ class SelectionMenuAction extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               title,
-              style: AppTextStyles.body.copyWith(
+              style: AppTextStyles.body2.copyWith(
                 color: context.colorScheme.textPrimary,
               ),
               textAlign: TextAlign.center,
@@ -77,7 +77,7 @@ class SelectionMenu extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16, top: 24),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: context.colorScheme.containerLowOnSurface,
+              color: context.colorScheme.surface,
               border: Border(
                 top: BorderSide(
                   width: 1,

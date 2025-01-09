@@ -26,6 +26,7 @@ mixin _$MediaPreviewState {
   bool get isVideoInitialized => throw _privateConstructorUsedError;
   bool get isVideoBuffering => throw _privateConstructorUsedError;
   bool get isImageZoomed => throw _privateConstructorUsedError;
+  bool get pointerOnSlider => throw _privateConstructorUsedError;
   double get swipeDownPercentage => throw _privateConstructorUsedError;
   Duration get videoPosition => throw _privateConstructorUsedError;
   Duration get videoMaxDuration => throw _privateConstructorUsedError;
@@ -60,6 +61,7 @@ abstract class $MediaPreviewStateCopyWith<$Res> {
       bool isVideoInitialized,
       bool isVideoBuffering,
       bool isImageZoomed,
+      bool pointerOnSlider,
       double swipeDownPercentage,
       Duration videoPosition,
       Duration videoMaxDuration,
@@ -96,6 +98,7 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
     Object? isVideoInitialized = null,
     Object? isVideoBuffering = null,
     Object? isImageZoomed = null,
+    Object? pointerOnSlider = null,
     Object? swipeDownPercentage = null,
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
@@ -138,6 +141,10 @@ class _$MediaPreviewStateCopyWithImpl<$Res, $Val extends MediaPreviewState>
       isImageZoomed: null == isImageZoomed
           ? _value.isImageZoomed
           : isImageZoomed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      pointerOnSlider: null == pointerOnSlider
+          ? _value.pointerOnSlider
+          : pointerOnSlider // ignore: cast_nullable_to_non_nullable
               as bool,
       swipeDownPercentage: null == swipeDownPercentage
           ? _value.swipeDownPercentage
@@ -204,6 +211,7 @@ abstract class _$$MediaPreviewStateImplCopyWith<$Res>
       bool isVideoInitialized,
       bool isVideoBuffering,
       bool isImageZoomed,
+      bool pointerOnSlider,
       double swipeDownPercentage,
       Duration videoPosition,
       Duration videoMaxDuration,
@@ -239,6 +247,7 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
     Object? isVideoInitialized = null,
     Object? isVideoBuffering = null,
     Object? isImageZoomed = null,
+    Object? pointerOnSlider = null,
     Object? swipeDownPercentage = null,
     Object? videoPosition = null,
     Object? videoMaxDuration = null,
@@ -281,6 +290,10 @@ class __$$MediaPreviewStateImplCopyWithImpl<$Res>
       isImageZoomed: null == isImageZoomed
           ? _value.isImageZoomed
           : isImageZoomed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      pointerOnSlider: null == pointerOnSlider
+          ? _value.pointerOnSlider
+          : pointerOnSlider // ignore: cast_nullable_to_non_nullable
               as bool,
       swipeDownPercentage: null == swipeDownPercentage
           ? _value.swipeDownPercentage
@@ -328,6 +341,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       this.isVideoInitialized = false,
       this.isVideoBuffering = false,
       this.isImageZoomed = false,
+      this.pointerOnSlider = false,
       this.swipeDownPercentage = 0.0,
       this.videoPosition = Duration.zero,
       this.videoMaxDuration = Duration.zero,
@@ -374,6 +388,9 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
   final bool isImageZoomed;
   @override
   @JsonKey()
+  final bool pointerOnSlider;
+  @override
+  @JsonKey()
   final double swipeDownPercentage;
   @override
   @JsonKey()
@@ -408,7 +425,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
 
   @override
   String toString() {
-    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, isImageZoomed: $isImageZoomed, swipeDownPercentage: $swipeDownPercentage, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, initializedVideoPath: $initializedVideoPath, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
+    return 'MediaPreviewState(googleAccount: $googleAccount, dropboxAccount: $dropboxAccount, error: $error, actionError: $actionError, medias: $medias, currentIndex: $currentIndex, showActions: $showActions, isVideoInitialized: $isVideoInitialized, isVideoBuffering: $isVideoBuffering, isImageZoomed: $isImageZoomed, pointerOnSlider: $pointerOnSlider, swipeDownPercentage: $swipeDownPercentage, videoPosition: $videoPosition, videoMaxDuration: $videoMaxDuration, initializedVideoPath: $initializedVideoPath, isVideoPlaying: $isVideoPlaying, uploadMediaProcesses: $uploadMediaProcesses, downloadMediaProcesses: $downloadMediaProcesses)';
   }
 
   @override
@@ -434,6 +451,8 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
                 other.isVideoBuffering == isVideoBuffering) &&
             (identical(other.isImageZoomed, isImageZoomed) ||
                 other.isImageZoomed == isImageZoomed) &&
+            (identical(other.pointerOnSlider, pointerOnSlider) ||
+                other.pointerOnSlider == pointerOnSlider) &&
             (identical(other.swipeDownPercentage, swipeDownPercentage) ||
                 other.swipeDownPercentage == swipeDownPercentage) &&
             (identical(other.videoPosition, videoPosition) ||
@@ -463,6 +482,7 @@ class _$MediaPreviewStateImpl implements _MediaPreviewState {
       isVideoInitialized,
       isVideoBuffering,
       isImageZoomed,
+      pointerOnSlider,
       swipeDownPercentage,
       videoPosition,
       videoMaxDuration,
@@ -493,6 +513,7 @@ abstract class _MediaPreviewState implements MediaPreviewState {
           final bool isVideoInitialized,
           final bool isVideoBuffering,
           final bool isImageZoomed,
+          final bool pointerOnSlider,
           final double swipeDownPercentage,
           final Duration videoPosition,
           final Duration videoMaxDuration,
@@ -522,6 +543,8 @@ abstract class _MediaPreviewState implements MediaPreviewState {
   bool get isVideoBuffering;
   @override
   bool get isImageZoomed;
+  @override
+  bool get pointerOnSlider;
   @override
   double get swipeDownPercentage;
   @override

@@ -15,6 +15,7 @@ import '../../../../components/app_sheet.dart';
 import '../../../../components/error_screen.dart';
 import '../../../../components/place_holder_screen.dart';
 import '../../../../components/selection_menu.dart';
+import '../../../../components/snack_bar.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import '../../../../domain/extensions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
@@ -43,8 +44,32 @@ class _AlbumMediaListScreenState extends ConsumerState<AlbumMediaListScreen> {
     super.initState();
   }
 
+  void _errorObserver() {
+    ref.listen(
+      _provider.select((value) => value.actionError),
+      (previous, next) {
+        if (next != null) {
+          showErrorSnackBar(context: context, error: next);
+        }
+      },
+    );
+  }
+
+  void _deleteObserver() {
+    ref.listen(
+      _provider.select((value) => value.deleteAlbumSuccess),
+      (previous, next) {
+        if (next) {
+          context.pop();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    _errorObserver();
+    _deleteObserver();
     final state = ref.watch(_provider);
     return AppPage(
       title: state.album.name,

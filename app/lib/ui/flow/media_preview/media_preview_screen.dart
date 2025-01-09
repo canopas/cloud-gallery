@@ -4,6 +4,7 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/animations/dismissible_page.dart';
+import 'package:style/theme/theme.dart';
 import '../../../components/app_page.dart';
 import '../../../components/place_holder_screen.dart';
 import '../../../components/snack_bar.dart';
@@ -96,7 +97,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       _videoPlayerController?.value.isBuffering ?? false,
     );
     _notifier.updateVideoPosition(
-      _videoPlayerController?.value.position ?? Duration.zero,
+      position: _videoPlayerController?.value.position ?? Duration.zero,
     );
     _notifier.updateVideoMaxDuration(
       _videoPlayerController?.value.duration ?? Duration.zero,
@@ -173,7 +174,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       ),
     );
     return AppPage(
-      backgroundColor: context.colorScheme.surface.withValues(
+      backgroundColor: appColorSchemeDark.surface.withValues(
         alpha: 1 - state.swipeDownPercentage,
       ),
       body: Stack(
@@ -451,8 +452,14 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             onChangeEnd: (duration) {
               _videoPlayerController?.seekTo(duration);
             },
+            onPointerDownOnSlider: (_) {
+              _notifier.pointerOnSlider(true);
+            },
+            onPointerUpOnSlider: (_) {
+              _notifier.pointerOnSlider(false);
+            },
             onChanged: (duration) {
-              _notifier.updateVideoPosition(duration);
+              _notifier.updateVideoPosition(position: duration, isManual: true);
             },
           );
         },

@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter_svg/svg.dart';
+import 'package:style/theme/theme.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../navigation/app_route.dart';
@@ -13,7 +15,6 @@ import 'package:style/buttons/action_button.dart';
 import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../../components/app_dialog.dart';
-import '../../../../components/app_page.dart';
 import '../../../../domain/formatter/date_formatter.dart';
 import '../media_preview_view_model.dart';
 import 'package:share_plus/share_plus.dart';
@@ -58,70 +59,118 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
 
     return CrossFadeAnimation(
       showChild: state.showAction,
-      child: AdaptiveAppBar(
-        iosTransitionBetweenRoutes: false,
-        text:
-            media?.createdTime?.format(context, DateFormatType.relative) ?? '',
-        actions: media == null
-            ? null
-            : [
-                ActionButton(
-                  onPressed: () {
-                    showMenu(
-                      context: context,
-                      position: RelativeRect.fromSize(
-                        Rect.fromLTRB(context.mediaQuerySize.width, 50, 0, 0),
-                        context.mediaQuerySize, // Size of the screen
-                      ),
-                      elevation: 1,
-                      surfaceTintColor: context.colorScheme.surface,
-                      color: context.colorScheme.surface,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      items: [
-                        infoAction(context, media),
-                        if (!media.sources
-                                .contains(AppMediaSource.googleDrive) &&
-                            media.sources.contains(AppMediaSource.local) &&
-                            state.googleAccount != null)
-                          _uploadToGoogleDriveAction(context, media),
-                        if (media.sources
-                                .contains(AppMediaSource.googleDrive) &&
-                            !media.sources.contains(AppMediaSource.local) &&
-                            state.googleAccount != null)
-                          _downloadFromGoogleDriveAction(context, media),
-                        if (media.sources
-                                .contains(AppMediaSource.googleDrive) &&
-                            state.googleAccount != null)
-                          _deleteFromGoogleDriveAction(context, media),
-                        if (!media.sources.contains(AppMediaSource.dropbox) &&
-                            media.sources.contains(AppMediaSource.local) &&
-                            state.dropboxAccount != null)
-                          _uploadToDropboxAction(context, media),
-                        if (media.sources.contains(AppMediaSource.dropbox) &&
-                            !media.sources.contains(AppMediaSource.local) &&
-                            state.dropboxAccount != null)
-                          _downloadFromDropboxAction(context, media),
-                        if (media.sources.contains(AppMediaSource.dropbox) &&
-                            state.dropboxAccount != null)
-                          _deleteFromDropboxAction(context, media),
-                        if (media.sources.contains(AppMediaSource.local))
-                          _deleteFromDeviceAction(context, media),
-                        if (media.sources.contains(AppMediaSource.local))
-                          _shareAction(context, media),
-                      ],
-                    );
-                  },
-                  icon: Icon(
-                    Icons.more_vert_rounded,
-                    color: context.colorScheme.textSecondary,
-                    size: 22,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      appColorSchemeDark.surface.withValues(alpha: 0.8),
+                      appColorSchemeDark.surface.withValues(alpha: 0.2),
+                    ],
                   ),
                 ),
-                if (!Platform.isIOS && !Platform.isMacOS)
-                  const SizedBox(width: 8),
-              ],
+                child: AppBar(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: appColorSchemeDark.textPrimary,
+                  title: Text(
+                    media?.createdTime
+                            ?.format(context, DateFormatType.relative) ??
+                        '',
+                  ),
+                  actions: media == null
+                      ? null
+                      : [
+                          ActionButton(
+                            onPressed: () {
+                              showMenu(
+                                context: context,
+                                position: RelativeRect.fromSize(
+                                  Rect.fromLTRB(
+                                    context.mediaQuerySize.width,
+                                    50,
+                                    0,
+                                    0,
+                                  ),
+                                  context.mediaQuerySize, // Size of the screen
+                                ),
+                                elevation: 1,
+                                surfaceTintColor: context.colorScheme.surface,
+                                color: context.colorScheme.surface,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                items: [
+                                  infoAction(context, media),
+                                  if (!media.sources.contains(
+                                        AppMediaSource.googleDrive,
+                                      ) &&
+                                      media.sources
+                                          .contains(AppMediaSource.local) &&
+                                      state.googleAccount != null)
+                                    _uploadToGoogleDriveAction(context, media),
+                                  if (media.sources.contains(
+                                        AppMediaSource.googleDrive,
+                                      ) &&
+                                      !media.sources
+                                          .contains(AppMediaSource.local) &&
+                                      state.googleAccount != null)
+                                    _downloadFromGoogleDriveAction(
+                                      context,
+                                      media,
+                                    ),
+                                  if (media.sources.contains(
+                                        AppMediaSource.googleDrive,
+                                      ) &&
+                                      state.googleAccount != null)
+                                    _deleteFromGoogleDriveAction(
+                                      context,
+                                      media,
+                                    ),
+                                  if (!media.sources
+                                          .contains(AppMediaSource.dropbox) &&
+                                      media.sources
+                                          .contains(AppMediaSource.local) &&
+                                      state.dropboxAccount != null)
+                                    _uploadToDropboxAction(context, media),
+                                  if (media.sources
+                                          .contains(AppMediaSource.dropbox) &&
+                                      !media.sources
+                                          .contains(AppMediaSource.local) &&
+                                      state.dropboxAccount != null)
+                                    _downloadFromDropboxAction(context, media),
+                                  if (media.sources
+                                          .contains(AppMediaSource.dropbox) &&
+                                      state.dropboxAccount != null)
+                                    _deleteFromDropboxAction(context, media),
+                                  if (media.sources
+                                      .contains(AppMediaSource.local))
+                                    _deleteFromDeviceAction(context, media),
+                                  if (media.sources
+                                      .contains(AppMediaSource.local))
+                                    _shareAction(context, media),
+                                ],
+                              );
+                            },
+                            icon: Icon(
+                              Icons.more_vert_rounded,
+                              color: appColorSchemeDark.textPrimary,
+                              size: 22,
+                            ),
+                          ),
+                        ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

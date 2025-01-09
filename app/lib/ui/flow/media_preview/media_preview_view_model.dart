@@ -409,8 +409,13 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     state = state.copyWith(showActions: !state.showActions);
   }
 
-  void updateVideoPosition(Duration position) {
-    if (state.videoPosition == position) return;
+  void updateVideoPosition({
+    required Duration position,
+    bool isManual = false,
+  }) {
+    if (state.videoPosition == position || state.pointerOnSlider && !isManual) {
+      return;
+    }
     state = state.copyWith(videoPosition: position);
   }
 
@@ -438,6 +443,10 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     state = state.copyWith(videoMaxDuration: maxDuration);
   }
 
+  void pointerOnSlider(bool isPointerOnSlider) {
+    state = state.copyWith(pointerOnSlider: isPointerOnSlider);
+  }
+
   @override
   void dispose() {
     _googleAccountSubscription?.cancel();
@@ -459,6 +468,7 @@ class MediaPreviewState with _$MediaPreviewState {
     @Default(false) bool isVideoInitialized,
     @Default(false) bool isVideoBuffering,
     @Default(false) bool isImageZoomed,
+    @Default(false) bool pointerOnSlider,
     @Default(0.0) double swipeDownPercentage,
     @Default(Duration.zero) Duration videoPosition,
     @Default(Duration.zero) Duration videoMaxDuration,

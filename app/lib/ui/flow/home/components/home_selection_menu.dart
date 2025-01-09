@@ -97,7 +97,7 @@ class HomeSelectionMenu extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 0, right: 8),
             child: Icon(
               CupertinoIcons.cloud_upload,
-              color: context.colorScheme.textSecondary,
+              color: context.colorScheme.textPrimary,
               size: 22,
             ),
           ),
@@ -143,7 +143,7 @@ class HomeSelectionMenu extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 0, right: 8),
             child: Icon(
               CupertinoIcons.cloud_download,
-              color: context.colorScheme.textSecondary,
+              color: context.colorScheme.textPrimary,
               size: 22,
             ),
           ),
@@ -194,7 +194,7 @@ class HomeSelectionMenu extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 2, right: 2),
             child: Icon(
               CupertinoIcons.trash,
-              color: context.colorScheme.textSecondary,
+              color: context.colorScheme.alert,
               size: 22,
             ),
           ),
@@ -243,7 +243,7 @@ class HomeSelectionMenu extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 0, right: 8),
             child: Icon(
               CupertinoIcons.cloud_upload,
-              color: context.colorScheme.textSecondary,
+              color: context.colorScheme.textPrimary,
               size: 22,
             ),
           ),
@@ -289,7 +289,7 @@ class HomeSelectionMenu extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 0, right: 8),
             child: Icon(
               CupertinoIcons.cloud_download,
-              color: context.colorScheme.textSecondary,
+              color: context.colorScheme.textPrimary,
               size: 22,
             ),
           ),
@@ -335,7 +335,7 @@ class HomeSelectionMenu extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 2, right: 2),
             child: Icon(
               CupertinoIcons.trash,
-              color: context.colorScheme.textSecondary,
+              color: context.colorScheme.alert,
               size: 22,
             ),
           ),
@@ -375,9 +375,10 @@ class HomeSelectionMenu extends ConsumerWidget {
 
   Widget _deleteFromDevice(BuildContext context, WidgetRef ref) {
     return SelectionMenuAction(
-      icon: const Icon(
+      icon: Icon(
         CupertinoIcons.delete,
-        size: 24,
+        size: 22,
+        color: context.colorScheme.alert,
       ),
       title: context.l10n.delete_from_device_title,
       onTap: () {
@@ -414,8 +415,8 @@ class HomeSelectionMenu extends ConsumerWidget {
     return SelectionMenuAction(
       icon: Icon(
         Platform.isIOS ? CupertinoIcons.share : Icons.share_rounded,
-        color: context.colorScheme.textSecondary,
-        size: 24,
+        color: context.colorScheme.textPrimary,
+        size: 22,
       ),
       title: context.l10n.common_share,
       onTap: () {
