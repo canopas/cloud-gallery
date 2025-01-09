@@ -409,10 +409,13 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     state = state.copyWith(showActions: !state.showActions);
   }
 
-  void updateVideoPosition(
-      {required Duration position, bool isManual = false}) {
-    if (state.videoPosition == position || state.pointerOnSlider && !isManual)
+  void updateVideoPosition({
+    required Duration position,
+    bool isManual = false,
+  }) {
+    if (state.videoPosition == position || state.pointerOnSlider && !isManual) {
       return;
+    }
     state = state.copyWith(videoPosition: position);
   }
 
