@@ -1,2 +1,3 @@
+include: [".well-known"]
 name: Cloud Gallery
 title: null
