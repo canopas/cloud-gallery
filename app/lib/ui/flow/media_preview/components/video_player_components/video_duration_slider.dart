@@ -9,8 +9,7 @@ import 'package:style/text/app_text_style.dart';
 class VideoDurationSlider extends StatelessWidget {
   final bool showSlider;
   final Duration duration;
-  final void Function(PointerDownEvent event) onPointerDownOnSlider;
-  final void Function(PointerUpEvent event) onPointerUpOnSlider;
+  final void Function(Duration duration) onChangeStart;
   final void Function(Duration duration) onChanged;
   final void Function(Duration duration) onChangeEnd;
   final Duration position;
@@ -22,8 +21,7 @@ class VideoDurationSlider extends StatelessWidget {
     required this.position,
     required this.onChangeEnd,
     required this.onChanged,
-    required this.onPointerDownOnSlider,
-    required this.onPointerUpOnSlider,
+    required this.onChangeStart,
   });
 
   @override
@@ -64,28 +62,26 @@ class VideoDurationSlider extends StatelessWidget {
                     height: 30,
                     child: Material(
                       color: Colors.transparent,
-                      child: Listener(
-                        onPointerDown: onPointerDownOnSlider,
-                        onPointerUp: onPointerUpOnSlider,
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            trackHeight: 4,
-                            trackShape: const RoundedRectSliderTrackShape(),
-                            rangeTrackShape:
-                                const RoundedRectRangeSliderTrackShape(),
-                            thumbShape: SliderComponentShape.noThumb,
-                          ),
-                          child: Slider(
-                            value: position.inSeconds.toDouble(),
-                            max: duration.inSeconds.toDouble(),
-                            min: 0,
-                            activeColor: appColorSchemeDark.primary,
-                            inactiveColor: appColorSchemeDark.outline,
-                            onChangeEnd: (value) => onChangeEnd
-                                .call(Duration(seconds: value.toInt())),
-                            onChanged: (double value) => onChanged
-                                .call(Duration(seconds: value.toInt())),
-                          ),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 4,
+                          trackShape: const RoundedRectSliderTrackShape(),
+                          rangeTrackShape:
+                              const RoundedRectRangeSliderTrackShape(),
+                          thumbShape: SliderComponentShape.noThumb,
+                        ),
+                        child: Slider(
+                          value: position.inSeconds.toDouble(),
+                          max: duration.inSeconds.toDouble(),
+                          min: 0,
+                          activeColor: appColorSchemeDark.primary,
+                          inactiveColor: appColorSchemeDark.outline,
+                          onChangeStart: (value) => onChangeStart
+                              .call(Duration(seconds: value.toInt())),
+                          onChangeEnd: (value) => onChangeEnd
+                              .call(Duration(seconds: value.toInt())),
+                          onChanged: (double value) => onChanged
+                              .call(Duration(seconds: value.toInt())),
                         ),
                       ),
                     ),
