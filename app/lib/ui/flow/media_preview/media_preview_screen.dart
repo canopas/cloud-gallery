@@ -97,7 +97,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       _videoPlayerController?.value.isBuffering ?? false,
     );
     _notifier.updateVideoPosition(
-      _videoPlayerController?.value.position ?? Duration.zero,
+      position: _videoPlayerController?.value.position ?? Duration.zero,
     );
     _notifier.updateVideoMaxDuration(
       _videoPlayerController?.value.duration ?? Duration.zero,
@@ -452,8 +452,14 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
             onChangeEnd: (duration) {
               _videoPlayerController?.seekTo(duration);
             },
+            onPointerDownOnSlider: (_) {
+              _notifier.pointerOnSlider(true);
+            },
+            onPointerUpOnSlider: (_) {
+              _notifier.pointerOnSlider(false);
+            },
             onChanged: (duration) {
-              _notifier.updateVideoPosition(duration);
+              _notifier.updateVideoPosition(position: duration, isManual: true);
             },
           );
         },

@@ -94,7 +94,11 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
                                 context: context,
                                 position: RelativeRect.fromSize(
                                   Rect.fromLTRB(
-                                      context.mediaQuerySize.width, 50, 0, 0),
+                                    context.mediaQuerySize.width,
+                                    50,
+                                    0,
+                                    0,
+                                  ),
                                   context.mediaQuerySize, // Size of the screen
                                 ),
                                 elevation: 1,
@@ -106,23 +110,30 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
                                 items: [
                                   infoAction(context, media),
                                   if (!media.sources.contains(
-                                          AppMediaSource.googleDrive) &&
+                                        AppMediaSource.googleDrive,
+                                      ) &&
                                       media.sources
                                           .contains(AppMediaSource.local) &&
                                       state.googleAccount != null)
                                     _uploadToGoogleDriveAction(context, media),
                                   if (media.sources.contains(
-                                          AppMediaSource.googleDrive) &&
+                                        AppMediaSource.googleDrive,
+                                      ) &&
                                       !media.sources
                                           .contains(AppMediaSource.local) &&
                                       state.googleAccount != null)
                                     _downloadFromGoogleDriveAction(
-                                        context, media),
+                                      context,
+                                      media,
+                                    ),
                                   if (media.sources.contains(
-                                          AppMediaSource.googleDrive) &&
+                                        AppMediaSource.googleDrive,
+                                      ) &&
                                       state.googleAccount != null)
                                     _deleteFromGoogleDriveAction(
-                                        context, media),
+                                      context,
+                                      media,
+                                    ),
                                   if (!media.sources
                                           .contains(AppMediaSource.dropbox) &&
                                       media.sources
