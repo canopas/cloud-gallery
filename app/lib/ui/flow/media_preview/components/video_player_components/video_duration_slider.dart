@@ -80,8 +80,8 @@ class VideoDurationSlider extends StatelessWidget {
                               .call(Duration(seconds: value.toInt())),
                           onChangeEnd: (value) => onChangeEnd
                               .call(Duration(seconds: value.toInt())),
-                          onChanged: (double value) => onChanged
-                              .call(Duration(seconds: value.toInt())),
+                          onChanged: (double value) =>
+                              onChanged.call(Duration(seconds: value.toInt())),
                         ),
                       ),
                     ),
