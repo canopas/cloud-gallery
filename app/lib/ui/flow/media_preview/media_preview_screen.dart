@@ -4,6 +4,7 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/animations/dismissible_page.dart';
+import 'package:style/theme/theme.dart';
 import '../../../components/app_page.dart';
 import '../../../components/place_holder_screen.dart';
 import '../../../components/snack_bar.dart';
@@ -173,7 +174,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
       ),
     );
     return AppPage(
-      backgroundColor: context.colorScheme.surface.withValues(
+      backgroundColor: appColorSchemeDark.surface.withValues(
         alpha: 1 - state.swipeDownPercentage,
       ),
       body: Stack(

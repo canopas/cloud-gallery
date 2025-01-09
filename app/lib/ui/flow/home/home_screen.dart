@@ -8,6 +8,7 @@ import '../../../domain/extensions/widget_extensions.dart';
 import '../../../domain/formatter/date_formatter.dart';
 import '../../../domain/extensions/context_extensions.dart';
 import '../../../gen/assets.gen.dart';
+import 'components/home_selection_menu.dart';
 import 'components/no_internet_connection_hint.dart';
 import 'components/no_local_medias_access_screen.dart';
 import 'components/sign_in_hint.dart';
@@ -21,7 +22,6 @@ import 'package:style/text/app_text_style.dart';
 import '../../../components/snack_bar.dart';
 import '../../navigation/app_route.dart';
 import 'components/app_media_item.dart';
-import 'components/multi_selection_done_button.dart';
 import 'package:style/buttons/action_button.dart';
 import 'package:style/animations/fade_in_switcher.dart';
 
@@ -153,20 +153,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           final gridEntry = state.medias.entries.elementAt(index - 1);
           return Column(
             children: [
-              Container(
-                height: 45,
-                padding: const EdgeInsets.only(left: 16, top: 5),
-                margin: EdgeInsets.zero,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                ),
-                child: Text(
-                  gridEntry.key.format(context, DateFormatType.relative),
-                  style: AppTextStyles.subtitle1.copyWith(
-                    color: context.colorScheme.textPrimary,
-                  ),
-                ),
+              Builder(
+                builder: (context) {
+                  return Container(
+                    height: 45,
+                    padding: const EdgeInsets.only(left: 16, top: 5),
+                    margin: EdgeInsets.zero,
+                    alignment: Alignment.centerLeft,
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.surface,
+                    ),
+                    child: Text(
+                      gridEntry.key.format(context, DateFormatType.relative),
+                      style: AppTextStyles.subtitle1.copyWith(
+                        color: context.colorScheme.textPrimary,
+                      ),
+                    ),
+                  );
+                },
               ),
               GridView.builder(
                 padding: const EdgeInsets.all(4),

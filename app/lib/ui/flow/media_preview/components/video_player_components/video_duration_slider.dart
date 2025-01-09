@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:style/theme/theme.dart';
+
 import '../../../../../domain/formatter/duration_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:style/animations/cross_fade_animation.dart';
@@ -26,56 +30,68 @@ class VideoDurationSlider extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: CrossFadeAnimation(
         showChild: showSlider,
-        child: Container(
-          padding: EdgeInsets.only(
-            bottom: context.systemPadding.bottom + 8,
-            top: 8,
-            left: 16,
-            right: 16,
-          ),
-          color: context.colorScheme.surface,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                position.format,
-                style: AppTextStyles.caption
-                    .copyWith(color: context.colorScheme.textPrimary),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  appColorSchemeDark.surface.withValues(alpha: 0.2),
+                  appColorSchemeDark.surface.withValues(alpha: 0.8),
+                ],
               ),
-              Expanded(
-                child: SizedBox(
-                  height: 30,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                        trackHeight: 4,
-                        trackShape: const RoundedRectSliderTrackShape(),
-                        rangeTrackShape:
-                            const RoundedRectRangeSliderTrackShape(),
-                        thumbShape: SliderComponentShape.noThumb,
-                      ),
-                      child: Slider(
-                        value: position.inSeconds.toDouble(),
-                        max: duration.inSeconds.toDouble(),
-                        min: 0,
-                        activeColor: context.colorScheme.primary,
-                        inactiveColor: context.colorScheme.outline,
-                        onChangeEnd: (value) =>
-                            onChangeEnd.call(Duration(seconds: value.toInt())),
-                        onChanged: (double value) =>
-                            onChanged.call(Duration(seconds: value.toInt())),
+            ),
+            padding: EdgeInsets.only(
+              bottom: context.systemPadding.bottom + 8,
+              top: 8,
+              left: 16,
+              right: 16,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  position.format,
+                  style: AppTextStyles.caption
+                      .copyWith(color: appColorSchemeDark.textPrimary),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height: 30,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 4,
+                          trackShape: const RoundedRectSliderTrackShape(),
+                          rangeTrackShape:
+                              const RoundedRectRangeSliderTrackShape(),
+                          thumbShape: SliderComponentShape.noThumb,
+                        ),
+                        child: Slider(
+                          value: position.inSeconds.toDouble(),
+                          max: duration.inSeconds.toDouble(),
+                          min: 0,
+                          activeColor: appColorSchemeDark.primary,
+                          inactiveColor: appColorSchemeDark.outline,
+                          onChangeEnd: (value) => onChangeEnd
+                              .call(Duration(seconds: value.toInt())),
+                          onChanged: (double value) =>
+                              onChanged.call(Duration(seconds: value.toInt())),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Text(
-                duration.format,
-                style: AppTextStyles.caption
-                    .copyWith(color: context.colorScheme.textPrimary),
-              ),
-            ],
+                Text(
+                  duration.format,
+                  style: AppTextStyles.caption
+                      .copyWith(color: appColorSchemeDark.textPrimary),
+                ),
+              ],
+            ),
           ),
         ),
       ),
