@@ -47,7 +47,9 @@ extension AppMediaExtension on AppMedia {
       name: name ?? media.name,
       thumbnailLink: media.thumbnailLink,
       driveMediaRefId: media.driveMediaRefId,
-      sources: sources.toList()..add(AppMediaSource.googleDrive),
+      sources: sources.toList()
+        ..add(AppMediaSource.googleDrive)
+        ..toSet().toList(),
     );
   }
 
@@ -55,7 +57,7 @@ extension AppMediaExtension on AppMedia {
     return copyWith(
       thumbnailLink: null,
       driveMediaRefId: null,
-      sources: sources.toList()..remove(AppMediaSource.googleDrive),
+      sources: sources.toSet().toList()..remove(AppMediaSource.googleDrive),
     );
   }
 
@@ -73,21 +75,23 @@ extension AppMediaExtension on AppMedia {
       createdTime: createdTime ?? media.createdTime,
       name: name ?? media.name,
       dropboxMediaRefId: media.dropboxMediaRefId,
-      sources: sources.toList()..add(AppMediaSource.dropbox),
+      sources: sources.toList()
+        ..add(AppMediaSource.dropbox)
+        ..toSet().toList(),
     );
   }
 
   AppMedia removeDropboxRef() {
     return copyWith(
       dropboxMediaRefId: null,
-      sources: sources.toList()..remove(AppMediaSource.dropbox),
+      sources: sources.toSet().toList()..remove(AppMediaSource.dropbox),
     );
   }
 
   AppMedia removeLocalRef() {
     return copyWith(
       id: driveMediaRefId ?? dropboxMediaRefId ?? '',
-      sources: sources.toList()..remove(AppMediaSource.local),
+      sources: sources.toSet().toList()..remove(AppMediaSource.local),
     );
   }
 
