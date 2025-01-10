@@ -60,10 +60,8 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
       );
 
       final moreMediaIds = state.album.medias
-          .sublist(
-            (reload ? 0 : _loadedMediaCount),
-          )
-          .take(_loadedMediaCount + (reload ? _loadedMediaCount : 30))
+          .sublist(reload ? 0 : _loadedMediaCount)
+          .take(reload ? _loadedMediaCount : 30)
           .toList();
 
       Map<String, AppMedia> medias = {};
@@ -236,6 +234,7 @@ class AlbumMediaListStateNotifier extends StateNotifier<AlbumMediaListState> {
               (element) => !medias.contains(element),
             )
             .toList(),
+        album: state.album.copyWith(medias: updatedMedias),
         medias: {...state.medias, ...moreMedia},
       );
     } catch (e, s) {
