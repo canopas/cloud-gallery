@@ -52,7 +52,7 @@ class GoogleDriveUploadEndpoint extends Endpoint {
 
   @override
   Map<String, dynamic> get headers => {
-        'Content-Type': content.contentType,
+        'Content-Type': content.type,
         'Content-Length': content.length.toString(),
       };
 
@@ -84,6 +84,81 @@ class GoogleDriveUploadEndpoint extends Endpoint {
   void Function(int p1, int p2)? get onSendProgress => onProgress;
 }
 
+class GoogleDriveStartUploadEndpoint extends Endpoint {
+  final drive.File request;
+  final CancelToken? cancellationToken;
+
+  const GoogleDriveStartUploadEndpoint({
+    required this.request,
+    this.cancellationToken,
+  });
+
+  @override
+  String get baseUrl => BaseURL.googleDriveUploadV3;
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  Object? get data => request.toJson();
+
+  @override
+  String get path => '/files';
+
+  @override
+  Map<String, dynamic>? get queryParameters => {
+        'uploadType': 'resumable',
+      };
+}
+
+class GoogleDriveAppendUploadEndpoint extends Endpoint {
+  final String uploadId;
+  final AppMediaContent content;
+  final CancelToken? cancellationToken;
+  final void Function(int chunk, int length)? onProgress;
+
+  const GoogleDriveAppendUploadEndpoint({
+    required this.uploadId,
+    required this.content,
+    this.cancellationToken,
+    this.onProgress,
+  });
+
+  @override
+  String get baseUrl => BaseURL.googleDriveUploadV3;
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  HttpMethod get method => HttpMethod.put;
+
+  @override
+  Map<String, dynamic> get headers => {
+        'Content-Type': content.type,
+        'Content-Length': content.length.toString(),
+        'Content-Range': content.range,
+      };
+
+  @override
+  Object? get data => content.stream;
+
+  @override
+  String get path => '/files';
+
+  @override
+  Map<String, dynamic>? get queryParameters => {
+        'upload_id': uploadId,
+        'uploadType': 'resumable',
+      };
+
+  @override
+  void Function(int p1, int p2)? get onSendProgress => onProgress;
+}
+
 class GoogleDriveContentUpdateEndpoint extends Endpoint {
   final AppMediaContent content;
   final String id;
@@ -108,7 +183,7 @@ class GoogleDriveContentUpdateEndpoint extends Endpoint {
 
   @override
   Map<String, dynamic> get headers => {
-        'Content-Type': content.contentType,
+        'Content-Type': content.type,
         'Content-Length': content.length.toString(),
       };
 

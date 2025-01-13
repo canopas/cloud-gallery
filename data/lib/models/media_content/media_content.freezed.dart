@@ -18,7 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AppMediaContent {
   Stream<List<int>> get stream => throw _privateConstructorUsedError;
   int? get length => throw _privateConstructorUsedError;
-  String get contentType => throw _privateConstructorUsedError;
+  String? get range => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
 
   /// Create a copy of AppMediaContent
   /// with the given fields replaced by the non-null parameter values.
@@ -33,7 +34,8 @@ abstract class $AppMediaContentCopyWith<$Res> {
           AppMediaContent value, $Res Function(AppMediaContent) then) =
       _$AppMediaContentCopyWithImpl<$Res, AppMediaContent>;
   @useResult
-  $Res call({Stream<List<int>> stream, int? length, String contentType});
+  $Res call(
+      {Stream<List<int>> stream, int? length, String? range, String type});
 }
 
 /// @nodoc
@@ -53,7 +55,8 @@ class _$AppMediaContentCopyWithImpl<$Res, $Val extends AppMediaContent>
   $Res call({
     Object? stream = null,
     Object? length = freezed,
-    Object? contentType = null,
+    Object? range = freezed,
+    Object? type = null,
   }) {
     return _then(_value.copyWith(
       stream: null == stream
@@ -64,9 +67,13 @@ class _$AppMediaContentCopyWithImpl<$Res, $Val extends AppMediaContent>
           ? _value.length
           : length // ignore: cast_nullable_to_non_nullable
               as int?,
-      contentType: null == contentType
-          ? _value.contentType
-          : contentType // ignore: cast_nullable_to_non_nullable
+      range: freezed == range
+          ? _value.range
+          : range // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -80,7 +87,8 @@ abstract class _$$AppMediaContentImplCopyWith<$Res>
       __$$AppMediaContentImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Stream<List<int>> stream, int? length, String contentType});
+  $Res call(
+      {Stream<List<int>> stream, int? length, String? range, String type});
 }
 
 /// @nodoc
@@ -98,7 +106,8 @@ class __$$AppMediaContentImplCopyWithImpl<$Res>
   $Res call({
     Object? stream = null,
     Object? length = freezed,
-    Object? contentType = null,
+    Object? range = freezed,
+    Object? type = null,
   }) {
     return _then(_$AppMediaContentImpl(
       stream: null == stream
@@ -109,9 +118,13 @@ class __$$AppMediaContentImplCopyWithImpl<$Res>
           ? _value.length
           : length // ignore: cast_nullable_to_non_nullable
               as int?,
-      contentType: null == contentType
-          ? _value.contentType
-          : contentType // ignore: cast_nullable_to_non_nullable
+      range: freezed == range
+          ? _value.range
+          : range // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -121,18 +134,23 @@ class __$$AppMediaContentImplCopyWithImpl<$Res>
 
 class _$AppMediaContentImpl implements _AppMediaContent {
   const _$AppMediaContentImpl(
-      {required this.stream, required this.length, required this.contentType});
+      {required this.stream,
+      required this.length,
+      this.range,
+      required this.type});
 
   @override
   final Stream<List<int>> stream;
   @override
   final int? length;
   @override
-  final String contentType;
+  final String? range;
+  @override
+  final String type;
 
   @override
   String toString() {
-    return 'AppMediaContent(stream: $stream, length: $length, contentType: $contentType)';
+    return 'AppMediaContent(stream: $stream, length: $length, range: $range, type: $type)';
   }
 
   @override
@@ -142,12 +160,12 @@ class _$AppMediaContentImpl implements _AppMediaContent {
             other is _$AppMediaContentImpl &&
             (identical(other.stream, stream) || other.stream == stream) &&
             (identical(other.length, length) || other.length == length) &&
-            (identical(other.contentType, contentType) ||
-                other.contentType == contentType));
+            (identical(other.range, range) || other.range == range) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, stream, length, contentType);
+  int get hashCode => Object.hash(runtimeType, stream, length, range, type);
 
   /// Create a copy of AppMediaContent
   /// with the given fields replaced by the non-null parameter values.
@@ -163,14 +181,17 @@ abstract class _AppMediaContent implements AppMediaContent {
   const factory _AppMediaContent(
       {required final Stream<List<int>> stream,
       required final int? length,
-      required final String contentType}) = _$AppMediaContentImpl;
+      final String? range,
+      required final String type}) = _$AppMediaContentImpl;
 
   @override
   Stream<List<int>> get stream;
   @override
   int? get length;
   @override
-  String get contentType;
+  String? get range;
+  @override
+  String get type;
 
   /// Create a copy of AppMediaContent
   /// with the given fields replaced by the non-null parameter values.

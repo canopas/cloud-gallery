@@ -414,6 +414,7 @@ mixin _$UploadMediaProcess {
   String get media_id => throw _privateConstructorUsedError;
   int get notification_id => throw _privateConstructorUsedError;
   String get folder_id => throw _privateConstructorUsedError;
+  String? get upload_session_id => throw _privateConstructorUsedError;
   MediaProvider get provider => throw _privateConstructorUsedError;
   String get path => throw _privateConstructorUsedError;
   String? get mime_type => throw _privateConstructorUsedError;
@@ -446,6 +447,7 @@ abstract class $UploadMediaProcessCopyWith<$Res> {
       String media_id,
       int notification_id,
       String folder_id,
+      String? upload_session_id,
       MediaProvider provider,
       String path,
       String? mime_type,
@@ -477,6 +479,7 @@ class _$UploadMediaProcessCopyWithImpl<$Res, $Val extends UploadMediaProcess>
     Object? media_id = null,
     Object? notification_id = null,
     Object? folder_id = null,
+    Object? upload_session_id = freezed,
     Object? provider = null,
     Object? path = null,
     Object? mime_type = freezed,
@@ -503,6 +506,10 @@ class _$UploadMediaProcessCopyWithImpl<$Res, $Val extends UploadMediaProcess>
           ? _value.folder_id
           : folder_id // ignore: cast_nullable_to_non_nullable
               as String,
+      upload_session_id: freezed == upload_session_id
+          ? _value.upload_session_id
+          : upload_session_id // ignore: cast_nullable_to_non_nullable
+              as String?,
       provider: null == provider
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
@@ -566,6 +573,7 @@ abstract class _$$UploadMediaProcessImplCopyWith<$Res>
       String media_id,
       int notification_id,
       String folder_id,
+      String? upload_session_id,
       MediaProvider provider,
       String path,
       String? mime_type,
@@ -596,6 +604,7 @@ class __$$UploadMediaProcessImplCopyWithImpl<$Res>
     Object? media_id = null,
     Object? notification_id = null,
     Object? folder_id = null,
+    Object? upload_session_id = freezed,
     Object? provider = null,
     Object? path = null,
     Object? mime_type = freezed,
@@ -622,6 +631,10 @@ class __$$UploadMediaProcessImplCopyWithImpl<$Res>
           ? _value.folder_id
           : folder_id // ignore: cast_nullable_to_non_nullable
               as String,
+      upload_session_id: freezed == upload_session_id
+          ? _value.upload_session_id
+          : upload_session_id // ignore: cast_nullable_to_non_nullable
+              as String?,
       provider: null == provider
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
@@ -666,6 +679,7 @@ class _$UploadMediaProcessImpl extends _UploadMediaProcess {
       required this.media_id,
       required this.notification_id,
       required this.folder_id,
+      this.upload_session_id,
       required this.provider,
       required this.path,
       this.mime_type,
@@ -687,6 +701,8 @@ class _$UploadMediaProcessImpl extends _UploadMediaProcess {
   final int notification_id;
   @override
   final String folder_id;
+  @override
+  final String? upload_session_id;
   @override
   final MediaProvider provider;
   @override
@@ -712,7 +728,7 @@ class _$UploadMediaProcessImpl extends _UploadMediaProcess {
 
   @override
   String toString() {
-    return 'UploadMediaProcess(id: $id, media_id: $media_id, notification_id: $notification_id, folder_id: $folder_id, provider: $provider, path: $path, mime_type: $mime_type, status: $status, upload_using_auto_backup: $upload_using_auto_backup, response: $response, total: $total, chunk: $chunk)';
+    return 'UploadMediaProcess(id: $id, media_id: $media_id, notification_id: $notification_id, folder_id: $folder_id, upload_session_id: $upload_session_id, provider: $provider, path: $path, mime_type: $mime_type, status: $status, upload_using_auto_backup: $upload_using_auto_backup, response: $response, total: $total, chunk: $chunk)';
   }
 
   @override
@@ -727,6 +743,8 @@ class _$UploadMediaProcessImpl extends _UploadMediaProcess {
                 other.notification_id == notification_id) &&
             (identical(other.folder_id, folder_id) ||
                 other.folder_id == folder_id) &&
+            (identical(other.upload_session_id, upload_session_id) ||
+                other.upload_session_id == upload_session_id) &&
             (identical(other.provider, provider) ||
                 other.provider == provider) &&
             (identical(other.path, path) || other.path == path) &&
@@ -750,6 +768,7 @@ class _$UploadMediaProcessImpl extends _UploadMediaProcess {
       media_id,
       notification_id,
       folder_id,
+      upload_session_id,
       provider,
       path,
       mime_type,
@@ -782,6 +801,7 @@ abstract class _UploadMediaProcess extends UploadMediaProcess {
       required final String media_id,
       required final int notification_id,
       required final String folder_id,
+      final String? upload_session_id,
       required final MediaProvider provider,
       required final String path,
       final String? mime_type,
@@ -803,6 +823,8 @@ abstract class _UploadMediaProcess extends UploadMediaProcess {
   int get notification_id;
   @override
   String get folder_id;
+  @override
+  String? get upload_session_id;
   @override
   MediaProvider get provider;
   @override

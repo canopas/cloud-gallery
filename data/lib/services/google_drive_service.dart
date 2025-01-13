@@ -217,7 +217,7 @@ class GoogleDriveService extends CloudProviderService {
         content: AppMediaContent(
           stream: localFile.openRead(),
           length: localFile.lengthSync(),
-          contentType: 'application/octet-stream',
+          type: 'application/octet-stream',
         ),
         onProgress: onProgress,
         cancellationToken: cancelToken,
@@ -232,6 +232,85 @@ class GoogleDriveService extends CloudProviderService {
       statusCode: res.statusCode,
       message: res.statusMessage,
     );
+  }
+
+  Future<String> startUploadSession({
+    required String folderId,
+    required String path,
+    String? localRefId,
+    String? mimeType,
+    CancelToken? cancelToken,
+  }) async {
+    final localFile = File(path);
+    final file = drive.File(
+      name: localFile.path.split('/').last,
+      mimeType: mimeType,
+      appProperties: {
+        ProviderConstants.localRefIdKey: localRefId,
+      },
+      parents: [folderId],
+    );
+    final res =
+        await _client.req(GoogleDriveStartUploadEndpoint(request: file));
+
+    if (res.statusCode == 200) {
+      return Uri.parse(res.headers.value('location')!)
+          .queryParameters['upload_id']!;
+    }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<AppMedia?> appendUploadSession({
+    required String uploadId,
+    required String path,
+    required int startByte,
+    required int endByte,
+    CancelToken? cancelToken,
+    void Function(int, int)? onProgress,
+  }) async {
+    final File file = File(path);
+
+    if (!file.existsSync()) {
+      throw SomethingWentWrongError(
+        message: 'File not found',
+      );
+    }
+
+    try {
+      final res = await _client.req(
+        GoogleDriveAppendUploadEndpoint(
+          uploadId: uploadId,
+          content: AppMediaContent(
+            stream: file.openRead(startByte, endByte),
+            length: endByte - startByte,
+            type: 'application/octet-stream',
+            range: 'bytes $startByte-${endByte - 1}/${file.lengthSync()}',
+          ),
+          onProgress: onProgress,
+          cancellationToken: cancelToken,
+        ),
+      );
+
+      if (res.statusCode == 200) {
+        return AppMedia.fromGoogleDriveFile(drive.File.fromJson(res.data));
+      } else if (res.statusCode == 308) {
+        return null;
+      }
+
+      throw SomethingWentWrongError(
+        statusCode: res.statusCode,
+        message: res.statusMessage,
+      );
+    } catch (e) {
+      if (e is DioException && e.response?.statusCode == 308) {
+        return null;
+      }
+      rethrow;
+    }
   }
 
   @override
@@ -376,7 +455,7 @@ class GoogleDriveService extends CloudProviderService {
               Uint8List.fromList(utf8.encode(jsonEncode(albums))),
             ),
             length: utf8.encode(jsonEncode(albums)).length,
-            contentType: 'application/json',
+            type: 'application/json',
           ),
         ),
       );
@@ -402,7 +481,7 @@ class GoogleDriveService extends CloudProviderService {
             Uint8List.fromList(utf8.encode(jsonEncode([newAlbum.toJson()]))),
           ),
           length: utf8.encode(jsonEncode([newAlbum.toJson()])).length,
-          contentType: 'application/json',
+          type: 'application/json',
         ),
       ),
     );
@@ -479,7 +558,7 @@ class GoogleDriveService extends CloudProviderService {
               Uint8List.fromList(utf8.encode(jsonEncode(albums))),
             ),
             length: utf8.encode(jsonEncode(albums)).length,
-            contentType: 'application/json',
+            type: 'application/json',
           ),
         ),
       );
@@ -553,7 +632,7 @@ class GoogleDriveService extends CloudProviderService {
               Uint8List.fromList(utf8.encode(jsonEncode(albums))),
             ),
             length: utf8.encode(jsonEncode(albums)).length,
-            contentType: 'application/json',
+            type: 'application/json',
           ),
         ),
       );
