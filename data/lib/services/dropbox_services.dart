@@ -327,13 +327,14 @@ class DropboxService extends CloudProviderService {
 
   Future<String> startUploadSession({
     required String path,
-    String? localRefId,
+    required int startByte,
+    required int endByte,
     CancelToken? cancelToken,
     void Function(int sent, int total)? onProgress,
   }) async {
-    final localFile = File(path);
+    final file = File(path);
 
-    if (localFile.existsSync() == false) {
+    if (file.existsSync() == false) {
       throw SomethingWentWrongError(
         statusCode: 404,
         message: 'File not found',
@@ -342,9 +343,11 @@ class DropboxService extends CloudProviderService {
 
     final res = await _dropboxAuthenticatedDio.req(
       DropboxStartUploadEndpoint(
+        onProgress: onProgress,
+        cancellationToken: cancelToken,
         content: AppMediaContent(
-          stream: localFile.openRead(),
-          length: localFile.lengthSync(),
+          stream: file.openRead(startByte, endByte),
+          length: endByte - startByte,
           type: 'application/octet-stream',
         ),
       ),
@@ -360,17 +363,17 @@ class DropboxService extends CloudProviderService {
     );
   }
 
-  Future<AppMedia> appendUploadSession({
-    required String path,
-    required int offset,
+  Future<void> appendUploadSession({
     required String sessionId,
-    required String localRefId,
+    required String path,
+    required int startByte,
+    required int endByte,
     CancelToken? cancelToken,
     void Function(int sent, int total)? onProgress,
   }) async {
-    final localFile = File(path);
+    final file = File(path);
 
-    if (localFile.existsSync() == false) {
+    if (file.existsSync() == false) {
       throw SomethingWentWrongError(
         statusCode: 404,
         message: 'File not found',
@@ -379,46 +382,65 @@ class DropboxService extends CloudProviderService {
 
     final res = await _dropboxAuthenticatedDio.req(
       DropboxAppendUploadEndpoint(
-        offset: offset,
+        offset: startByte,
         sessionId: sessionId,
         cancellationToken: cancelToken,
         onProgress: onProgress,
         content: AppMediaContent(
-          stream: localFile.openRead(),
-          length: localFile.lengthSync(),
+          stream: file.openRead(startByte, endByte),
+          length: endByte - startByte,
+          type: 'application/octet-stream',
+        ),
+      ),
+    );
+
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<AppMedia> finishUploadSession({
+    required String sessionId,
+    required String path,
+    required int startByte,
+    required int endByte,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+    required String localRefId,
+  }) async {
+    final file = File(path);
+
+    if (file.existsSync() == false) {
+      throw SomethingWentWrongError(
+        statusCode: 404,
+        message: 'File not found',
+      );
+    }
+
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxFinishUploadEndpoint(
+        filePath:
+            "/${ProviderConstants.backupFolderName}/${file.path.split('/').last}",
+        localRefId: localRefId,
+        appPropertyTemplateId:
+            _dropboxFileIdAppPropertyTemplateIdController.state!,
+        offset: startByte,
+        sessionId: sessionId,
+        cancellationToken: cancelToken,
+        onProgress: onProgress,
+        content: AppMediaContent(
+          stream: file.openRead(startByte, endByte),
+          length: endByte - startByte,
           type: 'application/octet-stream',
         ),
       ),
     );
 
     if (res.statusCode == 200) {
-      final res = await _dropboxAuthenticatedDio.req(
-        DropboxFinishUploadEndpoint(
-          filePath:
-              "/${ProviderConstants.backupFolderName}/${localFile.path.split('/').last}",
-          appPropertyTemplateId:
-              _dropboxFileIdAppPropertyTemplateIdController.state!,
-          localRefId: localRefId,
-          offset: offset,
-          sessionId: sessionId,
-          cancellationToken: cancelToken,
-          onProgress: onProgress,
-          content: AppMediaContent(
-            stream: localFile.openRead(),
-            length: localFile.lengthSync(),
-            type: 'application/octet-stream',
-          ),
-        ),
-      );
-
-      if (res.statusCode == 200) {
-        return AppMedia.fromDropboxJson(json: res.data);
-      }
-
-      throw SomethingWentWrongError(
-        statusCode: res.statusCode,
-        message: res.statusMessage,
-      );
+      return AppMedia.fromDropboxJson(json: res.data, metadataJson: res.data);
     }
 
     throw SomethingWentWrongError(

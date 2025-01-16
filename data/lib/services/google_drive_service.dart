@@ -92,7 +92,7 @@ class GoogleDriveService extends CloudProviderService {
     while (hasMore) {
       final res = await _client.req(
         GoogleDriveListEndpoint(
-          q: "'$folder' in parents and trashed=false and name!='${ProviderConstants.albumFileName}",
+          q: "'$folder' in parents and trashed=false and name!='${ProviderConstants.albumFileName}'",
           pageSize: 1000,
           pageToken: pageToken,
         ),
@@ -276,6 +276,7 @@ class GoogleDriveService extends CloudProviderService {
 
     if (!file.existsSync()) {
       throw SomethingWentWrongError(
+        statusCode: 404,
         message: 'File not found',
       );
     }

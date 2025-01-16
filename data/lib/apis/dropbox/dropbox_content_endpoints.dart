@@ -184,7 +184,6 @@ class DropboxStartUploadEndpoint extends Endpoint {
   @override
   Map<String, dynamic> get headers => {
         'Content-Type': content.type,
-        'Content-Length': content.length,
       };
 
   @override
@@ -230,7 +229,6 @@ class DropboxAppendUploadEndpoint extends Endpoint {
           },
         }),
         'Content-Type': content.type,
-        'Content-Length': content.length,
       };
 
   @override
@@ -280,7 +278,7 @@ class DropboxFinishUploadEndpoint extends Endpoint {
   HttpMethod get method => HttpMethod.post;
 
   @override
-  String get path => 'files/upload_session/finish';
+  String get path => '/files/upload_session/finish';
 
   @override
   Map<String, dynamic> get headers => {
@@ -310,7 +308,6 @@ class DropboxFinishUploadEndpoint extends Endpoint {
           },
         }),
         'Content-Type': content.type,
-        'Content-Length': content.length,
       };
 
   @override
