@@ -110,7 +110,7 @@ class UploadProcessItem extends StatelessWidget {
                 size: 20,
               ),
             ),
-          if (process.status.isTerminated || process.status.isFailed)
+          if (process.status.isFailed)
             ActionButton(
               onPressed: onResumeTap,
               icon: Icon(
