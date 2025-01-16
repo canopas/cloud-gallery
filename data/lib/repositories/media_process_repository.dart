@@ -702,7 +702,10 @@ class MediaProcessRepo extends ChangeNotifier {
           // If the upload session id is null and the chunk is not equal to 0 then start the upload session from the beginning
           if (chunk != 0) {
             await updateUploadProcessProgress(
-                id: process.id, chunk: 0, total: total);
+              id: process.id,
+              chunk: 0,
+              total: total,
+            );
             process = _uploadQueue.firstWhere((e) => e.id == process.id);
             _uploadInDropbox(process);
             return;
