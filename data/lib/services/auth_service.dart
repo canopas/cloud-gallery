@@ -29,7 +29,7 @@ final googleUserAccountProvider = StateProvider<GoogleSignInAccount?>((ref) {
 
 final googleSignInProvider = Provider(
   (ref) => GoogleSignIn(
-    scopes: [google_drive.DriveApi.driveScope],
+    scopes: [google_drive.DriveApi.driveFileScope],
   ),
 );
 
