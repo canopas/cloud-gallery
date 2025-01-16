@@ -604,7 +604,7 @@ class MediaProcessRepo extends ChangeNotifier {
           total: total,
         );
 
-        updateUploadProcessProgress(
+        await updateUploadProcessProgress(
           id: process.id,
           chunk: chunk,
           total: total,
