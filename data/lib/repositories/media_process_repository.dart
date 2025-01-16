@@ -665,67 +665,14 @@ class MediaProcessRepo extends ChangeNotifier {
       int chunk = process.chunk;
       final total = await File(process.path).length();
 
-      // Upload the media in chunks
-      while (chunk < total) {
-        process =
-            _uploadQueue.firstWhere((element) => element.id == process.id);
-
-        // Check if the process is terminated or paused and break the loop if it is
-        if (process.status.isTerminated) {
-          showNotification('Upload to Dropbox Cancelled');
-          break;
-        } else if (process.status.isPaused) {
-          showNotification('Upload to Dropbox Paused');
-          break;
-        }
-
-        final end = (chunk + ApiConfigs.uploadRequestByteSize).clamp(0, total);
-
-        if (end >= total && process.upload_session_id != null) {
-          // If the end byte is equal to the total bytes and the upload session id is not null then finish the upload session
-          response = await _dropboxService.finishUploadSession(
-            sessionId: process.upload_session_id!,
-            startByte: chunk,
-            endByte: end,
-            path: process.path,
-            localRefId: process.media_id,
-          );
-        } else if (process.upload_session_id != null) {
-          // If the upload session id is not null then append the chunk to the upload session
-          await _dropboxService.appendUploadSession(
-            path: process.path,
-            endByte: end,
-            startByte: chunk,
-            sessionId: process.upload_session_id!,
-          );
-        } else {
-          // If the upload session id is null and the chunk is not equal to 0 then start the upload session from the beginning
-          if (chunk != 0) {
-            await updateUploadProcessProgress(
-              id: process.id,
-              chunk: 0,
-              total: total,
-            );
-            process = _uploadQueue.firstWhere((e) => e.id == process.id);
-            _uploadInDropbox(process);
-            return;
-          }
-
-          // If the upload session id is null then start the upload session and update the upload session id
-          final uploadSessionId = await _dropboxService.startUploadSession(
-            path: process.path,
-            endByte: end,
-            startByte: chunk,
-          );
-
-          await updateUploadSessionId(
-            id: process.id,
-            uploadSessionId: uploadSessionId,
-          );
-        }
-
-        // Update the chunk and total bytes uploaded
-        chunk = end;
+      if (total <= ApiConfigs.uploadRequestByteSize) {
+        response = await _dropboxService.uploadMedia(
+          path: process.path,
+          folderId: process.folder_id,
+          localRefId: process.media_id,
+          mimeType: process.mime_type,
+        );
+        chunk = total;
 
         await updateUploadProcessProgress(
           id: process.id,
@@ -738,6 +685,81 @@ class MediaProcessRepo extends ChangeNotifier {
           chunk: chunk,
           total: total,
         );
+      } else {
+        while (chunk < total) {
+          process =
+              _uploadQueue.firstWhere((element) => element.id == process.id);
+
+          // Check if the process is terminated or paused and break the loop if it is
+          if (process.status.isTerminated) {
+            showNotification('Upload to Dropbox Cancelled');
+            break;
+          } else if (process.status.isPaused) {
+            showNotification('Upload to Dropbox Paused');
+            break;
+          }
+
+          final end =
+              (chunk + ApiConfigs.uploadRequestByteSize).clamp(0, total);
+
+          if (end >= total && process.upload_session_id != null) {
+            // If the end byte is equal to the total bytes and the upload session id is not null then finish the upload session
+            response = await _dropboxService.finishUploadSession(
+              sessionId: process.upload_session_id!,
+              startByte: chunk,
+              endByte: end,
+              path: process.path,
+              localRefId: process.media_id,
+            );
+          } else if (process.upload_session_id != null) {
+            // If the upload session id is not null then append the chunk to the upload session
+            await _dropboxService.appendUploadSession(
+              path: process.path,
+              endByte: end,
+              startByte: chunk,
+              sessionId: process.upload_session_id!,
+            );
+          } else {
+            // If the upload session id is null and the chunk is not equal to 0 then start the upload session from the beginning
+            if (chunk != 0) {
+              await updateUploadProcessProgress(
+                id: process.id,
+                chunk: 0,
+                total: total,
+              );
+              process = _uploadQueue.firstWhere((e) => e.id == process.id);
+              _uploadInDropbox(process);
+              return;
+            }
+
+            // If the upload session id is null then start the upload session and update the upload session id
+            final uploadSessionId = await _dropboxService.startUploadSession(
+              path: process.path,
+              endByte: end,
+              startByte: chunk,
+            );
+
+            await updateUploadSessionId(
+              id: process.id,
+              uploadSessionId: uploadSessionId,
+            );
+          }
+
+          // Update the chunk and total bytes uploaded
+          chunk = end;
+
+          await updateUploadProcessProgress(
+            id: process.id,
+            chunk: chunk,
+            total: total,
+          );
+
+          showNotification(
+            '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+            chunk: chunk,
+            total: total,
+          );
+        }
       }
 
       // If the chunk is equal to the total bytes, then sey the process as completed
