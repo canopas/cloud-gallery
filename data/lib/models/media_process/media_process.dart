@@ -14,10 +14,10 @@ part 'media_process.g.dart';
 enum MediaQueueProcessStatus {
   waiting('waiting'),
   uploading('uploading'),
-  deleting('deleting'),
   downloading('downloading'),
   completed('completed'),
   terminated('terminated'),
+  paused('paused'),
   failed('failed');
 
   final String value;
@@ -26,7 +26,6 @@ enum MediaQueueProcessStatus {
 
   bool get isRunning =>
       this == MediaQueueProcessStatus.uploading ||
-      this == MediaQueueProcessStatus.deleting ||
       this == MediaQueueProcessStatus.downloading;
 
   bool get isWaiting => this == MediaQueueProcessStatus.waiting;
@@ -34,6 +33,8 @@ enum MediaQueueProcessStatus {
   bool get isCompleted => this == MediaQueueProcessStatus.completed;
 
   bool get isFailed => this == MediaQueueProcessStatus.failed;
+
+  bool get isPaused => this == MediaQueueProcessStatus.paused;
 
   bool get isTerminated => this == MediaQueueProcessStatus.terminated;
 }
@@ -121,6 +122,7 @@ class UploadMediaProcess with _$UploadMediaProcess {
     required String media_id,
     required int notification_id,
     required String folder_id,
+    String? upload_session_id,
     required MediaProvider provider,
     required String path,
     String? mime_type,

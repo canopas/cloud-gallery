@@ -8,12 +8,13 @@ class AppMediaContent with _$AppMediaContent {
   const factory AppMediaContent({
     required Stream<List<int>> stream,
     required int? length,
-    required String contentType,
+    String? range,
+    required String type,
   }) = _AppMediaContent;
 
   factory AppMediaContent.fromGoogleDrive(drive.Media media) => AppMediaContent(
         stream: media.stream,
         length: media.length,
-        contentType: media.contentType,
+        type: media.contentType,
       );
 }

@@ -122,6 +122,12 @@ class _MediaTransferScreenState extends ConsumerState<MediaTransferScreen> {
           itemBuilder: (context, index) => UploadProcessItem(
             key: ValueKey(uploadProcesses[index].id),
             process: uploadProcesses[index],
+            onResumeTap: () {
+              notifier.onResumeUploadProcess(uploadProcesses[index].id);
+            },
+            onPausedTap: () {
+              notifier.onPauseUploadProcess(uploadProcesses[index].id);
+            },
             onRemoveTap: () {
               notifier.onRemoveUploadProcess(uploadProcesses[index].id);
             },

@@ -50,10 +50,10 @@ const _$MediaProviderEnumMap = {
 const _$MediaQueueProcessStatusEnumMap = {
   MediaQueueProcessStatus.waiting: 'waiting',
   MediaQueueProcessStatus.uploading: 'uploading',
-  MediaQueueProcessStatus.deleting: 'deleting',
   MediaQueueProcessStatus.downloading: 'downloading',
   MediaQueueProcessStatus.completed: 'completed',
   MediaQueueProcessStatus.terminated: 'terminated',
+  MediaQueueProcessStatus.paused: 'paused',
   MediaQueueProcessStatus.failed: 'failed',
 };
 
@@ -64,6 +64,7 @@ _$UploadMediaProcessImpl _$$UploadMediaProcessImplFromJson(
       media_id: json['media_id'] as String,
       notification_id: (json['notification_id'] as num).toInt(),
       folder_id: json['folder_id'] as String,
+      upload_session_id: json['upload_session_id'] as String?,
       provider: $enumDecode(_$MediaProviderEnumMap, json['provider']),
       path: json['path'] as String,
       mime_type: json['mime_type'] as String?,
@@ -87,6 +88,7 @@ Map<String, dynamic> _$$UploadMediaProcessImplToJson(
       'media_id': instance.media_id,
       'notification_id': instance.notification_id,
       'folder_id': instance.folder_id,
+      'upload_session_id': instance.upload_session_id,
       'provider': _$MediaProviderEnumMap[instance.provider]!,
       'path': instance.path,
       'mime_type': instance.mime_type,

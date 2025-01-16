@@ -292,7 +292,7 @@ class DropboxService extends CloudProviderService {
         content: AppMediaContent(
           stream: localFile.openRead(),
           length: localFile.lengthSync(),
-          contentType: 'application/octet-stream',
+          type: 'application/octet-stream',
         ),
         filePath:
             "/${ProviderConstants.backupFolderName}/${localFile.path.split('/').last}",
@@ -319,6 +319,130 @@ class DropboxService extends CloudProviderService {
       // If metadata is not available, return the uploaded file
       return AppMedia.fromDropboxJson(json: res.data);
     }
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<String> startUploadSession({
+    required String path,
+    required int startByte,
+    required int endByte,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    final file = File(path);
+
+    if (file.existsSync() == false) {
+      throw SomethingWentWrongError(
+        statusCode: 404,
+        message: 'File not found',
+      );
+    }
+
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxStartUploadEndpoint(
+        onProgress: onProgress,
+        cancellationToken: cancelToken,
+        content: AppMediaContent(
+          stream: file.openRead(startByte, endByte),
+          length: endByte - startByte,
+          type: 'application/octet-stream',
+        ),
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      return res.data['session_id'];
+    }
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<void> appendUploadSession({
+    required String sessionId,
+    required String path,
+    required int startByte,
+    required int endByte,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    final file = File(path);
+
+    if (file.existsSync() == false) {
+      throw SomethingWentWrongError(
+        statusCode: 404,
+        message: 'File not found',
+      );
+    }
+
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxAppendUploadEndpoint(
+        offset: startByte,
+        sessionId: sessionId,
+        cancellationToken: cancelToken,
+        onProgress: onProgress,
+        content: AppMediaContent(
+          stream: file.openRead(startByte, endByte),
+          length: endByte - startByte,
+          type: 'application/octet-stream',
+        ),
+      ),
+    );
+
+    if (res.statusCode == 200) return;
+
+    throw SomethingWentWrongError(
+      statusCode: res.statusCode,
+      message: res.statusMessage,
+    );
+  }
+
+  Future<AppMedia> finishUploadSession({
+    required String sessionId,
+    required String path,
+    required int startByte,
+    required int endByte,
+    CancelToken? cancelToken,
+    void Function(int sent, int total)? onProgress,
+    required String localRefId,
+  }) async {
+    final file = File(path);
+
+    if (file.existsSync() == false) {
+      throw SomethingWentWrongError(
+        statusCode: 404,
+        message: 'File not found',
+      );
+    }
+
+    final res = await _dropboxAuthenticatedDio.req(
+      DropboxFinishUploadEndpoint(
+        filePath:
+            "/${ProviderConstants.backupFolderName}/${file.path.split('/').last}",
+        localRefId: localRefId,
+        appPropertyTemplateId:
+            _dropboxFileIdAppPropertyTemplateIdController.state!,
+        offset: startByte,
+        sessionId: sessionId,
+        cancellationToken: cancelToken,
+        onProgress: onProgress,
+        content: AppMediaContent(
+          stream: file.openRead(startByte, endByte),
+          length: endByte - startByte,
+          type: 'application/octet-stream',
+        ),
+      ),
+    );
+
+    if (res.statusCode == 200) {
+      return AppMedia.fromDropboxJson(json: res.data, metadataJson: res.data);
+    }
+
     throw SomethingWentWrongError(
       statusCode: res.statusCode,
       message: res.statusMessage,
@@ -434,7 +558,7 @@ class DropboxService extends CloudProviderService {
         content: AppMediaContent(
           stream: Stream.value(utf8.encode(jsonEncode(albums))),
           length: utf8.encode(jsonEncode(albums)).length,
-          contentType: 'application/octet-stream',
+          type: 'application/octet-stream',
         ),
         filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
       ),
@@ -459,7 +583,7 @@ class DropboxService extends CloudProviderService {
         content: AppMediaContent(
           stream: Stream.value(utf8.encode(jsonEncode(albums))),
           length: utf8.encode(jsonEncode(albums)).length,
-          contentType: 'application/octet-stream',
+          type: 'application/octet-stream',
         ),
         filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
       ),
@@ -493,7 +617,7 @@ class DropboxService extends CloudProviderService {
         content: AppMediaContent(
           stream: Stream.value(utf8.encode(jsonEncode(albums))),
           length: utf8.encode(jsonEncode(albums)).length,
-          contentType: 'application/octet-stream',
+          type: 'application/octet-stream',
         ),
         filePath: "/${ProviderConstants.backupFolderName}/Albums.json",
       ),
