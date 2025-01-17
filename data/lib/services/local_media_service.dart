@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import '../domain/config.dart';
 import '../domain/json_converters/date_time_json_converter.dart';
 import '../models/album/album.dart';
+import '../models/clean_up/clean_up.dart';
 import '../models/media/media.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -101,6 +102,59 @@ class LocalMediaService {
       );
     }
     return asset != null ? AppMedia.fromAssetEntity(asset) : null;
+  }
+
+  // CLEAN UP ------------------------------------------------------------------
+
+  Future<Database> openCleanUpDatabase() async {
+    return await openDatabase(
+      LocalDatabaseConstants.databaseName,
+      version: 1,
+      onConfigure: (Database db) async {
+        await db.execute(
+          'CREATE TABLE IF NOT EXISTS ${LocalDatabaseConstants.cleanUpTable} ('
+              'id TEXT PRIMARY KEY, '
+              'provider TEXT NOT NULL, '
+              'created_at TEXT NOT NULL, '
+              'provider_ref_id TEXT'
+              ')',
+        );
+      },
+    );
+  }
+
+  Future<void> addToCleanUpMediaDatabase({
+    required List<CleanUpMedia> medias,
+  }) async {
+    final database = await openCleanUpDatabase();
+    final batch = database.batch();
+    for (CleanUpMedia media in medias) {
+      batch.insert(
+        LocalDatabaseConstants.cleanUpTable,
+        media.toJson(),
+      );
+    }
+    await batch.commit();
+  }
+
+  Future<void> removeFromCleanUpMediaDatabase(List<String> ids) async {
+    final database = await openCleanUpDatabase();
+    await database.delete(
+      LocalDatabaseConstants.cleanUpTable,
+      where: 'id IN (${List.filled(ids.length, '?').join(',')})',
+      whereArgs: ids,
+    );
+  }
+
+  Future<void> clearCleanUpMediaDatabase() async {
+    final database = await openCleanUpDatabase();
+    await database.delete(LocalDatabaseConstants.cleanUpTable);
+  }
+
+  Future<List<CleanUpMedia>> getCleanUpMedias() async {
+    final database = await openCleanUpDatabase();
+    final res = await database.query(LocalDatabaseConstants.cleanUpTable);
+    return res.map((e) => CleanUpMedia.fromJson(e)).toList();
   }
 
   // ALBUM ---------------------------------------------------------------------

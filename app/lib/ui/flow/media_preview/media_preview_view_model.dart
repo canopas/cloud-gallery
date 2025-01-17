@@ -231,7 +231,8 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
   Future<void> deleteMediaFromLocal(String id) async {
     try {
       state = state.copyWith(actionError: null);
-      await _localMediaService.deleteMedias([id]);
+      final res = await _localMediaService.deleteMedias([id]);
+      if(res.isEmpty) return;
       _mediaProcessRepo.notifyDeleteMedia([
         DeleteMediaEvent(id: id, source: AppMediaSource.local),
       ]);

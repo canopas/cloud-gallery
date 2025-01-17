@@ -13,6 +13,7 @@ class LocalDatabaseConstants {
   static const String uploadQueueTable = 'UploadQueue';
   static const String downloadQueueTable = 'DownloadQueue';
   static const String albumsTable = 'Albums';
+  static const String cleanUpTable = 'CleanUp';
 }
 
 class FeatureFlag {

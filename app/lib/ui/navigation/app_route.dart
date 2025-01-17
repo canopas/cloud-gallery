@@ -3,6 +3,7 @@ import '../flow/accounts/accounts_screen.dart';
 import '../flow/albums/add/add_album_screen.dart';
 import '../flow/albums/albums_screen.dart';
 import '../flow/albums/media_list/album_media_list_screen.dart';
+import '../flow/clean_up/clean_up_screen.dart';
 import '../flow/main/main_screen.dart';
 import '../flow/media_selection/media_selection_screen.dart';
 import '../flow/media_transfer/media_transfer_screen.dart';
@@ -19,6 +20,7 @@ part 'app_route.g.dart';
 class AppRoutePath {
   static const onBoard = '/on-board';
   static const home = '/';
+  static const cleanUp = '/clean-up';
   static const albums = '/albums';
   static const addAlbum = '/add-album';
   static const albumMediaList = '/albums/:albumId';
@@ -74,6 +76,15 @@ class MainShellRoute extends StatefulShellRouteData {
     StatefulNavigationShell navigationShell,
   ) =>
       MainScreen(navigationShell: navigationShell);
+}
+
+@TypedGoRoute<CleanUpRoute>(path: AppRoutePath.cleanUp)
+class CleanUpRoute extends GoRouteData {
+  const CleanUpRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CleanUpScreen();
 }
 
 class HomeShellBranch extends StatefulShellBranchData {}
