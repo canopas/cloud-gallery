@@ -27,6 +27,12 @@
   "common_sign_in": "Sign In",
   "common_skip_for_now": "Skip for Now",
 
+  "@_TAB_TITLE": {},
+  "home_tab_title": "Home",
+  "transfer_tab_title": "Transfer",
+  "album_tab_title": "Albums",
+  "account_tab_title": "Accounts",
+
   "@_ERROR":{},
   "no_internet_connection_error": "No internet connection! Please check your network and try again.",
   "something_went_wrong_error": "Oops, something went wrong. Please try again, we’re on it and will fix it soon!",
@@ -157,5 +163,11 @@
   "orientation_text": "Orientation",
   "path_text": "Path",
   "display_size_text": "Display Size",
-  "source_text": "Source"
+  "source_text": "Source",
+
+  "@_CLEAN_UP_SCREEN":{},
+  "clean_up_screen_title": "Clean Up",
+  "empty_clean_up_title": "All Clear and Clean!",
+  "empty_clean_up_message": "Looks like there's nothing to tidy up—you're already sparkling clean!",
+  "clean_up_title": "Clean Up"
 }

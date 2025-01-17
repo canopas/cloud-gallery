@@ -12,6 +12,7 @@ import 'package:style/buttons/segmented_button.dart';
 import 'package:style/buttons/switch.dart';
 import 'package:style/extensions/context_extensions.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../navigation/app_route.dart';
 import '../accounts_screen_view_model.dart';
 
 class SettingsActionList extends ConsumerWidget {
@@ -24,12 +25,30 @@ class SettingsActionList extends ConsumerWidget {
         _notificationAction(context),
         _themeAction(context, ref),
         _rateUsAction(context, ref),
+        _cleanUpMedia(context),
         _clearCacheAction(context, ref),
         _termAndConditionAction(context, ref),
         _privacyPolicyAction(context, ref),
       ],
     );
   }
+
+  Widget _cleanUpMedia(BuildContext context) => ActionListItem(
+        leading: Icon(
+          Icons.cleaning_services,
+          color: context.colorScheme.textPrimary,
+          size: 22,
+        ),
+        onPressed: () {
+          CleanUpRoute().push(context);
+        },
+        title: context.l10n.clean_up_screen_title,
+        trailing: Icon(
+          CupertinoIcons.right_chevron,
+          color: context.colorScheme.outline,
+          size: 22,
+        ),
+      );
 
   Widget _notificationAction(BuildContext context) => ActionListItem(
         leading: SvgPicture.asset(

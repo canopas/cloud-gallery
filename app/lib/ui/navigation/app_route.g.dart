@@ -9,6 +9,7 @@ part of 'app_route.dart';
 List<RouteBase> get $appRoutes => [
       $onBoardRoute,
       $mainShellRoute,
+      $cleanUpRoute,
       $addAlbumRoute,
       $albumMediaListRoute,
       $mediaPreviewRoute,
@@ -137,6 +138,28 @@ extension $AccountRouteExtension on AccountRoute {
 
   String get location => GoRouteData.$location(
         '/accounts',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $cleanUpRoute => GoRouteData.$route(
+      path: '/clean-up',
+      factory: $CleanUpRouteExtension._fromState,
+    );
+
+extension $CleanUpRouteExtension on CleanUpRoute {
+  static CleanUpRoute _fromState(GoRouterState state) => const CleanUpRoute();
+
+  String get location => GoRouteData.$location(
+        '/clean-up',
       );
 
   void go(BuildContext context) => context.go(location);

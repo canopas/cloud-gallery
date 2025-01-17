@@ -628,10 +628,12 @@ class HomeViewStateNotifier extends StateNotifier<HomeViewState>
 
       state = state.copyWith(selectedMedias: {}, actionError: null);
 
-      await _localMediaService.deleteMedias(ids);
+      final res = await _localMediaService.deleteMedias(ids);
+
+      if (res.isEmpty) return;
 
       _mediaProcessRepo.notifyDeleteMedia(
-        ids
+        res
             .map((e) => DeleteMediaEvent(id: e, source: AppMediaSource.local))
             .toList(),
       );

@@ -12,6 +12,7 @@ import '../domain/config.dart';
 import '../domain/formatters/byte_formatter.dart';
 import '../errors/app_error.dart';
 import '../handlers/notification_handler.dart';
+import '../models/clean_up/clean_up.dart';
 import '../models/media/media.dart';
 import '../models/media/media_extension.dart';
 import '../models/media_process/media_process.dart';
@@ -547,6 +548,17 @@ class MediaProcessRepo extends ChangeNotifier {
       );
 
       await clearUploadProcessResponse(id: process.id);
+
+      await _localMediaService.addToCleanUpMediaDatabase(
+        medias: [
+          CleanUpMedia(
+            id: process.media_id,
+            provider_ref_id: res.id,
+            provider: AppMediaSource.googleDrive,
+            created_at: DateTime.now(),
+          ),
+        ],
+      );
     } catch (e) {
       if (e is DioException && e.type == DioExceptionType.cancel) {
         showNotification('Upload to Google Drive cancelled');
@@ -636,6 +648,17 @@ class MediaProcessRepo extends ChangeNotifier {
       );
 
       await clearUploadProcessResponse(id: process.id);
+
+      await _localMediaService.addToCleanUpMediaDatabase(
+        medias: [
+          CleanUpMedia(
+            id: process.media_id,
+            provider_ref_id: res.id,
+            provider: AppMediaSource.dropbox,
+            created_at: DateTime.now(),
+          ),
+        ],
+      );
     } catch (e) {
       if (e is DioException && e.type == DioExceptionType.cancel) {
         showNotification('Upload to Dropbox cancelled');

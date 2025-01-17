@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/extensions/context_extensions.dart';
+import '../../../domain/extensions/context_extensions.dart';
 import '../../navigation/app_route.dart';
 
 class MainScreen extends StatefulWidget {
@@ -24,22 +25,22 @@ class _MainScreenState extends State<MainScreen> {
     final tabs = [
       (
         icon: CupertinoIcons.house_fill,
-        label: "Home",
+        label: context.l10n.home_tab_title,
         activeIcon: CupertinoIcons.house_fill,
       ),
       (
         icon: CupertinoIcons.folder,
-        label: "Albums",
+        label: context.l10n.album_tab_title,
         activeIcon: CupertinoIcons.folder_fill
       ),
       (
         icon: CupertinoIcons.arrow_up_arrow_down,
-        label: "Transfer",
+        label: context.l10n.transfer_tab_title,
         activeIcon: CupertinoIcons.arrow_up_arrow_down
       ),
       (
         icon: CupertinoIcons.person,
-        label: "Account",
+        label: context.l10n.account_tab_title,
         activeIcon: CupertinoIcons.person_fill
       ),
     ];
