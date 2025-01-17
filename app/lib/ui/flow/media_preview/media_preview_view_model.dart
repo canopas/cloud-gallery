@@ -232,7 +232,7 @@ class MediaPreviewStateNotifier extends StateNotifier<MediaPreviewState> {
     try {
       state = state.copyWith(actionError: null);
       final res = await _localMediaService.deleteMedias([id]);
-      if(res.isEmpty) return;
+      if (res.isEmpty) return;
       _mediaProcessRepo.notifyDeleteMedia([
         DeleteMediaEvent(id: id, source: AppMediaSource.local),
       ]);

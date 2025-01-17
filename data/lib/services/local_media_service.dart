@@ -113,11 +113,11 @@ class LocalMediaService {
       onConfigure: (Database db) async {
         await db.execute(
           'CREATE TABLE IF NOT EXISTS ${LocalDatabaseConstants.cleanUpTable} ('
-              'id TEXT PRIMARY KEY, '
-              'provider TEXT NOT NULL, '
-              'created_at TEXT NOT NULL, '
-              'provider_ref_id TEXT'
-              ')',
+          'id TEXT PRIMARY KEY, '
+          'provider TEXT NOT NULL, '
+          'created_at TEXT NOT NULL, '
+          'provider_ref_id TEXT'
+          ')',
         );
       },
     );
