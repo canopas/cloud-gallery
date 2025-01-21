@@ -232,11 +232,22 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
     required AppMedia media,
     required bool isZoomed,
   }) {
+    void onDragUp(displacement) async {
+      if (displacement > 100) {
+        if (_videoPlayerController != null &&
+            (_videoPlayerController?.value.isInitialized ?? false)) {
+          _videoPlayerController?.pause();
+        }
+        MediaMetadataDetailsScreen.show(context, media);
+      }
+    }
+
     if (media.type.isVideo && media.sources.contains(AppMediaSource.local)) {
       return DismissiblePage(
         backgroundColor: context.colorScheme.surface,
         enableScale: false,
         onDismiss: context.pop,
+        onDragUp: onDragUp,
         onDragDown: _notifier.updateSwipeDownPercentage,
         child: Center(
           child: Consumer(
@@ -318,6 +329,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         enableScale: false,
         backgroundColor: context.colorScheme.surface,
         onDismiss: context.pop,
+        onDragUp: onDragUp,
         onDragDown: _notifier.updateSwipeDownPercentage,
         child: _cloudVideoView(context: context, media: media),
       );
@@ -328,12 +340,8 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         onScaleChange: (scale) {
           _notifier.updateIsImageZoomed(scale > 1);
         },
-        onDragUp: (displacement) async {
-          if (displacement > 100) {
-            MediaMetadataDetailsScreen.show(context, media);
-          }
-        },
         onDismiss: context.pop,
+        onDragUp: onDragUp,
         onDragDown: _notifier.updateSwipeDownPercentage,
         child: LocalMediaImagePreview(media: media, heroTag: widget.heroTag),
       );
@@ -345,6 +353,7 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
           _notifier.updateIsImageZoomed(scale > 1);
         },
         onDismiss: context.pop,
+        onDragUp: onDragUp,
         onDragDown: _notifier.updateSwipeDownPercentage,
         child: NetworkImagePreview(media: media, heroTag: widget.heroTag),
       );
