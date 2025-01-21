@@ -126,8 +126,8 @@ class LocalMediaService {
   Future<void> addToCleanUpMediaDatabase({
     required List<CleanUpMedia> medias,
   }) async {
-    final database = await openCleanUpDatabase();
-    final batch = database.batch();
+    final db = await openCleanUpDatabase();
+    final batch = db.batch();
     for (CleanUpMedia media in medias) {
       batch.insert(
         LocalDatabaseConstants.cleanUpTable,
@@ -135,26 +135,29 @@ class LocalMediaService {
       );
     }
     await batch.commit();
+    await db.close();
   }
 
   Future<void> removeFromCleanUpMediaDatabase(List<String> ids) async {
-    final database = await openCleanUpDatabase();
-    await database.delete(
+    final db = await openCleanUpDatabase();
+    await db.delete(
       LocalDatabaseConstants.cleanUpTable,
       where: 'id IN (${List.filled(ids.length, '?').join(',')})',
       whereArgs: ids,
     );
+    await db.close();
   }
 
   Future<void> clearCleanUpMediaDatabase() async {
-    final database = await openCleanUpDatabase();
-    await database.delete(LocalDatabaseConstants.cleanUpTable);
+    final db = await openCleanUpDatabase();
+    await db.delete(LocalDatabaseConstants.cleanUpTable);
+    await db.close();
   }
 
   Future<List<CleanUpMedia>> getCleanUpMedias() async {
-    final database = await openCleanUpDatabase();
-
-    final res = await database.query(LocalDatabaseConstants.cleanUpTable);
+    final db = await openCleanUpDatabase();
+    final res = await db.query(LocalDatabaseConstants.cleanUpTable);
+    await db.close();
     return res.map((e) => CleanUpMedia.fromJson(e)).toList();
   }
 
