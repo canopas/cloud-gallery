@@ -185,7 +185,6 @@ class MediaPreviewRoute extends GoRouteData {
   }
 }
 
-
 @TypedGoRoute<MediaSelectionRoute>(path: AppRoutePath.mediaSelection)
 class MediaSelectionRoute extends GoRouteData {
   final AppMediaSource $extra;
