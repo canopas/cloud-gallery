@@ -12,6 +12,7 @@ import '../../../domain/extensions/context_extensions.dart';
 import '../../../domain/extensions/widget_extensions.dart';
 import '../../../domain/image_providers/app_media_image_provider.dart';
 import '../../../gen/assets.gen.dart';
+import '../media_metadata_details/media_metadata_details.dart';
 import 'components/download_require_view.dart';
 import 'components/local_media_image_preview.dart';
 import 'components/network_image_preview/network_image_preview.dart';
@@ -326,6 +327,11 @@ class _MediaPreviewState extends ConsumerState<MediaPreview> {
         backgroundColor: context.colorScheme.surface,
         onScaleChange: (scale) {
           _notifier.updateIsImageZoomed(scale > 1);
+        },
+        onDragUp: (displacement) async {
+          if (displacement > 100) {
+            MediaMetadataDetailsScreen.show(context, media);
+          }
         },
         onDismiss: context.pop,
         onDragDown: _notifier.updateSwipeDownPercentage,

@@ -12,7 +12,6 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import '../flow/home/home_screen.dart';
-import '../flow/media_metadata_details/media_metadata_details.dart';
 import '../flow/media_preview/media_preview_screen.dart';
 
 part 'app_route.g.dart';
@@ -27,7 +26,6 @@ class AppRoutePath {
   static const transfer = '/transfer';
   static const accounts = '/accounts';
   static const preview = '/preview';
-  static const metaDataDetails = '/metadata-details';
   static const mediaSelection = '/select';
 }
 
@@ -187,16 +185,6 @@ class MediaPreviewRoute extends GoRouteData {
   }
 }
 
-@TypedGoRoute<MediaMetadataDetailsRoute>(path: AppRoutePath.metaDataDetails)
-class MediaMetadataDetailsRoute extends GoRouteData {
-  final AppMedia $extra;
-
-  const MediaMetadataDetailsRoute({required this.$extra});
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      MediaMetadataDetailsScreen(media: $extra);
-}
 
 @TypedGoRoute<MediaSelectionRoute>(path: AppRoutePath.mediaSelection)
 class MediaSelectionRoute extends GoRouteData {

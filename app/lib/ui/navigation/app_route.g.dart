@@ -13,7 +13,6 @@ List<RouteBase> get $appRoutes => [
       $addAlbumRoute,
       $albumMediaListRoute,
       $mediaPreviewRoute,
-      $mediaMetadataDetailsRoute,
       $mediaSelectionRoute,
     ];
 
@@ -238,33 +237,6 @@ extension $MediaPreviewRouteExtension on MediaPreviewRoute {
 
   String get location => GoRouteData.$location(
         '/preview',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
-}
-
-RouteBase get $mediaMetadataDetailsRoute => GoRouteData.$route(
-      path: '/metadata-details',
-      factory: $MediaMetadataDetailsRouteExtension._fromState,
-    );
-
-extension $MediaMetadataDetailsRouteExtension on MediaMetadataDetailsRoute {
-  static MediaMetadataDetailsRoute _fromState(GoRouterState state) =>
-      MediaMetadataDetailsRoute(
-        $extra: state.extra as AppMedia,
-      );
-
-  String get location => GoRouteData.$location(
-        '/metadata-details',
       );
 
   void go(BuildContext context) => context.go(location, extra: $extra);
