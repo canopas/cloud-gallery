@@ -108,9 +108,9 @@ class LocalMediaService {
 
   Future<Database> openCleanUpDatabase() async {
     return await openDatabase(
-      LocalDatabaseConstants.databaseName,
+      LocalDatabaseConstants.cleanUpDatabaseName,
       version: 1,
-      onConfigure: (Database db) async {
+      onCreate: (db, version) async {
         await db.execute(
           'CREATE TABLE IF NOT EXISTS ${LocalDatabaseConstants.cleanUpTable} ('
           'id TEXT PRIMARY KEY, '
@@ -153,6 +153,7 @@ class LocalMediaService {
 
   Future<List<CleanUpMedia>> getCleanUpMedias() async {
     final database = await openCleanUpDatabase();
+
     final res = await database.query(LocalDatabaseConstants.cleanUpTable);
     return res.map((e) => CleanUpMedia.fromJson(e)).toList();
   }
