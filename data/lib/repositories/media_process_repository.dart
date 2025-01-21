@@ -13,6 +13,7 @@ import '../domain/formatters/byte_formatter.dart';
 import '../errors/app_error.dart';
 import '../handlers/notification_handler.dart';
 import '../handlers/unique_id_generator.dart';
+import '../models/clean_up/clean_up.dart';
 import '../models/media/media.dart';
 import '../models/media/media_extension.dart';
 import '../models/media_process/media_process.dart';
@@ -621,6 +622,16 @@ class MediaProcessRepo extends ChangeNotifier {
         );
         showNotification('Uploaded to Google Drive successfully');
         await clearUploadProcessResponse(id: process.id);
+        _localMediaService.addToCleanUpMediaDatabase(
+          medias: [
+            CleanUpMedia(
+              id: process.media_id,
+              provider: AppMediaSource.googleDrive,
+              created_at: DateTime.now(),
+              provider_ref_id: response?.id,
+            ),
+          ],
+        );
       }
     } catch (e) {
       showNotification('Failed to upload to Google Drive');
@@ -771,6 +782,16 @@ class MediaProcessRepo extends ChangeNotifier {
         );
         showNotification('Uploaded to Dropbox successfully');
         await clearUploadProcessResponse(id: process.id);
+        _localMediaService.addToCleanUpMediaDatabase(
+          medias: [
+            CleanUpMedia(
+              id: process.media_id,
+              provider: AppMediaSource.dropbox,
+              created_at: DateTime.now(),
+              provider_ref_id: response?.id,
+            ),
+          ],
+        );
       }
     } catch (e) {
       showNotification('Failed to upload to Dropbox');
