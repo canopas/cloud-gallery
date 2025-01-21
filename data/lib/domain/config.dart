@@ -10,9 +10,11 @@ class ProviderConstants {
 class LocalDatabaseConstants {
   static const String databaseName = 'cloud-gallery.db';
   static const String albumDatabaseName = 'cloud-gallery-album.db';
+  static const String cleanUpDatabaseName = 'cloud-gallery-clean-up.db';
   static const String uploadQueueTable = 'UploadQueue';
   static const String downloadQueueTable = 'DownloadQueue';
   static const String albumsTable = 'Albums';
+  static const String cleanUpTable = 'CleanUp';
 }
 
 class FeatureFlag {

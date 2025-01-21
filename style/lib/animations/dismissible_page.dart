@@ -7,6 +7,7 @@ class DismissiblePage extends StatefulWidget {
   final Color backgroundColor;
   final void Function(double scale)? onScaleChange;
   final void Function(double displacement)? onDragDown;
+  final void Function(double displacement)? onDragUp;
   final void Function()? onDismiss;
   final double scaleDownPercentage;
 
@@ -17,6 +18,7 @@ class DismissiblePage extends StatefulWidget {
     this.enableScale = true,
     this.onScaleChange,
     this.onDragDown,
+    this.onDragUp,
     required this.backgroundColor,
     this.onDismiss,
     this.scaleDownPercentage = 0.25,
@@ -49,6 +51,10 @@ class _DismissiblePageState extends State<DismissiblePage> {
             _percentage = (_displacement / widget.threshold).clamp(0, 1);
             widget.onDragDown?.call(_displacement);
           });
+        } else if ((details.localFocalPoint.dy - _startY) < 0 &&
+            details.pointerCount == 1 &&
+            !_isZoomed) {
+          widget.onDragUp?.call(_startY - details.localFocalPoint.dy);
         } else {
           if (details.pointerCount == 2) {
             _isZoomed = details.scale > 1;

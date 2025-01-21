@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:style/theme/theme.dart';
 import '../../../../domain/extensions/context_extensions.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../navigation/app_route.dart';
 import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +15,7 @@ import 'package:style/extensions/context_extensions.dart';
 import 'package:style/text/app_text_style.dart';
 import '../../../../components/app_dialog.dart';
 import '../../../../domain/formatter/date_formatter.dart';
+import '../../media_metadata_details/media_metadata_details.dart';
 import '../media_preview_view_model.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -179,7 +179,7 @@ class _PreviewTopBarState extends ConsumerState<PreviewTopBar> {
     return PopupMenuItem(
       onTap: () {
         widget.onAction();
-        MediaMetadataDetailsRoute($extra: media).push(context);
+        MediaMetadataDetailsScreen.show(context, media);
       },
       child: Row(
         children: [

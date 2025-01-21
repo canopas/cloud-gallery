@@ -9,10 +9,10 @@ part of 'app_route.dart';
 List<RouteBase> get $appRoutes => [
       $onBoardRoute,
       $mainShellRoute,
+      $cleanUpRoute,
       $addAlbumRoute,
       $albumMediaListRoute,
       $mediaPreviewRoute,
-      $mediaMetadataDetailsRoute,
       $mediaSelectionRoute,
     ];
 
@@ -149,6 +149,28 @@ extension $AccountRouteExtension on AccountRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
+RouteBase get $cleanUpRoute => GoRouteData.$route(
+      path: '/clean-up',
+      factory: $CleanUpRouteExtension._fromState,
+    );
+
+extension $CleanUpRouteExtension on CleanUpRoute {
+  static CleanUpRoute _fromState(GoRouterState state) => const CleanUpRoute();
+
+  String get location => GoRouteData.$location(
+        '/clean-up',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
 RouteBase get $addAlbumRoute => GoRouteData.$route(
       path: '/add-album',
       factory: $AddAlbumRouteExtension._fromState,
@@ -215,33 +237,6 @@ extension $MediaPreviewRouteExtension on MediaPreviewRoute {
 
   String get location => GoRouteData.$location(
         '/preview',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
-}
-
-RouteBase get $mediaMetadataDetailsRoute => GoRouteData.$route(
-      path: '/metadata-details',
-      factory: $MediaMetadataDetailsRouteExtension._fromState,
-    );
-
-extension $MediaMetadataDetailsRouteExtension on MediaMetadataDetailsRoute {
-  static MediaMetadataDetailsRoute _fromState(GoRouterState state) =>
-      MediaMetadataDetailsRoute(
-        $extra: state.extra as AppMedia,
-      );
-
-  String get location => GoRouteData.$location(
-        '/metadata-details',
       );
 
   void go(BuildContext context) => context.go(location, extra: $extra);
