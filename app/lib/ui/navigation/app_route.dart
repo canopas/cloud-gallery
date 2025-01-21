@@ -3,6 +3,7 @@ import '../flow/accounts/accounts_screen.dart';
 import '../flow/albums/add/add_album_screen.dart';
 import '../flow/albums/albums_screen.dart';
 import '../flow/albums/media_list/album_media_list_screen.dart';
+import '../flow/clean_up/clean_up_screen.dart';
 import '../flow/main/main_screen.dart';
 import '../flow/media_selection/media_selection_screen.dart';
 import '../flow/media_transfer/media_transfer_screen.dart';
@@ -11,7 +12,6 @@ import 'package:data/models/media/media.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import '../flow/home/home_screen.dart';
-import '../flow/media_metadata_details/media_metadata_details.dart';
 import '../flow/media_preview/media_preview_screen.dart';
 
 part 'app_route.g.dart';
@@ -19,13 +19,13 @@ part 'app_route.g.dart';
 class AppRoutePath {
   static const onBoard = '/on-board';
   static const home = '/';
+  static const cleanUp = '/clean-up';
   static const albums = '/albums';
   static const addAlbum = '/add-album';
   static const albumMediaList = '/albums/:albumId';
   static const transfer = '/transfer';
   static const accounts = '/accounts';
   static const preview = '/preview';
-  static const metaDataDetails = '/metadata-details';
   static const mediaSelection = '/select';
 }
 
@@ -74,6 +74,15 @@ class MainShellRoute extends StatefulShellRouteData {
     StatefulNavigationShell navigationShell,
   ) =>
       MainScreen(navigationShell: navigationShell);
+}
+
+@TypedGoRoute<CleanUpRoute>(path: AppRoutePath.cleanUp)
+class CleanUpRoute extends GoRouteData {
+  const CleanUpRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CleanUpScreen();
 }
 
 class HomeShellBranch extends StatefulShellBranchData {}
@@ -174,17 +183,6 @@ class MediaPreviewRoute extends GoRouteData {
       },
     );
   }
-}
-
-@TypedGoRoute<MediaMetadataDetailsRoute>(path: AppRoutePath.metaDataDetails)
-class MediaMetadataDetailsRoute extends GoRouteData {
-  final AppMedia $extra;
-
-  const MediaMetadataDetailsRoute({required this.$extra});
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      MediaMetadataDetailsScreen(media: $extra);
 }
 
 @TypedGoRoute<MediaSelectionRoute>(path: AppRoutePath.mediaSelection)
