@@ -44,7 +44,7 @@ class CleanUpStateNotifier extends StateNotifier<CleanUpState> {
     } catch (e, s) {
       state = state.copyWith(loading: false, error: e);
       _logger.e(
-        "BinStateNotifier: Error occur while loading bin items",
+        "CleanUpStateNotifier: Error occur while loading bin items",
         error: e,
         stackTrace: s,
       );
@@ -79,7 +79,7 @@ class CleanUpStateNotifier extends StateNotifier<CleanUpState> {
     } catch (e, s) {
       state = state.copyWith(deleteSelectedLoading: [], actionError: e);
       _logger.e(
-        "BinStateNotifier: Error occur while deleting selected bin items",
+        "CleanUpStateNotifier: Error occur while deleting selected bin items",
         error: e,
         stackTrace: s,
       );
@@ -103,7 +103,7 @@ class CleanUpStateNotifier extends StateNotifier<CleanUpState> {
     } catch (e, s) {
       state = state.copyWith(deleteAllLoading: false, actionError: e);
       _logger.e(
-        "BinStateNotifier: Error occur while deleting all bin items",
+        "CleanUpStateNotifier: Error occur while deleting all bin items",
         error: e,
         stackTrace: s,
       );
