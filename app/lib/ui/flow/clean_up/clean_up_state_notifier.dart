@@ -74,8 +74,7 @@ class CleanUpStateNotifier extends StateNotifier<CleanUpState> {
       }
       state = state.copyWith(
         deleteSelectedLoading: [],
-        medias:
-            state.medias.where((e) => !deleteMedias.contains(e.id)).toList(),
+        medias: state.medias.where((e) => !res.contains(e.id)).toList(),
       );
     } catch (e, s) {
       state = state.copyWith(deleteSelectedLoading: [], actionError: e);
@@ -99,7 +98,7 @@ class CleanUpStateNotifier extends StateNotifier<CleanUpState> {
       state = state.copyWith(
         deleteAllLoading: false,
         selected: [],
-        medias: [],
+        medias: res.isNotEmpty ? [] : state.medias,
       );
     } catch (e, s) {
       state = state.copyWith(deleteAllLoading: false, actionError: e);
