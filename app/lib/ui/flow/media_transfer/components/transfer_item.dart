@@ -139,7 +139,7 @@ class UploadProcessItem extends StatelessWidget {
     if (process.status.isWaiting) {
       return context.l10n.upload_status_waiting;
     } else if (process.status.isPaused) {
-      return "Upload paused";
+      return context.l10n.upload_status_paused;
     } else if (process.status.isFailed) {
       return context.l10n.upload_status_failed;
     } else if (process.status.isCompleted) {

@@ -102,16 +102,17 @@
   "successfully_sign_out_from_dropbox": "You have successfully signed out of Dropbox",
 
   "@_UPLOAD_ITEM":{},
-  "upload_status_waiting": "Upload is in the queue",
-  "upload_status_success": "Upload completed successfully",
+  "upload_status_waiting": "Upload is in the queue.",
+  "upload_status_success": "Upload completed successfully.",
   "upload_status_failed": "Upload failed. Please try again.",
-  "upload_status_cancelled": "Upload was cancelled",
+  "upload_status_cancelled": "Upload was cancelled.",
+  "upload_status_paused": "Upload paused.",
 
   "@_DOWNLOAD_ITEM":{},
-  "download_status_waiting": "Download is in the queue",
-  "download_status_success": "Download completed successfully",
+  "download_status_waiting": "Download is in the queue.",
+  "download_status_success": "Download completed successfully.",
   "download_status_failed": "Download failed. Please try again.",
-  "download_status_cancelled": "Download was cancelled",
+  "download_status_cancelled": "Download was cancelled.",
 
   "@_TRANSFER":{},
   "transfer_screen_title": "Transfer",
