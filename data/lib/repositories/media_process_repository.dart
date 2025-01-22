@@ -12,6 +12,7 @@ import '../domain/config.dart';
 import '../domain/formatters/byte_formatter.dart';
 import '../errors/app_error.dart';
 import '../handlers/notification_handler.dart';
+import '../handlers/unique_id_generator.dart';
 import '../models/clean_up/clean_up.dart';
 import '../models/media/media.dart';
 import '../models/media/media_extension.dart';
@@ -28,6 +29,7 @@ final mediaProcessRepoProvider = Provider<MediaProcessRepo>((ref) {
     ref.read(localMediaServiceProvider),
     ref.read(notificationHandlerProvider),
     ref.read(AppPreferences.notifications),
+    ref.read(uniqueIdGeneratorProvider),
   );
   final subscription = ref.listen(
     AppPreferences.notifications,
@@ -77,6 +79,7 @@ class MediaProcessRepo extends ChangeNotifier {
   final DropboxService _dropboxService;
   final LocalMediaService _localMediaService;
   final NotificationHandler _notificationHandler;
+  final UniqueIdGenerator _uniqueIdGenerator;
   bool _showNotification;
 
   late Database database;
@@ -104,8 +107,9 @@ class MediaProcessRepo extends ChangeNotifier {
     this._localMediaService,
     this._notificationHandler,
     this._showNotification,
+    this._uniqueIdGenerator,
   ) {
-    initializeLocalDatabase();
+    _initializeLocalDatabase();
   }
 
   void updateShowNotification(bool showNotification) {
@@ -118,7 +122,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
   // DATABASE COMMON OPERATIONS ------------------------------------------------
 
-  Future<void> initializeLocalDatabase() async {
+  Future<void> _initializeLocalDatabase() async {
     database = await openDatabase(
       LocalDatabaseConstants.databaseName,
       version: 1,
@@ -135,6 +139,7 @@ class MediaProcessRepo extends ChangeNotifier {
           'notification_id INTEGER NOT NULL, '
           'response TEXT, '
           'mime_type TEXT, '
+          'upload_session_id TEXT, '
           'total INTEGER NOT NULL, '
           'chunk INTEGER NOT NULL'
           ')',
@@ -202,6 +207,7 @@ class MediaProcessRepo extends ChangeNotifier {
   // AUTO BACKUP OPERATIONS ----------------------------------------------------
 
   void autoBackupInGoogleDrive() async {
+    //Fetch Media from local storage and Google Drive
     final backUpFolderId = await _googleDriveService.getBackUpFolderId();
 
     if (backUpFolderId == null) {
@@ -214,26 +220,31 @@ class MediaProcessRepo extends ChangeNotifier {
     ]);
 
     final localMedias = res[0];
-    final dgMedias = res[1];
+    final gdMedias = res[1];
 
+    // Remove media that are already in the upload queue or already in Google Drive
     for (AppMedia localMedia in localMedias.toList()) {
       if (_uploadQueue
               .where(
                 (element) =>
                     element.media_id == localMedia.id &&
-                    element.status.isRunning,
+                    (element.status.isRunning ||
+                        element.status.isPaused ||
+                        element.status.isWaiting),
               )
               .isNotEmpty ||
-          dgMedias.where((gdMedia) => gdMedia.id == localMedia.id).isNotEmpty) {
+          gdMedias.where((gdMedia) => gdMedia.id == localMedia.id).isNotEmpty) {
         localMedias.removeWhere((media) => media.id == localMedia.id);
       }
     }
 
+    // Add media to the upload queue
+    final batch = database.batch();
     for (AppMedia media in localMedias) {
-      await database.insert(
+      batch.insert(
         LocalDatabaseConstants.uploadQueueTable,
         UploadMediaProcess(
-          id: _generateUniqueIdV4(),
+          id: _uniqueIdGenerator.v4(),
           media_id: media.id,
           folder_id: backUpFolderId,
           provider: MediaProvider.googleDrive,
@@ -244,11 +255,15 @@ class MediaProcessRepo extends ChangeNotifier {
         ).toJson(),
       );
     }
+    await batch.commit(noResult: true);
+
+    // Update the queue and run the auto backup queue
     await updateQueue(database);
     runAutoBackupQueue();
   }
 
   Future<void> autoBackupInDropbox() async {
+    // Fetch Media from local storage and Dropbox
     final res = await Future.wait([
       _localMediaService.getAllLocalMedia(),
       _dropboxService.getAllMedias(folder: ProviderConstants.backupFolderPath),
@@ -257,12 +272,15 @@ class MediaProcessRepo extends ChangeNotifier {
     final localMedias = res[0];
     final dropboxMedias = res[1];
 
+    // Remove media that are already in the upload queue or already in Dropbox
     for (AppMedia localMedia in localMedias.toList()) {
       if (_uploadQueue
               .where(
                 (element) =>
                     element.media_id == localMedia.id &&
-                    element.status.isRunning,
+                    (element.status.isRunning ||
+                        element.status.isPaused ||
+                        element.status.isWaiting),
               )
               .isNotEmpty ||
           dropboxMedias
@@ -272,11 +290,13 @@ class MediaProcessRepo extends ChangeNotifier {
       }
     }
 
+    // Add media to the upload queue
+    final batch = database.batch();
     for (AppMedia media in localMedias) {
-      await database.insert(
+      batch.insert(
         LocalDatabaseConstants.uploadQueueTable,
         UploadMediaProcess(
-          id: _generateUniqueIdV4(),
+          id: _uniqueIdGenerator.v4(),
           media_id: media.id,
           folder_id: ProviderConstants.backupFolderPath,
           provider: MediaProvider.dropbox,
@@ -287,10 +307,14 @@ class MediaProcessRepo extends ChangeNotifier {
         ).toJson(),
       );
     }
+    await batch.commit(noResult: true);
+
+    // Update the queue and run the auto backup queue
     await updateQueue(database);
     runAutoBackupQueue();
   }
 
+  /// Remove all the auto backup processes from the upload queue for the given provider
   Future<void> stopAutoBackup(MediaProvider provider) async {
     final processes = _uploadQueue
         .where(
@@ -315,6 +339,7 @@ class MediaProcessRepo extends ChangeNotifier {
 
   bool _autoBackupQueueIsRunning = false;
 
+  /// Start uploading the media from the auto backup queue
   Future<void> runAutoBackupQueue() async {
     if (_autoBackupQueueIsRunning) return;
     _autoBackupQueueIsRunning = true;
@@ -351,31 +376,17 @@ class MediaProcessRepo extends ChangeNotifier {
     return baseId;
   }
 
-  ///Generate Cryptographically secure unique ID in UUIDv4 format
-  ///https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)
-  String _generateUniqueIdV4() {
-    final random = math.Random
-        .secure(); // Cryptographically secure random number generator
-
-    String generateHex(int length) {
-      return List.generate(length, (_) => random.nextInt(16).toRadixString(16))
-          .join();
-    }
-
-    // Generate UUID-like ID with shorter length
-    return '${generateHex(8)}-${generateHex(4)}-4${generateHex(3)}-${(8 + random.nextInt(4)).toRadixString(16)}${generateHex(3)}-${generateHex(8)}';
-  }
-
   void uploadMedia({
     required List<AppMedia> medias,
     required String folderId,
     required MediaProvider provider,
   }) async {
+    final batch = database.batch();
     for (AppMedia media in medias) {
-      await database.insert(
+      batch.insert(
         LocalDatabaseConstants.uploadQueueTable,
         UploadMediaProcess(
-          id: _generateUniqueIdV4(),
+          id: _uniqueIdGenerator.v4(),
           media_id: media.id,
           folder_id: folderId,
           provider: provider,
@@ -386,6 +397,7 @@ class MediaProcessRepo extends ChangeNotifier {
         ).toJson(),
       );
     }
+    await batch.commit(noResult: true);
     await updateQueue(database);
     runUploadQueue();
   }
@@ -398,6 +410,17 @@ class MediaProcessRepo extends ChangeNotifier {
     await database.rawUpdate(
       "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET status = ?, response = ? WHERE id = ?",
       [status.value, LocalDatabaseAppMediaConverter().toJson(response), id],
+    );
+    await updateQueue(database);
+  }
+
+  Future<void> updateUploadSessionId({
+    required String id,
+    required String uploadSessionId,
+  }) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET upload_session_id = ? WHERE id = ?",
+      [uploadSessionId, id],
     );
     await updateQueue(database);
   }
@@ -426,15 +449,45 @@ class MediaProcessRepo extends ChangeNotifier {
 
   Future<void> terminateUploadProcess(String id) async {
     await database.rawUpdate(
-      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET status = ? WHERE id = ? AND (status = ? OR status = ?)",
+      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET status = ? WHERE id = ? AND (status = ? OR status = ? OR status = ?)",
       [
         MediaQueueProcessStatus.terminated.value,
+        id,
+        MediaQueueProcessStatus.uploading.value,
+        MediaQueueProcessStatus.waiting.value,
+        MediaQueueProcessStatus.paused.value,
+      ],
+    );
+    await updateQueue(database);
+  }
+
+  Future<void> pauseUploadProcess(String id) async {
+    await database.rawUpdate(
+      "UPDATE ${LocalDatabaseConstants.uploadQueueTable} SET status = ? WHERE id = ? AND (status = ? OR status = ?)",
+      [
+        MediaQueueProcessStatus.paused.value,
         id,
         MediaQueueProcessStatus.uploading.value,
         MediaQueueProcessStatus.waiting.value,
       ],
     );
     await updateQueue(database);
+  }
+
+  Future<void> resumeUploadProcess(String id) async {
+    final process = _uploadQueue.firstWhere(
+      (element) => element.id == id,
+    );
+    if (process.provider == MediaProvider.googleDrive) {
+      _uploadInGoogleDrive(process);
+    } else if (process.provider == MediaProvider.dropbox) {
+      _uploadInDropbox(process);
+    } else {
+      updateUploadProcessStatus(
+        status: MediaQueueProcessStatus.failed,
+        id: process.id,
+      );
+    }
   }
 
   Future<void> removeAllWaitingUploadsOfProvider(MediaProvider provider) async {
@@ -475,7 +528,6 @@ class MediaProcessRepo extends ChangeNotifier {
 
   Future<void> _uploadInGoogleDrive(UploadMediaProcess uploadProcess) async {
     UploadMediaProcess process = uploadProcess;
-    Timer? updateDatabaseDebounce;
 
     Future<void> showNotification(
       String message, {
@@ -503,68 +555,85 @@ class MediaProcessRepo extends ChangeNotifier {
         id: process.id,
       );
 
-      final cancelToken = CancelToken();
+      // Start the upload session if it is not started yet and get the upload session id
+      final uploadSessionId = process.upload_session_id ??
+          await _googleDriveService.startUploadSession(
+            path: process.path,
+            localRefId: process.media_id,
+            mimeType: process.mime_type,
+            folderId: process.folder_id,
+          );
 
-      final res = await _googleDriveService.uploadMedia(
-        folderId: process.folder_id,
-        path: process.path,
-        mimeType: process.mime_type,
-        localRefId: process.media_id,
-        onProgress: (chunk, total) async {
-          process =
-              _uploadQueue.firstWhere((element) => element.id == process.id);
-          if (process.status.isTerminated) {
-            cancelToken.cancel();
-          }
-
-          if (updateDatabaseDebounce == null ||
-              !updateDatabaseDebounce!.isActive) {
-            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
-
-            if (!process.status.isTerminated) {
-              showNotification(
-                '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
-                chunk: chunk,
-                total: total,
-              );
-            }
-
-            await updateUploadProcessProgress(
-              id: process.id,
-              chunk: chunk,
-              total: total,
-            );
-          }
-        },
-        cancelToken: cancelToken,
-      );
-
-      showNotification('Uploaded to Google Drive successfully');
-
-      await updateUploadProcessStatus(
-        status: MediaQueueProcessStatus.completed,
-        response: res,
+      await updateUploadSessionId(
         id: process.id,
+        uploadSessionId: uploadSessionId,
       );
 
-      await clearUploadProcessResponse(id: process.id);
+      // Upload the media in chunks
+      AppMedia? response;
+      int chunk = process.chunk;
+      final total = await File(process.path).length();
 
-      await _localMediaService.addToCleanUpMediaDatabase(
-        medias: [
-          CleanUpMedia(
-            id: process.media_id,
-            provider_ref_id: res.id,
-            provider: AppMediaSource.googleDrive,
-            created_at: DateTime.now(),
-          ),
-        ],
-      );
-    } catch (e) {
-      if (e is DioException && e.type == DioExceptionType.cancel) {
-        showNotification('Upload to Google Drive cancelled');
-        return;
+      while (chunk < total) {
+        process = _uploadQueue.firstWhere((e) => e.id == process.id);
+
+        // Check if the process is terminated or paused and break the loop if it is
+        if (process.status.isTerminated) {
+          showNotification('Upload to Google Drive Cancelled');
+          break;
+        } else if (process.status.isPaused) {
+          showNotification('Upload to Google Drive Paused');
+          break;
+        }
+
+        // Calculate the end byte of the chunk to be uploaded
+        final end = (chunk + ApiConfigs.uploadRequestByteSize).clamp(0, total);
+
+        final res = await _googleDriveService.appendUploadSession(
+          startByte: chunk,
+          endByte: end,
+          uploadId: uploadSessionId,
+          path: process.path,
+        );
+
+        // Update the chunk and total bytes uploaded
+        chunk = end;
+
+        showNotification(
+          '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+          chunk: chunk,
+          total: total,
+        );
+
+        await updateUploadProcessProgress(
+          id: process.id,
+          chunk: chunk,
+          total: total,
+        );
+
+        if (res != null) response = res;
       }
-
+      // If the chunk is equal to the total bytes, then sey the process as completed
+      if (chunk >= total) {
+        await updateUploadProcessStatus(
+          status: MediaQueueProcessStatus.completed,
+          response: response,
+          id: process.id,
+        );
+        showNotification('Uploaded to Google Drive successfully');
+        await clearUploadProcessResponse(id: process.id);
+        _localMediaService.addToCleanUpMediaDatabase(
+          medias: [
+            CleanUpMedia(
+              id: process.media_id,
+              provider: AppMediaSource.googleDrive,
+              created_at: DateTime.now(),
+              provider_ref_id: response?.id,
+            ),
+          ],
+        );
+      }
+    } catch (e) {
       showNotification('Failed to upload to Google Drive');
 
       await updateDownloadProcessStatus(
@@ -576,7 +645,6 @@ class MediaProcessRepo extends ChangeNotifier {
 
   Future<void> _uploadInDropbox(UploadMediaProcess uploadProcess) async {
     UploadMediaProcess process = uploadProcess;
-    Timer? updateDatabaseDebounce;
 
     Future showNotification(
       String message, {
@@ -604,74 +672,134 @@ class MediaProcessRepo extends ChangeNotifier {
         id: process.id,
       );
 
-      final cancelToken = CancelToken();
+      AppMedia? response;
+      int chunk = process.chunk;
+      final total = await File(process.path).length();
 
-      final res = await _dropboxService.uploadMedia(
-        folderId: process.folder_id,
-        path: process.path,
-        mimeType: process.mime_type,
-        localRefId: process.media_id,
-        onProgress: (chunk, total) async {
+      if (total <= ApiConfigs.uploadRequestByteSize) {
+        response = await _dropboxService.uploadMedia(
+          path: process.path,
+          folderId: process.folder_id,
+          localRefId: process.media_id,
+          mimeType: process.mime_type,
+        );
+        chunk = total;
+
+        await updateUploadProcessProgress(
+          id: process.id,
+          chunk: chunk,
+          total: total,
+        );
+
+        showNotification(
+          '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+          chunk: chunk,
+          total: total,
+        );
+      } else {
+        while (chunk < total) {
           process =
               _uploadQueue.firstWhere((element) => element.id == process.id);
-          if (process.status.isTerminated) {
-            cancelToken.cancel();
-          }
-          if (updateDatabaseDebounce == null ||
-              !updateDatabaseDebounce!.isActive) {
-            updateDatabaseDebounce = Timer(Duration(milliseconds: 300), () {});
 
-            if (!process.status.isTerminated) {
-              showNotification(
-                '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
-                chunk: chunk,
+          // Check if the process is terminated or paused and break the loop if it is
+          if (process.status.isTerminated) {
+            showNotification('Upload to Dropbox Cancelled');
+            break;
+          } else if (process.status.isPaused) {
+            showNotification('Upload to Dropbox Paused');
+            break;
+          }
+
+          final end =
+              (chunk + ApiConfigs.uploadRequestByteSize).clamp(0, total);
+
+          if (end >= total && process.upload_session_id != null) {
+            // If the end byte is equal to the total bytes and the upload session id is not null then finish the upload session
+            response = await _dropboxService.finishUploadSession(
+              sessionId: process.upload_session_id!,
+              startByte: chunk,
+              endByte: end,
+              path: process.path,
+              localRefId: process.media_id,
+            );
+          } else if (process.upload_session_id != null) {
+            // If the upload session id is not null then append the chunk to the upload session
+            await _dropboxService.appendUploadSession(
+              path: process.path,
+              endByte: end,
+              startByte: chunk,
+              sessionId: process.upload_session_id!,
+            );
+          } else {
+            // If the upload session id is null and the chunk is not equal to 0 then start the upload session from the beginning
+            if (chunk != 0) {
+              await updateUploadProcessProgress(
+                id: process.id,
+                chunk: 0,
                 total: total,
               );
+              process = _uploadQueue.firstWhere((e) => e.id == process.id);
+              _uploadInDropbox(process);
+              return;
             }
 
-            await updateUploadProcessProgress(
+            // If the upload session id is null then start the upload session and update the upload session id
+            final uploadSessionId = await _dropboxService.startUploadSession(
+              path: process.path,
+              endByte: end,
+              startByte: chunk,
+            );
+
+            await updateUploadSessionId(
               id: process.id,
-              chunk: chunk,
-              total: total,
+              uploadSessionId: uploadSessionId,
             );
           }
-        },
-        cancelToken: cancelToken,
-      );
 
-      showNotification('Uploaded to Dropbox successfully');
+          // Update the chunk and total bytes uploaded
+          chunk = end;
 
-      await updateUploadProcessStatus(
-        status: MediaQueueProcessStatus.completed,
-        response: res,
-        id: process.id,
-      );
+          await updateUploadProcessProgress(
+            id: process.id,
+            chunk: chunk,
+            total: total,
+          );
 
-      await clearUploadProcessResponse(id: process.id);
-
-      await _localMediaService.addToCleanUpMediaDatabase(
-        medias: [
-          CleanUpMedia(
-            id: process.media_id,
-            provider_ref_id: res.id,
-            provider: AppMediaSource.dropbox,
-            created_at: DateTime.now(),
-          ),
-        ],
-      );
-    } catch (e) {
-      if (e is DioException && e.type == DioExceptionType.cancel) {
-        showNotification('Upload to Dropbox cancelled');
-        return;
+          showNotification(
+            '${chunk.formatBytes} / ${total.formatBytes} - ${total <= 0 ? 0 : (chunk / total * 100).round()}%',
+            chunk: chunk,
+            total: total,
+          );
+        }
       }
 
+      // If the chunk is equal to the total bytes, then sey the process as completed
+      if (chunk >= total) {
+        await updateUploadProcessStatus(
+          status: MediaQueueProcessStatus.completed,
+          response: response,
+          id: process.id,
+        );
+        showNotification('Uploaded to Dropbox successfully');
+        await clearUploadProcessResponse(id: process.id);
+        _localMediaService.addToCleanUpMediaDatabase(
+          medias: [
+            CleanUpMedia(
+              id: process.media_id,
+              provider: AppMediaSource.dropbox,
+              created_at: DateTime.now(),
+              provider_ref_id: response?.id,
+            ),
+          ],
+        );
+      }
+    } catch (e) {
       showNotification('Failed to upload to Dropbox');
 
       await updateUploadProcessStatus(
         status: MediaQueueProcessStatus.failed,
         id: process.id,
       );
-      return;
     }
   }
 
@@ -690,17 +818,18 @@ class MediaProcessRepo extends ChangeNotifier {
     required String folderId,
     required MediaProvider provider,
   }) async {
+    final batch = database.batch();
     for (AppMedia media in medias) {
       final id = provider == MediaProvider.googleDrive
           ? media.driveMediaRefId
           : media.dropboxMediaRefId;
-      await database.insert(
+      batch.insert(
         LocalDatabaseConstants.downloadQueueTable,
         DownloadMediaProcess(
           name: media.path.split('/').last.trim().isEmpty
               ? media.id
               : media.path.split('/').last,
-          id: _generateUniqueIdV4(),
+          id: _uniqueIdGenerator.v4(),
           media_id: id ?? media.id,
           folder_id: folderId,
           notification_id: _generateUniqueDownloadNotificationId(),
@@ -709,6 +838,7 @@ class MediaProcessRepo extends ChangeNotifier {
         ).toJson(),
       );
     }
+    await batch.commit(noResult: true);
     await updateQueue(database);
     runDownloadQueue();
   }

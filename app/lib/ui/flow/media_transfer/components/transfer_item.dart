@@ -11,12 +11,16 @@ class UploadProcessItem extends StatelessWidget {
   final UploadMediaProcess process;
   final void Function() onCancelTap;
   final void Function() onRemoveTap;
+  final void Function() onPausedTap;
+  final void Function() onResumeTap;
 
   const UploadProcessItem({
     super.key,
     required this.process,
     required this.onCancelTap,
     required this.onRemoveTap,
+    required this.onPausedTap,
+    required this.onResumeTap,
   });
 
   @override
@@ -77,12 +81,41 @@ class UploadProcessItem extends StatelessWidget {
               ],
             ),
           ),
-          if (process.status.isRunning || process.status.isWaiting)
+          if (process.status.isPaused)
+            ActionButton(
+              onPressed: onResumeTap,
+              icon: Icon(
+                CupertinoIcons.play,
+                color: context.colorScheme.textPrimary,
+                size: 20,
+              ),
+            ),
+          if (process.status.isRunning)
+            ActionButton(
+              onPressed: onPausedTap,
+              icon: Icon(
+                CupertinoIcons.pause,
+                color: context.colorScheme.textPrimary,
+                size: 20,
+              ),
+            ),
+          if (process.status.isRunning ||
+              process.status.isWaiting ||
+              process.status.isPaused)
             ActionButton(
               onPressed: onCancelTap,
               icon: Icon(
                 CupertinoIcons.xmark,
                 color: context.colorScheme.textPrimary,
+                size: 20,
+              ),
+            ),
+          if (process.status.isFailed)
+            ActionButton(
+              onPressed: onResumeTap,
+              icon: Icon(
+                CupertinoIcons.refresh,
+                color: context.colorScheme.textSecondary,
                 size: 20,
               ),
             ),
@@ -105,6 +138,8 @@ class UploadProcessItem extends StatelessWidget {
   String _getUploadMessage(BuildContext context) {
     if (process.status.isWaiting) {
       return context.l10n.upload_status_waiting;
+    } else if (process.status.isPaused) {
+      return context.l10n.upload_status_paused;
     } else if (process.status.isFailed) {
       return context.l10n.upload_status_failed;
     } else if (process.status.isCompleted) {

@@ -147,8 +147,167 @@ class DropboxUploadEndpoint extends Endpoint {
               }
             ],
         }),
-        'Content-Type': content.contentType,
+        'Content-Type': content.type,
         'Content-Length': content.length,
+      };
+
+  @override
+  Object? get data => content.stream;
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  void Function(int p1, int p2)? get onSendProgress => onProgress;
+}
+
+class DropboxStartUploadEndpoint extends Endpoint {
+  final AppMediaContent content;
+  final void Function(int chunk, int length)? onProgress;
+  final CancelToken? cancellationToken;
+
+  const DropboxStartUploadEndpoint({
+    this.cancellationToken,
+    this.onProgress,
+    required this.content,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxContentV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/upload_session/start';
+
+  @override
+  Map<String, dynamic> get headers => {
+        'Content-Type': content.type,
+      };
+
+  @override
+  Object? get data => content.stream;
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  void Function(int p1, int p2)? get onSendProgress => onProgress;
+}
+
+class DropboxAppendUploadEndpoint extends Endpoint {
+  final String sessionId;
+  final int offset;
+  final AppMediaContent content;
+  final void Function(int chunk, int length)? onProgress;
+  final CancelToken? cancellationToken;
+
+  const DropboxAppendUploadEndpoint({
+    required this.sessionId,
+    required this.offset,
+    this.cancellationToken,
+    this.onProgress,
+    required this.content,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxContentV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/upload_session/append_v2';
+
+  @override
+  Map<String, dynamic> get headers => {
+        'Dropbox-API-Arg': jsonEncode({
+          'cursor': {
+            'session_id': sessionId,
+            'offset': offset,
+          },
+        }),
+        'Content-Type': content.type,
+      };
+
+  @override
+  Object? get data => content.stream;
+
+  @override
+  CancelToken? get cancelToken => cancellationToken;
+
+  @override
+  void Function(int p1, int p2)? get onSendProgress => onProgress;
+}
+
+class DropboxFinishUploadEndpoint extends Endpoint {
+  final String? appPropertyTemplateId;
+  final String filePath;
+  final String? localRefId;
+  final String mode;
+  final bool autoRename;
+  final bool mute;
+  final bool strictConflict;
+
+  final String sessionId;
+  final int offset;
+  final AppMediaContent content;
+  final void Function(int chunk, int length)? onProgress;
+  final CancelToken? cancellationToken;
+
+  const DropboxFinishUploadEndpoint({
+    this.appPropertyTemplateId,
+    required this.filePath,
+    this.mode = 'add',
+    this.autoRename = true,
+    this.mute = false,
+    this.localRefId,
+    this.strictConflict = false,
+    this.cancellationToken,
+    this.onProgress,
+    required this.content,
+    required this.sessionId,
+    required this.offset,
+  });
+
+  @override
+  String get baseUrl => BaseURL.dropboxContentV2;
+
+  @override
+  HttpMethod get method => HttpMethod.post;
+
+  @override
+  String get path => '/files/upload_session/finish';
+
+  @override
+  Map<String, dynamic> get headers => {
+        'Dropbox-API-Arg': jsonEncode({
+          "commit": {
+            "autorename": autoRename,
+            "mode": mode,
+            "mute": mute,
+            "path": filePath,
+            "strict_conflict": strictConflict,
+            if (appPropertyTemplateId != null && localRefId != null)
+              'property_groups': [
+                {
+                  "fields": [
+                    {
+                      "name": ProviderConstants.localRefIdKey,
+                      "value": localRefId ?? '',
+                    },
+                  ],
+                  "template_id": appPropertyTemplateId,
+                }
+              ],
+          },
+          "cursor": {
+            "offset": offset,
+            "session_id": sessionId,
+          },
+        }),
+        'Content-Type': content.type,
       };
 
   @override

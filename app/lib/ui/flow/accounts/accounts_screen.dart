@@ -141,7 +141,21 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
                   ),
                 ),
                 title: context.l10n.sign_out_title,
-                onPressed: notifier.signOutWithGoogle,
+                onPressed: () async {
+                  await notifier.signOutWithGoogle();
+                  if (context.mounted) {
+                    showSnackBar(
+                      context: context,
+                      text:
+                          context.l10n.successfully_sign_out_from_google_drive,
+                      icon: SvgPicture.asset(
+                        Assets.images.icGoogleDrive,
+                        height: 22,
+                        width: 22,
+                      ),
+                    );
+                  }
+                },
               ),
             ],
             backgroundColor: AppColors.googleDriveColor,
@@ -216,7 +230,20 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen>
                   ),
                 ),
                 title: context.l10n.sign_out_title,
-                onPressed: notifier.signOutWithDropbox,
+                onPressed: () async {
+                  await notifier.signOutWithDropbox();
+                  if (context.mounted) {
+                    showSnackBar(
+                      context: context,
+                      text: context.l10n.successfully_sign_out_from_dropbox,
+                      icon: SvgPicture.asset(
+                        Assets.images.icDropbox,
+                        height: 22,
+                        width: 22,
+                      ),
+                    );
+                  }
+                },
               ),
             ],
             backgroundColor: AppColors.dropBoxColor,

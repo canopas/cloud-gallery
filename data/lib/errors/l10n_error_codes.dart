@@ -6,4 +6,5 @@ class AppErrorL10nCodes {
   static const backUpFolderNotFoundError = 'back-up-folder-not-found';
   static const unableToSaveFileInGalleryError =
       'unable-to-save-file-in-gallery';
+  static const noGoogleDriveAccessError = 'no-google-drive-access';
 }

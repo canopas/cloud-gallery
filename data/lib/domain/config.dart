@@ -20,3 +20,11 @@ class LocalDatabaseConstants {
 class FeatureFlag {
   static final googleDriveSupport = true;
 }
+
+class ApiConfigs {
+  /// The size of the byte to be uploaded from the server in one request.
+  static final uploadRequestByteSize = 262144;
+
+  /// The duration to wait before updating the progress of the process.
+  static final processProgressUpdateDuration = Duration(milliseconds: 300);
+}
