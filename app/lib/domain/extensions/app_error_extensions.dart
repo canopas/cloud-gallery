@@ -21,6 +21,8 @@ extension AppErrorExtensions on Object {
         return context.l10n.auth_session_expired_error;
       case AppErrorL10nCodes.unableToSaveFileInGalleryError:
         return context.l10n.save_media_in_gallery_error;
+      case AppErrorL10nCodes.noGoogleDriveAccessError:
+        return context.l10n.no_google_drive_access_error;
       default:
         return context.l10n.something_went_wrong_error;
     }

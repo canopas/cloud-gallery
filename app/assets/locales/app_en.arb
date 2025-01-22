@@ -40,6 +40,7 @@
   "back_up_folder_not_found_error": "Back up folder not found!",
   "auth_session_expired_error": "Your session has expired. Please log in again to continue using the app.",
   "save_media_in_gallery_error": "There was an issue saving your media to the gallery. Please try again, we’ll have it sorted out shortly",
+  "no_google_drive_access_error": "It seems we don’t have the required permissions to access your Google Drive. Please sign in again and grant the necessary permissions.",
 
   "@_MEDIA_ACTIONS":{},
   "upload_to_google_drive_title": "Upload to Google Drive",
