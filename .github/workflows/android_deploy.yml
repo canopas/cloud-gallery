@@ -1,9 +1,6 @@
 name: Publish to Google Play Store
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
