@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Gallery - Google Picker</title>
+    <script>
+        let accessToken = null;
+        let appId = null;
+        let apiKey = null;
+
+        function onApiLoad() {
+            gapi.load('picker', onPickerApiLoad);
+        }
+
+        function onPickerApiLoad() {
+            console.log("Google Picker API Loaded");
+        }
+
+        function createPicker() {
+            if (!accessToken || !appId || !apiKey) {
+                console.error("Authentication Failed");
+                return;
+            }
+
+            const picker = new google.picker.PickerBuilder()
+                .addView(google.picker.ViewId.DOCS_IMAGES_AND_VIDEOS)
+                .addView(google.picker.ViewId.FOLDERS)
+                .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                .setOAuthToken(accessToken)
+                .setDeveloperKey(apiKey)
+                .setCallback(pickerCallback)
+                .setAppId(appId)
+                .build();
+            picker.setVisible(true);
+        }
+
+        function pickerCallback(data) {
+            if (data.action === google.picker.Action.PICKED) {
+                console.log("Picked:", data.docs);
+                window.flutterWebView.postMessage(JSON.stringify(data.docs));
+            }
+        }
+
+        function receiveAccessToken(token, key, id) {
+            accessToken = token;
+            appId = id;
+            apiKey = key;
+            console.log("Authentication with", accessToken, appId, apiKey);
+        }
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="onApiLoad()"></script>
+</head>
+<body>
+<center>
+    <h1>Grant Access</h1>
+    <br>
+    <p>Click the button below to grant access to your Google Drive</p>
+    <br>
+    <button onclick="createPicker()">Show Picker</button>
+</center>
+</body>
+</html>
