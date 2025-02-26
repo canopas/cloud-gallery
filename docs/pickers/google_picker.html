@@ -50,14 +50,60 @@
         }
     </script>
     <script async defer src="https://apis.google.com/js/api.js" onload="onApiLoad()"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .picker-button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .picker-button:hover {
+            background-color: #357ae8;
+        }
+    </style>
 </head>
 <body>
-<center>
-    <h1>Grant Access</h1>
-    <br>
-    <p>Click the button below to grant access to your Google Drive</p>
-    <br>
-    <button onclick="createPicker()">Show Picker</button>
-</center>
+    <center>
+        <h1>Choose Files or Folders</h1>
+        <p>Select the files or folders you want to access in Cloud Gallery from Google Drive.</p>
+        <button class="picker-button" onclick="createPicker()">Select Files</button>
+    </center>
 </body>
 </html>
