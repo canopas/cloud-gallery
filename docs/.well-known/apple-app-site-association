@@ -4,7 +4,7 @@
     "details": [
       {
         "appIDs": [
-          "S985H2T7J8.com.canopas.cloudGallery"
+          "S8QB4VV633.com.canopas.cloudGallery"
         ],
         "paths": [
           "*"
@@ -19,7 +19,7 @@
   },
   "webcredentials": {
     "apps": [
-      "S985H2T7J8.com.canopas.cloudGallery"
+      "S8QB4VV633.com.canopas.cloudGallery"
     ]
   }
 }
