@@ -8,15 +8,11 @@
         ],
         "paths": [
           "*"
-          "dropbox-auth"
         ],
         "components": [
           {
             "/": "/*"
           },
-          { 
-            "/":"/dropbox-auth/*" 
-          }, 
         ]
       }
     ]
