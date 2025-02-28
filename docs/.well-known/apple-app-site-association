@@ -1,25 +1,25 @@
 {
-  "applinks": {
-    "apps": [],
-    "details": [
-      {
-        "appIDs": [
-          "S985H2T7J8.com.canopas.cloudGallery"
-        ],
-        "paths": [
-          "*"
-        ],
-        "components": [
-          {
-            "/": "/*"
-          },
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appIDs": [
+                    "S985H2T7J8.com.canopas.cloudGallery"
+                ],
+                "paths": [
+                    "*"
+                ],
+                "components": [
+                    {
+                        "/": "/*"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  },
-  "webcredentials": {
-    "apps": [
-      "S985H2T7J8.com.canopas.cloudGallery"
-    ]
-  }
+    },
+    "webcredentials": {
+        "apps": [
+            "S985H2T7J8.com.canopas.cloudGallery"
+        ]
+    }
 }
